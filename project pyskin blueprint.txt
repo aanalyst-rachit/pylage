@@ -1,35 +1,36 @@
-Bilkul. Ab jab **local + GitHub checkpoint dono secure** hain, humein blueprint ko current reality ke hisaab se update karna chahiye. Purane blueprint mein kuch cheezein future target ke roop mein thi jo ab partially implement ho chuki hain.
-
-Neeche main **PySkin / PU ka new Master Blueprint v2** de raha hoon — isme **exact current checkpoint, architecture, remaining work, milestones aur project completion estimate** sab locked hain.
-
----
-
-# 🐍 PySkin / PU — MASTER BLUEPRINT v2
+# 🐍 PySkin / PU — MASTER BLUEPRINT v4
 
 **Project:** PySkin
-**Long-term name/vision:** PU — Python Universal UI Framework
-
+**Long-term vision:** PU — Python Universal UI Framework
 **Repository:** `aanalyst-rachit/pyskin`
+**Branch:** `main`
 
-**Current branch:** `main`
-
-**Current checkpoint:** `4c07225`
-
-**Checkpoint commit:**
+## 🔒 CURRENT CHECKPOINT
 
 ```text
-checkpoint: PySkin reactive runtime and registry architecture
-```
+HEAD:
+ac99f30
 
-**GitHub:** [PySkin Repository](https://github.com/aanalyst-rachit/pyskin.git?utm_source=chatgpt.com)
+Commit:
+complete generic reactive registry prop pipeline
+
+Branch:
+main
+
+Status:
+Latest verified milestone committed
+
+Previous checkpoint:
+d8b184c
+```
 
 ---
 
-# 1. 🎯 FINAL VISION
+# 1. 🎯 FINAL GOAL
 
-PySkin ka goal ek aisa **Python-first UI framework** banana hai jisme developer primarily **Python** likhe aur framework automatically UI ko browser/desktop par render kare.
+PySkin ka ultimate goal ek **Python-first, low-latency reactive UI framework** banana hai.
 
-Target experience:
+Developer ko sirf Python likhna chahiye:
 
 ```python
 import pyskin as ps
@@ -39,379 +40,255 @@ count = ps.State(0)
 app = ps.Column(
     ps.Heading("Counter"),
     ps.Text(count),
-    ps.Button("+", on_click=lambda: count.set(count.value + 1)),
+    ps.Button(
+        "+",
+        on_click=lambda: count.set(count.value + 1)
+    ),
 )
 
 ps.run(app)
 ```
 
-Developer ko:
+Developer ko manually handle nahi karna chahiye:
 
 ```text
 ❌ HTML
-❌ CSS
 ❌ JavaScript
 ❌ DOM manipulation
-❌ WebSocket management
+❌ WebSocket protocol
+❌ browser event plumbing
+❌ state synchronization
+❌ patch generation
 ```
 
-manually handle nahi karna chahiye.
-
-Framework internally ye sab handle kare.
+Framework internally ye sab handle karega.
 
 ---
 
 # 2. 🧠 CORE PHILOSOPHY
 
-PySkin ka architecture:
+> **Python is the developer-facing UI language.**
+
+Browser JavaScript implementation detail hai.
+
+Target architecture:
 
 ```text
-Python Developer
-       ↓
-Python UI API
-       ↓
-Component Tree
-       ↓
-Registry / Metadata
-       ↓
-UI IR
-       ↓
-Compiler / Optimizer
-       ↓
-Runtime
-       ↓
-Tiny Client Runtime
-       ↓
-Browser / Desktop
-```
-
-Important:
-
-> **No user-written JavaScript ≠ zero JavaScript internally.**
-
-Browser ke liye ek tiny internal JS runtime allowed hai.
-
-Goal hai:
-
-```text
-Developer → Python only
-Framework → JS internally
-```
-
----
-
-# 3. 🏗️ FINAL ARCHITECTURE
-
-```text
-                    PYTHON APPLICATION
-                           │
-                           ▼
-                     PySkin API
-                           │
-                           ▼
-                    Component / Node
-                           │
-                           ▼
-                    Component Tree
-                           │
-              ┌────────────┴────────────┐
-              │                         │
-              ▼                         ▼
-          Registry                 State Graph
-              │                         │
-              ▼                         ▼
-       Component Metadata         Dependencies
-              │                         │
-              └────────────┬────────────┘
-                           ▼
-                         IR
-                           │
-                           ▼
-                      Compiler
-                           │
-                    ┌──────┴──────┐
-                    ▼             ▼
-                 Renderer      Runtime
-                    │             │
-                    ▼             ▼
-                  HTML       Event/State Bridge
-                                  │
-                              WebSocket
-                                  │
-                                  ▼
-                           Tiny JS Runtime
-                                  │
-                                  ▼
-                               Browser
+Python Application
+        │
+        ▼
+    PySkin API
+        │
+        ▼
+ Component Tree
+        │
+        ▼
+ Registry / Metadata
+        │
+        ▼
+ Reactive State Graph
+        │
+        ▼
+       UI IR
+        │
+        ▼
+ Compiler / Optimizer
+        │
+        ├───────────────┐
+        ▼               ▼
+   Web Runtime      Future Native
+        │
+        ▼
+ Tiny Client Runtime
+        │
+        ▼
+      Browser
 ```
 
 ---
 
-# 4. 📍 HUM ABHI KAHAN HAIN
+# 3. 🏗️ TARGET ARCHITECTURE
 
-Current implementation ko roughly is tarah dekho:
+Final architecture:
 
 ```text
-Python API
-    │
-    ▼
-Component
-    │
-    ├── type       ✅
-    ├── id         ✅
-    ├── props      ✅
-    └── children   ✅
-    │
-    ▼
+                     PYTHON APPLICATION
+                            │
+                            ▼
+                       PySkin API
+                            │
+                            ▼
+                     Component Tree
+                            │
+              ┌─────────────┴─────────────┐
+              │                           │
+              ▼                           ▼
+          Registry                    State Graph
+              │                           │
+              ▼                           ▼
+       Component Metadata            Dependencies
+              │                           │
+              └─────────────┬─────────────┘
+                            ▼
+                           UI IR
+                            │
+                            ▼
+                        Compiler
+                            │
+                 ┌──────────┴──────────┐
+                 ▼                     ▼
+             Renderer               Runtime
+                 │                     │
+                 ▼                     ▼
+              Initial              Events / State
+              Output                    │
+                                        ▼
+                                   Diff / Patch
+                                        │
+                                        ▼
+                                    WebSocket
+                                        │
+                                        ▼
+                                Tiny Client Runtime
+                                        │
+                                        ▼
+                                      DOM
+```
+
+---
+
+# 4. 📍 ACTUAL CURRENT POSITION
+
+Current codebase has already crossed the basic renderer/prototype stage.
+
+Current real pipeline:
+
+```text
+Python Component
+       │
+       ▼
 Component Tree
-    │
-    ▼
+       │
+       ▼
 Registry
-    │
-    ├── ComponentDefinition     ✅
-    ├── PropDefinition          ✅
-    ├── kind                    ✅
-    ├── reactive                ✅
-    ├── html_name               ✅
-    ├── void                    ✅
-    └── renderer                ✅
-    │
-    ▼
+       │
+       ├── ComponentDefinition       ✅
+       ├── PropDefinition            ✅
+       ├── prop kind                 ✅
+       ├── reactive metadata         ✅
+       ├── html_name                 ✅
+       ├── void metadata             ✅
+       └── renderer ownership        ✅
+       │
+       ▼
 HTML Renderer
-    │
-    ▼
-HTML Document
-    │
-    ▼
+       │
+       ▼
+Initial HTML
+       │
+       ▼
 Runtime
-    │
-    ├── HTTP server             ✅
-    ├── WebSocket server        ✅
-    └── browser client          ✅
-    │
-    ▼
-Reactive State
-    │
-    ├── State                   ✅
-    ├── StateBinding            ✅
-    ├── UpdateMessage           ✅
-    └── client update handling  ✅
+       │
+       ├── HTTP/server               ✅
+       ├── WebSocket                 ✅
+       └── browser client            ✅
+       │
+       ▼
+State / UpdateMessage
+       │
+       ▼
+Generic browser prop patch
+       │
+       ▼
+DOM
 ```
 
-### Current milestone:
+### Current milestone
 
-> **Prototype → Functional Runtime transition complete.**
+# **Registry-driven generic reactive prop pipeline — COMPLETE**
 
-Ye important milestone hai.
+The next milestone is no longer basic registry architecture.
 
-Hum sirf static HTML generator nahi rahe.
+The next real architectural problem is:
+
+# **Registry metadata → actual runtime semantics → dependency-aware updates**
 
 ---
 
-# 5. 🔒 CURRENT GIT CHECKPOINT
+# 5. ✅ COMPLETED — COMPONENT FOUNDATION
+
+Current `Component` implementation provides:
 
 ```text
-Commit: 4c07225
-
-checkpoint: PySkin reactive runtime and registry architecture
+Component type                 ✅
+Props                          ✅
+Children                       ✅
+Events                         ✅
+Stable component ID            ✅
+Child addition                 ✅
+Event handler validation       ✅
 ```
 
-GitHub:
+Current component model:
 
-```text
-origin/main
-```
-
-Current state:
-
-```text
-working tree clean
-        +
-GitHub push successful
-```
-
-Iska matlab:
-
-```text
-CURRENT WORKING STATE
-        ↓
-LOCAL GIT
-        ↓
-GITHUB
-```
-
-dono jagah safe hai.
-
----
-
-# 6. ✅ COMPLETED SYSTEMS
-
-## A. Component foundation
-
-```text
-Component                    ✅
-Component IDs                ✅
-Children                     ✅
-Props                        ✅
-Tree traversal               ✅
+```python
+@dataclass
+class Component:
+    type: str
+    props: dict
+    children: list
+    events: dict
+    id: str
 ```
 
 ---
 
-## B. Basic components
+# 6. 🟡 COMPONENT CONSTRUCTION — PARTIALLY GENERIC
+
+`component()` now consults the registry:
+
+```text
+component()
+    ↓
+registry.get(type)
+```
+
+However, current behavior intentionally keeps unknown props for backward compatibility.
 
 Current:
 
 ```text
-Column
-Heading
-Button
-Input
-```
-
-implemented.
-
-Future component library abhi intentionally limited hai.
-
----
-
-# 7. ✅ STATE SYSTEM
-
-Current:
-
-```text
-State
- ├── value
- ├── set()
- ├── subscribe()
- └── unsubscribe()
-```
-
-Basic reactive foundation working.
-
----
-
-# 8. ✅ EVENT SYSTEM
-
-Current architecture has:
-
-```text
-EventDispatcher
-```
-
-which can:
-
-```text
-Component ID
-      +
-Event name
-      +
-Payload
+Known component
       ↓
-Handler
+Registry consulted              ✅
+      ↓
+Props normalized                🟡
+      ↓
+Unknown prop rejection          ❌
 ```
 
-tak event dispatch karta hai.
+This is acceptable for now.
+
+Do **not** introduce strict prop rejection until the runtime contract is mature enough.
 
 ---
 
-# 9. ✅ STATE BINDING
+# 7. ✅ COMPLETED — REGISTRY ARCHITECTURE
 
-Current:
-
-```text
-StateBinding
-```
-
-tree ke andar State values detect karta hai:
+Registry now owns:
 
 ```text
-Component
-    ↓
-props
-    ↓
-State
-    ↓
-subscribe
-    ↓
-change
-    ↓
-callback
+Component type
+HTML tag
+void status
+renderer callback
+prop definitions
 ```
-
----
-
-# 10. ✅ PROTOCOL
-
-Current runtime mein:
-
-```text
-EventMessage
-UpdateMessage
-```
-
-exist karte hain.
-
-Basic bridge:
-
-```text
-Browser
-   ↓
-event
-   ↓
-WebSocket
-   ↓
-Python
-   ↓
-state
-   ↓
-update
-   ↓
-WebSocket
-   ↓
-Browser
-```
-
-already foundation level par implemented hai.
-
----
-
-# 11. ✅ BROWSER CLIENT RUNTIME
-
-Tiny embedded JS runtime already hai.
-
-It:
-
-```text
-connects WebSocket
-       ↓
-receives events
-       ↓
-receives updates
-       ↓
-finds data-pyskin-id
-       ↓
-updates DOM
-```
-
-Example:
-
-```text
-data-pyskin-id="abc123"
-```
-
-This is extremely important for future fine-grained updates.
-
----
-
-# 12. ✅ REGISTRY ARCHITECTURE
-
-Ye recent major milestone tha.
 
 Current:
 
 ```python
-@dataclass
+@dataclass(frozen=True)
 class PropDefinition:
     name: str
     kind: str
@@ -419,824 +296,1569 @@ class PropDefinition:
     html_name: str | None
 ```
 
-Aur:
+and:
 
 ```python
-@dataclass
+@dataclass(frozen=True)
 class ComponentDefinition:
     type: str
     tag: str
     void: bool
-    renderer: ...
-    props: ...
-```
-
-Architecture now:
-
-```text
-Component
-      ↓
-Registry
-      ↓
-ComponentDefinition
-      ↓
-PropDefinition
-```
-
----
-
-# 13. ✅ METADATA-DRIVEN HTML
-
-Recent work ka result:
-
-```text
-class_name → class
-html_for   → for
-disabled   → boolean attribute
-```
-
-registry metadata se resolve ho sakta hai.
-
-### Remaining compromise
-
-Renderer mein generic fallback abhi bhi hai:
-
-```text
-class_name → class
-html_for → for
-```
-
-Isko eventually clean registry contract mein move karna hai.
-
-**Ye next cleanup task hai.**
-
----
-
-# 14. ✅ VOID COMPONENT CONTRACT
-
-`Input` jaise components:
-
-```html
-<input ...>
-```
-
-ko children nahi hone chahiye.
-
-Registry now supports:
-
-```python
-void=True
-```
-
-This is the correct architectural direction.
-
----
-
-# 15. ✅ `ps.run()`
-
-Current public runtime entry:
-
-```python
-ps.run(app)
-```
-
-works.
-
-Current flow:
-
-```text
-ps.run(app)
-     ↓
-Runtime
-     ↓
-render
-     ↓
-HTML
-     ↓
-server
-```
-
----
-
-# 16. ✅ LOCAL SERVER
-
-Current:
-
-```text
-LocalServer
-```
-
-exists.
-
-Supports:
-
-```text
-host
-port
-start()
-stop()
-url
-context manager
-```
-
----
-
-# 17. 🚧 CURRENT NEXT MILESTONE
-
-Ab immediate focus:
-
-# **MILESTONE 4 — Runtime + Reactive Architecture Cleanup**
-
-Order:
-
-```text
-1. Registry metadata cleanup
-2. Reactive metadata enforcement
-3. Event/runtime integration cleanup
-4. Fine-grained update model
-5. DOM patch system
-6. Runtime lifecycle
-7. reconnect/error handling
-```
-
----
-
-# 18. 🔥 NEXT TASK #1
-
-### Complete Registry Prop Contract
-
-Current:
-
-```text
-Registry
-   ↓
-metadata
-   ↓
-Renderer
-   ↓
-generic fallback
-```
-
-Target:
-
-```text
-Registry
-   ↓
-complete prop contract
-   ↓
-Renderer
-```
-
-No unnecessary semantic knowledge hidden inside renderer.
-
----
-
-# 19. 🔥 NEXT TASK #2
-
-## Make `reactive` Metadata Actually Matter
-
-Currently:
-
-```python
-PropDefinition(
-    "value",
-    reactive=True
-)
-```
-
-exists.
-
-But runtime/client side prop handling is still partly hardcoded:
-
-```text
-text
-value
-disabled
-class
-title
-```
-
-Target:
-
-```text
-PropDefinition
-       ↓
-reactive=True/False
-       ↓
-runtime protocol
-       ↓
-client patch
-```
-
-This makes registry metadata a **real framework contract**, not just documentation.
-
----
-
-# 20. 🔥 NEXT BIG MILESTONE
-
-# Fine-Grained Reactive Updates
-
-Current conceptual path:
-
-```text
-State changes
-     ↓
-Component identified
-     ↓
-UpdateMessage
-     ↓
-Browser
-     ↓
-property update
-```
-
-Target:
-
-```text
-State
- ↓
-Dependency Graph
- ↓
-Dirty Nodes
- ↓
-Diff Engine
- ↓
-Patch
- ↓
-WebSocket
- ↓
-Tiny Runtime
- ↓
-DOM
-```
-
-Example:
-
-```text
-State count = 10
-
-       ↓ set(11)
-
-ONLY:
-
-<span id="counter">10</span>
-
-becomes:
-
-<span id="counter">11</span>
-```
-
-Not:
-
-```text
-entire page rerender ❌
-```
-
----
-
-# 21. 🚀 MILESTONE ROADMAP
-
-## Phase 0 — Foundation
-
-```text
-Project setup                ✅
-Component                    ✅
-Tree                         ✅
-State                        ✅
-Basic renderer               ✅
-```
-
-**100% complete**
-
----
-
-## Phase 1 — Component Architecture
-
-```text
-Registry                     ✅
-ComponentDefinition          ✅
-PropDefinition               ✅
-Prop metadata                ✅
-HTML metadata                ✅
-Void contract                ✅
-Renderer dispatch            ✅
-```
-
-**~95% complete**
-
-Small cleanup remains.
-
----
-
-# Phase 2 — Runtime
-
-```text
-ps.run()                     ✅
-HTTP server                  ✅
-Runtime abstraction          ✅
-WebSocket                    ✅
-Browser runtime              ✅
-Event bridge                 ✅
-State bridge                 ✅
-```
-
-**~85–90% complete**
-
-Needs robustness and proper lifecycle handling.
-
----
-
-# Phase 3 — Reactive Engine
-
-```text
-State                         ✅
-Subscriptions                ✅
-StateBinding                 ✅
-UpdateMessage                ✅
-Client patch handling         🟡
-Dependency graph              ❌
-Dirty tracking                ❌
-Diff engine                   ❌
-Patch optimizer               ❌
-Batching                      ❌
-```
-
-**~35–40% complete**
-
-This is one of the biggest remaining areas.
-
----
-
-# Phase 4 — Component Library
-
-Target:
-
-```text
-Text
-Heading
-Button
-Input
-Textarea
-Checkbox
-Radio
-Select
-Image
-Link
-Row
-Column
-Stack
-Grid
-Card
-Modal
-Tabs
-Table
-Form
-```
-
-Current only a tiny subset exists.
-
-**~10–15% complete**
-
-But intentionally — component library abhi priority nahi hai.
-
----
-
-# Phase 5 — CSS / Styling
-
-Target:
-
-```python
-ps.Button(
-    "Save",
-    width=200,
-    padding=10,
-    background="blue"
-)
+    renderer: Callable | None
+    props: dict[str, PropDefinition] | None
 ```
 
 Architecture:
 
 ```text
-Python props
+Component
      ↓
-Style model
+Registry
      ↓
-CSS compiler
+ComponentDefinition
+     ↓
+PropDefinition
 ```
 
-Current:
-
-```text
-basic attribute rendering
-```
-
-Full styling system:
-
-**mostly pending**
+**STATUS: ~95%**
 
 ---
 
-# Phase 6 — Compiler / IR
+# 8. ✅ COMPLETED — PROP CONTRACT
 
-This is where PySkin becomes much more serious.
-
-Current:
+Supported prop kinds:
 
 ```text
-Component
-   ↓
-HTML Renderer
+attribute
+boolean
+text
 ```
 
-Target:
+Invalid kinds are rejected.
+
+Verified:
 
 ```text
-Component
-   ↓
-UI IR
-   ↓
-Optimizer
-   ↓
-Renderer
+Prop registration              PASS
+Prop metadata storage          PASS
+Prop definition contract       PASS
 ```
-
-Possible IR:
-
-```text
-Node
- ├── type
- ├── id
- ├── props
- └── children
-```
-
-Then:
-
-```text
-IR
- ↓
-static analysis
- ↓
-constant folding
- ↓
-prop normalization
- ↓
-optimized output
-```
-
-**Mostly pending**
 
 ---
 
-# Phase 7 — Desktop
+# 9. ✅ COMPLETED — REACTIVE METADATA CONTRACT
 
-Long-term:
+`reactive` is now strictly boolean.
+
+Valid:
 
 ```text
-Same Python API
+True
+False
+```
+
+Invalid:
+
+```text
+"true"
+1
+None
+```
+
+Verified:
+
+```text
+Boolean reactive values        PASS
+Non-boolean reactive rejection PASS
+```
+
+### Important distinction
+
+The metadata contract is complete.
+
+The **full runtime meaning** of `reactive=True/False` is not yet complete.
+
+This is one of the next tasks.
+
+---
+
+# 10. ✅ COMPLETED — HTML NAME CONTRACT
+
+`html_name` is validated.
+
+Examples:
+
+```text
+class_name → class
+html_for   → for
+title      → title
+```
+
+Invalid empty names are rejected.
+
+---
+
+# 11. ✅ COMPLETED — GENERIC PROP MAPPING
+
+Current registry can describe:
+
+```text
+Python property
        ↓
-       IR
-   ┌───┴────┐
-   ↓        ↓
- Web      Desktop
+HTML property
 ```
 
-Possible targets later:
+Example:
 
 ```text
-WebView
-Native backend
-GPU renderer
+class_name
+    ↓
+class
 ```
 
-**Not started.**
+Verified:
+
+```text
+class_name → class metadata      PASS
+disabled boolean metadata        PASS
+title attribute metadata         PASS
+```
 
 ---
 
-# Phase 8 — Performance Engine
+# 12. ✅ COMPLETED — GENERIC HTML RENDERING
 
-This is where your original goal becomes measurable.
+Renderer now reads registry metadata.
 
-Benchmarks:
+Example verified output:
 
-```text
-Startup
-Initial render
-Memory
-Event latency
-State update latency
-DOM patch latency
-Large tree
-1000 components
-10,000 components
-Concurrent events
+```html
+<button
+    data-pyskin-id="..."
+    value="123"
+    disabled
+    title="Save button"
+>
+    Save
+</button>
 ```
 
-Comparison:
+Verified:
 
 ```text
-PySkin
-vs
-Streamlit
-vs
-Flet
-vs
-other Python UI frameworks
+Registry-driven HTML rendering    PASS
+Registry prop metadata            PASS
 ```
-
-**Not benchmarked yet.**
 
 ---
 
-# 22. 📊 OVERALL PROJECT PROGRESS
+# 13. ✅ COMPLETED — REGISTRY-DRIVEN TEXT PROPS
 
-Important distinction:
+Text props are no longer required to be hard-coded by prop name at the generic rendering layer.
 
-**Prototype progress ≠ final framework progress.**
-
-Current estimate:
+Registry:
 
 ```text
-Foundation                  ████████████████████ 100%
-Component architecture      ███████████████████░  95%
-Runtime                     █████████████████░░░  85%
-Reactive engine             ████████░░░░░░░░░░░░  40%
-Component library           ██░░░░░░░░░░░░░░░░░░  15%
-Styling system              ██░░░░░░░░░░░░░░░░░░  10%
-Compiler / IR               ███░░░░░░░░░░░░░░░░░  15%
-Desktop                     ░░░░░░░░░░░░░░░░░░░░   0%
-Performance engine          ░░░░░░░░░░░░░░░░░░░░   0%
-Packaging                   ░░░░░░░░░░░░░░░░░░░░   0%
+kind="text"
 ```
 
-Overall final-product estimate:
+means:
 
-# **~25–30%**
+```text
+value
+ ↓
+component content
+```
 
-Lekin iska matlab **project weak nahi hai**.
-
-Important part ye hai ki **architecture ka skeleton already ban gaya hai.**
+This is a major step toward a generic renderer.
 
 ---
 
-# 23. 🧠 ACTUAL REMAINING DIFFICULT WORK
+# 14. ✅ COMPLETED — RENDERER OWNERSHIP
 
-Sabse difficult parts:
+Renderer callbacks are attached to registry definitions.
+
+Architecture:
 
 ```text
-                    Difficulty
-                        │
-Dependency Graph        ██████████
-Diff/Patch Engine       ██████████
-Runtime robustness      █████████
-Compiler/IR             █████████
-Performance             █████████
-Desktop backend         █████████
-Styling engine          ███████
-Component library       █████
-Packaging               ████
+component.type
+      ↓
+registry
+      ↓
+ComponentDefinition
+      ↓
+renderer callback
 ```
 
-Simple components banana comparatively easy hai.
+Current renderer resolution no longer depends on a giant component-type dispatch inside `_render_component()`.
 
-**Real PySkin technology** yahan banegi:
+---
+
+# 15. 🟡 RENDERER ARCHITECTURE — IMPORTANT REMAINING CLEANUP
+
+Current `HTMLRenderer` still contains:
+
+```text
+_register_builtin_renderers()
+        ↓
+Column
+Heading
+Button
+Input
+        ↓
+_render_column()
+_render_heading()
+_render_button()
+_render_input()
+```
+
+This is currently protected from overwriting custom callbacks:
+
+```text
+if definition.renderer is not None:
+    continue
+```
+
+That is good.
+
+But long-term:
+
+```text
+Registry
+    ↓
+complete renderer metadata
+    ↓
+generic renderer
+```
+
+should become more dominant.
+
+The goal is to minimize component-specific renderer logic.
+
+**STATUS: ~85–90%**
+
+---
+
+# 16. ✅ COMPLETED — CUSTOM RENDERER PROTECTION
+
+Custom renderer registration survives builtin renderer initialization.
+
+Verified:
+
+```text
+Custom renderer registration       PASS
+Custom renderer preservation       PASS
+Repeated initialization            PASS
+Callback preservation              PASS
+```
+
+This is important for future:
+
+```text
+plugins
+custom components
+third-party components
+```
+
+---
+
+# 17. ✅ COMPLETED — GENERIC BROWSER REACTIVE PROPS
+
+Old architecture:
+
+```javascript
+if (prop === "text") ...
+if (prop === "value") ...
+if (prop === "disabled") ...
+if (prop === "class") ...
+if (prop === "title") ...
+```
+
+has been replaced with generic prop iteration.
+
+Current architecture:
+
+```text
+UpdateMessage
+      ↓
+props
+      ↓
+Object.keys(props)
+      ↓
+generic DOM patch
+```
+
+Verified:
+
+```text
+Generic prop iteration              PASS
+No hard-coded reactive dispatch     PASS
+Generic DOM patching                PASS
+Embedded client runtime             PASS
+```
+
+# **THIS MILESTONE IS COMPLETE.**
+
+---
+
+# 18. ✅ COMPLETED — UPDATE MESSAGE CONTRACT
+
+Current update message contains:
+
+```text
+type
+id
+props
+prop_meta
+```
+
+Example:
+
+```python
+{
+    "type": "update",
+    "id": "...",
+    "props": {
+        "class_name": "danger"
+    },
+    "prop_meta": {
+        "class_name": {
+            "kind": "attribute",
+            "html_name": "class"
+        }
+    }
+}
+```
+
+Verified:
+
+```text
+Registry metadata serialization       PASS
+JSON round-trip                       PASS
+Backward-compatible UpdateMessage     PASS
+```
+
+---
+
+# 19. ✅ COMPLETED — WEBSOCKET UPDATE PIPELINE
+
+Current verified flow:
+
+```text
+Component
+    ↓
+State / prop update
+    ↓
+UpdateMessage
+    ↓
+WebSocket
+    ↓
+Browser client
+    ↓
+Generic DOM update
+```
+
+Verified connection:
+
+```text
+WebSocket connected: PASS
+```
+
+---
+
+# 20. ✅ COMPLETED — GENERIC REACTIVE PROP TEST
+
+Current test verifies:
+
+```text
+text       PASS
+value      PASS
+disabled   PASS
+title      PASS
+```
+
+and:
+
+```text
+State → UpdateMessage              PASS
+Multiple reactive props            PASS
+```
+
+This means the generic reactive property transport is now proven.
+
+---
+
+# 21. 🔥 CURRENT ARCHITECTURAL GAP
+
+This is the most important point.
+
+We currently have:
+
+```text
+State
+ ↓
+Update
+ ↓
+WebSocket
+ ↓
+Browser
+```
+
+but the framework does not yet have the complete:
 
 ```text
 State
  ↓
 Dependency Graph
  ↓
-Diff
+Affected Components
  ↓
-Patch
+Dirty Nodes
  ↓
-WebSocket
+Minimal Diff
  ↓
-DOM
+Minimal Patch
+```
+
+Therefore PySkin currently proves:
+
+> **How a known update can reach the browser.**
+
+It does not yet fully prove:
+
+> **How PySkin automatically determines the smallest possible update.**
+
+That is the next major architecture.
+
+---
+
+# 22. 🔥 NEXT MILESTONE
+
+# MILESTONE 6 — Dependency-Aware Reactive Runtime
+
+Target:
+
+```text
+State
+  ↓
+Dependency tracking
+  ↓
+Affected component(s)
+  ↓
+Dirty node(s)
+  ↓
+Update scheduling
+```
+
+Example:
+
+```python
+count = ps.State(10)
+
+Text(count)
+```
+
+Target behavior:
+
+```text
+count.set(11)
+     ↓
+Dependency graph
+     ↓
+Text node becomes dirty
+     ↓
+Only that node updates
+```
+
+Not:
+
+```text
+entire application rerender ❌
 ```
 
 ---
 
-# 24. 🎯 PYTHON DEVELOPER EXPERIENCE TARGET
+# 23. 🔥 TASK 1 — DEFINE REACTIVE SEMANTICS
 
-Eventually user ko ideally sirf:
+We need to formally decide:
+
+```text
+What does reactive=True mean?
+
+What does reactive=False mean?
+
+When is a State dependency registered?
+
+When is a component subscribed?
+
+When is an update generated?
+
+When is an update suppressed?
+```
+
+Target:
+
+```text
+PropDefinition
+      ↓
+reactive=True
+      ↓
+runtime dependency participation
+```
+
+This should be a real runtime contract, not only metadata.
+
+---
+
+# 24. 🔥 TASK 2 — DEPENDENCY GRAPH
+
+Target data model:
+
+```text
+State A
+   │
+   ├────► Component X
+   │
+   └────► Component Y
+
+State B
+   │
+   └────► Component Z
+```
+
+Then:
+
+```text
+State A changes
+       ↓
+X + Y dirty
+       ↓
+Z untouched
+```
+
+This is the core of fine-grained reactivity.
+
+---
+
+# 25. 🔥 TASK 3 — DIRTY NODE TRACKING
+
+Instead of rerendering everything:
+
+```text
+Application
+    ↓
+dirty set
+```
+
+Example:
+
+```text
+dirty_nodes = {
+    "component_123",
+    "component_456"
+}
+```
+
+Only affected nodes should enter the update pipeline.
+
+---
+
+# 26. 🔥 TASK 4 — UPDATE SCHEDULER
+
+Need a controlled scheduling layer:
+
+```text
+State changes
+      ↓
+mark dirty
+      ↓
+schedule update
+      ↓
+batch synchronous changes
+      ↓
+produce update
+```
+
+Example:
+
+```python
+count.set(1)
+count.set(2)
+count.set(3)
+```
+
+Potential target:
+
+```text
+3 separate network updates ❌
+```
+
+Instead:
+
+```text
+one scheduled update
+final value = 3
+```
+
+This must be benchmarked rather than assumed.
+
+---
+
+# 27. 🔥 TASK 5 — DOM SEMANTICS
+
+Current metadata supports:
+
+```text
+attribute
+boolean
+text
+```
+
+We eventually need a precise DOM semantic model:
+
+```text
+ATTRIBUTE
+BOOLEAN ATTRIBUTE
+DOM PROPERTY
+TEXT CONTENT
+CHILD NODE
+```
+
+For example:
+
+```text
+title
+    → attribute
+
+disabled
+    → boolean attribute
+
+value
+    → potentially DOM property
+
+text
+    → text/content
+```
+
+This distinction becomes critical when generic patching grows.
+
+---
+
+# 28. 🔥 TASK 6 — DIFF ENGINE
+
+Target:
+
+```text
+Previous UI
+      +
+Current UI
+      ↓
+     DIFF
+      ↓
+Minimal changes
+```
+
+Example:
+
+```text
+Before:
+
+<div>
+    <h1>Hello</h1>
+    <span>10</span>
+</div>
+```
+
+After:
+
+```text
+<div>
+    <h1>Hello</h1>
+    <span>11</span>
+</div>
+```
+
+Target patch:
+
+```text
+span.textContent = "11"
+```
+
+not:
+
+```text
+rerender entire page
+```
+
+---
+
+# 29. 🔥 TASK 7 — PATCH PROTOCOL
+
+Once diff exists:
+
+```text
+Diff
+ ↓
+Patch
+ ↓
+UpdateMessage
+ ↓
+WebSocket
+ ↓
+Browser
+```
+
+Potential future protocol:
+
+```json
+{
+  "type": "patch",
+  "id": "component-id",
+  "ops": [
+    {
+      "kind": "text",
+      "value": "11"
+    }
+  ]
+}
+```
+
+Exact protocol should be designed only after dependency/diff semantics are clear.
+
+---
+
+# 30. ⚡ PERFORMANCE TARGET
+
+The final high-performance path:
+
+```text
+Python State Change
+       ↓
+Dependency Tracking
+       ↓
+Dirty Node
+       ↓
+Minimal Diff
+       ↓
+Minimal Patch
+       ↓
+Tiny WebSocket Message
+       ↓
+Tiny Client Runtime
+       ↓
+DOM
+```
+
+The performance goal is:
+
+```text
+LOW LATENCY
++
+LOW CPU
++
+LOW MEMORY
++
+LOW NETWORK PAYLOAD
++
+NO FULL PAGE RERENDER
+```
+
+---
+
+# 31. 🧪 CURRENT VERIFIED TEST SUITE
+
+Latest combined run:
+
+```text
+test_registry_update_message_contract.py
+test_registry_reactive_contract.py
+test_registry_props.py
+test_registry_dom_metadata.py
+test_registry_render_metadata.py
+test_registry_prop_mapping.py
+test_browser_generic_reactive_props.py
+test_reactive_props.py
+```
+
+Result:
+
+```text
+ALL PASS
+```
+
+Verified areas:
+
+```text
+Registry update contract       ✅
+Registry reactive contract     ✅
+Registry props                 ✅
+DOM metadata                   ✅
+Render metadata                ✅
+Prop mapping                   ✅
+Browser generic props          ✅
+Generic reactive props         ✅
+```
+
+---
+
+# 32. 🧪 TESTING POLICY GOING FORWARD
+
+We now have enough registry tests.
+
+Do NOT keep expanding registry tests without architectural reason.
+
+Next tests should prove:
+
+```text
+Dependency discovery
+State → component dependency
+Dirty node tracking
+Update scheduling
+Batching
+Diff correctness
+Patch correctness
+Reconnect behavior
+Performance
+```
+
+Testing should follow the architecture.
+
+---
+
+# 33. 📊 CURRENT PROGRESS
+
+Engineering estimates only.
+
+```text
+Foundation
+████████████████████ 100%
+
+Component architecture
+███████████████████░  95%
+
+Registry architecture
+███████████████████░  95%
+
+HTML renderer
+█████████████████░░░  85%
+
+Runtime foundation
+████████████████░░░░  80%
+
+Generic reactive transport
+███████████████████░  95%
+
+Reactive engine
+████████░░░░░░░░░░░░  40%
+
+Dependency graph
+░░░░░░░░░░░░░░░░░░░░   0%
+
+Dirty-node tracking
+░░░░░░░░░░░░░░░░░░░░   0%
+
+Update scheduler
+░░░░░░░░░░░░░░░░░░░░   0%
+
+Diff engine
+░░░░░░░░░░░░░░░░░░░░   0%
+
+Patch engine
+░░░░░░░░░░░░░░░░░░░░   0%
+
+Compiler / UI IR
+██░░░░░░░░░░░░░░░░░░░  10%
+
+Styling
+██░░░░░░░░░░░░░░░░░░░  10%
+
+Component library
+███░░░░░░░░░░░░░░░░░░  15%
+
+Desktop backend
+░░░░░░░░░░░░░░░░░░░░   0%
+
+GPU / hardware rendering
+░░░░░░░░░░░░░░░░░░░░   0%
+
+Performance benchmark suite
+░░░░░░░░░░░░░░░░░░░░   0%
+```
+
+---
+
+# 34. 📈 OVERALL PROJECT PROGRESS
+
+Current estimate:
+
+# **~30% of final PU vision**
+
+But this should NOT be interpreted as:
+
+> "Only 30% code is done."
+
+Rather:
+
+```text
+Core foundation              ~90%+
+Registry foundation          ~95%
+Basic runtime                ~80%
+Reactive transport           ~95%
+
+Advanced runtime             mostly pending
+```
+
+The remaining work contains the difficult architectural systems.
+
+---
+
+# 35. 🧠 WHERE THE REAL DIFFICULTY IS
+
+```text
+Component API
+████░░░░░░
+
+Registry
+████░░░░░░
+
+Basic rendering
+████░░░░░░
+
+State
+█████░░░░░
+
+WebSocket transport
+█████░░░░░
+
+Dependency graph
+██████████
+
+Dirty tracking
+█████████░
+
+Diff engine
+██████████
+
+Patch engine
+██████████
+
+Scheduling / batching
+█████████░
+
+Compiler / IR
+█████████░
+
+Performance optimization
+██████████
+
+Desktop backend
+█████████░
+
+GPU backend
+██████████
+```
+
+Therefore:
+
+> **The difficult part starts now.**
+
+---
+
+# 36. 🛣️ MASTER ROADMAP
+
+## PHASE 0 — FOUNDATION
+
+```text
+Project
+Component
+Tree
+Props
+Children
+State
+Basic renderer
+```
+
+**STATUS: COMPLETE ✅**
+
+---
+
+## PHASE 1 — REGISTRY
+
+```text
+ComponentDefinition
+PropDefinition
+Prop kinds
+HTML metadata
+Reactive metadata
+Renderer ownership
+Custom renderer support
+```
+
+**STATUS: ~95% COMPLETE 🟢**
+
+Remaining:
+
+```text
+Complete runtime semantics
+Further renderer genericization
+```
+
+---
+
+## PHASE 2 — RUNTIME FOUNDATION
+
+```text
+run()
+HTTP server
+WebSocket
+Browser runtime
+Events
+UpdateMessage
+Generic browser patching
+```
+
+**STATUS: ~80–90% 🟢**
+
+---
+
+## PHASE 3 — FINE-GRAINED REACTIVITY
+
+```text
+Dependency graph
+Dirty tracking
+Scheduler
+Batching
+```
+
+**STATUS: NEXT MAJOR PHASE 🔥**
+
+---
+
+## PHASE 4 — DIFF / PATCH
+
+```text
+UI snapshot
+Diff
+Patch generation
+Patch protocol
+Minimal DOM mutations
+```
+
+**STATUS: NOT STARTED ❌**
+
+---
+
+## PHASE 5 — UI SYSTEM
+
+```text
+Layout
+Forms
+Tables
+Cards
+Dialogs
+Navigation
+Data components
+```
+
+**STATUS: MOSTLY PENDING ❌**
+
+---
+
+## PHASE 6 — STYLING
+
+```text
+Python style API
+Theme system
+Responsive design
+CSS generation
+Layout constraints
+```
+
+**STATUS: MOSTLY PENDING ❌**
+
+---
+
+## PHASE 7 — COMPILER / IR
+
+```text
+UI IR
+Normalization
+Static analysis
+Optimization
+Constant folding
+Patch planning
+```
+
+**STATUS: EARLY / ~10%**
+
+Important:
+
+> Do not build a huge compiler before reactive semantics are stable.
+
+---
+
+## PHASE 8 — PERFORMANCE
+
+```text
+Latency benchmarks
+Memory benchmarks
+Network payload
+Event throughput
+Update throughput
+1000 nodes
+10,000 nodes
+Large state graphs
+```
+
+**STATUS: PENDING ❌**
+
+---
+
+## PHASE 9 — DESKTOP / NATIVE
+
+```text
+PySkin API
+     ↓
+Shared UI IR
+     ↓
+Native renderer
+```
+
+**STATUS: FUTURE**
+
+---
+
+## PHASE 10 — GPU / HARDWARE
+
+Long-term experimental architecture:
+
+```text
+Component Tree
+      ↓
+UI IR
+      ↓
+Render Graph
+      ↓
+GPU backend
+```
+
+Possible technologies:
+
+```text
+WebGPU
+Skia
+OpenGL
+Vulkan
+Native GPU APIs
+```
+
+**STATUS: FUTURE RESEARCH**
+
+---
+
+# 37. 🚦 IMMEDIATE ROADMAP
+
+Do not jump to UI library, GPU, or desktop yet.
+
+Exact sequence:
+
+```text
+CURRENT CHECKPOINT
+        │
+        ▼
+Complete registry runtime semantics
+        │
+        ▼
+Define DOM property/attribute semantics
+        │
+        ▼
+Define State → Component dependency model
+        │
+        ▼
+Dependency Graph
+        │
+        ▼
+Dirty Node Tracking
+        │
+        ▼
+Update Scheduler
+        │
+        ▼
+Batching
+        │
+        ▼
+UI Snapshot / Representation
+        │
+        ▼
+Diff Engine
+        │
+        ▼
+Patch Engine
+        │
+        ▼
+Patch Protocol
+        │
+        ▼
+Performance Benchmark
+```
+
+---
+
+# 38. 🚫 WHAT WE MUST NOT DO YET
+
+Do NOT prematurely build:
+
+```text
+❌ 100+ components
+❌ Desktop backend
+❌ Mobile backend
+❌ GPU backend
+❌ Marketplace
+❌ Cloud platform
+❌ Authentication
+❌ AI layer
+❌ Huge CSS system
+```
+
+First solve:
+
+```text
+Component
+    ↓
+Registry
+    ↓
+State
+    ↓
+Dependency
+    ↓
+Dirty
+    ↓
+Diff
+    ↓
+Patch
+    ↓
+Browser
+```
+
+---
+
+# 39. 🔐 DEVELOPMENT RULE
+
+Every milestone:
+
+```text
+Audit
+  ↓
+Small change
+  ↓
+Focused test
+  ↓
+Full relevant suite
+  ↓
+Review git diff
+  ↓
+Commit
+  ↓
+Push
+```
+
+Never:
+
+```text
+Large rewrite
+     ↓
+Hope it works
+```
+
+---
+
+# 40. 🧹 REPOSITORY HYGIENE
+
+Current tree contains several historical backup files:
+
+```text
+*.before_*
+*.v01
+*.bak
+```
+
+Example:
+
+```text
+pyskin/core/protocol.py.bak
+pyskin/core/component.py.v01
+pyskin/core/registry.py.before_*
+pyskin/core/renderer.py.before_*
+```
+
+These are useful during active development but should eventually be cleaned or moved out of the source tree.
+
+Also:
+
+```text
+__pycache__
+```
+
+should not be part of the meaningful project source.
+
+### Cleanup should happen later
+
+Do NOT mix repository cleanup into the dependency-graph implementation unless necessary.
+
+---
+
+# 41. 🔒 CURRENT GIT STATE
+
+Latest checkpoint:
+
+```text
+ac99f30
+complete generic reactive registry prop pipeline
+```
+
+Previous architecture checkpoint:
+
+```text
+d8b184c
+checkpoint: registry contracts and generic reactivity
+```
+
+The new checkpoint supersedes `d8b184c` as the current source-of-truth recovery point.
+
+---
+
+# 42. 🏁 CURRENT DEFINITION OF DONE
+
+The current registry milestone is considered complete because:
+
+```text
+Registry metadata serialization          ✅
+Registry metadata JSON round-trip        ✅
+Backward-compatible UpdateMessage        ✅
+
+Reactive boolean contract                ✅
+Reactive invalid-value rejection         ✅
+
+Prop registration                        ✅
+Prop metadata storage                    ✅
+Prop definition contract                 ✅
+
+HTML metadata                            ✅
+DOM mapping metadata                     ✅
+
+Registry-driven rendering                ✅
+Registry prop metadata                   ✅
+
+class_name → class                       ✅
+Boolean metadata                         ✅
+Attribute metadata                       ✅
+
+Generic browser prop iteration           ✅
+No hard-coded prop dispatch              ✅
+Generic DOM patching                     ✅
+Embedded client runtime                  ✅
+
+Generic reactive props                   ✅
+Multiple reactive props                  ✅
+State → UpdateMessage                    ✅
+WebSocket connection                     ✅
+```
+
+# **MILESTONE COMPLETE ✅**
+
+---
+
+# 43. 🎯 NEXT DEFINITION OF DONE
+
+The next milestone should NOT be considered complete until we can prove:
+
+```text
+State
+ ↓
+Dependency registration
+ ↓
+Affected component identification
+ ↓
+Dirty tracking
+ ↓
+Scheduled update
+ ↓
+Minimal update
+ ↓
+Browser patch
+```
+
+with tests proving that:
+
+```text
+Unrelated components do NOT update.
+```
+
+This is the key architectural test.
+
+---
+
+# 44. 🧩 FINAL PYTHON DEVELOPER EXPERIENCE
+
+Eventually:
 
 ```python
 import pyskin as ps
 
-name = ps.State("Rachit")
+name = ps.State("Dollar")
+count = ps.State(0)
 
 app = ps.Column(
     ps.Heading("Dashboard"),
+
     ps.Input(name),
-    ps.Button("Save"),
+
+    ps.Text(name),
+
+    ps.Button(
+        "+",
+        on_click=lambda: count.set(count.value + 1),
+    ),
+
+    ps.Text(count),
 )
 
 ps.run(app)
 ```
 
-likhna ho.
-
-Behind the scenes:
+Internally:
 
 ```text
-PySkin
-├── Tree
-├── Registry
-├── State
-├── Dependency graph
-├── Event system
-├── Diff engine
-├── Patch engine
-├── WebSocket
-├── Client runtime
-└── Renderer
-```
-
----
-
-# 25. 🚫 WHAT WE WILL NOT DO YET
-
-Abhi:
-
-```text
-❌ 100 components banana
-❌ Desktop banana
-❌ Mobile banana
-❌ AI integration
-❌ Cloud deployment
-❌ Huge CSS framework
-❌ Plugin marketplace
-❌ Enterprise features
-```
-
-Pehle:
-
-```text
-Reactive engine
-+
-Runtime correctness
-+
-Architecture
-+
-Performance
-```
-
-strong karenge.
-
----
-
-# 26. 🔐 DEVELOPMENT RULE
-
-Har architectural change:
-
-```text
-Current working state
-        ↓
-audit
-        ↓
-small change
-        ↓
-tests
-        ↓
-checkpoint
-        ↓
-GitHub push
-```
-
-Kabhi:
-
-```text
-big rewrite
+Component Tree
       ↓
-hope it works
-```
-
-nahi.
-
----
-
-# 27. 🛡️ CHECKPOINT STRATEGY
-
-Har major milestone:
-
-```bash
-git status
-git diff
-pytest
-git commit
-git push
-```
-
-Checkpoint naming:
-
-```text
-checkpoint: ...
-```
-
-Agar kuch break ho:
-
-```bash
-git reset --hard <checkpoint>
+Registry
+      ↓
+State Graph
+      ↓
+Dependency Graph
+      ↓
+Dirty Nodes
+      ↓
+Diff
+      ↓
+Patch
+      ↓
+WebSocket
+      ↓
+Tiny Client
+      ↓
+Browser
 ```
 
 ---
 
-# 28. 📍 EXACT NEXT POSITION
+# 45. 🏆 FINAL DEFINITION OF SUCCESS
 
-Hum **abhi yahin khade hain:**
-
-```text
-                    PySkin
-                       │
-                       ▼
-                Component Tree
-                       │
-                       ▼
-                   Registry
-                       │
-                       ▼
-               PropDefinition
-                       │
-              ┌────────┴────────┐
-              ▼                 ▼
-          Renderer           Runtime
-              │                 │
-              ▼                 ▼
-            HTML            WebSocket
-                                │
-                                ▼
-                         Client Runtime
-                                │
-                                ▼
-                         Reactive Update
-                                │
-                                ▼
-                         🟡 NEEDS DESIGN
-```
-
-### Next actual engineering task:
-
-**Registry → Reactive Prop Contract ko complete karna.**
-
-Pehla subtask:
+PySkin successful tab maana jayega jab:
 
 ```text
-class_name → class
-html_for   → for
+Python-only developer API
+          +
+Fine-grained reactivity
+          +
+Minimal network patches
+          +
+Low event latency
+          +
+Scalable component tree
+          +
+Generic registry architecture
+          +
+Extensible renderer system
+          +
+Multiple backends
 ```
 
-fallback ko cleanly registry metadata mein shift karna.
-
-Uske baad:
-
-```text
-PropDefinition.reactive
-```
-
-ko actual runtime behavior se connect karenge.
-
-**Uske baad hi Diff/Patch engine.**
+and these claims are backed by actual benchmarks.
 
 ---
 
-# 🔒 MASTER CHECKPOINT — 29 AUG 2026
+# 🔥 CURRENT MASTER STATE
 
 ```text
-Repository
-    ↓
-aanalyst-rachit/pyskin
+PROJECT
+PySkin / PU
 
-Branch
-    ↓
+BRANCH
 main
 
-Commit
-    ↓
-4c07225
+CURRENT CHECKPOINT
+ac99f30
 
-Status
-    ↓
-Clean + pushed
+CURRENT COMMIT
+complete generic reactive registry prop pipeline
 
-Current milestone
-    ↓
-Functional Python-first reactive UI runtime foundation
+PREVIOUS CHECKPOINT
+d8b184c
 
-Next milestone
-    ↓
-Complete registry-driven reactive prop contract
+CURRENT MILESTONE
+Registry-driven generic reactive prop pipeline
 
-Then
-    ↓
-Dependency tracking
-    ↓
-Fine-grained diff
-    ↓
-Patch engine
-    ↓
-Optimized runtime
+MILESTONE STATUS
+COMPLETE ✅
+
+COMPLETED
+Component foundation                  ✅
+Component tree                        ✅
+State foundation                      ✅
+WebSocket foundation                  ✅
+Browser runtime                       ✅
+Registry architecture                 ✅
+Prop contracts                        ✅
+HTML metadata                         ✅
+DOM mapping                           ✅
+Reactive metadata contract            ✅
+Generic text props                    ✅
+Registry renderer ownership           ✅
+Custom renderer protection            ✅
+Renderer idempotency                  ✅
+Generic browser reactive props        ✅
+UpdateMessage contract                ✅
+Generic DOM patching                  ✅
+Multiple reactive props               ✅
+
+CURRENT PRIORITY
+Define actual reactive runtime semantics
+
+NEXT MAJOR SYSTEM
+Dependency Graph
+
+THEN
+Dirty Tracking
+→ Scheduler
+→ Batching
+→ Diff Engine
+→ Patch Engine
+→ Performance
+
+LATER
+UI component library
+Styling
+Compiler / UI IR
+Desktop backend
+GPU / hardware rendering
+Multi-backend architecture
+
+ESTIMATED FINAL PU VISION PROGRESS
+~30%
+
+CORE FOUNDATION PROGRESS
+~85–95%
+
+MOST IMPORTANT CURRENT PRINCIPLE
+Do not add large numbers of components yet.
+
+Solve the reactive runtime architecture first.
 ```
 
-**Ye ab hamara new master blueprint/checkpoint hai.** Aage ki discussion mein isi ko source-of-truth maan kar chalenge.
+---
+
+# ⭐ ONE-LINE PROJECT NORTH STAR
+
+> **PySkin ka goal “Python se HTML banana” nahi hai; goal hai Python ko ek serious, low-latency, fine-grained reactive UI programming model banana jiske peeche browser/native rendering complexity completely hidden ho.**
 
