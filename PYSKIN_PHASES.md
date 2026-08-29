@@ -18,8 +18,8 @@ Repository: https://github.com/aanalyst-rachit/pyskin
 Branch: main
 
 Current stable checkpoint:
-- Commit: PENDING — current tree-mutation milestone
-- Tag: PENDING — phase-2-tree-mutation-precheck
+- Commit: a1221cf — checkpoint: complete tree mutation pipeline
+- Tag: phase-2-tree-mutation-precheck
 - Tests: 106 passed
 - Status: Tree mutation pipeline stable; reactive dependency/scheduler work remains
 
@@ -151,7 +151,7 @@ Status: 🟢 ACTIVE
 
 Current phase.
 
-## Phase 2 — Completed Runtime Foundation
+## Phase 2 — Completed Tree Mutation Runtime Foundation
 
 The following tree-mutation infrastructure is now implemented and covered
 by focused runtime/protocol/client tests:
