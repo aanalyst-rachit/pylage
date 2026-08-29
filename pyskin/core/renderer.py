@@ -121,10 +121,8 @@ class HTMLRenderer:
                 kind = prop_definition.kind
             else:
                 # Unknown props remain backward-compatible.
-                html_name = {
-                    "class_name": "class",
-                    "html_for": "for",
-                }.get(name, name)
+                # Semantic HTML naming belongs to registry metadata.
+                html_name = name
                 kind = "attribute"
 
             if kind == "boolean":
