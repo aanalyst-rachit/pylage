@@ -176,18 +176,19 @@ class HTMLRenderer:
     def _render_input(self, component: Component) -> str:
         common = self._render_common_attributes(component)
 
-        value = self._value(
-            component.props.get("value", "")
-        )
-
         if component.events:
             events = self._event_attributes(component)
         else:
             events = ' data-pyskin-events="input,change"'
 
+        attributes = self._render_prop_attributes(
+            component,
+            excluded={"children"},
+        )
+
         return (
-            f'<input {common}{events} '
-            f'value="{escape(str(value), quote=True)}">'
+            f"<input {common}{events}"
+            f"{attributes}>"
         )
 
     def _render_button(self, component: Component) -> str:
@@ -197,32 +198,10 @@ class HTMLRenderer:
             component.props.get("text", "Button")
         )
 
-        attributes = common
-
-        value = self._value(
-            component.props.get("value")
+        attributes = common + self._render_prop_attributes(
+            component,
+            excluded={"text", "children"},
         )
-
-        disabled = self._value(
-            component.props.get("disabled")
-        )
-
-        title = self._value(
-            component.props.get("title")
-        )
-
-        if value is not None:
-            attributes += (
-                f' value="{escape(str(value), quote=True)}"'
-            )
-
-        if disabled:
-            attributes += " disabled"
-
-        if title is not None:
-            attributes += (
-                f' title="{escape(str(title), quote=True)}"'
-            )
 
         return (
             f"<button {attributes}>"

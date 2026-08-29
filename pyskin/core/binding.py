@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Callable
 
 from pyskin.core.component import Component
+from pyskin.core.registry import registry
 from pyskin.core.state import State
 
 
@@ -10,7 +11,7 @@ UpdateCallback = Callable[[Component, dict[str, Any]], None]
 
 
 class StateBinding:
-    """Binds State values inside a component to update callbacks."""
+    """Binds reactive State values inside a component tree."""
 
     def __init__(
         self,
@@ -33,23 +34,50 @@ class StateBinding:
 
         self._bind_tree(root)
 
+    def _is_reactive(
+        self,
+        component: Component,
+        prop_name: str,
+    ) -> bool:
+        """Return whether a component prop participates in reactivity."""
+
+        definition = registry.get(component.type)
+
+        if definition is None or definition.props is None:
+            # Preserve backward compatibility for unknown components
+            # and props that have no registry contract.
+            return True
+
+        prop_definition = definition.props.get(prop_name)
+
+        if prop_definition is None:
+            # Preserve existing behavior for unknown props.
+            return True
+
+        return prop_definition.reactive
+
     def _bind_tree(self, node: Any) -> None:
         if not isinstance(node, Component):
             return
 
         for prop_name, value in node.props.items():
-            if isinstance(value, State):
-                unsubscribe = value.subscribe(
-                    lambda old, new,
-                    component=node,
-                    name=prop_name: self._changed(
-                        component,
-                        name,
-                        new,
-                    )
-                )
+            if not isinstance(value, State):
+                continue
 
-                self._subscriptions.append(unsubscribe)
+            if not self._is_reactive(node, prop_name):
+                continue
+
+            unsubscribe = value.subscribe(
+                lambda old, new,
+                component=node,
+                name=prop_name: self._changed(
+                    component,
+                    name,
+                    new,
+                )
+            )
+
+            self._subscriptions.append(unsubscribe)
 
         for child in node.children:
             self._bind_tree(child)
