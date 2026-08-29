@@ -134,6 +134,9 @@ class HTMLRenderer:
                     )
                 continue
 
+            if kind == "text":
+                continue
+
             if value is True:
                 attributes.append(
                     escape(html_name, quote=True)
@@ -244,12 +247,35 @@ class HTMLRenderer:
                 f"{generic_attributes}>"
             )
 
-        text = self._value(
-            component.props.get("text")
-        )
+        # Registry-defined text props become component content.
+        text_values: list[str] = []
 
-        if text is not None:
-            children = escape(str(text)) + children
+        if definition is not None and definition.props is not None:
+            for prop_name, prop_definition in definition.props.items():
+                if prop_definition.kind != "text":
+                    continue
+
+                value = component.props.get(prop_name)
+
+                if value is None:
+                    continue
+
+                value = self._value(value)
+
+                if value is not None:
+                    text_values.append(escape(str(value)))
+
+        # Backward-compatible built-in "text" prop behavior.
+        if not text_values:
+            text = self._value(
+                component.props.get("text")
+            )
+
+            if text is not None:
+                text_values.append(escape(str(text)))
+
+        if text_values:
+            children = "".join(text_values) + children
 
         return (
             f"<{tag} {common}"

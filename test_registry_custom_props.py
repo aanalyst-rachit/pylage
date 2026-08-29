@@ -6,9 +6,6 @@ from pyskin.core.renderer import HTMLRenderer
 print("=== PYSKIN CUSTOM REGISTRY PROP RENDERING TEST ===")
 
 
-# ---------------------------------------------------------
-# Register a custom component with registry-defined props
-# ---------------------------------------------------------
 registry.register(
     "Card",
     "section",
@@ -36,6 +33,9 @@ registry.register(
 )
 
 
+# ---------------------------------------------------------
+# Registry-defined text prop
+# ---------------------------------------------------------
 card = Component(
     type="Card",
     props={
@@ -45,7 +45,6 @@ card = Component(
         "data_id": "card-01",
     },
 )
-
 
 html = HTMLRenderer().render(card)
 
@@ -57,9 +56,41 @@ assert 'class="premium-card"' in html
 assert "hidden" in html
 assert 'data-id="card-01"' in html
 
+# Text props must NOT become HTML attributes.
+assert 'label="Hello Card"' not in html
+
+print("Registry text props: PASS")
 print("Registry HTML names: PASS")
 print("Registry boolean props: PASS")
 print("Registry custom attributes: PASS")
+
+
+# ---------------------------------------------------------
+# Text prop + children
+# ---------------------------------------------------------
+card_with_children = Component(
+    type="Card",
+    props={
+        "label": "Title",
+    },
+    children=[
+        Component(
+            type="Heading",
+            props={"text": "Child"},
+        )
+    ],
+)
+
+html = HTMLRenderer().render(card_with_children)
+
+print(html)
+
+assert "Title" in html
+assert "<h1" in html
+assert "Child" in html
+assert 'label="Title"' not in html
+
+print("Text prop + children: PASS")
 
 
 # ---------------------------------------------------------
