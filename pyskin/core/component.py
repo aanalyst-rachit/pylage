@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 import uuid
 
+from pyskin.core.registry import registry
+
 
 Child = Any
 EventHandler = Callable[..., Any]
@@ -77,9 +79,23 @@ def component(
 
         events[event_name] = handler
 
+    # Consult the registry when a component type is known.
+    #
+    # The registry currently provides metadata and contracts for known
+    # components, while unknown components remain backward-compatible.
+    definition = registry.get(type)
+
+    if definition is not None and definition.props is not None:
+        # Keep all supplied props for compatibility. Registry metadata
+        # is authoritative for known properties but does not yet reject
+        # unknown properties.
+        normalized_props = dict(props)
+    else:
+        normalized_props = dict(props)
+
     return Component(
         type=type,
-        props=dict(props),
+        props=normalized_props,
         children=normalized_children,
         events=events,
     )
