@@ -25,10 +25,7 @@ registry.register(
 )
 
 
-renderer = HTMLRenderer()
-
-# Temporarily use isolated registry.
-renderer.registry._definitions = registry._definitions
+renderer = HTMLRenderer(registry_instance=registry)
 
 
 card = component(

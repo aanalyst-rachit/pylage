@@ -26,9 +26,7 @@ print("Custom renderer registration: PASS")
 
 
 # Create a renderer and replace its registry with our isolated registry.
-renderer = HTMLRenderer()
-
-renderer.registry._definitions = local_registry._definitions
+renderer = HTMLRenderer(registry_instance=local_registry)
 
 
 # Built-in registration must not overwrite a renderer

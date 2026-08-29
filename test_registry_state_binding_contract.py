@@ -30,8 +30,10 @@ registry.register(
 )
 
 
-# Use the isolated registry for this contract test.
-binding_module.registry._definitions = registry._definitions
+# Use the isolated registry for this contract test without
+# mutating the process-wide builtin registry.
+original_registry = binding_module.registry
+binding_module.registry = registry
 
 
 reactive_state = State("one")
@@ -99,3 +101,7 @@ print("Binding unsubscribe: PASS")
 
 print()
 print("=== REGISTRY STATE BINDING CONTRACT PASS ===")
+
+
+# Restore the process-wide builtin registry.
+binding_module.registry = original_registry

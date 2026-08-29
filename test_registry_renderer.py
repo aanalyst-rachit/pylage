@@ -5,72 +5,70 @@ from pyskin.core.registry import registry
 from pyskin.core.renderer import render
 
 
-print("=== PYSKIN REGISTRY RENDERER TEST ===")
+def test_registry_renderer():
+    print("=== PYSKIN REGISTRY RENDERER TEST ===")
 
-# Built-in component
-heading = ps.Heading("Hello")
+    # Built-in component
+    heading = ps.Heading("Hello")
 
-html = render(heading)
+    html = render(heading)
 
-print(html)
+    print(html)
 
-assert "<h1" in html
-assert "Hello" in html
-assert 'data-pyskin-id="' in html
+    assert "<h1" in html
+    assert "Hello" in html
+    assert 'data-pyskin-id="' in html
 
-print("Built-in registry rendering: PASS")
+    print("Built-in registry rendering: PASS")
 
+    # Custom component through registry
+    registry.register("Card", "section")
 
-# Custom component through registry
-registry.register("Card", "section")
-
-card = Component(
-    type="Card",
-    props={"text": "Hello Card"},
-)
-
-html = render(card)
-
-print(html)
-
-assert "<section" in html
-assert "Hello Card" in html
-
-print("Custom registry rendering: PASS")
-
-
-# Custom renderer
-def render_card(renderer, component):
-    text = renderer._value(
-        component.props.get("text", "")
+    card = Component(
+        type="Card",
+        props={"text": "Hello Card"},
     )
 
-    return (
-        f'<article data-pyskin-id="{component.id}">'
-        f"{text}"
-        f"</article>"
+    html = render(card)
+
+    print(html)
+
+    assert "<section" in html
+    assert "Hello Card" in html
+
+    print("Custom registry rendering: PASS")
+
+    # Custom renderer
+    def render_card(renderer, component):
+        text = renderer._value(
+            component.props.get("text", "")
+        )
+
+        return (
+            f'<article data-pyskin-id="{component.id}">'
+            f"{text}"
+            f"</article>"
+        )
+
+    registry.register(
+        "CustomCard",
+        "article",
+        renderer=render_card,
     )
 
+    custom = Component(
+        type="CustomCard",
+        props={"text": "Custom"},
+    )
 
-registry.register(
-    "CustomCard",
-    "article",
-    renderer=render_card,
-)
+    html = render(custom)
 
-custom = Component(
-    type="CustomCard",
-    props={"text": "Custom"},
-)
+    print(html)
 
-html = render(custom)
+    assert "<article" in html
+    assert "Custom" in html
 
-print(html)
+    print("Custom renderer dispatch: PASS")
 
-assert "<article" in html
-assert "Custom" in html
-
-print("Custom renderer dispatch: PASS")
-
-print()
-print("=== REGISTRY RENDERER PASS ===")
+    print()
+    print("=== REGISTRY RENDERER PASS ===")

@@ -1,5 +1,5 @@
 from pyskin.core.component import Component
-from pyskin.core.registry import registry
+from pyskin.core.registry import PropDefinition, registry
 from pyskin.core.renderer import render
 
 
@@ -9,6 +9,18 @@ registry.register(
     "Divider",
     "hr",
     void=True,
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
 )
 
 divider = Component(

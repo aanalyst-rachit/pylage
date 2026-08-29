@@ -1,3 +1,4 @@
+import pytest
 import asyncio
 import json
 
@@ -30,6 +31,7 @@ print("WebSocket:", url)
 print("Component ID:", component.id)
 
 
+@pytest.mark.asyncio
 async def test_mapping():
     import websockets
 
@@ -90,7 +92,3 @@ async def test_mapping():
         print("=== REGISTRY PROP MAPPING TEST PASS ===")
 
 
-try:
-    asyncio.run(test_mapping())
-finally:
-    server.stop()

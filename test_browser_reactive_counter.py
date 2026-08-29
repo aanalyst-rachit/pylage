@@ -1,92 +1,92 @@
-import threading
-import time
-import urllib.request
-import json
+import pytest
+from playwright.sync_api import sync_playwright, expect
 
 import pyskin as ps
 from pyskin.runtime import Runtime
 
 
-print("=== PYSKIN BROWSER REACTIVE COUNTER TEST ===")
+def test_browser_reactive_counter():
+    print("=== PYSKIN BROWSER REACTIVE COUNTER TEST ===")
 
-count = ps.State(0)
-clicked = threading.Event()
+    count = ps.State(0)
 
+    def increment():
+        count.set(count.value + 1)
+        return count.value
 
-def increment():
-    count.set(count.value + 1)
-    clicked.set()
-    return count.value
+    heading = ps.Heading(count)
 
+    button = ps.Button(
+        "Increment",
+        on_click=increment,
+    )
 
-heading = ps.Heading(count)
+    app = ps.Column(
+        heading,
+        button,
+    )
 
-button = ps.Button(
-    "Increment",
-    on_click=increment,
-)
+    runtime = Runtime(
+        app,
+        title="PySkin Reactive Counter",
+        output="browser_reactive_counter/index.html",
+    )
 
-app = ps.Column(
-    heading,
-    button,
-)
+    try:
+        url = runtime.start()
 
-runtime = Runtime(
-    app,
-    title="PySkin Reactive Counter",
-    output="browser_reactive_counter/index.html",
-)
+        print("HTTP:", url)
+        print("WebSocket:", runtime._websocket.url)
+        print("Heading ID:", heading.id)
+        print("Button ID:", button.id)
+        print("Initial state:", count.value)
 
-try:
-    url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
 
-    print("HTTP:", url)
-    print("WebSocket:", runtime._websocket.url)
-    print("Heading ID:", heading.id)
-    print("Button ID:", button.id)
-    print("Initial state:", count.value)
+            page.goto(url)
 
-    with urllib.request.urlopen(url, timeout=2) as response:
-        html = response.read().decode("utf-8")
-
-    assert f'data-pyskin-id="{heading.id}"' in html
-    assert f'data-pyskin-id="{button.id}"' in html
-    assert "Increment" in html
-
-    print("HTML checks: PASS")
-
-    print()
-    print("OPEN THIS URL IN YOUR BROWSER:")
-    print(url)
-    print()
-    print("Click 'Increment' three times.")
-    print("Waiting for Python callbacks...")
-
-    for expected in (1, 2, 3):
-        clicked.clear()
-
-        if not clicked.wait(timeout=10):
-            raise AssertionError(
-                f"Python callback not received for click {expected}."
+            heading_locator = page.locator(
+                f'[data-pyskin-id="{heading.id}"]'
             )
 
-        assert count.value == expected
+            button_locator = page.locator(
+                f'[data-pyskin-id="{button.id}"]'
+            )
 
-        print(
-            f"Click {expected}: Python State = {count.value}"
-        )
+            expect(heading_locator).to_have_text("0")
+            expect(button_locator).to_have_text("Increment")
 
-        if expected < 3:
-            time.sleep(0.5)
+            print("Browser loaded: PASS")
+            print("Initial state: 0")
 
-    print()
-    print("Browser → WebSocket event: PASS")
-    print("WebSocket → Python callback: PASS")
-    print("Python callback → State.set(): PASS")
-    print("State value sequence 1 → 2 → 3: PASS")
-    print()
-    print("=== BROWSER REACTIVE COUNTER PASS ===")
+            button_locator.click()
+            expect(heading_locator).to_have_text("1")
+            assert count.value == 1
+            print("Click 1: Python State = 1")
 
-finally:
-    runtime.stop()
-    print("Runtime stopped.")
+            button_locator.click()
+            expect(heading_locator).to_have_text("2")
+            assert count.value == 2
+            print("Click 2: Python State = 2")
+
+            button_locator.click()
+            expect(heading_locator).to_have_text("3")
+            assert count.value == 3
+            print("Click 3: Python State = 3")
+
+            browser.close()
+
+        print()
+        print("Browser → WebSocket event: PASS")
+        print("WebSocket → Python callback: PASS")
+        print("Python callback → State.set(): PASS")
+        print("State → Browser DOM: PASS")
+        print("State value sequence 1 → 2 → 3: PASS")
+        print()
+        print("=== BROWSER REACTIVE COUNTER PASS ===")
+
+    finally:
+        runtime.stop()
+        print("Runtime stopped.")

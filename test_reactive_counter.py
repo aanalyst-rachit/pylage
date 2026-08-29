@@ -37,7 +37,7 @@ print("Heading ID:", heading.id)
 print("Button ID:", button.id)
 
 
-async def test_counter():
+async def _test_counter():
     async with connect(url) as ws:
         print("WebSocket connected: PASS")
 
@@ -104,10 +104,11 @@ async def test_counter():
         print("Second click/state update: PASS")
 
 
-try:
-    asyncio.run(test_counter())
-finally:
-    server.stop()
+def test_sync_wrapper():
+    try:
+        asyncio.run(_test_counter())
+    finally:
+        server.stop()
 
-print("Final state:", count.value)
-print("=== PYSKIN REACTIVE COUNTER PASS ===")
+    print("Final state:", count.value)
+    print("=== PYSKIN REACTIVE COUNTER PASS ===")

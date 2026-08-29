@@ -11,12 +11,13 @@ from pyskin.core.registry import registry
 class HTMLRenderer:
     """Render a PySkin component tree into HTML."""
 
-    def __init__(self) -> None:
+    def __init__(self, registry_instance=None) -> None:
+        self._registry = registry_instance or registry
         self._register_builtin_renderers()
 
     @property
     def registry(self):
-        return registry
+        return self._registry
 
     def _register_builtin_renderers(self) -> None:
         """Attach built-in rendering callbacks to registry definitions."""
@@ -121,7 +122,7 @@ class HTMLRenderer:
                 kind = prop_definition.kind
             else:
                 # Unknown props remain backward-compatible.
-                # Semantic HTML naming belongs to registry metadata.
+                # HTML naming is owned by registry metadata.
                 html_name = name
                 kind = "attribute"
 
@@ -263,6 +264,16 @@ class HTMLRenderer:
                 if value is not None:
                     text_values.append(escape(str(value)))
 
+        # Backward-compatible generic text support.
+        # A registered custom component such as:
+        #     registry.register("Card", "section")
+        # may provide props={"text": "Hello Card"} without
+        # explicitly declaring a text PropDefinition.
+        if not text_values and "text" in component.props:
+            value = self._value(component.props.get("text"))
+
+            if value is not None:
+                text_values.append(escape(str(value)))
 
         if text_values:
             children = "".join(text_values) + children

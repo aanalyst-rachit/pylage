@@ -212,6 +212,7 @@ CLIENT_RUNTIME = r"""
     };
 
     document.addEventListener("click", handleEvent);
+    document.addEventListener("input", handleEvent);
     document.addEventListener("change", handleEvent);
 
     window.PySkin.socket = connectWebSocket(

@@ -1,80 +1,78 @@
-import asyncio
-import json
+from playwright.sync_api import sync_playwright, expect
 
 import pyskin as ps
-from pyskin.runtime.websocket import WebSocketServer
+from pyskin.runtime import Runtime
 
 
-print("=== PYSKIN AUTOMATIC BROWSER INPUT BINDING TEST ===")
+def test_browser_input_binding():
+    print("=== PYSKIN BROWSER INPUT BINDING TEST ===")
 
-name = ps.State("Dollar")
+    name = ps.State("Dollar")
 
-heading = ps.Heading(name)
-input_box = ps.Input(value=name)
+    heading = ps.Heading(name)
 
-app = ps.Column(
-    heading,
-    input_box,
-)
+    input_box = ps.Input(
+        value=name,
+    )
 
-server = WebSocketServer(app)
-url = server.start()
+    app = ps.Column(
+        heading,
+        input_box,
+    )
 
-print("WebSocket:", url)
-print("Heading ID:", heading.id)
-print("Input ID:", input_box.id)
-print("Initial state:", name.value)
+    runtime = Runtime(
+        app,
+        title="PySkin Input Binding",
+        output="browser_input_binding/index.html",
+    )
 
+    try:
+        url = runtime.start()
 
-async def test_binding():
-    import websockets
+        print("HTTP:", url)
+        print("WebSocket:", runtime._websocket.url)
+        print("Heading ID:", heading.id)
+        print("Input ID:", input_box.id)
+        print("Initial state:", name.value)
 
-    async with websockets.connect(url) as ws:
-        print("WebSocket connected: PASS")
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
 
-        event = {
-            "type": "event",
-            "id": input_box.id,
-            "event": "input",
-            "payload": {
-                "value": "Racit"
-            },
-        }
+            page.goto(url)
 
-        await ws.send(json.dumps(event))
+            heading_locator = page.locator(
+                f'[data-pyskin-id="{heading.id}"]'
+            )
 
-        response = json.loads(
-            await asyncio.wait_for(ws.recv(), timeout=2)
-        )
+            input_locator = page.locator(
+                f'[data-pyskin-id="{input_box.id}"]'
+            )
 
-        print("Response:", response)
+            expect(heading_locator).to_have_text("Dollar")
+            expect(input_locator).to_have_value("Dollar")
 
-        assert response["type"] == "response"
-        assert response["ok"] is True
+            print("Browser loaded: PASS")
+            print("Initial state: Dollar")
 
-        update = json.loads(
-            await asyncio.wait_for(ws.recv(), timeout=2)
-        )
+            input_locator.fill("Racit")
 
-        print("Update:", update)
+            expect(heading_locator).to_have_text("Racit")
+            expect(input_locator).to_have_value("Racit")
 
-        assert update["type"] == "update"
-        assert update["id"] == heading.id
-        assert update["props"]["text"] == "Racit"
+            assert name.value == "Racit"
 
-        assert name.value == "Racit"
+            print("Browser input: PASS")
+            print("Browser → WebSocket: PASS")
+            print("WebSocket → Python State: PASS")
+            print("State → Browser DOM: PASS")
+            print("Final state:", name.value)
+
+            browser.close()
 
         print()
-        print("Browser → WebSocket: PASS")
-        print("Automatic Input → State: PASS")
-        print("State → UpdateMessage: PASS")
-        print("Heading updated: PASS")
-        print("Final state:", name.value)
-        print()
-        print("=== AUTOMATIC BROWSER INPUT BINDING PASS ===")
+        print("=== BROWSER INPUT BINDING PASS ===")
 
-
-try:
-    asyncio.run(test_binding())
-finally:
-    server.stop()
+    finally:
+        runtime.stop()
+        print("Runtime stopped.")

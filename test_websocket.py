@@ -35,7 +35,7 @@ print("Running:", server.running)
 assert server.running
 
 
-async def test_connection():
+async def _test_connection():
     async with connect(url) as websocket:
         message = {
             "type": "event",
@@ -56,7 +56,7 @@ async def test_connection():
         assert response["result"] == "handler-ok"
 
 
-asyncio.run(test_connection())
+asyncio.run(_test_connection())
 
 print("Calls:", calls)
 

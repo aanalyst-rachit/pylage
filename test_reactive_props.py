@@ -36,7 +36,7 @@ print("  disabled =", disabled.value)
 print("  title =", title.value)
 
 
-async def test_props():
+async def _test_props():
     import websockets
 
     async with websockets.connect(url) as ws:
@@ -93,7 +93,8 @@ async def test_props():
         print("=== GENERIC REACTIVE PROPS PASS ===")
 
 
-try:
-    asyncio.run(test_props())
-finally:
-    server.stop()
+def test_sync_wrapper():
+    try:
+        asyncio.run(_test_props())
+    finally:
+        server.stop()

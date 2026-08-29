@@ -1,73 +1,82 @@
-from __future__ import annotations
-
-import threading
-import time
-import urllib.request
+from playwright.sync_api import sync_playwright, expect
 
 import pyskin as ps
 from pyskin.runtime import Runtime
 
 
-event_received = threading.Event()
-calls: list[str] = []
-
-
-def clicked():
-    calls.append("clicked")
-    print("=== BROWSER EVENT RECEIVED ===")
-    event_received.set()
-    return "browser-ok"
-
-
-button = ps.Button(
-    "Click me",
-    on_click=clicked,
-)
-
-app = ps.Column(
-    ps.Heading("Browser Event Test"),
-    button,
-)
-
-runtime = Runtime(
-    app,
-    title="Browser Event Test",
-    output="browser_event_output/index.html",
-)
-
-try:
-    url = runtime.start()
-
+def test_browser_event():
     print("=== PYSKIN BROWSER EVENT TEST ===")
-    print("URL:", url)
-    print("Button ID:", button.id)
-    print("WebSocket:", runtime._websocket.url)
 
-    with urllib.request.urlopen(url) as response:
-        html = response.read().decode("utf-8")
+    calls = []
 
-    assert "Browser Event Test" in html
-    assert "data-pyskin-events=\"click\"" in html
-    assert "websocketUrl" in html
+    def clicked():
+        calls.append("clicked")
+        print("=== BROWSER EVENT RECEIVED ===")
+        print("Calls:", calls)
+        return "clicked"
 
-    print("HTML checks: PASS")
-    print()
-    print("Open this URL in your browser:")
-    print(url)
-    print()
-    print("CLICK THE 'Click me' BUTTON.")
-    print("Waiting for Python callback...")
+    heading = ps.Heading("Browser Event Test")
 
-    if not event_received.wait(timeout=30000):
-        raise TimeoutError(
-            "Browser event was not received within 30 seconds."
-        )
+    button = ps.Button(
+        "Click me",
+        on_click=clicked,
+    )
 
-    print("Calls:", calls)
-    assert calls == ["clicked"]
+    app = ps.Column(
+        heading,
+        button,
+    )
 
-    print("=== BROWSER EVENT PASS ===")
+    runtime = Runtime(
+        app,
+        title="Browser Event Test",
+        output="browser_event_output/index.html",
+    )
 
-finally:
-    runtime.stop()
-    print("Runtime stopped.")
+    try:
+        url = runtime.start()
+
+        print("URL:", url)
+        print("WebSocket:", runtime._websocket.url)
+        print("Button ID:", button.id)
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+
+            page.goto(url)
+
+            button_locator = page.locator(
+                f'[data-pyskin-id="{button.id}"]'
+            )
+
+            expect(button_locator).to_have_text("Click me")
+
+            print("Browser loaded: PASS")
+
+            button_locator.click()
+
+            page.wait_for_function(
+                """() => window.__pyskin_event_test_done === true"""
+            ) if False else None
+
+            # Poll Python-side callback without arbitrary long waits.
+            for _ in range(50):
+                if calls == ["clicked"]:
+                    break
+                page.wait_for_timeout(100)
+
+            assert calls == ["clicked"]
+
+            print("Browser click: PASS")
+            print("WebSocket event → Python callback: PASS")
+            print("Callback isolation: PASS")
+
+            browser.close()
+
+        print()
+        print("=== BROWSER EVENT PASS ===")
+
+    finally:
+        runtime.stop()
+        print("Runtime stopped.")

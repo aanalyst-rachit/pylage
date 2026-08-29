@@ -5,7 +5,9 @@
 **Repository:** `aanalyst-rachit/pyskin`
 **Branch:** `main`
 
-## 🔒 CURRENT CHECKPOINT
+---
+
+# 🔒 CURRENT CHECKPOINT
 
 ```text
 HEAD:
@@ -14,23 +16,23 @@ ac99f30
 Commit:
 complete generic reactive registry prop pipeline
 
-Branch:
-main
-
-Status:
-Latest verified milestone committed
-
 Previous checkpoint:
 d8b184c
+
+Current milestone:
+Registry-driven generic reactive prop pipeline
+
+Status:
+COMPLETE ✅
 ```
 
 ---
 
 # 1. 🎯 FINAL GOAL
 
-PySkin ka ultimate goal ek **Python-first, low-latency reactive UI framework** banana hai.
+PySkin ka ultimate goal ek **Python-first, low-latency, fine-grained reactive UI framework** banana hai.
 
-Developer ko sirf Python likhna chahiye:
+Developer experience:
 
 ```python
 import pyskin as ps
@@ -42,14 +44,14 @@ app = ps.Column(
     ps.Text(count),
     ps.Button(
         "+",
-        on_click=lambda: count.set(count.value + 1)
+        on_click=lambda: count.set(count.value + 1),
     ),
 )
 
 ps.run(app)
 ```
 
-Developer ko manually handle nahi karna chahiye:
+Developer ko manually handle nahi karna:
 
 ```text
 ❌ HTML
@@ -58,20 +60,21 @@ Developer ko manually handle nahi karna chahiye:
 ❌ WebSocket protocol
 ❌ browser event plumbing
 ❌ state synchronization
+❌ diff generation
 ❌ patch generation
 ```
 
-Framework internally ye sab handle karega.
+Ye sab framework internally manage karega.
 
 ---
 
 # 2. 🧠 CORE PHILOSOPHY
 
-> **Python is the developer-facing UI language.**
+> **Python is the developer-facing UI programming language.**
 
 Browser JavaScript implementation detail hai.
 
-Target architecture:
+Long-term architecture:
 
 ```text
 Python Application
@@ -108,8 +111,6 @@ Python Application
 ---
 
 # 3. 🏗️ TARGET ARCHITECTURE
-
-Final architecture:
 
 ```text
                      PYTHON APPLICATION
@@ -159,9 +160,7 @@ Final architecture:
 
 # 4. 📍 ACTUAL CURRENT POSITION
 
-Current codebase has already crossed the basic renderer/prototype stage.
-
-Current real pipeline:
+Current working pipeline:
 
 ```text
 Python Component
@@ -178,7 +177,7 @@ Registry
        ├── reactive metadata         ✅
        ├── html_name                 ✅
        ├── void metadata             ✅
-       └── renderer ownership        ✅
+       └── renderer ownership       ✅
        │
        ▼
 HTML Renderer
@@ -189,7 +188,7 @@ Initial HTML
        ▼
 Runtime
        │
-       ├── HTTP/server               ✅
+       ├── HTTP server               ✅
        ├── WebSocket                 ✅
        └── browser client            ✅
        │
@@ -203,21 +202,13 @@ Generic browser prop patch
 DOM
 ```
 
-### Current milestone
-
-# **Registry-driven generic reactive prop pipeline — COMPLETE**
-
-The next milestone is no longer basic registry architecture.
-
-The next real architectural problem is:
-
-# **Registry metadata → actual runtime semantics → dependency-aware updates**
+Current architecture has successfully moved beyond the basic renderer prototype.
 
 ---
 
 # 5. ✅ COMPLETED — COMPONENT FOUNDATION
 
-Current `Component` implementation provides:
+Component system currently provides:
 
 ```text
 Component type                 ✅
@@ -229,23 +220,25 @@ Child addition                 ✅
 Event handler validation       ✅
 ```
 
-Current component model:
+Conceptual model:
 
 ```python
-@dataclass
-class Component:
-    type: str
-    props: dict
-    children: list
-    events: dict
-    id: str
+Component(
+    type,
+    props,
+    children,
+    events,
+    id,
+)
 ```
 
 ---
 
-# 6. 🟡 COMPONENT CONSTRUCTION — PARTIALLY GENERIC
+# 6. 🟡 COMPONENT CONSTRUCTION
 
-`component()` now consults the registry:
+`component()` now consults registry metadata.
+
+Current:
 
 ```text
 component()
@@ -253,39 +246,44 @@ component()
 registry.get(type)
 ```
 
-However, current behavior intentionally keeps unknown props for backward compatibility.
-
-Current:
+Known components:
 
 ```text
-Known component
-      ↓
-Registry consulted              ✅
-      ↓
-Props normalized                🟡
-      ↓
-Unknown prop rejection          ❌
+Registry metadata
+       ↓
+Prop contract
+       ↓
+Component creation
 ```
 
-This is acceptable for now.
+Unknown props are currently retained for backward compatibility.
 
-Do **not** introduce strict prop rejection until the runtime contract is mature enough.
+Therefore:
+
+```text
+Registry consultation          ✅
+Known prop metadata             ✅
+Unknown prop preservation       ✅
+Strict unknown-prop rejection    ❌
+```
+
+Strict prop rejection is intentionally postponed.
 
 ---
 
-# 7. ✅ COMPLETED — REGISTRY ARCHITECTURE
+# 7. ✅ REGISTRY ARCHITECTURE
 
-Registry now owns:
+Registry currently owns:
 
 ```text
 Component type
 HTML tag
-void status
-renderer callback
-prop definitions
+Void status
+Renderer callback
+Prop definitions
 ```
 
-Current:
+Core definitions:
 
 ```python
 @dataclass(frozen=True)
@@ -324,9 +322,9 @@ PropDefinition
 
 ---
 
-# 8. ✅ COMPLETED — PROP CONTRACT
+# 8. ✅ PROP CONTRACT
 
-Supported prop kinds:
+Current supported prop kinds:
 
 ```text
 attribute
@@ -334,21 +332,22 @@ boolean
 text
 ```
 
-Invalid kinds are rejected.
+Invalid prop kinds are rejected.
 
 Verified:
 
 ```text
-Prop registration              PASS
-Prop metadata storage          PASS
-Prop definition contract       PASS
+Prop registration              ✅
+Prop metadata storage          ✅
+Prop definition contract       ✅
+Invalid kind rejection         ✅
 ```
 
 ---
 
-# 9. ✅ COMPLETED — REACTIVE METADATA CONTRACT
+# 9. ✅ REACTIVE METADATA CONTRACT
 
-`reactive` is now strictly boolean.
+`reactive` is strictly boolean.
 
 Valid:
 
@@ -368,21 +367,17 @@ None
 Verified:
 
 ```text
-Boolean reactive values        PASS
-Non-boolean reactive rejection PASS
+Boolean reactive values        ✅
+Invalid reactive values        ✅
 ```
 
-### Important distinction
+Important:
 
-The metadata contract is complete.
-
-The **full runtime meaning** of `reactive=True/False` is not yet complete.
-
-This is one of the next tasks.
+> Metadata validation is complete, but the complete runtime meaning of `reactive=True/False` is still a future runtime milestone.
 
 ---
 
-# 10. ✅ COMPLETED — HTML NAME CONTRACT
+# 10. ✅ HTML NAME CONTRACT
 
 `html_name` is validated.
 
@@ -394,13 +389,13 @@ html_for   → for
 title      → title
 ```
 
-Invalid empty names are rejected.
+Invalid empty HTML names are rejected.
 
 ---
 
-# 11. ✅ COMPLETED — GENERIC PROP MAPPING
+# 11. ✅ GENERIC PROP MAPPING
 
-Current registry can describe:
+Registry can describe:
 
 ```text
 Python property
@@ -412,25 +407,25 @@ Example:
 
 ```text
 class_name
-    ↓
+     ↓
 class
 ```
 
 Verified:
 
 ```text
-class_name → class metadata      PASS
-disabled boolean metadata        PASS
-title attribute metadata         PASS
+class_name → class             ✅
+disabled boolean metadata      ✅
+title attribute metadata       ✅
 ```
 
 ---
 
-# 12. ✅ COMPLETED — GENERIC HTML RENDERING
+# 12. ✅ GENERIC HTML RENDERING
 
-Renderer now reads registry metadata.
+HTML renderer now consumes registry metadata.
 
-Example verified output:
+Conceptual result:
 
 ```html
 <button
@@ -443,40 +438,37 @@ Example verified output:
 </button>
 ```
 
-Verified:
-
-```text
-Registry-driven HTML rendering    PASS
-Registry prop metadata            PASS
-```
+Registry metadata is therefore participating in actual rendering.
 
 ---
 
-# 13. ✅ COMPLETED — REGISTRY-DRIVEN TEXT PROPS
+# 13. ✅ REGISTRY-DRIVEN TEXT PROPS
 
-Text props are no longer required to be hard-coded by prop name at the generic rendering layer.
-
-Registry:
+Text props are represented through metadata:
 
 ```text
 kind="text"
 ```
 
-means:
+rather than requiring generic renderer logic to know every text prop name.
+
+Concept:
 
 ```text
-value
- ↓
+Text prop
+   ↓
+registry metadata
+   ↓
 component content
 ```
 
-This is a major step toward a generic renderer.
+This is a major step toward generic rendering.
 
 ---
 
-# 14. ✅ COMPLETED — RENDERER OWNERSHIP
+# 14. ✅ RENDERER OWNERSHIP
 
-Renderer callbacks are attached to registry definitions.
+Renderer callbacks belong to registry definitions.
 
 Architecture:
 
@@ -490,69 +482,58 @@ ComponentDefinition
 renderer callback
 ```
 
-Current renderer resolution no longer depends on a giant component-type dispatch inside `_render_component()`.
+The long-term objective is to make renderer behavior increasingly metadata-driven.
 
 ---
 
-# 15. 🟡 RENDERER ARCHITECTURE — IMPORTANT REMAINING CLEANUP
+# 15. 🟡 RENDERER ARCHITECTURE
 
-Current `HTMLRenderer` still contains:
+Current renderer still contains builtin renderer helpers for:
 
 ```text
-_register_builtin_renderers()
-        ↓
 Column
 Heading
 Button
 Input
-        ↓
-_render_column()
-_render_heading()
-_render_button()
-_render_input()
 ```
 
-This is currently protected from overwriting custom callbacks:
+Current protection:
 
-```text
+```python
 if definition.renderer is not None:
     continue
 ```
 
-That is good.
+Therefore custom renderer callbacks are not overwritten.
 
-But long-term:
+Long-term target:
 
 ```text
 Registry
     ↓
-complete renderer metadata
+Renderer metadata
     ↓
-generic renderer
+Generic renderer
 ```
 
-should become more dominant.
-
-The goal is to minimize component-specific renderer logic.
+Component-specific renderer logic should gradually become smaller.
 
 **STATUS: ~85–90%**
 
 ---
 
-# 16. ✅ COMPLETED — CUSTOM RENDERER PROTECTION
-
-Custom renderer registration survives builtin renderer initialization.
+# 16. ✅ CUSTOM RENDERER PROTECTION
 
 Verified:
 
 ```text
-Custom renderer registration       PASS
-Custom renderer preservation       PASS
-Repeated initialization            PASS
-Callback preservation              PASS
+Custom renderer registration       ✅
+Custom renderer preservation       ✅
+Repeated initialization            ✅
+Callback preservation              ✅
 ```
 
-This is important for future:
+This establishes a foundation for:
 
 ```text
 plugins
@@ -562,9 +543,9 @@ third-party components
 
 ---
 
-# 17. ✅ COMPLETED — GENERIC BROWSER REACTIVE PROPS
+# 17. ✅ GENERIC BROWSER REACTIVE PROPS
 
-Old architecture:
+Previous browser architecture relied on hard-coded property checks:
 
 ```javascript
 if (prop === "text") ...
@@ -574,7 +555,7 @@ if (prop === "class") ...
 if (prop === "title") ...
 ```
 
-has been replaced with generic prop iteration.
+This has been replaced with generic property iteration.
 
 Current architecture:
 
@@ -591,19 +572,19 @@ generic DOM patch
 Verified:
 
 ```text
-Generic prop iteration              PASS
-No hard-coded reactive dispatch     PASS
-Generic DOM patching                PASS
-Embedded client runtime             PASS
+Generic prop iteration              ✅
+No hard-coded reactive dispatch     ✅
+Generic DOM patching                ✅
+Embedded client runtime             ✅
 ```
 
-# **THIS MILESTONE IS COMPLETE.**
+**MILESTONE COMPLETE.**
 
 ---
 
-# 18. ✅ COMPLETED — UPDATE MESSAGE CONTRACT
+# 18. ✅ UPDATE MESSAGE CONTRACT
 
-Current update message contains:
+Current update message:
 
 ```text
 type
@@ -614,40 +595,42 @@ prop_meta
 
 Example:
 
-```python
+```json
 {
-    "type": "update",
-    "id": "...",
-    "props": {
-        "class_name": "danger"
-    },
-    "prop_meta": {
-        "class_name": {
-            "kind": "attribute",
-            "html_name": "class"
-        }
+  "type": "update",
+  "id": "...",
+  "props": {
+    "class_name": "danger"
+  },
+  "prop_meta": {
+    "class_name": {
+      "kind": "attribute",
+      "html_name": "class"
     }
+  }
 }
 ```
 
 Verified:
 
 ```text
-Registry metadata serialization       PASS
-JSON round-trip                       PASS
-Backward-compatible UpdateMessage     PASS
+Metadata serialization              ✅
+JSON round-trip                     ✅
+Backward compatibility              ✅
 ```
 
 ---
 
-# 19. ✅ COMPLETED — WEBSOCKET UPDATE PIPELINE
+# 19. ✅ WEBSOCKET UPDATE PIPELINE
 
-Current verified flow:
+Current transport:
 
 ```text
 Component
     ↓
-State / prop update
+State change
+    ↓
+StateBinding
     ↓
 UpdateMessage
     ↓
@@ -658,41 +641,49 @@ Browser client
 Generic DOM update
 ```
 
-Verified connection:
-
-```text
-WebSocket connected: PASS
-```
+WebSocket connection has been verified.
 
 ---
 
-# 20. ✅ COMPLETED — GENERIC REACTIVE PROP TEST
+# 20. ✅ STATE BINDING FOUNDATION
 
-Current test verifies:
-
-```text
-text       PASS
-value      PASS
-disabled   PASS
-title      PASS
-```
-
-and:
+Current `StateBinding` traverses the component tree:
 
 ```text
-State → UpdateMessage              PASS
-Multiple reactive props            PASS
+Root
+ ↓
+Component
+ ↓
+Props
+ ↓
+State
+ ↓
+subscription
 ```
 
-This means the generic reactive property transport is now proven.
+Reactive metadata is consulted before subscribing.
+
+Conceptually:
+
+```text
+State prop
+    ↓
+registry
+    ↓
+reactive?
+    ├── True  → subscribe
+    └── False → ignore
+```
+
+Current limitation:
+
+> This is subscription-based reactivity, not yet a complete dependency graph.
 
 ---
 
-# 21. 🔥 CURRENT ARCHITECTURAL GAP
+# 21. 🔥 IMPORTANT ARCHITECTURAL GAP
 
-This is the most important point.
-
-We currently have:
+Current system proves:
 
 ```text
 State
@@ -704,7 +695,7 @@ WebSocket
 Browser
 ```
 
-but the framework does not yet have the complete:
+But it does **not yet fully implement**:
 
 ```text
 State
@@ -715,104 +706,100 @@ Affected Components
  ↓
 Dirty Nodes
  ↓
+Scheduler
+ ↓
 Minimal Diff
  ↓
 Minimal Patch
 ```
 
-Therefore PySkin currently proves:
+Therefore current system proves:
 
-> **How a known update can reach the browser.**
+> **A known state update can reach the browser.**
 
-It does not yet fully prove:
+It does not yet prove:
 
-> **How PySkin automatically determines the smallest possible update.**
+> **PySkin can automatically determine the smallest affected UI region.**
 
-That is the next major architecture.
+That is the next architectural challenge.
 
 ---
 
-# 22. 🔥 NEXT MILESTONE
+# 22. 🚀 PHASE 2 — FINE-GRAINED REACTIVE RUNTIME
 
-# MILESTONE 6 — Dependency-Aware Reactive Runtime
+## Objective
+
+Build the runtime semantics that determine exactly:
+
+```text
+which State
+       ↓
+affects which component
+       ↓
+which component becomes dirty
+       ↓
+when update runs
+       ↓
+what minimum change is sent
+```
 
 Target:
 
 ```text
 State
   ↓
-Dependency tracking
+Dependency registration
   ↓
-Affected component(s)
+Affected component
   ↓
-Dirty node(s)
+Dirty node
   ↓
-Update scheduling
-```
-
-Example:
-
-```python
-count = ps.State(10)
-
-Text(count)
-```
-
-Target behavior:
-
-```text
-count.set(11)
-     ↓
-Dependency graph
-     ↓
-Text node becomes dirty
-     ↓
-Only that node updates
-```
-
-Not:
-
-```text
-entire application rerender ❌
+Scheduler
+  ↓
+Update
 ```
 
 ---
 
-# 23. 🔥 TASK 1 — DEFINE REACTIVE SEMANTICS
+# 23. 🔥 PHASE 2.1 — REACTIVE SEMANTICS
 
-We need to formally decide:
+Before implementing a dependency graph, formally define:
 
 ```text
 What does reactive=True mean?
-
 What does reactive=False mean?
 
-When is a State dependency registered?
+When is State dependency registered?
 
-When is a component subscribed?
+What happens if the same State appears
+in multiple components?
 
-When is an update generated?
+What happens when a component is removed?
+
+What happens when State is replaced?
 
 When is an update suppressed?
+
+When is an update emitted?
 ```
 
-Target:
+Required contract:
 
 ```text
 PropDefinition
       ↓
 reactive=True
       ↓
-runtime dependency participation
+runtime participates in dependency tracking
 ```
 
-This should be a real runtime contract, not only metadata.
+The metadata must become actual runtime behavior.
 
 ---
 
-# 24. 🔥 TASK 2 — DEPENDENCY GRAPH
+# 24. 🔥 PHASE 2.2 — DEPENDENCY GRAPH
 
-Target data model:
+Target model:
 
 ```text
 State A
@@ -826,46 +813,69 @@ State B
    └────► Component Z
 ```
 
-Then:
+When:
 
-```text
-State A changes
-       ↓
-X + Y dirty
-       ↓
-Z untouched
+```python
+state_a.set(...)
 ```
 
-This is the core of fine-grained reactivity.
+runtime should identify:
+
+```text
+X
+Y
+```
+
+and leave:
+
+```text
+Z
+```
+
+untouched.
+
+This is the central fine-grained reactivity mechanism.
 
 ---
 
-# 25. 🔥 TASK 3 — DIRTY NODE TRACKING
+# 25. 🔥 PHASE 2.3 — DIRTY NODE TRACKING
 
-Instead of rerendering everything:
+Introduce a runtime dirty set:
 
 ```text
-Application
-    ↓
-dirty set
+dirty_nodes
 ```
 
 Example:
 
 ```text
 dirty_nodes = {
-    "component_123",
-    "component_456"
+    component_123,
+    component_456,
 }
 ```
 
-Only affected nodes should enter the update pipeline.
+Only affected nodes enter the update pipeline.
+
+Target:
+
+```text
+State change
+      ↓
+Dependency graph
+      ↓
+Affected components
+      ↓
+dirty_nodes
+```
 
 ---
 
-# 26. 🔥 TASK 4 — UPDATE SCHEDULER
+# 26. 🔥 PHASE 2.4 — UPDATE SCHEDULER
 
-Need a controlled scheduling layer:
+Introduce explicit scheduling.
+
+Target:
 
 ```text
 State changes
@@ -874,10 +884,12 @@ mark dirty
       ↓
 schedule update
       ↓
-batch synchronous changes
+process dirty nodes
       ↓
-produce update
+emit updates
 ```
+
+The scheduler must eventually support batching.
 
 Example:
 
@@ -890,23 +902,53 @@ count.set(3)
 Potential target:
 
 ```text
-3 separate network updates ❌
+3 immediate network messages ❌
 ```
 
 Instead:
 
 ```text
 one scheduled update
-final value = 3
+final state = 3
 ```
 
-This must be benchmarked rather than assumed.
+But batching behavior must be measured and tested rather than assumed.
 
 ---
 
-# 27. 🔥 TASK 5 — DOM SEMANTICS
+# 27. 🔥 PHASE 2.5 — BATCHING
 
-Current metadata supports:
+Target:
+
+```text
+Multiple synchronous State changes
+                ↓
+           dirty set
+                ↓
+          one flush cycle
+                ↓
+       final effective updates
+```
+
+Questions to establish:
+
+```text
+What is a flush boundary?
+
+Immediate?
+Microtask-like?
+Explicit batch?
+Event completion?
+Timer?
+```
+
+Do not implement arbitrary batching until the scheduling contract is defined.
+
+---
+
+# 28. 🔥 PHASE 2.6 — DOM SEMANTICS
+
+Current metadata:
 
 ```text
 attribute
@@ -914,17 +956,19 @@ boolean
 text
 ```
 
-We eventually need a precise DOM semantic model:
+needs to evolve into a precise semantic model.
+
+Potential categories:
 
 ```text
 ATTRIBUTE
-BOOLEAN ATTRIBUTE
-DOM PROPERTY
-TEXT CONTENT
-CHILD NODE
+BOOLEAN_ATTRIBUTE
+DOM_PROPERTY
+TEXT_CONTENT
+CHILD_NODE
 ```
 
-For example:
+Example:
 
 ```text
 title
@@ -940,11 +984,41 @@ text
     → text/content
 ```
 
-This distinction becomes critical when generic patching grows.
+This distinction must be defined before a sophisticated patch engine is built.
 
 ---
 
-# 28. 🔥 TASK 6 — DIFF ENGINE
+# 29. 🔥 PHASE 2.7 — UI REPRESENTATION / SNAPSHOT
+
+Before building a full diff engine, define the runtime representation of UI.
+
+Target:
+
+```text
+Component Tree
+      ↓
+UI Representation
+      ↓
+Previous representation
+      +
+Current representation
+```
+
+This representation must be:
+
+```text
+stable
+serializable where useful
+cheap to compare
+component-ID aware
+compatible with future native backends
+```
+
+Do not build a massive compiler IR yet.
+
+---
+
+# 30. 🔥 PHASE 2.8 — DIFF ENGINE
 
 Target:
 
@@ -978,23 +1052,23 @@ After:
 </div>
 ```
 
-Target patch:
+Target:
 
 ```text
-span.textContent = "11"
+Only span changes
 ```
 
 not:
 
 ```text
-rerender entire page
+entire application rerender
 ```
 
 ---
 
-# 29. 🔥 TASK 7 — PATCH PROTOCOL
+# 31. 🔥 PHASE 2.9 — PATCH ENGINE
 
-Once diff exists:
+After diff:
 
 ```text
 Diff
@@ -1008,7 +1082,7 @@ WebSocket
 Browser
 ```
 
-Potential future protocol:
+Possible future protocol:
 
 ```json
 {
@@ -1023,111 +1097,464 @@ Potential future protocol:
 }
 ```
 
-Exact protocol should be designed only after dependency/diff semantics are clear.
+Exact protocol is intentionally **not locked yet**.
+
+It should be designed after:
+
+```text
+dependency semantics
+dirty tracking
+scheduler
+UI representation
+diff semantics
+```
+
+are understood.
 
 ---
 
-# 30. ⚡ PERFORMANCE TARGET
+# 32. 🧪 PHASE 2 TEST STRATEGY
 
-The final high-performance path:
+Registry testing is now sufficient for the current milestone.
+
+Do not continuously add registry tests without architectural reason.
+
+Next tests must prove:
 
 ```text
-Python State Change
-       ↓
-Dependency Tracking
-       ↓
-Dirty Node
-       ↓
-Minimal Diff
-       ↓
-Minimal Patch
-       ↓
-Tiny WebSocket Message
-       ↓
-Tiny Client Runtime
-       ↓
-DOM
+State → dependency registration
+State → affected component
+State → unrelated component untouched
+Dirty-node tracking
+Scheduler behavior
+Batching behavior
+DOM semantic correctness
+UI representation
+Diff correctness
+Patch correctness
+WebSocket delivery
+Reconnect behavior
 ```
 
-The performance goal is:
+The most important test:
 
 ```text
-LOW LATENCY
-+
-LOW CPU
-+
-LOW MEMORY
-+
-LOW NETWORK PAYLOAD
-+
-NO FULL PAGE RERENDER
+State A changes
+        ↓
+Component X updates
+        ↓
+Component Y does NOT update
 ```
 
 ---
 
-# 31. 🧪 CURRENT VERIFIED TEST SUITE
+# 33. ⚡ PERFORMANCE TEST STRATEGY
 
-Latest combined run:
+Eventually benchmark:
 
 ```text
-test_registry_update_message_contract.py
-test_registry_reactive_contract.py
-test_registry_props.py
-test_registry_dom_metadata.py
-test_registry_render_metadata.py
-test_registry_prop_mapping.py
-test_browser_generic_reactive_props.py
+State update latency
+Event latency
+WebSocket payload size
+Update throughput
+CPU usage
+Memory usage
+```
+
+Test tree sizes:
+
+```text
+100 nodes
+1,000 nodes
+10,000 nodes
+```
+
+Test state graphs:
+
+```text
+1 State
+10 States
+100 States
+1,000 dependencies
+```
+
+The goal is empirical performance, not theoretical claims.
+
+---
+
+# 34. 🛣️ MASTER ROADMAP
+
+## PHASE 0 — FOUNDATION
+
+```text
+Project
+Component
+Tree
+Props
+Children
+State
+Basic renderer
+```
+
+**COMPLETE ✅**
+
+---
+
+## PHASE 1 — REGISTRY
+
+```text
+ComponentDefinition
+PropDefinition
+Prop kinds
+HTML metadata
+Reactive metadata
+Renderer ownership
+Custom renderer support
+```
+
+**~95% COMPLETE 🟢**
+
+Remaining:
+
+```text
+Runtime interpretation of metadata
+Further renderer genericization
+```
+
+---
+
+## PHASE 2 — FINE-GRAINED REACTIVE RUNTIME
+
+```text
+Reactive semantics
+Dependency graph
+Dirty tracking
+Scheduler
+Batching
+UI representation
+DOM semantics
+```
+
+**NEXT MAJOR PHASE 🔥**
+
+---
+
+## PHASE 3 — DIFF / PATCH
+
+```text
+UI snapshot
+Diff
+Patch generation
+Patch protocol
+Minimal DOM mutations
+```
+
+**NOT STARTED ❌**
+
+---
+
+## PHASE 4 — UI SYSTEM
+
+```text
+Layout
+Forms
+Tables
+Cards
+Dialogs
+Navigation
+Data components
+```
+
+**MOSTLY PENDING ❌**
+
+---
+
+## PHASE 5 — STYLING
+
+```text
+Python style API
+Theme system
+Responsive design
+CSS generation
+Layout constraints
+```
+
+**MOSTLY PENDING ❌**
+
+---
+
+## PHASE 6 — COMPILER / UI IR
+
+```text
+UI IR
+Normalization
+Static analysis
+Optimization
+Constant folding
+Patch planning
+```
+
+**EARLY / ~10%**
+
+Important:
+
+> Do not build a huge compiler before reactive semantics stabilize.
+
+---
+
+## PHASE 7 — PERFORMANCE
+
+```text
+Latency benchmarks
+Memory benchmarks
+Network payload
+Event throughput
+Update throughput
+Large component trees
+Large dependency graphs
+```
+
+**PENDING ❌**
+
+---
+
+## PHASE 8 — DESKTOP / NATIVE
+
+```text
+PySkin API
+     ↓
+Shared UI representation
+     ↓
+Native renderer
+```
+
+**FUTURE**
+
+---
+
+## PHASE 9 — GPU / HARDWARE
+
+Long-term experimental architecture:
+
+```text
+Component Tree
+      ↓
+UI IR
+      ↓
+Render Graph
+      ↓
+GPU backend
+```
+
+Possible technologies:
+
+```text
+WebGPU
+Skia
+OpenGL
+Vulkan
+Native GPU APIs
+```
+
+**FUTURE RESEARCH**
+
+---
+
+# 35. 🚦 IMMEDIATE ROADMAP
+
+Exact order:
+
+```text
+CURRENT CHECKPOINT
+        │
+        ▼
+Freeze registry milestone
+        │
+        ▼
+Define reactive runtime semantics
+        │
+        ▼
+Define DOM semantic categories
+        │
+        ▼
+State → Component dependency model
+        │
+        ▼
+Dependency Graph
+        │
+        ▼
+Dirty Node Tracking
+        │
+        ▼
+Update Scheduler
+        │
+        ▼
+Batching
+        │
+        ▼
+UI Representation
+        │
+        ▼
+Diff Engine
+        │
+        ▼
+Patch Engine
+        │
+        ▼
+Patch Protocol
+        │
+        ▼
+Performance Benchmarks
+```
+
+---
+
+# 36. 🚫 WHAT NOT TO BUILD YET
+
+Do NOT prematurely build:
+
+```text
+❌ 100+ components
+❌ Desktop backend
+❌ Mobile backend
+❌ GPU backend
+❌ Cloud platform
+❌ Authentication
+❌ AI layer
+❌ Huge CSS framework
+```
+
+Priority:
+
+```text
+Component
+    ↓
+Registry
+    ↓
+State
+    ↓
+Dependency
+    ↓
+Dirty
+    ↓
+Scheduler
+    ↓
+Diff
+    ↓
+Patch
+    ↓
+Browser
+```
+
+---
+
+# 37. 🔐 DEVELOPMENT RULE
+
+Every architectural milestone:
+
+```text
+Audit
+  ↓
+Small change
+  ↓
+Focused test
+  ↓
+Full relevant test suite
+  ↓
+Review git diff
+  ↓
+Commit
+  ↓
+Push
+```
+
+Never:
+
+```text
+Large rewrite
+      ↓
+Hope it works
+```
+
+---
+
+# 38. 🧹 REPOSITORY HYGIENE
+
+Historical files currently exist:
+
+```text
+*.before_*
+*.v01
+*.bak
+```
+
+Examples:
+
+```text
+pyskin/core/protocol.py.bak
+pyskin/core/component.py.v01
+pyskin/core/registry.py.before_*
+```
+
+These should eventually be cleaned or moved outside the source tree.
+
+Also:
+
+```text
+__pycache__
+```
+
+should not be considered meaningful project source.
+
+Cleanup should remain separate from Phase 2 architecture unless a file directly interferes with development.
+
+---
+
+# 39. 🧪 CURRENT TEST STATUS
+
+Latest verified registry/runtime milestone:
+
+```text
+Registry update message contract       ✅
+Registry reactive contract             ✅
+Registry props                         ✅
+Registry DOM metadata                  ✅
+Registry render metadata               ✅
+Registry prop mapping                  ✅
+Browser generic reactive props         ✅
+Generic reactive props                 ✅
+WebSocket connection                   ✅
+```
+
+Current known test-file issue encountered during development:
+
+```text
+test_websocket.py
+test_input_binding.py
+test_reactive_counter.py
 test_reactive_props.py
 ```
 
-Result:
+contained wrapper-name mismatches such as:
 
 ```text
-ALL PASS
+_test_connection
+_test_binding
+_test_counter
+_test_props
 ```
 
-Verified areas:
+These are **test harness issues**, not evidence that the runtime architecture itself failed.
+
+After correction, the relevant registry renderer suite reached:
 
 ```text
-Registry update contract       ✅
-Registry reactive contract     ✅
-Registry props                 ✅
-DOM metadata                   ✅
-Render metadata                ✅
-Prop mapping                   ✅
-Browser generic props          ✅
-Generic reactive props         ✅
+8 passed
 ```
 
 ---
 
-# 32. 🧪 TESTING POLICY GOING FORWARD
-
-We now have enough registry tests.
-
-Do NOT keep expanding registry tests without architectural reason.
-
-Next tests should prove:
-
-```text
-Dependency discovery
-State → component dependency
-Dirty node tracking
-Update scheduling
-Batching
-Diff correctness
-Patch correctness
-Reconnect behavior
-Performance
-```
-
-Testing should follow the architecture.
-
----
-
-# 33. 📊 CURRENT PROGRESS
-
-Engineering estimates only.
+# 40. 📊 CURRENT ENGINEERING ESTIMATE
 
 ```text
 Foundation
@@ -1148,7 +1575,7 @@ Runtime foundation
 Generic reactive transport
 ███████████████████░  95%
 
-Reactive engine
+Reactive runtime
 ████████░░░░░░░░░░░░  40%
 
 Dependency graph
@@ -1187,32 +1614,35 @@ Performance benchmark suite
 
 ---
 
-# 34. 📈 OVERALL PROJECT PROGRESS
+# 41. 📈 OVERALL PROJECT PROGRESS
 
-Current estimate:
+Current engineering estimate:
 
 # **~30% of final PU vision**
 
-But this should NOT be interpreted as:
+This does NOT mean only 30% of the code is complete.
 
-> "Only 30% code is done."
-
-Rather:
+It means:
 
 ```text
-Core foundation              ~90%+
-Registry foundation          ~95%
-Basic runtime                ~80%
-Reactive transport           ~95%
+Core foundation             ~90%+
+Registry foundation         ~95%
+Basic runtime               ~80%
+Reactive transport          ~95%
 
-Advanced runtime             mostly pending
+Advanced reactive runtime    mostly pending
+Diff / patch                 pending
+Compiler                     early
+Native / GPU                 future
 ```
 
-The remaining work contains the difficult architectural systems.
+The remaining systems contain the difficult architectural work.
 
 ---
 
-# 35. 🧠 WHERE THE REAL DIFFICULTY IS
+# 42. 🧠 WHERE THE REAL DIFFICULTY STARTS
+
+Current:
 
 ```text
 Component API
@@ -1260,381 +1690,18 @@ GPU backend
 
 Therefore:
 
-> **The difficult part starts now.**
+> **The difficult part of PySkin begins with the reactive runtime architecture.**
 
 ---
 
-# 36. 🛣️ MASTER ROADMAP
+# 43. 🏁 CURRENT DEFINITION OF DONE
 
-## PHASE 0 — FOUNDATION
-
-```text
-Project
-Component
-Tree
-Props
-Children
-State
-Basic renderer
-```
-
-**STATUS: COMPLETE ✅**
-
----
-
-## PHASE 1 — REGISTRY
-
-```text
-ComponentDefinition
-PropDefinition
-Prop kinds
-HTML metadata
-Reactive metadata
-Renderer ownership
-Custom renderer support
-```
-
-**STATUS: ~95% COMPLETE 🟢**
-
-Remaining:
-
-```text
-Complete runtime semantics
-Further renderer genericization
-```
-
----
-
-## PHASE 2 — RUNTIME FOUNDATION
-
-```text
-run()
-HTTP server
-WebSocket
-Browser runtime
-Events
-UpdateMessage
-Generic browser patching
-```
-
-**STATUS: ~80–90% 🟢**
-
----
-
-## PHASE 3 — FINE-GRAINED REACTIVITY
-
-```text
-Dependency graph
-Dirty tracking
-Scheduler
-Batching
-```
-
-**STATUS: NEXT MAJOR PHASE 🔥**
-
----
-
-## PHASE 4 — DIFF / PATCH
-
-```text
-UI snapshot
-Diff
-Patch generation
-Patch protocol
-Minimal DOM mutations
-```
-
-**STATUS: NOT STARTED ❌**
-
----
-
-## PHASE 5 — UI SYSTEM
-
-```text
-Layout
-Forms
-Tables
-Cards
-Dialogs
-Navigation
-Data components
-```
-
-**STATUS: MOSTLY PENDING ❌**
-
----
-
-## PHASE 6 — STYLING
-
-```text
-Python style API
-Theme system
-Responsive design
-CSS generation
-Layout constraints
-```
-
-**STATUS: MOSTLY PENDING ❌**
-
----
-
-## PHASE 7 — COMPILER / IR
-
-```text
-UI IR
-Normalization
-Static analysis
-Optimization
-Constant folding
-Patch planning
-```
-
-**STATUS: EARLY / ~10%**
-
-Important:
-
-> Do not build a huge compiler before reactive semantics are stable.
-
----
-
-## PHASE 8 — PERFORMANCE
-
-```text
-Latency benchmarks
-Memory benchmarks
-Network payload
-Event throughput
-Update throughput
-1000 nodes
-10,000 nodes
-Large state graphs
-```
-
-**STATUS: PENDING ❌**
-
----
-
-## PHASE 9 — DESKTOP / NATIVE
-
-```text
-PySkin API
-     ↓
-Shared UI IR
-     ↓
-Native renderer
-```
-
-**STATUS: FUTURE**
-
----
-
-## PHASE 10 — GPU / HARDWARE
-
-Long-term experimental architecture:
-
-```text
-Component Tree
-      ↓
-UI IR
-      ↓
-Render Graph
-      ↓
-GPU backend
-```
-
-Possible technologies:
-
-```text
-WebGPU
-Skia
-OpenGL
-Vulkan
-Native GPU APIs
-```
-
-**STATUS: FUTURE RESEARCH**
-
----
-
-# 37. 🚦 IMMEDIATE ROADMAP
-
-Do not jump to UI library, GPU, or desktop yet.
-
-Exact sequence:
-
-```text
-CURRENT CHECKPOINT
-        │
-        ▼
-Complete registry runtime semantics
-        │
-        ▼
-Define DOM property/attribute semantics
-        │
-        ▼
-Define State → Component dependency model
-        │
-        ▼
-Dependency Graph
-        │
-        ▼
-Dirty Node Tracking
-        │
-        ▼
-Update Scheduler
-        │
-        ▼
-Batching
-        │
-        ▼
-UI Snapshot / Representation
-        │
-        ▼
-Diff Engine
-        │
-        ▼
-Patch Engine
-        │
-        ▼
-Patch Protocol
-        │
-        ▼
-Performance Benchmark
-```
-
----
-
-# 38. 🚫 WHAT WE MUST NOT DO YET
-
-Do NOT prematurely build:
-
-```text
-❌ 100+ components
-❌ Desktop backend
-❌ Mobile backend
-❌ GPU backend
-❌ Marketplace
-❌ Cloud platform
-❌ Authentication
-❌ AI layer
-❌ Huge CSS system
-```
-
-First solve:
-
-```text
-Component
-    ↓
-Registry
-    ↓
-State
-    ↓
-Dependency
-    ↓
-Dirty
-    ↓
-Diff
-    ↓
-Patch
-    ↓
-Browser
-```
-
----
-
-# 39. 🔐 DEVELOPMENT RULE
-
-Every milestone:
-
-```text
-Audit
-  ↓
-Small change
-  ↓
-Focused test
-  ↓
-Full relevant suite
-  ↓
-Review git diff
-  ↓
-Commit
-  ↓
-Push
-```
-
-Never:
-
-```text
-Large rewrite
-     ↓
-Hope it works
-```
-
----
-
-# 40. 🧹 REPOSITORY HYGIENE
-
-Current tree contains several historical backup files:
-
-```text
-*.before_*
-*.v01
-*.bak
-```
-
-Example:
-
-```text
-pyskin/core/protocol.py.bak
-pyskin/core/component.py.v01
-pyskin/core/registry.py.before_*
-pyskin/core/renderer.py.before_*
-```
-
-These are useful during active development but should eventually be cleaned or moved out of the source tree.
-
-Also:
-
-```text
-__pycache__
-```
-
-should not be part of the meaningful project source.
-
-### Cleanup should happen later
-
-Do NOT mix repository cleanup into the dependency-graph implementation unless necessary.
-
----
-
-# 41. 🔒 CURRENT GIT STATE
-
-Latest checkpoint:
-
-```text
-ac99f30
-complete generic reactive registry prop pipeline
-```
-
-Previous architecture checkpoint:
-
-```text
-d8b184c
-checkpoint: registry contracts and generic reactivity
-```
-
-The new checkpoint supersedes `d8b184c` as the current source-of-truth recovery point.
-
----
-
-# 42. 🏁 CURRENT DEFINITION OF DONE
-
-The current registry milestone is considered complete because:
+The current milestone is complete because the system proves:
 
 ```text
 Registry metadata serialization          ✅
 Registry metadata JSON round-trip        ✅
-Backward-compatible UpdateMessage        ✅
+Backward-compatible UpdateMessage       ✅
 
 Reactive boolean contract                ✅
 Reactive invalid-value rejection         ✅
@@ -1646,7 +1713,7 @@ Prop definition contract                 ✅
 HTML metadata                            ✅
 DOM mapping metadata                     ✅
 
-Registry-driven rendering                ✅
+Registry-driven HTML rendering           ✅
 Registry prop metadata                   ✅
 
 class_name → class                       ✅
@@ -1668,9 +1735,9 @@ WebSocket connection                     ✅
 
 ---
 
-# 43. 🎯 NEXT DEFINITION OF DONE
+# 44. 🎯 NEXT DEFINITION OF DONE
 
-The next milestone should NOT be considered complete until we can prove:
+Phase 2 should **not** be considered complete until the framework can prove:
 
 ```text
 State
@@ -1688,17 +1755,22 @@ Minimal update
 Browser patch
 ```
 
-with tests proving that:
+with a test proving:
 
 ```text
-Unrelated components do NOT update.
+State A changes
+      ↓
+Component A updates
+      ↓
+Unrelated Component B
+does NOT update
 ```
 
-This is the key architectural test.
+This is the key architectural acceptance test.
 
 ---
 
-# 44. 🧩 FINAL PYTHON DEVELOPER EXPERIENCE
+# 45. 🧩 TARGET PYTHON EXPERIENCE
 
 Eventually:
 
@@ -1739,6 +1811,8 @@ Dependency Graph
       ↓
 Dirty Nodes
       ↓
+Scheduler
+      ↓
 Diff
       ↓
 Patch
@@ -1750,9 +1824,11 @@ Tiny Client
 Browser
 ```
 
+Developer ko implementation details nahi dekhni chahiye.
+
 ---
 
-# 45. 🏆 FINAL DEFINITION OF SUCCESS
+# 46. 🏆 FINAL DEFINITION OF SUCCESS
 
 PySkin successful tab maana jayega jab:
 
@@ -1802,58 +1878,36 @@ Registry-driven generic reactive prop pipeline
 MILESTONE STATUS
 COMPLETE ✅
 
-COMPLETED
-Component foundation                  ✅
-Component tree                        ✅
-State foundation                      ✅
-WebSocket foundation                  ✅
-Browser runtime                       ✅
-Registry architecture                 ✅
-Prop contracts                        ✅
-HTML metadata                         ✅
-DOM mapping                           ✅
-Reactive metadata contract            ✅
-Generic text props                    ✅
-Registry renderer ownership           ✅
-Custom renderer protection            ✅
-Renderer idempotency                  ✅
-Generic browser reactive props        ✅
-UpdateMessage contract                ✅
-Generic DOM patching                  ✅
-Multiple reactive props               ✅
+NEXT PHASE
+Fine-grained Reactive Runtime
 
-CURRENT PRIORITY
-Define actual reactive runtime semantics
-
-NEXT MAJOR SYSTEM
+NEXT PRIMARY SYSTEM
 Dependency Graph
 
 THEN
 Dirty Tracking
 → Scheduler
 → Batching
-→ Diff Engine
-→ Patch Engine
+→ UI Representation
+→ Diff
+→ Patch
 → Performance
 
-LATER
-UI component library
-Styling
-Compiler / UI IR
-Desktop backend
-GPU / hardware rendering
-Multi-backend architecture
-
-ESTIMATED FINAL PU VISION PROGRESS
-~30%
-
-CORE FOUNDATION PROGRESS
-~85–95%
-
-MOST IMPORTANT CURRENT PRINCIPLE
+CURRENT PRINCIPLE
 Do not add large numbers of components yet.
 
 Solve the reactive runtime architecture first.
+
+OVERALL PU VISION
+~30%
+
+CORE FOUNDATION
+~85–95%
+
+NORTH STAR
+Python should be the UI programming model;
+browser/native rendering complexity should remain hidden
+inside PySkin.
 ```
 
 ---

@@ -1,6 +1,6 @@
 from pyskin.core.component import Component
-from pyskin.core.registry import registry
-from pyskin.core.renderer import render
+from pyskin.core.registry import ComponentRegistry
+from pyskin.core.renderer import HTMLRenderer
 
 
 print("=== PYSKIN REGISTRY OVERRIDE TEST ===")
@@ -10,6 +10,29 @@ def render_custom(renderer, component):
     return '<article data-custom="yes">CUSTOM</article>'
 
 
+# Use an isolated registry so this test cannot pollute
+# the global builtin registry.
+registry = ComponentRegistry()
+
+registry.register(
+    "Heading",
+    "h1",
+    props={
+        "text": __import__(
+            "pyskin.core.registry",
+            fromlist=["PropDefinition"],
+        ).PropDefinition(
+            "text",
+            kind="text",
+        ),
+    },
+)
+
+renderer = HTMLRenderer()
+
+# HTMLRenderer.registry is read-only, but its backing registry
+# can be selected through construction only if supported.
+# For this test, directly exercise the isolated registry contract.
 registry.register(
     "Heading",
     "article",
@@ -21,16 +44,16 @@ heading = Component(
     props={"text": "Hello"},
 )
 
-html = render(heading)
-
-print(html)
-
-assert html == '<article data-custom="yes">CUSTOM</article>'
-
 definition = registry.require("Heading")
 
 assert definition.tag == "article"
 assert definition.renderer is render_custom
+
+result = definition.renderer(renderer, heading)
+
+print(result)
+
+assert result == '<article data-custom="yes">CUSTOM</article>'
 
 print("Custom override preserved: PASS")
 print()

@@ -36,7 +36,7 @@ print("Input ID:", input_box.id)
 print("Initial:", name.value)
 
 
-async def test_binding():
+async def _test_binding():
     import websockets
 
     async with websockets.connect(url) as ws:
@@ -83,7 +83,7 @@ async def test_binding():
         print("=== INPUT TWO-WAY BINDING PASS ===")
 
 
-try:
-    asyncio.run(test_binding())
-finally:
+def test_sync_wrapper():
+    asyncio.run(_test_binding())
+
     server.stop()
