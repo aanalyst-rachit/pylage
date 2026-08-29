@@ -41,3 +41,55 @@ def count_components(node: Any) -> int:
         count_components(child)
         for child in node.children
     )
+
+class TreeMutationObserver:
+    """Observe mutations anywhere inside a Component tree."""
+
+    def __init__(
+        self,
+        root: Component,
+        callback,
+    ) -> None:
+        if not isinstance(root, Component):
+            raise TypeError(
+                "TreeMutationObserver expects a Component root."
+            )
+
+        if not callable(callback):
+            raise TypeError(
+                "TreeMutationObserver callback must be callable."
+            )
+
+        self.root = root
+        self.callback = callback
+        self._subscriptions = []
+
+        self._bind_tree(root)
+
+    def _bind_tree(self, node: Any) -> None:
+        if not isinstance(node, Component):
+            return
+
+        unsubscribe = node.subscribe_mutation(
+            self._on_mutation
+        )
+
+        self._subscriptions.append(unsubscribe)
+
+        for child in node.children:
+            self._bind_tree(child)
+
+    def _on_mutation(self, event: dict[str, Any]) -> None:
+        for child in event.get("children", []):
+            self._bind_tree(child)
+
+        self.callback(event)
+
+    def stop(self) -> None:
+        """Remove all mutation subscriptions."""
+
+        for unsubscribe in self._subscriptions:
+            unsubscribe()
+
+        self._subscriptions.clear()
+

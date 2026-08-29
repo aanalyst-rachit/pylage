@@ -133,7 +133,349 @@ CLIENT_RUNTIME = r"""
     window.PySkin.onResponse = window.PySkin.onResponse || function (message) {
         console.log("[PySkin response]", message);
 
-        if (!message || message.type !== "update") {
+        if (!message) {
+            return;
+        }
+
+        if (message.type === "tree_move") {
+            if (
+                !message.component_id ||
+                !message.old_parent_id ||
+                !message.new_parent_id
+            ) {
+                return;
+            }
+
+            const component = document.querySelector(
+                '[data-pyskin-id="' +
+                CSS.escape(message.component_id) +
+                '"]'
+            );
+
+            const newParent = document.querySelector(
+                '[data-pyskin-id="' +
+                CSS.escape(message.new_parent_id) +
+                '"]'
+            );
+
+            if (!component || !newParent) {
+                return;
+            }
+
+            newParent.appendChild(component);
+
+            return;
+        }
+
+        if (message.type === "tree_add") {
+            const parent = document.querySelector(
+                '[data-pyskin-id="' + CSS.escape(message.parent_id) + '"]'
+            );
+
+            if (!parent || !Array.isArray(message.components)) {
+                return;
+            }
+
+            function createTreeNode(item) {
+                if (!item || !item.id) {
+                    return null;
+                }
+
+                const element = document.createElement(
+                    item.tag || "div"
+                );
+
+                element.setAttribute(
+                    "data-pyskin-id",
+                    item.id
+                );
+
+                if (item.events) {
+                    element.setAttribute(
+                        "data-pyskin-events",
+                        item.events
+                    );
+                }
+
+                const props = item.props || {};
+
+                Object.keys(props).forEach(function (name) {
+                    const value = props[name];
+
+                    if (name === "text") {
+                        element.textContent =
+                            value === null || value === undefined
+                                ? ""
+                                : String(value);
+                        return;
+                    }
+
+                    if (value !== null && value !== undefined) {
+                        element.setAttribute(
+                            name,
+                            String(value)
+                        );
+                    }
+                });
+
+                const children = item.children || [];
+
+                if (Array.isArray(children)) {
+                    children.forEach(function (child) {
+                        const childElement = createTreeNode(child);
+
+                        if (childElement) {
+                            element.appendChild(childElement);
+                        }
+                    });
+                }
+
+                return element;
+            }
+
+            message.components.forEach(function (item) {
+                const element = createTreeNode(item);
+
+                if (!element) {
+                    return;
+                }
+
+                if (
+                    typeof message.index === "number" &&
+                    message.index >= 0 &&
+                    message.index < parent.children.length
+                ) {
+                    parent.insertBefore(
+                        element,
+                        parent.children[message.index]
+                    );
+                } else {
+                    parent.appendChild(element);
+                }
+            });
+
+            return;
+        }
+
+        if (message.type === "tree_remove") {
+            if (!Array.isArray(message.component_ids)) {
+                return;
+            }
+
+            message.component_ids.forEach(function (componentId) {
+                if (!componentId) {
+                    return;
+                }
+
+                const component = document.querySelector(
+                    '[data-pyskin-id="' + CSS.escape(componentId) + '"]'
+                );
+
+                if (component) {
+                    component.remove();
+                }
+            });
+
+            return;
+        }
+
+        if (message.type === "tree_clear") {
+            const parent = document.querySelector(
+                '[data-pyskin-id="' +
+                CSS.escape(message.parent_id) +
+                '"]'
+            );
+
+            if (!parent || !Array.isArray(message.component_ids)) {
+                return;
+            }
+
+            const componentIds = new Set(
+                message.component_ids
+            );
+
+            Array.from(parent.children).forEach(function (child) {
+                const componentId = child.getAttribute(
+                    "data-pyskin-id"
+                );
+
+                if (componentIds.has(componentId)) {
+                    parent.removeChild(child);
+                }
+            });
+
+            return;
+        }
+
+        if (message.type === "tree_set_children") {
+            const parent = document.querySelector(
+                '[data-pyskin-id="' +
+                CSS.escape(message.parent_id) +
+                '"]'
+            );
+
+            if (!parent || !Array.isArray(message.children)) {
+                return;
+            }
+
+            function createTreeNode(item) {
+                if (!item || !item.id) {
+                    return null;
+                }
+
+                const element = document.createElement(
+                    item.tag || "div"
+                );
+
+                element.setAttribute(
+                    "data-pyskin-id",
+                    item.id
+                );
+
+                if (item.events) {
+                    element.setAttribute(
+                        "data-pyskin-events",
+                        item.events
+                    );
+                }
+
+                const props = item.props || {};
+
+                Object.keys(props).forEach(function (name) {
+                    const value = props[name];
+
+                    if (name === "text") {
+                        element.textContent =
+                            value === null || value === undefined
+                                ? ""
+                                : String(value);
+                        return;
+                    }
+
+                    if (value !== null && value !== undefined) {
+                        element.setAttribute(
+                            name,
+                            String(value)
+                        );
+                    }
+                });
+
+                const children = item.children || [];
+
+                if (Array.isArray(children)) {
+                    children.forEach(function (child) {
+                        const childElement = createTreeNode(child);
+
+                        if (childElement) {
+                            element.appendChild(childElement);
+                        }
+                    });
+                }
+
+                return element;
+            }
+
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
+
+            message.children.forEach(function (item) {
+                const element = createTreeNode(item);
+
+                if (element) {
+                    parent.appendChild(element);
+                }
+            });
+
+            return;
+        }
+
+        if (message.type === "tree_replace") {
+            const oldComponent = document.querySelector(
+                '[data-pyskin-id="' +
+                CSS.escape(message.old_component_id) +
+                '"]'
+            );
+
+            if (!oldComponent || !message.new_component) {
+                return;
+            }
+
+            const item = message.new_component;
+
+            if (!item.id) {
+                return;
+            }
+
+            const createTreeNode = function (item) {
+                if (!item || !item.id) {
+                    return null;
+                }
+
+                const element = document.createElement(
+                    item.tag || "div"
+                );
+
+                element.setAttribute(
+                    "data-pyskin-id",
+                    item.id
+                );
+
+                if (item.events) {
+                    element.setAttribute(
+                        "data-pyskin-events",
+                        item.events
+                    );
+                }
+
+                const props = item.props || {};
+
+                Object.keys(props).forEach(function (name) {
+                    const value = props[name];
+
+                    if (name === "text") {
+                        element.textContent =
+                            value === null || value === undefined
+                                ? ""
+                                : String(value);
+                        return;
+                    }
+
+                    if (value !== null && value !== undefined) {
+                        element.setAttribute(
+                            name,
+                            String(value)
+                        );
+                    }
+                });
+
+                const children = item.children || [];
+
+                if (Array.isArray(children)) {
+                    children.forEach(function (child) {
+                        const childElement = createTreeNode(child);
+
+                        if (childElement) {
+                            element.appendChild(childElement);
+                        }
+                    });
+                }
+
+                return element;
+            };
+
+            const newComponent = createTreeNode(item);
+
+            if (!newComponent) {
+                return;
+            }
+
+            oldComponent.replaceWith(newComponent);
+
+            return;
+        }
+
+        if (message.type !== "update") {
             return;
         }
 

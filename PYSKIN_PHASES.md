@@ -18,10 +18,10 @@ Repository: https://github.com/aanalyst-rachit/pyskin
 Branch: main
 
 Current stable checkpoint:
-- Commit: e23b73d
-- Tag: phase-2-precheck
-- Tests: 8 passed
-- Status: Stable before Phase 2
+- Commit: PENDING — current tree-mutation milestone
+- Tag: PENDING — phase-2-tree-mutation-precheck
+- Tests: 106 passed
+- Status: Tree mutation pipeline stable; reactive dependency/scheduler work remains
 
 Master blueprint:
 - `project pyskin blueprint.txt`
@@ -150,6 +150,69 @@ Important rule:
 Status: 🟢 ACTIVE
 
 Current phase.
+
+## Phase 2 — Completed Runtime Foundation
+
+The following tree-mutation infrastructure is now implemented and covered
+by focused runtime/protocol/client tests:
+
+- `Component.add()`
+- `Component.insert()`
+- `Component.remove()`
+- `Component.move_to()`
+- `Component.replace()`
+- `Component.clear()`
+- `Component.set_children()`
+
+Mutation event system:
+
+- Atomic mutation events
+- Mutation subscribers
+- Replace mutation events
+- Clear mutation events
+- Set-children mutation events
+- Correct parent ownership updates
+
+Tree protocol:
+
+- `tree_add`
+- `tree_remove`
+- `tree_move`
+- `tree_replace`
+- `tree_clear`
+- `tree_set_children`
+
+Runtime:
+
+- WebSocket mutation broadcasting
+- Recursive subtree serialization
+- Nested replacement support
+- Nested set-children support
+- Empty-clear no-op behavior
+
+Client runtime:
+
+- Indexed tree insertion
+- Tree move DOM patch
+- Recursive tree replacement
+- Tree clear DOM patch
+- Recursive tree set-children DOM replacement
+
+Validation:
+
+    Full test suite: 106 passed
+
+Architectural significance:
+
+> This establishes the mutation-to-DOM transport foundation required by
+> the later fine-grained reactive runtime.
+
+Important:
+
+> This does NOT mean Phase 2 reactive semantics are complete.
+> Dependency tracking, dirty-node tracking, scheduling, and batching
+> remain separate tasks.
+
 
 Main objective:
 
@@ -593,6 +656,10 @@ Do not begin this before the software architecture and benchmarks justify it.
 
 Current priority:
 
+    Tree Mutation Foundation
+            ↓
+       ✅ COMPLETE
+            ↓
     Phase 2A
        ↓
     Reactive Semantics
@@ -612,6 +679,14 @@ Current priority:
     Phase 2E
        ↓
     Batching
+
+Current active architectural task:
+
+    Audit mutation semantics
+            ↓
+    Validate no-op / ownership / event contracts
+            ↓
+    Begin Phase 2A reactive semantics
 
 Then:
 
@@ -726,23 +801,43 @@ Priority:
 
 Commit:
 
-    e23b73d
+    PENDING
 
 Message:
 
-    checkpoint: complete registry reactive runtime foundation
+    checkpoint: complete tree mutation pipeline
 
 Tag:
 
-    phase-2-precheck
+    phase-2-tree-mutation-precheck
 
 Tests:
 
-    8 passed
+    106 passed
 
 Working tree:
 
-    Stable checkpoint
+    Stable tree mutation milestone
+
+Milestone:
+
+    Component Mutation
+          ↓
+    Mutation Events
+          ↓
+    Tree Protocol
+          ↓
+    WebSocket Runtime
+          ↓
+    Recursive Client DOM Patches
+
+Next:
+
+    Mutation API semantic audit
+          ↓
+    Reactive Semantics
+          ↓
+    Dependency Graph
 
 ---
 

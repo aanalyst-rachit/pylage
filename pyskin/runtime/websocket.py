@@ -9,7 +9,7 @@ from websockets.asyncio.server import Server, ServerConnection, serve
 from pyskin.core.binding import StateBinding
 from pyskin.core.component import Component
 from pyskin.core.events import EventDispatcher
-from pyskin.core.protocol import EventMessage, UpdateMessage
+from pyskin.core.protocol import EventMessage, UpdateMessage, TreeAddMessage, TreeRemoveMessage, TreeMoveMessage, TreeReplaceMessage, TreeRemoveMessage, TreeMoveMessage, TreeClearMessage, TreeSetChildrenMessage
 
 
 class WebSocketServer:
@@ -46,6 +46,13 @@ class WebSocketServer:
         self._binding = StateBinding(
             root,
             self._on_state_change,
+        )
+
+        from pyskin.core.tree import TreeMutationObserver
+
+        self._tree_observer = TreeMutationObserver(
+            root,
+            self._on_tree_mutation,
         )
 
     @property
@@ -91,6 +98,260 @@ class WebSocketServer:
 
         asyncio.run_coroutine_threadsafe(
             self._broadcast(message.to_json()),
+            self._loop,
+        )
+
+    def _on_tree_mutation(
+        self,
+        event: dict[str, Any],
+    ) -> None:
+        mutation_type = event.get("type")
+
+        if mutation_type == "move":
+            component = event.get("component")
+            old_parent = event.get("old_parent")
+            new_parent = event.get("new_parent")
+
+            if not isinstance(component, Component):
+                return
+
+            if not isinstance(old_parent, Component):
+                return
+
+            if not isinstance(new_parent, Component):
+                return
+
+            message = TreeMoveMessage(
+                component_id=component.id,
+                old_parent_id=old_parent.id,
+                new_parent_id=new_parent.id,
+            )
+
+            raw_message = message.to_json()
+
+            if self._loop is None:
+                return
+
+            asyncio.run_coroutine_threadsafe(
+                self._broadcast(raw_message),
+                self._loop,
+            )
+
+            return
+
+        if mutation_type == "replace":
+            parent = event.get("parent")
+            old_child = event.get("old_child")
+            new_child = event.get("new_child")
+            index = event.get("index")
+
+            if not isinstance(parent, Component):
+                return
+
+            if not isinstance(old_child, Component):
+                return
+
+            if not isinstance(new_child, Component):
+                return
+
+            if not isinstance(index, int):
+                return
+
+            def serialize_component(component: Component) -> dict[str, Any]:
+                definition = self._get_component_definition(component)
+
+                return {
+                    "id": component.id,
+                    "type": component.type,
+                    "tag": (
+                        definition.tag
+                        if definition is not None
+                        else "div"
+                    ),
+                    "events": ",".join(component.events),
+                    "props": dict(component.props),
+                    "children": [
+                        serialize_component(child)
+                        for child in component.children
+                        if isinstance(child, Component)
+                    ],
+                }
+
+            component = serialize_component(new_child)
+
+            message = TreeReplaceMessage(
+                parent_id=parent.id,
+                old_component_id=old_child.id,
+                new_component=component,
+                index=index,
+            )
+
+            if self._loop is None:
+                return
+
+            asyncio.run_coroutine_threadsafe(
+                self._broadcast(message.to_json()),
+                self._loop,
+            )
+
+            return
+
+        if mutation_type == "set_children":
+            parent = event.get("parent")
+            children = event.get("children", [])
+
+            if not isinstance(parent, Component):
+                return
+
+            def serialize_component(component: Component) -> dict[str, Any]:
+                definition = self._get_component_definition(component)
+
+                return {
+                    "id": component.id,
+                    "type": component.type,
+                    "tag": (
+                        definition.tag
+                        if definition is not None
+                        else "div"
+                    ),
+                    "events": ",".join(component.events),
+                    "props": dict(component.props),
+                    "children": [
+                        serialize_component(child)
+                        for child in component.children
+                        if isinstance(child, Component)
+                    ],
+                }
+
+            serialized_children = [
+                serialize_component(child)
+                for child in children
+                if isinstance(child, Component)
+            ]
+
+            message = TreeSetChildrenMessage(
+                parent_id=parent.id,
+                children=serialized_children,
+            )
+
+            if self._loop is None:
+                return
+
+            asyncio.run_coroutine_threadsafe(
+                self._broadcast(message.to_json()),
+                self._loop,
+            )
+
+            return
+
+        if mutation_type == "clear":
+            parent = event.get("parent")
+            children = event.get("children", [])
+
+            if not isinstance(parent, Component):
+                return
+
+            component_ids = [
+                child.id
+                for child in children
+                if isinstance(child, Component)
+            ]
+
+            message = TreeClearMessage(
+                parent_id=parent.id,
+                component_ids=component_ids,
+            )
+
+            if self._loop is None:
+                return
+
+            asyncio.run_coroutine_threadsafe(
+                self._broadcast(message.to_json()),
+                self._loop,
+            )
+
+            return
+
+        if mutation_type == "remove":
+            parent = event.get("parent")
+            children = event.get("children", [])
+
+            if not isinstance(parent, Component):
+                return
+
+            component_ids = [
+                child.id
+                for child in children
+                if isinstance(child, Component)
+            ]
+
+            if not component_ids:
+                return
+
+            message = TreeRemoveMessage(
+                parent_id=parent.id,
+                component_ids=component_ids,
+            )
+
+            raw_message = message.to_json()
+
+            if self._loop is None:
+                return
+
+            asyncio.run_coroutine_threadsafe(
+                self._broadcast(raw_message),
+                self._loop,
+            )
+            return
+
+        if mutation_type != "add":
+            return
+
+        parent = event.get("parent")
+        children = event.get("children", [])
+
+        if not isinstance(parent, Component):
+            return
+
+        components = []
+
+        for child in children:
+            if not isinstance(child, Component):
+                continue
+
+            definition = self._get_component_definition(child)
+
+            components.append(
+                {
+                    "id": child.id,
+                    "type": child.type,
+                    "tag": (
+                        definition.tag
+                        if definition is not None
+                        else "div"
+                    ),
+                    "props": dict(child.props),
+                    "events": ",".join(child.events.keys()),
+                    "children": [],
+                }
+            )
+
+        if not components:
+            return
+
+        message = TreeAddMessage(
+            parent_id=parent.id,
+            components=components,
+            index=event.get("index"),
+        )
+
+        raw_message = message.to_json()
+
+        if self._loop is None:
+            return
+
+        asyncio.run_coroutine_threadsafe(
+            self._broadcast(raw_message),
             self._loop,
         )
 

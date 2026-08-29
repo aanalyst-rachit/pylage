@@ -9,6 +9,7 @@ from pyskin.core.registry import registry
 
 Child = Any
 EventHandler = Callable[..., Any]
+MutationSubscriber = Callable[[dict[str, Any]], None]
 
 
 @dataclass
@@ -18,10 +19,233 @@ class Component:
     children: list[Child] = field(default_factory=list)
     events: dict[str, EventHandler] = field(default_factory=dict)
     id: str = field(default_factory=lambda: uuid.uuid4().hex[:10])
+    _mutation_subscribers: list[MutationSubscriber] = field(
+        default_factory=list,
+        init=False,
+        repr=False,
+    )
 
     def add(self, *children: Child) -> "Component":
+        for child in children:
+            if isinstance(child, Component):
+                if child is self:
+                    raise ValueError(
+                        "A component cannot contain itself."
+                    )
+
+                child._parent = self
+
         self.children.extend(children)
+
+        event = {
+            "type": "add",
+            "parent": self,
+            "children": list(children),
+        }
+
+        for subscriber in tuple(self._mutation_subscribers):
+            subscriber(event)
+
         return self
+
+    def remove(self, child: Child) -> "Component":
+        """Remove a child and notify mutation subscribers."""
+
+        try:
+            self.children.remove(child)
+        except ValueError:
+            raise ValueError(
+                "Child is not present in this component."
+            ) from None
+
+        event = {
+            "type": "remove",
+            "parent": self,
+            "children": [child],
+        }
+
+        for subscriber in tuple(self._mutation_subscribers):
+            subscriber(event)
+
+        return self
+
+    def move_to(self, new_parent: "Component") -> "Component":
+        if not isinstance(new_parent, Component):
+            raise TypeError(
+                "move_to expects a Component parent."
+            )
+
+        if self is new_parent:
+            raise ValueError(
+                "A component cannot be moved into itself."
+            )
+
+        old_parent = self._parent
+
+        if old_parent is None:
+            raise ValueError(
+                "Component is not attached to a parent."
+            )
+
+        if self not in old_parent.children:
+            raise ValueError(
+                "Component parent relationship is inconsistent."
+            )
+
+        old_parent.children.remove(self)
+        self._parent = new_parent
+        new_parent.children.append(self)
+
+        event = {
+            "type": "move",
+            "component": self,
+            "old_parent": old_parent,
+            "new_parent": new_parent,
+        }
+
+        for subscriber in tuple(
+            new_parent._mutation_subscribers
+        ):
+            subscriber(event)
+
+        return self
+
+    def insert(
+        self,
+        index: int,
+        *children: Child,
+    ) -> "Component":
+        if not isinstance(index, int):
+            raise TypeError(
+                "insert index must be an integer."
+            )
+
+        if not children:
+            raise ValueError(
+                "insert requires at least one child."
+            )
+
+        normalized_index = index
+
+        for offset, child in enumerate(children):
+            self.children.insert(
+                normalized_index + offset,
+                child,
+            )
+
+            if isinstance(child, Component):
+                child._parent = self
+
+        event = {
+            "type": "add",
+            "parent": self,
+            "children": list(children),
+            "index": normalized_index,
+        }
+
+        for subscriber in tuple(self._mutation_subscribers):
+            subscriber(event)
+
+        return self
+
+    def replace(
+        self,
+        old_child: Child,
+        new_child: Child,
+    ) -> "Component":
+        try:
+            index = self.children.index(old_child)
+        except ValueError as exc:
+            raise ValueError(
+                "Child is not attached to this parent."
+            ) from exc
+
+        self.children[index] = new_child
+
+        if isinstance(old_child, Component):
+            old_child._parent = None
+
+        if isinstance(new_child, Component):
+            new_child._parent = self
+
+        event = {
+            "type": "replace",
+            "parent": self,
+            "old_child": old_child,
+            "new_child": new_child,
+            "index": index,
+        }
+
+        for subscriber in tuple(self._mutation_subscribers):
+            subscriber(event)
+
+        return self
+
+    def clear(self) -> "Component":
+        removed_children = list(self.children)
+
+        if not removed_children:
+            return self
+
+        self.children.clear()
+
+        for child in removed_children:
+            if isinstance(child, Component):
+                child._parent = None
+
+        event = {
+            "type": "clear",
+            "parent": self,
+            "children": removed_children,
+        }
+
+        for subscriber in tuple(self._mutation_subscribers):
+            subscriber(event)
+
+        return self
+
+    def set_children(
+        self,
+        *children: Child,
+    ) -> "Component":
+        old_children = list(self.children)
+
+        self.children = list(children)
+
+        for child in old_children:
+            if isinstance(child, Component):
+                child._parent = None
+
+        for child in self.children:
+            if isinstance(child, Component):
+                child._parent = self
+
+        event = {
+            "type": "set_children",
+            "parent": self,
+            "old_children": old_children,
+            "children": list(self.children),
+        }
+
+        for subscriber in tuple(self._mutation_subscribers):
+            subscriber(event)
+
+        return self
+
+    def subscribe_mutation(
+        self,
+        callback: MutationSubscriber,
+    ) -> Callable[[], None]:
+        if not callable(callback):
+            raise TypeError("mutation subscriber must be callable")
+
+        self._mutation_subscribers.append(callback)
+
+        def unsubscribe() -> None:
+            if callback in self._mutation_subscribers:
+                self._mutation_subscribers.remove(callback)
+
+        return unsubscribe
 
     def on(
         self,
