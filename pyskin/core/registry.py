@@ -186,6 +186,11 @@ registry.register(
             "text",
             kind="text",
         ),
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
         "value": PropDefinition(
             "value",
             kind="attribute",

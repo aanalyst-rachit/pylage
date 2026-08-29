@@ -66,9 +66,24 @@ class WebSocketServer:
     ) -> None:
         """Called whenever a bound State changes."""
 
+        definition = self._get_component_definition(component)
+
+        prop_meta = {}
+        if definition is not None and definition.props:
+            for prop_name in props:
+                prop_definition = definition.props.get(prop_name)
+                if prop_definition is None:
+                    continue
+
+                prop_meta[prop_name] = {
+                    "kind": prop_definition.kind,
+                    "html_name": prop_definition.html_name,
+                }
+
         message = UpdateMessage(
             component_id=component.id,
             props=props,
+            prop_meta=prop_meta,
         )
 
         if self._loop is None or self._server is None:
@@ -78,6 +93,12 @@ class WebSocketServer:
             self._broadcast(message.to_json()),
             self._loop,
         )
+
+    def _get_component_definition(self, component: Component):
+        """Resolve registry metadata for a component."""
+        from pyskin.core.registry import registry
+
+        return registry.get(component.type)
 
     async def _broadcast(self, raw_message: str) -> None:
         """Send a state update to every connected browser."""

@@ -77,23 +77,17 @@ class UpdateMessage:
 
     component_id: str
     props: dict[str, Any]
-    prop_meta: dict[str, dict[str, Any]] | None = None
 
     @property
     def type(self) -> str:
         return "update"
 
     def to_dict(self) -> dict[str, Any]:
-        message: dict[str, Any] = {
+        return {
             "type": self.type,
             "id": self.component_id,
             "props": self.props,
         }
-
-        if self.prop_meta is not None:
-            message["prop_meta"] = self.prop_meta
-
-        return message
 
     def to_json(self) -> str:
         return json.dumps(
@@ -114,7 +108,6 @@ class UpdateMessage:
 
         component_id = data.get("id")
         props = data.get("props")
-        prop_meta = data.get("prop_meta")
 
         if not isinstance(component_id, str) or not component_id:
             raise ValueError("Update message requires a valid id.")
@@ -122,15 +115,9 @@ class UpdateMessage:
         if not isinstance(props, dict):
             raise ValueError("Update message requires props.")
 
-        if prop_meta is not None and not isinstance(prop_meta, dict):
-            raise ValueError(
-                "Update message prop_meta must be a dictionary."
-            )
-
         return cls(
             component_id=component_id,
             props=props,
-            prop_meta=prop_meta,
         )
 
     @classmethod
@@ -138,8 +125,6 @@ class UpdateMessage:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:
-            raise ValueError(
-                "Invalid JSON update message."
-            ) from exc
+            raise ValueError("Invalid JSON update message.") from exc
 
         return cls.from_dict(decoded)

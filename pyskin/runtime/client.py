@@ -145,19 +145,41 @@ CLIENT_RUNTIME = r"""
             return;
         }
 
+          const propMeta = message.prop_meta || {};
+
           Object.keys(message.props).forEach(function (propName) {
               const value = message.props[propName];
+              const meta = propMeta[propName] || {};
+              const kind = meta.kind || "attribute";
+              const htmlName = meta.html_name || propName;
+
+              if (kind === "text") {
+                  component.textContent =
+                      value === null || value === undefined
+                          ? ""
+                          : String(value);
+                  return;
+              }
+
+              if (kind === "boolean") {
+                  if (value) {
+                      component.setAttribute(htmlName, "");
+                  } else {
+                      component.removeAttribute(htmlName);
+                  }
+                  return;
+              }
 
               if (value === null || value === undefined) {
-                  component.removeAttribute(propName);
+                  component.removeAttribute(htmlName);
 
-                  if (propName in component) {
+                  if (htmlName in component) {
                       try {
-                          component[propName] = value;
+                          component[htmlName] = value;
                       } catch (error) {
                           console.warn(
                               "[PySkin] Failed to clear DOM property:",
-                              propName,
+                              htmlName,
                               error
                           );
                       }
@@ -166,31 +188,21 @@ CLIENT_RUNTIME = r"""
                   return;
               }
 
-              if (propName in component) {
+              if (htmlName in component) {
                   try {
-                      component[propName] = value;
+                      component[htmlName] = value;
                       return;
                   } catch (error) {
                       console.warn(
                           "[PySkin] DOM property update failed:",
-                          propName,
+                          htmlName,
                           error
                       );
                   }
               }
 
-              if (value === false) {
-                  component.removeAttribute(propName);
-                  return;
-              }
-
-              if (value === true) {
-                  component.setAttribute(propName, "");
-                  return;
-              }
-
               component.setAttribute(
-                  propName,
+                  htmlName,
                   String(value)
               );
           });
