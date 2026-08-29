@@ -263,14 +263,6 @@ class HTMLRenderer:
                 if value is not None:
                     text_values.append(escape(str(value)))
 
-        # Backward-compatible built-in "text" prop behavior.
-        if not text_values:
-            text = self._value(
-                component.props.get("text")
-            )
-
-            if text is not None:
-                text_values.append(escape(str(text)))
 
         if text_values:
             children = "".join(text_values) + children

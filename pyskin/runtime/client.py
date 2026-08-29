@@ -145,39 +145,55 @@ CLIENT_RUNTIME = r"""
             return;
         }
 
-        Object.keys(message.props).forEach(function (propName) {
-            const value = message.props[propName];
+          Object.keys(message.props).forEach(function (propName) {
+              const value = message.props[propName];
 
-            if (propName === "text") {
-                component.textContent = String(value);
-                return;
-            }
+              if (value === null || value === undefined) {
+                  component.removeAttribute(propName);
 
-            if (propName === "value") {
-                component.value = value;
-                return;
-            }
+                  if (propName in component) {
+                      try {
+                          component[propName] = value;
+                      } catch (error) {
+                          console.warn(
+                              "[PySkin] Failed to clear DOM property:",
+                              propName,
+                              error
+                          );
+                      }
+                  }
 
-            if (propName === "disabled") {
-                component.disabled = Boolean(value);
-                return;
-            }
+                  return;
+              }
 
-            if (propName === "class") {
-                component.className = String(value);
-                return;
-            }
+              if (propName in component) {
+                  try {
+                      component[propName] = value;
+                      return;
+                  } catch (error) {
+                      console.warn(
+                          "[PySkin] DOM property update failed:",
+                          propName,
+                          error
+                      );
+                  }
+              }
 
-            if (propName === "title") {
-                component.title = String(value);
-                return;
-            }
+              if (value === false) {
+                  component.removeAttribute(propName);
+                  return;
+              }
 
-            console.warn(
-                "[PySkin] Unsupported reactive prop:",
-                propName
-            );
-        });
+              if (value === true) {
+                  component.setAttribute(propName, "");
+                  return;
+              }
+
+              component.setAttribute(
+                  propName,
+                  String(value)
+              );
+          });
 
         window.PySkin.onUpdate = window.PySkin.onUpdate || function () {};
         window.PySkin.onUpdate(message);

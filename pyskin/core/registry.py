@@ -70,6 +70,34 @@ class ComponentRegistry:
                         f"{name!r} != {definition.name!r}"
                     )
 
+
+                if definition.html_name is not None:
+                    if not isinstance(definition.html_name, str):
+                        raise TypeError(
+                            f"html_name must be a string or None, "
+                            f"got {type(definition.html_name).__name__}"
+                        )
+
+                    if not definition.html_name:
+                        raise ValueError(
+                            "html_name must be a non-empty string"
+                        )
+                if not isinstance(definition.reactive, bool):
+                    raise TypeError(
+                        f"reactive must be a bool, "
+                        f"got {type(definition.reactive).__name__}"
+                    )
+
+                if definition.kind not in {
+                    "attribute",
+                    "boolean",
+                    "text",
+                }:
+                    raise ValueError(
+                        f"unsupported prop kind: "
+                        f"{definition.kind!r}"
+                    )
+
         definition = ComponentDefinition(
             type=type,
             tag=tag,
