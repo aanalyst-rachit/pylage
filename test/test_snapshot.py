@@ -1,5 +1,11 @@
+import copy
+import json
+
+import pytest
+
 from pyskin.core.component import Component
 from pyskin.core.snapshot import component_to_snapshot
+from pyskin.core.state import State
 
 
 def test_component_to_snapshot_serializes_component():
@@ -98,3 +104,207 @@ def test_component_to_snapshot_unknown_component_uses_div_tag():
     assert snapshot["type"] == "UnknownComponent"
     assert snapshot["tag"] == "div"
     assert snapshot["props"] == {"foo": "bar"}
+
+
+def test_snapshot_state_prop_uses_current_state_value():
+    state = State("initial")
+
+    component = Component(
+        type="Button",
+        props={"text": state},
+    )
+
+    snapshot = component_to_snapshot(component)
+
+    assert snapshot["props"]["text"] == "initial"
+    assert not isinstance(snapshot["props"]["text"], State)
+
+    state.set("updated")
+
+    assert snapshot["props"]["text"] == "initial"
+
+
+def test_snapshot_nested_state_is_unwrapped_recursively():
+    state = State(
+        {
+            "user": {
+                "name": "Racit",
+                "roles": ["admin", "developer"],
+            },
+            "count": 3,
+        }
+    )
+
+    component = Component(
+        type="Column",
+        props={"data": state},
+    )
+
+    snapshot = component_to_snapshot(component)
+
+    assert snapshot["props"]["data"] == {
+        "user": {
+            "name": "Racit",
+            "roles": ["admin", "developer"],
+        },
+        "count": 3,
+    }
+
+
+def test_snapshot_preserves_event_registration_order():
+    button = Component(type="Button")
+
+    button.on("click", lambda: None)
+    button.on("focus", lambda: None)
+    button.on("submit", lambda: None)
+
+    snapshot = component_to_snapshot(button)
+
+    assert snapshot["events"] == "click,focus,submit"
+
+
+def test_snapshot_unknown_component_is_still_serializable():
+    component = Component(
+        type="FutureComponent",
+        props={
+            "value": State(
+                {
+                    "enabled": True,
+                    "items": [1, 2, 3],
+                }
+            )
+        },
+    )
+
+    snapshot = component_to_snapshot(component)
+
+    assert snapshot["type"] == "FutureComponent"
+    assert snapshot["tag"] == "div"
+    assert json.dumps(snapshot)
+
+
+def test_snapshot_is_json_serializable():
+    component = Component(
+        type="Button",
+        props={
+            "text": State("Save"),
+            "disabled": State(False),
+            "metadata": {
+                "count": 5,
+                "items": ["a", "b"],
+            },
+        },
+    )
+
+    snapshot = component_to_snapshot(component)
+
+    encoded = json.dumps(snapshot)
+    decoded = json.loads(encoded)
+
+    assert decoded == snapshot
+
+
+def test_snapshot_immutability_for_nested_props():
+    metadata = {
+        "user": {
+            "name": "Racit",
+        },
+        "items": ["one", "two"],
+    }
+
+    component = Component(
+        type="Button",
+        props={"metadata": metadata},
+    )
+
+    snapshot = component_to_snapshot(component)
+
+    metadata["user"]["name"] = "Changed"
+    metadata["items"].append("three")
+
+    assert snapshot["props"]["metadata"] == {
+        "user": {
+            "name": "Racit",
+        },
+        "items": ["one", "two"],
+    }
+
+
+def test_snapshot_immutability_against_component_prop_replacement():
+    component = Component(
+        type="Button",
+        props={
+            "text": "Before",
+        },
+    )
+
+    snapshot = component_to_snapshot(component)
+
+    component.props["text"] = "After"
+
+    assert snapshot["props"]["text"] == "Before"
+
+
+def test_snapshot_immutability_with_nested_state_value():
+    value = {
+        "user": {
+            "name": "Racit",
+        }
+    }
+
+    state = State(value)
+
+    component = Component(
+        type="Button",
+        props={"data": state},
+    )
+
+    snapshot = component_to_snapshot(component)
+
+    value["user"]["name"] = "Changed"
+
+    assert snapshot["props"]["data"]["user"]["name"] == "Racit"
+
+    state.set(
+        {
+            "user": {
+                "name": "Updated",
+            }
+        }
+    )
+
+    assert snapshot["props"]["data"]["user"]["name"] == "Racit"
+
+
+def test_snapshot_does_not_share_mutable_children():
+    child = Component(
+        type="Button",
+        props={
+            "data": {
+                "items": ["original"],
+            }
+        },
+    )
+
+    root = Component(type="Column")
+    root.add(child)
+
+    snapshot = component_to_snapshot(root)
+
+    child.props["data"]["items"].append("changed")
+
+    assert snapshot["children"][0]["props"]["data"] == {
+        "items": ["original"],
+    }
+
+
+def test_snapshot_rejects_non_json_serializable_prop():
+    component = Component(
+        type="Button",
+        props={
+            "callback": lambda: None,
+        },
+    )
+
+    with pytest.raises(TypeError, match="JSON serializable"):
+        component_to_snapshot(component)
