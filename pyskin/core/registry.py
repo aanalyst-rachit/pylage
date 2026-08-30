@@ -160,11 +160,541 @@ registry = ComponentRegistry()
 
 # Built-in PySkin component definitions.
 #
+# Text is a first-class UI component. Its text prop becomes
+# the rendered element content.
+
+registry.register(
+    "Text",
+    "div",
+    props={
+        "text": PropDefinition(
+            "text",
+            kind="text",
+        ),
+    },
+)
+
+#
+registry.register(
+    "Card",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+registry.register(
+    "Tabs",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+
+registry.register(
+    "DatePicker",
+    "input",
+    void=True,
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+        "value": PropDefinition(
+            "value",
+            kind="attribute",
+            html_name="value",
+        ),
+        "min": PropDefinition(
+            "min",
+            kind="attribute",
+            html_name="min",
+        ),
+        "max": PropDefinition(
+            "max",
+            kind="attribute",
+            html_name="max",
+        ),
+    },
+)
+
+
+
+registry.register(
+    "Alert",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+        "text": PropDefinition(
+            "text",
+            kind="text",
+        ),
+    },
+)
+
+
+
+registry.register(
+    "Toast",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+        "text": PropDefinition(
+            "text",
+            kind="text",
+        ),
+    },
+)
+
+
+
+registry.register(
+    "Spinner",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+        "text": PropDefinition(
+            "text",
+            kind="text",
+        ),
+    },
+)
+
+
+
+registry.register(
+    "ProgressBar",
+    "progress",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+        "value": PropDefinition(
+            "value",
+            kind="attribute",
+            html_name="value",
+        ),
+        "max": PropDefinition(
+            "max",
+            kind="attribute",
+            html_name="max",
+        ),
+        "text": PropDefinition(
+            "text",
+            kind="text",
+        ),
+    },
+)
+
+
+
+registry.register(
+    "Skeleton",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+        "text": PropDefinition(
+            "text",
+            kind="text",
+        ),
+    },
+)
+
+
+
+registry.register(
+    "Breadcrumbs",
+    "nav",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+
+
+registry.register(
+    "Pagination",
+    "nav",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+
+
+registry.register(
+    "Menu",
+    "menu",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+
+
+registry.register(
+    "Drawer",
+    "aside",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+
+
+registry.register(
+    "Tooltip",
+    "span",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+
+
+registry.register(
+    "Popover",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+
 # Rendering behavior lives in HTMLRenderer, while the registry
 # owns the public component -> HTML tag + prop contract.
 registry.register(
+    "RadioGroup",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Switch",
+    "input",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+        "checked": PropDefinition(
+            "checked",
+            kind="boolean",
+            html_name="checked",
+        ),
+    },
+)
+
+registry.register(
+    "Select",
+    "select",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+        "value": PropDefinition(
+            "value",
+            kind="attribute",
+            html_name="value",
+        ),
+    },
+)
+
+registry.register(
+    "Slider",
+    "input",
+    void=True,
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+        "value": PropDefinition(
+            "value",
+            kind="attribute",
+            html_name="value",
+        ),
+        "min": PropDefinition(
+            "min",
+            kind="attribute",
+            html_name="min",
+        ),
+        "max": PropDefinition(
+            "max",
+            kind="attribute",
+            html_name="max",
+        ),
+        "step": PropDefinition(
+            "step",
+            kind="attribute",
+            html_name="step",
+        ),
+    },
+)
+
+registry.register(
+    "Form",
+    "form",
+)
+
+registry.register(
+    "Table",
+    "table",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Dialog",
+    "dialog",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Navigation",
+    "nav",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Checkbox",
+    "input",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+        "checked": PropDefinition(
+            "checked",
+            kind="boolean",
+            html_name="checked",
+        ),
+    },
+)
+
+
+registry.register(
+    "Divider",
+    "hr",
+    void=True,
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
     "Column",
     "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
 )
 
 registry.register(

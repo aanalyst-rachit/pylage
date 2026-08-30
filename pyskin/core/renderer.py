@@ -26,6 +26,18 @@ class HTMLRenderer:
             "Column": lambda renderer, component:
                 renderer._render_column(component),
 
+            "Dialog": lambda renderer, component:
+                renderer._render_dialog(component),
+
+            "Table": lambda renderer, component:
+                renderer._render_table(component),
+
+            "Form": lambda renderer, component:
+                renderer._render_form(component),
+
+            "Text": lambda renderer, component:
+                renderer._render_text(component),
+
             "Heading": lambda renderer, component:
                 renderer._render_heading(component),
 
@@ -97,6 +109,15 @@ class HTMLRenderer:
         excluded = excluded or set()
 
         definition = self.registry.get(component.type)
+
+        # Input-like components with fixed HTML input types.
+        if component.type in {"Checkbox", "Switch"}:
+            component.props.setdefault("_html_type", "checkbox")
+        elif component.type == "Slider":
+            component.props.setdefault("_html_type", "range")
+        elif component.type == "DatePicker":
+            component.props.setdefault("_html_type", "date")
+
         prop_definitions = (
             definition.props
             if definition is not None and definition.props is not None
@@ -116,6 +137,9 @@ class HTMLRenderer:
 
             prop_definition = prop_definitions.get(name)
 
+            if name == "_html_type":
+                html_name = "type"
+                kind = "attribute"
             # Registry metadata controls the HTML attribute name.
             if prop_definition is not None:
                 html_name = prop_definition.html_name or name
@@ -125,6 +149,12 @@ class HTMLRenderer:
                 # HTML naming is owned by registry metadata.
                 html_name = name
                 kind = "attribute"
+
+            if name == "_html_type":
+                attributes.append(
+                    f'type="{escape(str(value), quote=True)}"'
+                )
+                continue
 
             if kind == "boolean":
                 if value:
@@ -152,14 +182,73 @@ class HTMLRenderer:
 
         return " " + " ".join(attributes)
 
-    def _render_column(self, component: Component) -> str:
+    def _render_form(self, component: Component) -> str:
         common = self._render_common_attributes(component)
+        attributes = common + self._render_prop_attributes(
+            component,
+            excluded={"children"},
+        )
         children = self._render_children(component)
 
         return (
-            f'<div {common} '
+            f"<form {attributes}>"
+            f"{children}"
+            f"</form>"
+        )
+
+    def _render_table(self, component: Component) -> str:
+        common = self._render_common_attributes(component)
+        attributes = common + self._render_prop_attributes(
+            component,
+            excluded={"children"},
+        )
+        children = self._render_children(component)
+
+        return (
+            f"<table {attributes}>"
+            f"{children}"
+            f"</table>"
+        )
+
+    def _render_dialog(self, component: Component) -> str:
+        common = self._render_common_attributes(component)
+        attributes = common + self._render_prop_attributes(
+            component,
+            excluded={"children"},
+        )
+        children = self._render_children(component)
+
+        return (
+            f"<dialog {attributes}>"
+            f"{children}"
+            f"</dialog>"
+        )
+
+    def _render_column(self, component: Component) -> str:
+        common = self._render_common_attributes(component)
+        props = self._render_prop_attributes(
+            component,
+            excluded={"children"},
+        )
+        children = self._render_children(component)
+
+        return (
+            f'<div {common}{props} '
             f'style="display:flex;flex-direction:column;">'
             f'{children}</div>'
+        )
+
+    def _render_text(self, component: Component) -> str:
+        common = self._render_common_attributes(component)
+
+        text = self._value(
+            component.props.get("text", "")
+        )
+
+        return (
+            f"<div {common}>"
+            f"{escape(str(text))}"
+            f"</div>"
         )
 
     def _render_heading(self, component: Component) -> str:
@@ -187,6 +276,9 @@ class HTMLRenderer:
             component,
             excluded={"children"},
         )
+
+        if component.type == "Slider":
+            attributes += ' type="range"'
 
         return (
             f"<input {common}{events}"
@@ -239,6 +331,10 @@ class HTMLRenderer:
             component,
             excluded={"text", "children"},
         )
+
+        # Slider is rendered as an HTML range input.
+        if component.type == "Slider":
+            generic_attributes += ' type="range"'
 
         if definition is not None and definition.void:
             return (

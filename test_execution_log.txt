@@ -1,0 +1,753 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /home/racit/Desktop/curser project/pyskin/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/racit/Desktop/curser project/pyskin
+configfile: pytest.ini
+plugins: playwright-0.9.0, asyncio-1.4.0, base-url-2.1.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... === PYSKIN BROWSER GENERIC REACTIVE PROP TEST ===
+Generic prop iteration: PASS
+No hard-coded reactive prop dispatch: PASS
+Generic DOM patching: PASS
+Embedded client runtime: PASS
+
+=== BROWSER GENERIC REACTIVE PROP TEST PASS ===
+=== PYSKIN CLIENT RUNTIME TEST ===
+Runtime bytes: 17137
+Runtime present: PASS
+Event detection logic: PASS
+Event message generation: PASS
+=== CLIENT RUNTIME PASS ===
+=== PYSKIN COMPONENT TREE ===
+Column [ccb4020321]
+  Heading [7b38654390]
+    props={'text': 'Hello pyskin'}
+  'Plain text'
+  Button [77cbbc8044]
+    props={'text': 'Click me', 'variant': 'primary'}
+
+=== COMPONENT IDS ===
+ccb4020321
+7b38654390
+77cbbc8044
+
+=== COUNTS ===
+Components: 3
+Unique IDs: 3
+Children of root: 3
+=== PYSKIN EVENT MODEL TEST ===
+Type: Button
+Props: {'text': 'Click me'}
+Events: ['click']
+Handler: <function clicked at 0x7ef6118660c0>
+Calls: ['clicked']
+=== EVENT MODEL PASS ===
+=== PYSKIN EVENT DISPATCH TEST ===
+Component indexed: True
+Click event: True
+Change event: True
+Click result: None
+Calls: ['clicked', {'value': 'hello'}]
+=== EVENT DISPATCH PASS ===
+=== PYSKIN EVENT RENDER TEST ===
+<button data-pyskin-id="b9da2649ab" data-pyskin-events="click">Click me</button>
+Event metadata: PASS
+Callback isolation: PASS
+No-event regression: PASS
+=== EVENT RENDER PASS ===
+=== PYSKIN GENERIC VOID RENDER TEST ===
+<hr data-pyskin-id="b833b8d2b6" class="separator" title="Section divider">
+Registry void contract: PASS
+Generic void rendering: PASS
+Void has no closing tag: PASS
+
+=== GENERIC VOID RENDER PASS ===
+=== PYSKIN INPUT TWO-WAY BINDING TEST ===
+WebSocket: ws://127.0.0.1:44945/
+Heading ID: 15559ce258
+Input ID: fd17e45e17
+Initial: Dollar
+=== PYSKIN EVENT PROTOCOL TEST ===
+Dict: {'type': 'event', 'id': 'abc123', 'event': 'click'}
+JSON: {"type":"event","id":"abc123","event":"click"}
+Round trip: EventMessage(component_id='abc123', event='click', payload=None)
+Payload JSON: {"type":"event","id":"xyz789","event":"change","payload":{"value":"hello"}}
+Payload round trip: EventMessage(component_id='xyz789', event='change', payload={'value': 'hello'})
+=== EVENT PROTOCOL PASS ===
+=== PYSKIN REACTIVE COUNTER TEST ===
+WebSocket: ws://127.0.0.1:45671/
+Initial: 0
+Heading ID: a792c7490e
+Button ID: 07d26cafc1
+=== PYSKIN GENERIC REACTIVE PROPS TEST ===
+WebSocket: ws://127.0.0.1:42717/
+Component ID: f026bc4ef7
+Initial:
+  text = Hello
+  value = 100
+  disabled = False
+  title = Initial title
+=== PYSKIN COMPONENT REGISTRY TEST ===
+Built-in components: PASS
+Custom registration: PASS
+Unregister: PASS
+
+=== COMPONENT REGISTRY PASS ===
+=== PYSKIN BUILTIN PROP CONTRACT TEST ===
+<h1 data-pyskin-id="2da29a4141">Hello</h1>
+Heading text contract: PASS
+<button data-pyskin-id="3d7e86f4d2" value="save" disabled title="Save button">Save</button>
+Button prop contract: PASS
+<button data-pyskin-id="51ec9cac2f">Save</button>
+Boolean false contract: PASS
+<input data-pyskin-id="f2808a8be6" data-pyskin-events="input,change" value="Dollar" disabled title="Name input">
+Input prop contract: PASS
+
+=== BUILTIN PROP CONTRACT PASS ===
+=== PYSKIN COMPONENT REGISTRY CONTRACT TEST ===
+Component(type='Button', id='cd12e6e8e4', props={'text': 'Save', 'value': 'save', 'disabled': True, 'title': 'Save button'}, children=[], events=[])
+Built-in props accepted: PASS
+Event props separated: PASS
+Custom registered props accepted: PASS
+Unknown component compatibility: PASS
+
+=== COMPONENT REGISTRY CONTRACT PASS ===
+=== PYSKIN CUSTOM REGISTRY PROP RENDERING TEST ===
+<section data-pyskin-id="06ab5b5d3c" class="premium-card" hidden data-id="card-01">Hello Card</section>
+Registry text props: PASS
+Registry HTML names: PASS
+Registry boolean props: PASS
+Registry custom attributes: PASS
+<section data-pyskin-id="d9998bb18f">Title<h1 data-pyskin-id="58e0e9938b">Child</h1></section>
+Text prop + children: PASS
+
+=== CUSTOM REGISTRY PROP RENDERING PASS ===
+=== PYSKIN CUSTOM RENDERER PROTECTION TEST ===
+Custom renderer registration: PASS
+Custom renderer preservation: PASS
+Custom renderer remains functional: PASS
+
+=== CUSTOM RENDERER PROTECTION PASS ===
+=== PYSKIN REGISTRY DOM METADATA TEST ===
+Registry HTML metadata: PASS
+DOM mapping metadata: PASS
+
+=== REGISTRY DOM METADATA TEST PASS ===
+=== PYSKIN REGISTRY GENERIC TEXT CONTRACT TEST ===
+<section data-pyskin-id="72b1651e8e" data-id="card-01">Premium Card</section>
+Registry-defined text prop rendering: PASS
+<article data-pyskin-id="e63b111345">Dynamic Panel</article>
+Arbitrary registry text prop: PASS
+
+=== REGISTRY GENERIC TEXT CONTRACT PASS ===
+=== PYSKIN REGISTRY GLOBAL PROP ALIAS TEST ===
+<div data-pyskin-id="db799523f2" class="probe" for="target"></div>
+Registry class_name → class: PASS
+Registry html_for → for: PASS
+Renderer alias fallback removed: PASS
+
+=== REGISTRY GLOBAL PROP ALIAS PASS ===
+=== PYSKIN PROP HTML NAME CONTRACT TEST ===
+None html_name: PASS
+Valid html_name: PASS
+Empty html_name rejection: PASS
+Non-string html_name rejection: PASS
+
+=== PROP HTML NAME CONTRACT PASS ===
+=== PYSKIN REGISTRY NO BUILTIN DISPATCH TEST ===
+No builtin dispatch in _render_component: PASS
+Registry-driven component resolution: PASS
+
+=== REGISTRY NO BUILTIN DISPATCH TEST PASS ===
+=== PYSKIN REGISTRY OVERRIDE TEST ===
+<article data-custom="yes">CUSTOM</article>
+Custom override preserved: PASS
+
+=== REGISTRY OVERRIDE PASS ===
+=== PYSKIN PROP KIND CONTRACT TEST ===
+Supported prop kinds: PASS
+Invalid prop kind rejection: PASS
+Empty prop kind rejection: PASS
+
+=== PROP KIND CONTRACT PASS ===
+=== PYSKIN REGISTRY PROP MAPPING TEST ===
+WebSocket: ws://127.0.0.1:33521/
+Component ID: d8227d01b6
+=== PYSKIN REGISTRY PROPS TEST ===
+Prop registration: PASS
+Prop metadata storage: PASS
+Prop definition contract: PASS
+
+=== REGISTRY PROPS PASS ===
+=== PYSKIN PROP REACTIVE CONTRACT TEST ===
+Boolean reactive values: PASS
+Non-boolean reactive rejection: PASS
+
+=== PROP REACTIVE CONTRACT PASS ===
+=== PYSKIN REGISTRY REACTIVE UPDATE CONTRACT TEST ===
+Registry reactive metadata: PASS
+State change notification: PASS
+State-backed component prop: PASS
+
+=== REGISTRY REACTIVE UPDATE CONTRACT PASS ===
+=== PYSKIN REGISTRY RENDER METADATA TEST ===
+Rendered HTML:
+<button data-pyskin-id="8ad716e1c7" value="123" disabled title="Save button">Save</button>
+Registry-driven HTML rendering: PASS
+Registry prop metadata: PASS
+
+=== REGISTRY RENDER METADATA TEST PASS ===
+=== PYSKIN REGISTRY → RENDERER CONTRACT TEST ===
+Builtin registry coverage: PASS
+Registry renderer attachment: PASS
+Renderer registry resolution: PASS
+Component contracts: PASS
+
+=== REGISTRY → RENDERER CONTRACT PASS ===
+=== PYSKIN REGISTRY RENDERER IDEMPOTENCY TEST ===
+First renderer registration: PASS
+Repeated initialization preserves callbacks: PASS
+Renderer functionality after repeated initialization: PASS
+
+=== REGISTRY RENDERER IDEMPOTENCY PASS ===
+=== PYSKIN REGISTRY RENDERER OWNERSHIP TEST ===
+Renderer attachment uses registry API: PASS
+Component dispatch remains generic: PASS
+Registry-owned renderer invocation: PASS
+
+=== REGISTRY RENDERER OWNERSHIP PASS ===
+=== PYSKIN REGISTRY STATE BINDING CONTRACT TEST ===
+reactive=True binding: PASS
+reactive=False suppression: PASS
+Binding unsubscribe: PASS
+
+=== REGISTRY STATE BINDING CONTRACT PASS ===
+=== PYSKIN REGISTRY UPDATE MESSAGE CONTRACT TEST ===
+Registry metadata serialization: PASS
+Registry metadata JSON round-trip: PASS
+Backward-compatible UpdateMessage: PASS
+
+=== REGISTRY UPDATE MESSAGE CONTRACT PASS ===
+=== PYSKIN REGISTRY VOID TEST ===
+<input data-pyskin-id="c6451724db" value="Dollar" title="Test input">
+Void definition: PASS
+Void rendering: PASS
+No closing tag: PASS
+
+=== REGISTRY VOID PASS ===
+=== PYSKIN RUN TEST ===
+Output: test_output/index.html
+Exists: True
+Size: 17565 bytes
+=== PYSKIN RUN COMPATIBILITY TEST ===
+Return type: PosixPath
+Output: compat_output/index.html
+Exists: True
+Title: True
+Heading: True
+Button: True
+=== RUN COMPATIBILITY PASS ===
+=== PYSKIN SERVE MODE TEST ===
+Output: serve_output/index.html
+URL: http://127.0.0.1:45241/
+Status: 200
+Title: True
+Heading: True
+Button: True
+Runtime stopped.
+=== SERVE MODE PASS ===
+=== PYSKIN RUNTIME LIFECYCLE TEST ===
+HTML: runtime_output/index.html
+HTML exists: True
+Server URL: http://127.0.0.1:37397/
+Server running: True
+Request 1: 200 17546 bytes
+Request 2: 200 17546 bytes
+Request 3: 200 17546 bytes
+Server stopped.
+After stop: URLError
+=== RUNTIME LIFECYCLE PASS ===
+=== PYSKIN RUNTIME API TEST ===
+Before start: False
+Running: True
+URL: http://127.0.0.1:43815/
+Status: 200
+Title: True
+Heading: True
+After stop: False
+=== RUNTIME API PASS ===
+=== PYSKIN LOCAL SERVER TEST ===
+URL: http://127.0.0.1:37251/
+Status: 200
+Content-Type: text/html; charset=utf-8
+Bytes: 17565
+HTML: <!DOCTYPE html> <html lang="en"> <head>     <meta charset="UTF-8">     <meta nam
+Server stopped.
+=== PYSKIN STATE TEST ===
+Initial: 0
+Changed: 0 -> 1
+Changed: 1 -> 2
+Current: 2
+After unsubscribe: 3
+=== PYSKIN STATE PROTOCOL TEST ===
+Encoded: {"type":"update","id":"component123","props":{"text":"Hello"}}
+Type: PASS
+Component ID: PASS
+Props: PASS
+=== STATE PROTOCOL PASS ===
+=== PYSKIN STATE WEBSOCKET TEST ===
+URL: ws://127.0.0.1:36785/
+Connected: PASS
+Received: {"type":"update","id":"a48b3cf9c9","props":{"text":1},"prop_meta":{"text":{"kind":"text","html_name":null}}}
+Update type: PASS
+Component ID: PASS
+Updated value: PASS
+=== STATE WEBSOCKET PASS ===
+=== PYSKIN WEBSOCKET TEST ===
+URL: ws://127.0.0.1:40043/
+Running: True
+Response: {"type":"response","ok":true,"result":"handler-ok"}
+Calls: ['clicked']
+Running after stop: False
+=== WEBSOCKET PASS ===
+collected 208 items
+
+test/test_batching.py::test_multiple_state_changes_are_coalesced_into_one_flush PASSED
+test/test_batching_benchmark.py::test_batching_reduces_processing_cycles PASSED
+test/test_batching_benchmark.py::test_batching_benchmark_report 
+===== PHASE 2E BATCHING BENCHMARK =====
+State changes       : 1000
+
+BATCHED
+  processing cycles : 1
+  final value       : 1000
+  elapsed           : 0.001030391s
+
+UNBATCHED
+  processing cycles : 1000
+  final value       : 1000
+  elapsed           : 0.003589575s
+
+processing reduction: 1000.0x
+PASSED
+test/test_browser_event.py::test_browser_event === PYSKIN BROWSER EVENT TEST ===
+URL: http://127.0.0.1:39127/
+WebSocket: ws://127.0.0.1:46171/
+Button ID: d9a14b38e9
+Browser loaded: PASS
+=== BROWSER EVENT RECEIVED ===
+Calls: ['clicked']
+Browser click: PASS
+WebSocket event → Python callback: PASS
+Callback isolation: PASS
+
+=== BROWSER EVENT PASS ===
+Runtime stopped.
+PASSED
+test/test_browser_input_binding.py::test_browser_input_binding === PYSKIN BROWSER INPUT BINDING TEST ===
+HTTP: http://127.0.0.1:40285/
+WebSocket: ws://127.0.0.1:34685/
+Heading ID: 125ae2be28
+Input ID: e541964880
+Initial state: Dollar
+Browser loaded: PASS
+Initial state: Dollar
+Browser input: PASS
+Browser → WebSocket: PASS
+WebSocket → Python State: PASS
+State → Browser DOM: PASS
+Final state: Racit
+
+=== BROWSER INPUT BINDING PASS ===
+Runtime stopped.
+PASSED
+test/test_browser_reactive_counter.py::test_browser_reactive_counter === PYSKIN BROWSER REACTIVE COUNTER TEST ===
+HTTP: http://127.0.0.1:36709/
+WebSocket: ws://127.0.0.1:46145/
+Heading ID: d456a2bc40
+Button ID: e74839f3b8
+Initial state: 0
+Browser loaded: PASS
+Initial state: 0
+Click 1: Python State = 1
+Click 2: Python State = 2
+Click 3: Python State = 3
+
+Browser → WebSocket event: PASS
+WebSocket → Python callback: PASS
+Python callback → State.set(): PASS
+State → Browser DOM: PASS
+State value sequence 1 → 2 → 3: PASS
+
+=== BROWSER REACTIVE COUNTER PASS ===
+Runtime stopped.
+PASSED
+test/test_client_runtime.py::test_runtime_contains_tree_add_patch_handler PASSED
+test/test_client_runtime.py::test_runtime_contains_nested_tree_add_support PASSED
+test/test_client_runtime.py::test_runtime_contains_tree_remove_patch_handler PASSED
+test/test_client_runtime.py::test_runtime_tree_remove_handles_multiple_component_ids PASSED
+test/test_client_runtime.py::test_runtime_tree_remove_supports_multiple_component_ids PASSED
+test/test_client_runtime.py::test_runtime_contains_tree_move_patch_handler PASSED
+test/test_client_runtime.py::test_runtime_tree_move_uses_append_child PASSED
+test/test_client_runtime.py::test_runtime_tree_move_preserves_existing_subtree PASSED
+test/test_client_runtime.py::test_runtime_tree_add_supports_indexed_insertion PASSED
+test/test_client_runtime.py::test_runtime_tree_add_multiple_components_uses_index PASSED
+test/test_client_runtime.py::test_runtime_contains_tree_replace_patch_handler PASSED
+test/test_client_runtime.py::test_runtime_contains_tree_clear_patch_handler PASSED
+test/test_client_runtime.py::test_runtime_contains_tree_set_children_patch_handler PASSED
+test/test_component_mutation.py::test_add_appends_children_and_returns_parent PASSED
+test/test_component_mutation.py::test_add_supports_chaining PASSED
+test/test_component_mutation.py::test_add_preserves_existing_children PASSED
+test/test_component_mutation.py::test_remove_child PASSED
+test/test_component_mutation.py::test_remove_notifies_tree_mutation_listener PASSED
+test/test_component_mutation.py::test_move_child_between_parents PASSED
+test/test_component_mutation.py::test_insert_child_at_index PASSED
+test/test_component_mutation.py::test_insert_multiple_children_at_index PASSED
+test/test_component_mutation.py::test_replace_child PASSED
+test/test_component_mutation.py::test_clear_children PASSED
+test/test_component_mutation.py::test_set_children_replaces_all_children PASSED
+test/test_component_mutation.py::test_new_component_has_no_parent PASSED
+test/test_component_mutation.py::test_add_sets_parent_reference PASSED
+test/test_component_mutation.py::test_remove_clears_parent_reference PASSED
+test/test_component_mutation.py::test_move_updates_both_parent_relationships PASSED
+test/test_component_mutation.py::test_add_detaches_child_from_previous_parent PASSED
+test/test_component_mutation.py::test_add_rejects_ancestor_cycle PASSED
+test/test_component_mutation.py::test_replace_updates_parent_references PASSED
+test/test_component_mutation.py::test_clear_clears_parent_references PASSED
+test/test_component_mutation.py::test_insert_detaches_child_from_previous_parent PASSED
+test/test_component_mutation.py::test_insert_rejects_self_cycle PASSED
+test/test_component_mutation.py::test_insert_rejects_ancestor_cycle PASSED
+test/test_component_mutation.py::test_replace_detaches_new_child_from_previous_parent PASSED
+test/test_component_mutation.py::test_replace_rejects_self_cycle PASSED
+test/test_component_mutation.py::test_replace_rejects_ancestor_cycle PASSED
+test/test_component_mutation.py::test_set_children_detaches_children_from_previous_parent PASSED
+test/test_component_mutation.py::test_set_children_rejects_self_cycle PASSED
+test/test_component_mutation.py::test_set_children_rejects_ancestor_cycle PASSED
+test/test_component_mutation_events.py::test_add_notifies_tree_mutation_listener PASSED
+test/test_component_mutation_events.py::test_unsubscribe_stops_mutation_notifications PASSED
+test/test_component_mutation_events.py::test_mutation_subscription_is_idempotently_removable PASSED
+test/test_component_mutation_events.py::test_move_to_emits_single_move_mutation_event PASSED
+test/test_component_mutation_events.py::test_insert_emits_add_mutation_with_index PASSED
+test/test_component_mutation_events.py::test_insert_multiple_children_emits_single_mutation_event PASSED
+test/test_component_mutation_events.py::test_replace_emits_replace_mutation_event PASSED
+test/test_component_mutation_events.py::test_clear_emits_single_clear_mutation_event PASSED
+test/test_component_mutation_events.py::test_set_children_emits_single_set_children_mutation_event PASSED
+test/test_dependency_graph.py::test_add_and_get_dependents PASSED
+test/test_dependency_graph.py::test_multiple_dependents_for_same_state PASSED
+test/test_dependency_graph.py::test_remove_dependency PASSED
+test/test_dependency_graph.py::test_graph_clear PASSED
+test/test_diff.py::test_identical_snapshots_produce_no_operations PASSED
+test/test_diff.py::test_prop_change_produces_one_update PASSED
+test/test_diff.py::test_added_prop_is_updated PASSED
+test/test_diff.py::test_removed_prop_is_reported PASSED
+test/test_diff.py::test_event_change_produces_event_operation PASSED
+test/test_diff.py::test_child_prop_change_is_recursive PASSED
+test/test_diff.py::test_child_insert_produces_one_insert PASSED
+test/test_diff.py::test_child_remove_produces_one_remove PASSED
+test/test_diff.py::test_node_type_change_produces_replace PASSED
+test/test_diff.py::test_multiple_changes_are_deterministic PASSED
+test/test_dirty_nodes.py::test_state_change_marks_dependent_component_dirty PASSED
+test/test_dirty_nodes.py::test_multiple_states_mark_same_component_only_once PASSED
+test/test_dirty_nodes.py::test_clear_removes_all_dirty_nodes PASSED
+test/test_input_binding.py::test_sync_wrapper WebSocket connected: PASS
+Browser → Python payload: {'value': 'Racit'}
+Received: {'type': 'response', 'ok': True, 'result': None}
+Update: {'type': 'update', 'id': '15559ce258', 'props': {'text': 'Racit'}, 'prop_meta': {'text': {'kind': 'text', 'html_name': None}}}
+Browser → Python callback: PASS
+Python callback → State.set(): PASS
+State → Heading update: PASS
+Final state: Racit
+
+=== INPUT TWO-WAY BINDING PASS ===
+PASSED
+test/test_phase6_benchmarks.py::test_phase6_state_update_latency 
+===== PHASE 6 — STATE UPDATE LATENCY =====
+iterations        : 1000
+total             : 0.001301939s
+per update        : 0.000001302s
+PASSED
+test/test_phase6_benchmarks.py::test_phase6_scheduler_latency 
+===== PHASE 6 — SCHEDULER FLUSH =====
+dirty updates     : 1000
+processing cycles : 1
+elapsed           : 0.000008529s
+PASSED
+test/test_phase6_benchmarks.py::test_phase6_diff_latency 
+===== PHASE 6 — DIFF LATENCY =====
+iterations        : 1000
+operations        : 1
+total             : 0.004048860s
+per diff          : 0.000004049s
+PASSED
+test/test_phase6_benchmarks.py::test_phase6_patch_latency 
+===== PHASE 6 — PATCH LATENCY =====
+iterations        : 1000
+messages          : 1
+total             : 0.004963743s
+per conversion    : 0.000004964s
+PASSED
+test/test_phase6_dependency_scaling.py::test_phase6_dependency_graph_scaling 
+===== PHASE 6 — DEPENDENCY GRAPH SCALING =====
+
+dependencies       : 10
+components         : 10
+get_dependents     : 0.000028307s
+per lookup         : 0.000000283s
+
+dependencies       : 100
+components         : 100
+get_dependents     : 0.000027693s
+per lookup         : 0.000000277s
+
+dependencies       : 1000
+components         : 1000
+get_dependents     : 0.000028153s
+per lookup         : 0.000000282s
+
+dependencies       : 10000
+components         : 10000
+get_dependents     : 0.000031206s
+per lookup         : 0.000000312s
+PASSED
+test/test_phase6_dependency_scaling.py::test_phase6_dependency_graph_registration_scaling 
+===== PHASE 6 — DEPENDENCY REGISTRATION =====
+
+dependencies       : 10
+registration       : 0.000021801s
+per registration   : 0.000002180s
+
+dependencies       : 100
+registration       : 0.000118318s
+per registration   : 0.000001183s
+
+dependencies       : 1000
+registration       : 0.001228220s
+per registration   : 0.000001228s
+
+dependencies       : 10000
+registration       : 0.014296994s
+per registration   : 0.000001430s
+PASSED
+test/test_phase6_scaling.py::test_phase6_component_scaling 
+===== PHASE 6 — COMPONENT SCALING =====
+
+nodes              : 10
+snapshot           : 0.000256629s
+diff               : 0.000052106s
+patch              : 0.000014258s
+
+nodes              : 100
+snapshot           : 0.002248646s
+diff               : 0.000428134s
+patch              : 0.000019890s
+
+nodes              : 1000
+snapshot           : 0.019077489s
+diff               : 0.004073917s
+patch              : 0.000020324s
+
+nodes              : 10000
+snapshot           : 0.197193696s
+diff               : 0.044179123s
+patch              : 0.000026884s
+
+PASSED
+test/test_phase6_websocket_benchmarks.py::test_phase6_websocket_state_update_latency 
+===== PHASE 6 — WEBSOCKET STATE UPDATE =====
+iterations        : 100
+total             : 0.219287810s
+per update        : 0.002192878s
+PASSED
+test/test_phase6_websocket_benchmarks.py::test_phase6_websocket_tree_patch_latency 
+===== PHASE 6 — WEBSOCKET TREE PATCH =====
+iterations        : 100
+total             : 0.072835463s
+per patch         : 0.000728355s
+PASSED
+test/test_phase6_websocket_benchmarks.py::test_phase6_websocket_multi_client_broadcast 
+===== PHASE 6 — WEBSOCKET BROADCAST =====
+clients            : 10
+total              : 0.006130894s
+per client         : 0.000613089s
+PASSED
+test/test_phase6_websocket_benchmarks.py::test_phase6_websocket_client_scaling 
+===== PHASE 6 — WEBSOCKET CLIENT SCALING =====
+clients            : 10
+total              : 0.005230480s
+per client         : 0.000523048s
+
+===== PHASE 6 — WEBSOCKET CLIENT SCALING =====
+clients            : 50
+total              : 0.016558956s
+per client         : 0.000331179s
+
+===== PHASE 6 — WEBSOCKET CLIENT SCALING =====
+clients            : 100
+total              : 0.028839935s
+per client         : 0.000288399s
+PASSED
+test/test_reactive_counter.py::test_sync_wrapper WebSocket connected: PASS
+Received: {"type":"response","ok":true,"result":1}
+Received: {"type":"update","id":"a792c7490e","props":{"text":1},"prop_meta":{"text":{"kind":"text","html_name":null}}}
+Event → Python callback: PASS
+Python callback → State.set(): PASS
+State → UpdateMessage: PASS
+Update component ID: PASS
+Updated value: PASS
+Received: {"type":"response","ok":true,"result":2}
+Received: {"type":"update","id":"a792c7490e","props":{"text":2},"prop_meta":{"text":{"kind":"text","html_name":null}}}
+Second click/state update: PASS
+Final state: 2
+=== PYSKIN REACTIVE COUNTER PASS ===
+PASSED
+test/test_reactive_pipeline.py::test_state_change_flows_through_reactive_pipeline PASSED
+test/test_reactive_props.py::test_sync_wrapper WebSocket connected: PASS
+Received: {'type': 'update', 'id': 'f026bc4ef7', 'props': {'text': 'World', 'value': '100', 'disabled': False, 'title': 'Initial title'}, 'prop_meta': {'text': {'kind': 'text', 'html_name': None}, 'value': {'kind': 'attribute', 'html_name': 'value'}, 'disabled': {'kind': 'boolean', 'html_name': 'disabled'}, 'title': {'kind': 'attribute', 'html_name': 'title'}}}
+text: PASS
+value: PASS
+disabled: PASS
+title: PASS
+
+State → UpdateMessage: PASS
+Multiple reactive props: PASS
+
+=== GENERIC REACTIVE PROPS PASS ===
+PASSED
+test/test_registry_prop_mapping.py::test_mapping WebSocket connected: PASS
+class_name update: {'type': 'update', 'id': 'd8227d01b6', 'props': {'text': 'Save', 'class_name': 'danger', 'disabled': False, 'title': 'Initial'}, 'prop_meta': {'text': {'kind': 'text', 'html_name': None}, 'class_name': {'kind': 'attribute', 'html_name': 'class'}, 'disabled': {'kind': 'boolean', 'html_name': 'disabled'}, 'title': {'kind': 'attribute', 'html_name': 'title'}}}
+class_name → class metadata: PASS
+disabled boolean metadata: PASS
+title attribute metadata: PASS
+
+=== REGISTRY PROP MAPPING TEST PASS ===
+PASSED
+test/test_registry_renderer.py::test_registry_renderer === PYSKIN REGISTRY RENDERER TEST ===
+<h1 data-pyskin-id="1c44028276">Hello</h1>
+Built-in registry rendering: PASS
+<section data-pyskin-id="d65ed97f83">Hello Card</section>
+Custom registry rendering: PASS
+<article data-pyskin-id="a1bb61f226">Custom</article>
+Custom renderer dispatch: PASS
+
+=== REGISTRY RENDERER PASS ===
+PASSED
+test/test_scheduler.py::test_scheduler_request_coalescing PASSED
+test/test_scheduler.py::test_multiple_states_same_component PASSED
+test/test_scheduler.py::test_final_value PASSED
+test/test_scheduler.py::test_deterministic_dirty_order PASSED
+test/test_scheduler.py::test_re_entrant_state_change PASSED
+test/test_scheduler.py::test_flush_clears_before_callback PASSED
+test/test_scheduler.py::test_scheduler_flush_can_be_scheduled_only_once_per_batch PASSED
+test/test_snapshot.py::test_component_to_snapshot_serializes_component PASSED
+test/test_snapshot.py::test_component_to_snapshot_serializes_nested_children PASSED
+test/test_snapshot.py::test_component_to_snapshot_serializes_event_names PASSED
+test/test_snapshot.py::test_component_to_snapshot_ignores_non_component_children PASSED
+test/test_snapshot.py::test_component_to_snapshot_unknown_component_uses_div_tag PASSED
+test/test_snapshot.py::test_snapshot_state_prop_uses_current_state_value PASSED
+test/test_snapshot.py::test_snapshot_nested_state_is_unwrapped_recursively PASSED
+test/test_snapshot.py::test_snapshot_preserves_event_registration_order PASSED
+test/test_snapshot.py::test_snapshot_unknown_component_is_still_serializable PASSED
+test/test_snapshot.py::test_snapshot_is_json_serializable PASSED
+test/test_snapshot.py::test_snapshot_immutability_for_nested_props PASSED
+test/test_snapshot.py::test_snapshot_immutability_against_component_prop_replacement PASSED
+test/test_snapshot.py::test_snapshot_immutability_with_nested_state_value PASSED
+test/test_snapshot.py::test_snapshot_does_not_share_mutable_children PASSED
+test/test_snapshot.py::test_snapshot_rejects_non_json_serializable_prop PASSED
+test/test_state_binding_graph.py::test_state_binding_builds_dependency_graph PASSED
+test/test_state_binding_semantics.py::test_reactive_and_non_reactive_props PASSED
+test/test_state_binding_semantics.py::test_stop_removes_all_subscriptions PASSED
+test/test_state_binding_semantics.py::test_stop_is_idempotent PASSED
+test/test_state_binding_semantics.py::test_nested_components_are_bound PASSED
+test/test_state_semantics.py::test_same_value_does_not_notify PASSED
+test/test_state_semantics.py::test_different_value_notifies_once PASSED
+test/test_state_semantics.py::test_multiple_changes_preserve_order PASSED
+test/test_state_semantics.py::test_multiple_subscribers_all_receive_update PASSED
+test/test_state_semantics.py::test_unsubscribe_stops_future_notifications PASSED
+test/test_state_semantics.py::test_unsubscribe_is_idempotent PASSED
+test/test_state_semantics.py::test_subscriber_can_unsubscribe_during_notification PASSED
+test/test_state_semantics.py::test_subscriber_iteration_is_stable PASSED
+test/test_tree_clear_client.py::test_tree_clear_client_removes_listed_children PASSED
+test/test_tree_clear_client.py::test_tree_clear_client_preserves_unlisted_children PASSED
+test/test_tree_clear_client.py::test_tree_clear_client_keeps_parent_node PASSED
+test/test_tree_clear_client.py::test_tree_clear_client_removes_nested_subtree_with_direct_child PASSED
+test/test_tree_clear_protocol.py::test_tree_clear_message_round_trip PASSED
+test/test_tree_clear_protocol.py::test_tree_clear_message_dict_contract PASSED
+test/test_tree_clear_protocol.py::test_tree_clear_message_requires_parent_id PASSED
+test/test_tree_clear_runtime.py::test_tree_clear_is_broadcast_when_children_are_cleared PASSED
+test/test_tree_clear_runtime.py::test_tree_clear_broadcast_contains_direct_children_only PASSED
+test/test_tree_clear_runtime.py::test_tree_clear_does_not_broadcast_when_parent_is_empty PASSED
+test/test_tree_helpers.py::test_collect_ids_returns_empty_for_non_component PASSED
+test/test_tree_helpers.py::test_count_components_returns_zero_for_non_component PASSED
+test/test_tree_helpers.py::test_collect_ids_walks_nested_component_tree PASSED
+test/test_tree_helpers.py::test_count_components_counts_nested_components_only PASSED
+test/test_tree_helpers.py::test_collect_ids_preserves_duplicate_ids PASSED
+test/test_tree_helpers.py::test_count_components_does_not_depend_on_component_ids PASSED
+test/test_tree_helpers.py::test_print_tree_prints_nested_components_and_text PASSED
+test/test_tree_helpers.py::test_print_tree_handles_non_component PASSED
+test/test_tree_move_protocol.py::test_tree_move_message_round_trip PASSED
+test/test_tree_move_protocol.py::test_tree_move_message_dict_contract PASSED
+test/test_tree_move_protocol.py::test_tree_move_message_requires_component_id PASSED
+test/test_tree_move_protocol.py::test_tree_move_message_requires_parent_ids PASSED
+test/test_tree_move_runtime.py::test_tree_move_is_broadcast_when_component_is_moved PASSED
+test/test_tree_mutation_observer.py::test_observer_receives_nested_add_mutations PASSED
+test/test_tree_mutation_observer.py::test_observer_can_be_stopped PASSED
+test/test_tree_mutation_observer.py::test_observer_stop_is_idempotent PASSED
+test/test_tree_mutation_observer.py::test_observer_tracks_components_added_after_observer_creation PASSED
+test/test_tree_mutation_observer.py::test_observer_does_not_bind_same_component_twice PASSED
+test/test_tree_mutation_observer.py::test_observer_does_not_duplicate_bind_on_set_children PASSED
+test/test_tree_mutation_observer.py::test_observer_tracks_component_added_by_replace PASSED
+test/test_tree_mutation_observer.py::test_observer_stops_tracking_removed_component PASSED
+test/test_tree_mutation_observer.py::test_observer_tracks_component_after_move PASSED
+test/test_tree_mutation_observer.py::test_observer_move_event_contains_correct_parent_relationship PASSED
+test/test_tree_mutation_observer.py::test_observer_stop_then_new_tree_mutation_does_not_reactivate PASSED
+test/test_tree_mutation_observer.py::test_observer_stops_tracking_subtree_removed_by_clear PASSED
+test/test_tree_patch_protocol.py::test_tree_add_message_round_trip PASSED
+test/test_tree_patch_protocol.py::test_tree_add_message_dict_contract PASSED
+test/test_tree_patch_protocol.py::test_tree_add_message_requires_parent_id PASSED
+test/test_tree_patch_protocol.py::test_tree_add_message_preserves_nested_children PASSED
+test/test_tree_patch_protocol.py::test_replace_operation_converts_to_tree_replace_message PASSED
+test/test_tree_patch_protocol.py::test_replace_operation_requires_parent_id PASSED
+test/test_tree_patch_protocol.py::test_replace_operation_requires_index PASSED
+test/test_tree_patch_protocol.py::test_replace_diff_operation_produces_protocol_json PASSED
+test/test_tree_patch_protocol.py::test_diff_replace_flows_through_patch_engine PASSED
+test/test_tree_patch_protocol.py::test_update_operation_converts_to_protocol_message PASSED
+test/test_tree_patch_protocol.py::test_update_operation_preserves_remove_props PASSED
+test/test_tree_patch_protocol.py::test_update_operation_json_preserves_remove_props PASSED
+test/test_tree_patch_protocol.py::test_update_message_round_trip_preserves_remove_props PASSED
+test/test_tree_patch_protocol.py::test_insert_operation_converts_to_tree_add_message PASSED
+test/test_tree_patch_protocol.py::test_remove_operation_converts_to_tree_remove_message PASSED
+test/test_tree_patch_protocol.py::test_operations_to_messages_preserves_operation_order PASSED
+test/test_tree_patch_runtime.py::test_tree_add_is_broadcast_when_component_is_added PASSED
+test/test_tree_patch_runtime.py::test_tree_add_contains_render_metadata_for_button PASSED
+test/test_tree_patch_runtime.py::test_tree_add_contains_event_metadata PASSED
+test/test_tree_patch_runtime.py::test_tree_add_contains_insert_index PASSED
+test/test_tree_patch_runtime.py::test_tree_add_preserves_insert_index_in_message PASSED
+test/test_tree_patch_runtime.py::test_tree_add_multiple_components_preserves_index PASSED
+test/test_tree_remove_protocol.py::test_tree_remove_message_round_trip PASSED
+test/test_tree_remove_protocol.py::test_tree_remove_message_dict_contract PASSED
+test/test_tree_remove_protocol.py::test_tree_remove_message_requires_parent_id PASSED
+test/test_tree_remove_runtime.py::test_tree_remove_is_broadcast_when_component_is_removed PASSED
+test/test_tree_remove_runtime.py::test_tree_remove_broadcast_contains_removed_subtree_root_id PASSED
+test/test_tree_replace_client.py::test_tree_replace_client_replaces_old_node_at_same_position PASSED
+test/test_tree_replace_client.py::test_tree_replace_client_creates_replacement_tree_node PASSED
+test/test_tree_replace_client.py::test_tree_replace_client_supports_nested_replacement_tree PASSED
+test/test_tree_replace_client.py::test_tree_replace_client_replaces_nested_subtree PASSED
+test/test_tree_replace_protocol.py::test_tree_replace_message_round_trip PASSED
+test/test_tree_replace_protocol.py::test_tree_replace_message_dict_contract PASSED
+test/test_tree_replace_protocol.py::test_tree_replace_message_requires_parent_id PASSED
+test/test_tree_replace_runtime.py::test_tree_replace_is_broadcast_when_component_is_replaced PASSED
+test/test_tree_replace_runtime.py::test_tree_replace_broadcast_contains_nested_children PASSED
+test/test_tree_replace_runtime.py::test_tree_replace_broadcast_serializes_deep_nested_tree PASSED
+test/test_tree_set_children_client.py::test_tree_set_children_client_replaces_existing_children PASSED
+test/test_tree_set_children_client.py::test_tree_set_children_client_preserves_new_child_order PASSED
+test/test_tree_set_children_client.py::test_tree_set_children_client_builds_nested_subtrees PASSED
+test/test_tree_set_children_client.py::test_tree_set_children_client_supports_deep_nested_subtrees PASSED
+test/test_tree_set_children_protocol.py::test_tree_set_children_message_round_trip PASSED
+test/test_tree_set_children_protocol.py::test_tree_set_children_message_dict_contract PASSED
+test/test_tree_set_children_protocol.py::test_tree_set_children_message_requires_parent_id PASSED
+test/test_tree_set_children_runtime.py::test_tree_set_children_is_broadcast_when_children_are_replaced PASSED
+test/test_tree_set_children_runtime.py::test_tree_set_children_broadcast_contains_nested_subtree PASSED
+test/test_websocket_reactive_pipeline.py::test_websocket_state_update_uses_reactive_pipeline PASSED
+test/test_websocket_reactive_pipeline.py::test_websocket_batches_multiple_state_changes_into_one_final_update PASSED
+
+============================= 208 passed in 11.48s =============================
