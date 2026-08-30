@@ -89,7 +89,7 @@ class WebSocketServer:
 
         self._loop.call_soon_threadsafe(
             lambda: self._loop.call_later(
-                0,
+                0.001,
                 self._scheduler.flush,
             )
         )
