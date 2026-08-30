@@ -5,6 +5,9 @@ from typing import Any, Callable
 from pyskin.core.component import Component
 from pyskin.core.registry import registry
 from pyskin.core.state import State
+from pyskin.core.graph import DependencyGraph
+from pyskin.core.dirty import DirtyNodes
+from pyskin.core.scheduler import Scheduler
 
 
 UpdateCallback = Callable[[Component, dict[str, Any]], None]
@@ -17,6 +20,9 @@ class StateBinding:
         self,
         root: Component,
         callback: UpdateCallback,
+        graph: DependencyGraph | None = None,
+        dirty: DirtyNodes | None = None,
+        scheduler: Scheduler | None = None,
     ) -> None:
         if not isinstance(root, Component):
             raise TypeError(
@@ -30,6 +36,9 @@ class StateBinding:
 
         self.root = root
         self.callback = callback
+        self.graph = graph
+        self.dirty = dirty
+        self.scheduler = scheduler
         self._subscriptions: list[Callable[[], None]] = []
 
         self._bind_tree(root)
@@ -79,6 +88,13 @@ class StateBinding:
 
             self._subscriptions.append(unsubscribe)
 
+            if self.graph is not None:
+                self.graph.add_dependency(
+                    value,
+                    node,
+                    prop_name,
+                )
+
         for child in node.children:
             self._bind_tree(child)
 
@@ -88,12 +104,26 @@ class StateBinding:
         prop_name: str,
         value: Any,
     ) -> None:
+        # Scheduler mode only marks the component dirty.
+        # The scheduler is flushed explicitly at the batching boundary.
+        if self.scheduler is not None:
+            if self.dirty is not None:
+                self.dirty.mark(component)
+
+            self.scheduler.request()
+            return
+
+        # Preserve the existing immediate callback contract when
+        # no scheduler is configured.
         self.callback(
             component,
             {
                 prop_name: value,
             },
         )
+
+        if self.dirty is not None:
+            self.dirty.mark(component)
 
     def stop(self) -> None:
         """Remove all State subscriptions."""

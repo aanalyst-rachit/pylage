@@ -18,10 +18,10 @@ Repository: https://github.com/aanalyst-rachit/pyskin
 Branch: main
 
 Current stable checkpoint:
-- Commit: a1221cf — checkpoint: complete tree mutation pipeline
-- Tag: phase-2-tree-mutation-precheck
-- Tests: 106 passed
-- Status: Tree mutation pipeline stable; reactive dependency/scheduler work remains
+- Commit: PENDING — reactive dependency/scheduler milestone
+- Tag: phase-2-reactive-prebatching (pending)
+- Tests: 117 passed
+- Status: Tree mutation + dependency graph + dirty tracking + scheduler foundation stable; batching remains
 
 Master blueprint:
 - `project pyskin blueprint.txt`
@@ -238,7 +238,25 @@ into:
 
 ## Phase 2A — Reactive Semantics
 
-Status: 🔴 NOT STARTED
+Status: 🟢 VALIDATED
+
+Completed:
+- `reactive=True` / `reactive=False` registry contracts
+- State-to-component reactive binding
+- Generic reactive prop updates
+- Registry-driven reactive behavior
+- WebSocket update propagation
+- State value resolution before serialization
+- Reactive browser DOM update path
+
+Validation:
+- Reactive registry/state contract tests passing
+- WebSocket reactive pipeline passing
+- Browser reactive counter passing
+
+Remaining:
+- Final semantic edge-case audit
+- Confirm batching interaction with reactive semantics
 
 Define precisely:
 
@@ -258,7 +276,20 @@ Definition of done:
 
 ## Phase 2B — Dependency Graph
 
-Status: 🔴 NOT STARTED
+Status: ✅ COMPLETE
+
+Completed:
+- Dependency registration
+- State → Component → Prop dependency mapping
+- Multiple dependents
+- Dependency lookup
+- Integration with StateBinding
+- Lifecycle-safe binding foundation
+
+Validation:
+- `test_dependency_graph.py`
+- `test_state_binding_graph.py`
+- Full relevant suite passing
 
 Target model:
 
@@ -292,7 +323,18 @@ Definition of done:
 
 ## Phase 2C — Dirty Node Tracking
 
-Status: 🔴 NOT STARTED
+Status: ✅ COMPLETE
+
+Completed:
+- Dirty node marking
+- Duplicate dirty-node suppression
+- Dirty node collection
+- Scheduler integration
+- Deterministic processing foundation
+
+Validation:
+- `test_dirty_nodes.py`
+- Reactive pipeline tests passing
 
 Target:
 
@@ -324,7 +366,25 @@ Definition of done:
 
 ## Phase 2D — Update Scheduler
 
-Status: 🔴 NOT STARTED
+Status: ✅ COMPLETE — PRE-BATCH SCHEDULER
+
+Completed:
+- Scheduler abstraction
+- Dirty node processing
+- Component update scheduling
+- Integration with StateBinding
+- State value resolution during scheduled update
+- Reactive update dispatch
+
+Important:
+- Current scheduler is immediate/pre-batch.
+- It does NOT yet provide multi-update coalescing.
+
+Validation:
+- `test_scheduler.py`
+- `test_reactive_pipeline.py`
+- `test_websocket_reactive_pipeline.py`
+- Full suite: 117 passed
 
 Target:
 
@@ -356,7 +416,50 @@ Definition of done:
 
 ## Phase 2E — Batching
 
-Status: 🔴 NOT STARTED
+Status: 🟢 ACTIVE
+
+Current task:
+
+    Multiple State changes
+            ↓
+       dirty nodes
+            ↓
+        scheduler
+            ↓
+      one coalesced flush
+            ↓
+       final values
+            ↓
+      minimal updates
+
+First target:
+
+    count.set(1)
+    count.set(2)
+    count.set(3)
+
+should be experimentally evaluated for:
+
+    one scheduled processing cycle
+    final value = 3
+
+Requirements:
+- Define batching boundary
+- Define flush semantics
+- Prevent duplicate component processing
+- Handle multiple States affecting one component
+- Handle re-entrant State changes
+- Preserve deterministic behavior
+- Measure update count before/after batching
+
+Do not assume batching is faster.
+Benchmark actual latency and update counts.
+
+Definition of done:
+- Batching semantics explicitly defined.
+- Focused batching tests pass.
+- Existing 117-test suite remains green.
+- No regression in WebSocket/browser reactivity.
 
 Example:
 
@@ -664,29 +767,43 @@ Current priority:
        ↓
     Reactive Semantics
        ↓
+       🟢 VALIDATED
+            ↓
     Phase 2B
        ↓
     Dependency Graph
        ↓
+       ✅ COMPLETE
+            ↓
     Phase 2C
        ↓
     Dirty Tracking
        ↓
+       ✅ COMPLETE
+            ↓
     Phase 2D
        ↓
     Scheduler
        ↓
+       ✅ PRE-BATCH COMPLETE
+            ↓
     Phase 2E
        ↓
-    Batching
+    🟢 BATCHING — CURRENT TASK
 
 Current active architectural task:
 
-    Audit mutation semantics
+    Phase 2E — Batching
             ↓
-    Validate no-op / ownership / event contracts
+    Define batching boundary
             ↓
-    Begin Phase 2A reactive semantics
+    Implement coalesced scheduler flush
+            ↓
+    Add focused batching tests
+            ↓
+    Run full suite
+            ↓
+    Benchmark update count / latency
 
 Then:
 
@@ -813,11 +930,12 @@ Tag:
 
 Tests:
 
-    106 passed
+    117 passed
 
 Working tree:
 
-    Stable tree mutation milestone
+    Stable reactive dependency/scheduler foundation
+    Checkpoint commit pending
 
 Milestone:
 
@@ -830,14 +948,26 @@ Milestone:
     WebSocket Runtime
           ↓
     Recursive Client DOM Patches
-
-Next:
-
-    Mutation API semantic audit
           ↓
     Reactive Semantics
           ↓
     Dependency Graph
+          ↓
+    Dirty Nodes
+          ↓
+    Scheduler
+
+Current next task:
+
+    Phase 2E — Batching
+          ↓
+    Coalesced scheduler flush
+          ↓
+    Focused batching tests
+          ↓
+    Full regression suite
+          ↓
+    Benchmark
 
 ---
 

@@ -25,6 +25,9 @@ class Component:
         repr=False,
     )
 
+    def __hash__(self) -> int:
+        return hash(self.id)
+
     def add(self, *children: Child) -> "Component":
         for child in children:
             if isinstance(child, Component):

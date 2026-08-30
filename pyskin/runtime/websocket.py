@@ -9,6 +9,10 @@ from websockets.asyncio.server import Server, ServerConnection, serve
 from pyskin.core.binding import StateBinding
 from pyskin.core.component import Component
 from pyskin.core.events import EventDispatcher
+from pyskin.core.graph import DependencyGraph
+from pyskin.core.dirty import DirtyNodes
+from pyskin.core.scheduler import Scheduler
+from pyskin.core.state import State
 from pyskin.core.protocol import EventMessage, UpdateMessage, TreeAddMessage, TreeRemoveMessage, TreeMoveMessage, TreeReplaceMessage, TreeRemoveMessage, TreeMoveMessage, TreeClearMessage, TreeSetChildrenMessage
 
 
@@ -43,9 +47,20 @@ class WebSocketServer:
         self._ready = threading.Event()
         self._startup_error: Optional[BaseException] = None
 
+        self._graph = DependencyGraph()
+        self._dirty = DirtyNodes()
+        self._scheduler = Scheduler(
+            self._dirty,
+            self._scheduled_update,
+            schedule_flush=self._schedule_scheduler_flush,
+        )
+
         self._binding = StateBinding(
             root,
             self._on_state_change,
+            graph=self._graph,
+            dirty=self._dirty,
+            scheduler=self._scheduler,
         )
 
         from pyskin.core.tree import TreeMutationObserver
@@ -65,6 +80,32 @@ class WebSocketServer:
             raise RuntimeError("WebSocket server is not running.")
 
         return f"ws://{self.host}:{self.port}/"
+
+    def _schedule_scheduler_flush(self) -> None:
+        """Schedule one coalesced scheduler flush on the WebSocket loop."""
+
+        if self._loop is None:
+            return
+
+        self._loop.call_soon_threadsafe(
+            self._scheduler.flush,
+        )
+
+    def _scheduled_update(
+        self,
+        component: Component,
+    ) -> None:
+        """Flush a dirty component using resolved State values."""
+
+        props: dict[str, Any] = {}
+
+        for prop_name, value in component.props.items():
+            if isinstance(value, State):
+                props[prop_name] = value.value
+            else:
+                props[prop_name] = value
+
+        self._on_state_change(component, props)
 
     def _on_state_change(
         self,
@@ -354,6 +395,10 @@ class WebSocketServer:
             self._broadcast(raw_message),
             self._loop,
         )
+
+    def flush(self) -> None:
+        """Explicit batching boundary for scheduled state updates."""
+        self._scheduler.flush()
 
     def _get_component_definition(self, component: Component):
         """Resolve registry metadata for a component."""
