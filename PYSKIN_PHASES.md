@@ -635,7 +635,7 @@ Definition of done:
 
 # PHASE 6 — PERFORMANCE / BENCHMARKS
 
-Status: 🟢 ACTIVE
+Status: 🟢 COMPLETE
 
 Measure real performance.
 
@@ -658,6 +658,37 @@ Test sizes:
 - 1,000 nodes
 - 10,000 nodes
 
+Validated results:
+
+- Dependency graph lookup scaling validated through 10,000 dependencies.
+- Dependency registration scaling validated through 10,000 dependencies.
+- WebSocket state update latency benchmarked with 100 updates.
+- WebSocket tree patch latency benchmarked with 100 patches.
+- WebSocket client scaling validated with 10, 50, and 100 clients.
+- Full regression suite: 208 passed.
+
+Performance checkpoint:
+
+    Dependency graph lookup:
+        10,000 dependencies → ~0.000000315s per lookup
+
+    Dependency registration:
+        10,000 dependencies → ~0.000003186s per registration
+
+    WebSocket state update:
+        100 updates → ~0.002204652s per update
+
+    WebSocket tree patch:
+        100 patches → ~0.000805323s per patch
+
+    WebSocket client scaling:
+        10 clients  → ~0.000716038s per client
+        50 clients  → ~0.000310202s per client
+        100 clients → ~0.000310139s per client
+
+    Full regression suite:
+        208 passed
+
 Important:
 
 > Performance claims must come from benchmarks, not assumptions.
@@ -670,8 +701,9 @@ Status: 🔴 NOT STARTED
 
 Only after reactive runtime is stable.
 
-Potential components:
+Target Components:
 
+## Core Primitives
 - Text
 - Heading
 - Button
@@ -682,13 +714,45 @@ Potential components:
 - Dialog
 - Navigation
 - Tabs
-- Data components
 
-Rule:
+## Data Input & Selection
+- Checkbox
+- Radio Group
+- Switch / Toggle
+- Select / Dropdown
+- Slider
+- DatePicker
 
-> Do not build a huge component library before the runtime is proven.
+## Feedback & Status Indicators
+- Alert
+- Toast / Notification
+- Spinner / Loader
+- Progress Bar
+- Skeleton
 
----
+## Navigation & Overlay
+- Breadcrumbs
+- Pagination
+- Menu / ContextMenu
+- Drawer / Sidebar
+- Tooltip
+- Popover
+
+## Data Display & Layout
+- Badge / Tag
+- Avatar
+- Accordion
+- Carousel
+- Divider
+- Grid / Flex Container
+
+## Media & Canvas
+- Image
+- Video
+- Audio
+- Icon
+- Canvas / SVG Container
+
 
 # PHASE 8 — STYLING SYSTEM
 
@@ -787,7 +851,7 @@ Do not begin this before the software architecture and benchmarks justify it.
 
 ---
 
-# 🔥 CURRENT PHASE — PHASE 6
+# 🔥 CURRENT PHASE — PHASE 7
 
 Current priority:
 
@@ -823,7 +887,7 @@ Current priority:
        ↓
     ✅ BATCHING — COMPLETE
        ↓
-    Phase 3 — UI Representation / Snapshot
+    Phase 7 — UI Component System
        ↓
     ✅ COMPLETE
        ↓
@@ -836,6 +900,9 @@ Current priority:
     ✅ COMPLETE
        ↓
     Phase 6 — Performance / Benchmarks
+       ↓
+    ✅ COMPLETE
+    phase 7 — UI COMPONENT SYSTEM
        ↓
     🟢 ACTIVE
 
@@ -961,20 +1028,21 @@ Commits:
 
 Message:
 
-    complete phase 2e reactive batching pipeline
+    test: add phase 6 websocket performance benchmarks
 
 Tag:
 
-    phase-2e-complete (pending)
+    phase-6-websocket-performance-baseline
 
 Tests:
 
-    126 passed
+    208 passed
 
 Working tree:
 
-    Phase 2E batching implementation stable
-    Benchmark committed
+    Phase 6 performance benchmark stable
+    WebSocket client scaling validated through 100 clients
+    Full regression suite green
 
 
 Milestone:
