@@ -96,7 +96,22 @@ print("Text prop + children: PASS")
 # ---------------------------------------------------------
 # Cleanup
 # ---------------------------------------------------------
-registry.unregister("Card")
+registry.register(
+    "Card",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
 
 print()
 print("=== CUSTOM REGISTRY PROP RENDERING PASS ===")

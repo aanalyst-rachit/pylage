@@ -108,11 +108,17 @@ class Style:
     def to_css(self) -> str:
         """Convert the style definition into a CSS declaration string."""
 
+        # Import lazily to avoid a styling -> core import cycle.
+        from pyskin.core.state import State
+
         declarations: list[str] = []
 
         for field_name, value in self.__dict__.items():
             if field_name == "custom":
                 continue
+
+            if isinstance(value, State):
+                value = value.value
 
             if value is None:
                 continue
@@ -123,6 +129,9 @@ class Style:
             )
 
         for name, value in (self.custom or {}).items():
+            if isinstance(value, State):
+                value = value.value
+
             if value is None:
                 continue
 

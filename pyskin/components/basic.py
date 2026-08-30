@@ -14,6 +14,10 @@ def Column(*children, **props: Any) -> Component:
     return component("Column", *children, **props)
 
 
+def Row(*children, **props: Any) -> Component:
+    return component("Row", *children, **props)
+
+
 def Card(*children, **props: Any) -> Component:
     from pyskin.core.registry import PropDefinition, registry
 
@@ -139,26 +143,6 @@ def Carousel(*children, **props: Any) -> Component:
 
 
 def Grid(*children, **props: Any) -> Component:
-    from pyskin.core.registry import PropDefinition, registry
-
-    if not registry.has("Grid"):
-        registry.register(
-            "Grid",
-            "div",
-            props={
-                "class_name": PropDefinition(
-                    "class_name",
-                    kind="attribute",
-                    html_name="class",
-                ),
-                "title": PropDefinition(
-                    "title",
-                    kind="attribute",
-                    html_name="title",
-                ),
-            },
-        )
-
     return component("Grid", *children, **props)
 
 

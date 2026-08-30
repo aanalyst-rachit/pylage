@@ -681,9 +681,242 @@ registry.register(
 )
 
 registry.register(
+    "Row",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Grid",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
     "Column",
     "div",
     props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+
+registry.register(
+    "Badge",
+    "span",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Avatar",
+    "span",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Accordion",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Carousel",
+    "div",
+    props={
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Image",
+    "img",
+    void=True,
+    props={
+        "src": PropDefinition(
+            "src",
+            kind="attribute",
+            html_name="src",
+        ),
+        "alt": PropDefinition(
+            "alt",
+            kind="attribute",
+            html_name="alt",
+        ),
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Video",
+    "video",
+    props={
+        "src": PropDefinition(
+            "src",
+            kind="attribute",
+            html_name="src",
+        ),
+        "controls": PropDefinition(
+            "controls",
+            kind="boolean",
+            html_name="controls",
+        ),
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Audio",
+    "audio",
+    props={
+        "src": PropDefinition(
+            "src",
+            kind="attribute",
+            html_name="src",
+        ),
+        "controls": PropDefinition(
+            "controls",
+            kind="boolean",
+            html_name="controls",
+        ),
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Icon",
+    "span",
+    props={
+        "name": PropDefinition(
+            "name",
+            kind="text",
+        ),
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
+
+registry.register(
+    "Canvas",
+    "svg",
+    props={
+        "width": PropDefinition(
+            "width",
+            kind="attribute",
+            html_name="width",
+        ),
+        "height": PropDefinition(
+            "height",
+            kind="attribute",
+            html_name="height",
+        ),
         "class_name": PropDefinition(
             "class_name",
             kind="attribute",

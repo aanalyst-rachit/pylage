@@ -12,13 +12,8 @@ from pyskin.styling import Style
 class HTMLRenderer:
     """Render a PySkin component tree into HTML."""
 
-    def __init__(
-        self,
-        registry_instance=None,
-        theme=None,
-    ) -> None:
+    def __init__(self, registry_instance=None) -> None:
         self._registry = registry_instance or registry
-        self._theme = theme
         self._register_builtin_renderers()
 
     @property
@@ -31,9 +26,6 @@ class HTMLRenderer:
         builtins = {
             "Column": lambda renderer, component:
                 renderer._render_column(component),
-
-            "Row": lambda renderer, component:
-                renderer._render_row(component),
 
             "Dialog": lambda renderer, component:
                 renderer._render_dialog(component),
@@ -78,18 +70,7 @@ class HTMLRenderer:
         return value
 
     def render(self, component: Component) -> str:
-        html = self._render_component(component)
-
-        if self._theme is not None:
-            theme_css = self._theme.to_css()
-
-            if theme_css:
-                html = (
-                    f"<style>:root{{{theme_css}}}</style>"
-                    + html
-                )
-
-        return html
+        return self._render_component(component)
 
     def _event_attributes(self, component: Component) -> str:
         if not component.events:
@@ -172,9 +153,7 @@ class HTMLRenderer:
         attributes: list[str] = []
 
         for name, raw_value in component.props.items():
-            # ``style`` is rendered by _render_common_attributes().
-            # Never emit it again as a generic HTML attribute.
-            if name == "style" or name in excluded:
+            if name in excluded:
                 continue
 
             value = self._value(raw_value)
@@ -277,25 +256,6 @@ class HTMLRenderer:
             default_style=Style(
                 display="flex",
                 flex_direction="column",
-            ),
-        )
-        props = self._render_prop_attributes(
-            component,
-            excluded={"children"},
-        )
-        children = self._render_children(component)
-
-        return (
-            f'<div {common}{props}>'
-            f'{children}</div>'
-        )
-
-    def _render_row(self, component: Component) -> str:
-        common = self._render_common_attributes(
-            component,
-            default_style=Style(
-                display="flex",
-                flex_direction="row",
             ),
         )
         props = self._render_prop_attributes(
