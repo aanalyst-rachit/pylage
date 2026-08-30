@@ -552,7 +552,7 @@ Definition of done:
 
 # PHASE 4 — DIFF ENGINE
 
-Status: 🔴 NOT STARTED
+Status: ✅ COMPLETE
 
 Objective:
 
@@ -829,28 +829,28 @@ Current priority:
        ↓
     Phase 4 — Diff Engine
        ↓
+    ✅ COMPLETE
+       ↓
+    Phase 5 — Patch Engine
+       ↓
     🟢 NEXT
 
 Current active architectural task:
 
-    Phase 4 — Diff Engine
+    Phase 5 — Patch Engine
             ↓
-    Audit Phase 3 snapshot representation
+    Define patch operation semantics
             ↓
-    Define deterministic diff semantics
+    Convert diff results into patch operations
             ↓
-    Implement minimal prop/text/child diffs
+    Validate WebSocket patch transport
             ↓
-    Add focused diff tests
+    Add focused patch tests
             ↓
     Preserve existing reactive/mutation behavior
 
 Then:
 
-    Phase 4
-       ↓
-    Diff
-       ↓
     Phase 5
        ↓
     Patch
@@ -997,13 +997,15 @@ Milestone:
 
 Current next task:
 
-    Phase 3 — UI Representation / Snapshot
+    Phase 5 — Patch Engine
           ↓
-    Stable UI representation
+    Diff results
           ↓
-    Previous + Current snapshots
+    Patch operations
           ↓
-    Deterministic comparison foundation
+    WebSocket transport
+          ↓
+    Browser DOM patching
 
 ---
 
