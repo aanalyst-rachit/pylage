@@ -1,6 +1,7 @@
 from pyskin.app import run
 from pyskin.components import Canvas, Icon, Audio, Video, Image, Grid, Carousel, Accordion, Avatar, Badge, Divider, Button, Card, Column, Dialog, Form, Heading, Input, Navigation, RadioGroup, Select, Slider, Switch, Table, Tabs, Text, Checkbox, DatePicker, Alert, Toast, Spinner, ProgressBar, Skeleton, Breadcrumbs, Pagination, Menu, Drawer, Tooltip, Popover
 from pyskin.core.state import State
+from pyskin.styling import Style
 
 __all__ = [
     "Accordion",
@@ -43,5 +44,6 @@ __all__ = [
     "Tooltip",
     "Popover",
     "State",
+    "Style",
     "run",
 ]

@@ -6,6 +6,7 @@ from typing import Any
 from pyskin.core.component import Component
 from pyskin.core.state import State
 from pyskin.core.registry import registry
+from pyskin.styling import Style
 
 
 class HTMLRenderer:
@@ -92,13 +93,38 @@ class HTMLRenderer:
     def _render_common_attributes(
         self,
         component: Component,
+        default_style: Style | None = None,
     ) -> str:
         component_id = escape(component.id, quote=True)
 
-        return (
+        attributes = (
             f'data-pyskin-id="{component_id}"'
             f'{self._event_attributes(component)}'
         )
+
+        style = component.props.get("style")
+
+        if isinstance(style, State):
+            style = style.value
+
+        if default_style is not None:
+            if style is None:
+                style = default_style
+            elif isinstance(style, Style):
+                style = default_style.merge(style)
+
+        if style is not None:
+            to_css = getattr(style, "to_css", None)
+
+            if callable(to_css):
+                css = to_css()
+
+                if css:
+                    attributes += (
+                        f' style="{escape(css, quote=True)}"'
+                    )
+
+        return attributes
 
     def _render_prop_attributes(
         self,
@@ -225,7 +251,13 @@ class HTMLRenderer:
         )
 
     def _render_column(self, component: Component) -> str:
-        common = self._render_common_attributes(component)
+        common = self._render_common_attributes(
+            component,
+            default_style=Style(
+                display="flex",
+                flex_direction="column",
+            ),
+        )
         props = self._render_prop_attributes(
             component,
             excluded={"children"},
@@ -233,8 +265,7 @@ class HTMLRenderer:
         children = self._render_children(component)
 
         return (
-            f'<div {common}{props} '
-            f'style="display:flex;flex-direction:column;">'
+            f'<div {common}{props}>'
             f'{children}</div>'
         )
 
