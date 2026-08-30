@@ -483,11 +483,48 @@ CLIENT_RUNTIME = r"""
             '[data-pyskin-id="' + CSS.escape(message.id) + '"]'
         );
 
-        if (!component || !message.props) {
+        if (!component) {
             return;
         }
 
           const propMeta = message.prop_meta || {};
+
+          // Remove props that disappeared from the component snapshot.
+          const removeProps = Array.isArray(message.remove_props)
+              ? message.remove_props
+              : [];
+
+          removeProps.forEach(function (propName) {
+              const meta = propMeta[propName] || {};
+              const htmlName = meta.html_name || propName;
+
+              component.removeAttribute(htmlName);
+
+              if (htmlName in component) {
+                  try {
+                      if (meta.kind === "boolean") {
+                          component[htmlName] = false;
+                      } else if (meta.kind === "text") {
+                          component[htmlName] = "";
+                      } else {
+                          component[htmlName] = null;
+                      }
+                  } catch (error) {
+                      console.warn(
+                          "[PySkin] Failed to clear removed DOM property:",
+                          htmlName,
+                          error
+                      );
+                  }
+              }
+          });
+
+          if (!message.props) {
+              window.PySkin.onUpdate =
+                  window.PySkin.onUpdate || function () {};
+              window.PySkin.onUpdate(message);
+              return;
+          }
 
           Object.keys(message.props).forEach(function (propName) {
               const value = message.props[propName];

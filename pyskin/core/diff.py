@@ -27,28 +27,43 @@ def _diff_node(
     previous: dict[str, Any],
     current: dict[str, Any],
     operations: list[DiffOperation],
+    *,
+    parent_id: Any = None,
+    index: int | None = None,
 ) -> None:
     previous_id = previous.get("id")
     current_id = current.get("id")
 
     if previous_id != current_id:
-        operations.append(
-            {
-                "type": "replace",
-                "id": previous_id,
-                "node": current,
-            }
-        )
+        operation = {
+            "type": "replace",
+            "id": previous_id,
+            "node": current,
+        }
+
+        if parent_id is not None:
+            operation["parent_id"] = parent_id
+
+        if index is not None:
+            operation["index"] = index
+
+        operations.append(operation)
         return
 
     if previous.get("type") != current.get("type"):
-        operations.append(
-            {
-                "type": "replace",
-                "id": current_id,
-                "node": current,
-            }
-        )
+        operation = {
+            "type": "replace",
+            "id": current_id,
+            "node": current,
+        }
+
+        if parent_id is not None:
+            operation["parent_id"] = parent_id
+
+        if index is not None:
+            operation["index"] = index
+
+        operations.append(operation)
         return
 
     previous_props = previous.get("props", {})
@@ -141,4 +156,6 @@ def _diff_children(
             previous_by_id[child_id],
             child,
             operations,
+            parent_id=parent_id,
+            index=index,
         )

@@ -596,7 +596,7 @@ Definition of done:
 
 # PHASE 5 — PATCH ENGINE
 
-Status: 🔴 NOT STARTED
+Status: 🟢 COMPLETE
 
 Objective:
 
@@ -635,7 +635,7 @@ Definition of done:
 
 # PHASE 6 — PERFORMANCE / BENCHMARKS
 
-Status: 🔴 NOT STARTED
+Status: 🟢 ACTIVE
 
 Measure real performance.
 
@@ -787,7 +787,7 @@ Do not begin this before the software architecture and benchmarks justify it.
 
 ---
 
-# 🔥 CURRENT PHASE — PHASE 4
+# 🔥 CURRENT PHASE — PHASE 6
 
 Current priority:
 
@@ -833,31 +833,33 @@ Current priority:
        ↓
     Phase 5 — Patch Engine
        ↓
-    🟢 NEXT
+    ✅ COMPLETE
+       ↓
+    Phase 6 — Performance / Benchmarks
+       ↓
+    🟢 ACTIVE
 
 Current active architectural task:
 
-    Phase 5 — Patch Engine
+    Phase 6 — Performance / Benchmarks
             ↓
-    Define patch operation semantics
+    Establish benchmark harness
             ↓
-    Convert diff results into patch operations
+    Measure state update latency
             ↓
-    Validate WebSocket patch transport
+    Measure event latency
             ↓
-    Add focused patch tests
+    Measure WebSocket latency
             ↓
-    Preserve existing reactive/mutation behavior
-
-Then:
-
-    Phase 5
-       ↓
-    Patch
-       ↓
-    Phase 6
-       ↓
-    Benchmarks
+    Measure update throughput
+            ↓
+    Measure patch size
+            ↓
+    Measure CPU / memory usage
+            ↓
+    Measure component-count scaling
+            ↓
+    Measure dependency-graph scaling
 
 ---
 
@@ -997,15 +999,17 @@ Milestone:
 
 Current next task:
 
-    Phase 5 — Patch Engine
+    Phase 6 — Performance / Benchmarks
           ↓
-    Diff results
+    Benchmark harness
           ↓
-    Patch operations
+    Runtime measurements
           ↓
-    WebSocket transport
+    Patch/network measurements
           ↓
-    Browser DOM patching
+    Scaling measurements
+          ↓
+    Benchmark-backed performance baseline
 
 ---
 

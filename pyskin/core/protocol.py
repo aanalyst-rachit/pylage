@@ -77,6 +77,7 @@ class UpdateMessage:
 
     component_id: str
     props: dict[str, Any]
+    remove_props: list[str] | None = None
     prop_meta: dict[str, dict[str, Any]] | None = None
 
     @property
@@ -89,6 +90,9 @@ class UpdateMessage:
             "id": self.component_id,
             "props": self.props,
         }
+
+        if self.remove_props:
+            message["remove_props"] = self.remove_props
 
         if self.prop_meta is not None:
             message["prop_meta"] = self.prop_meta
@@ -114,6 +118,7 @@ class UpdateMessage:
 
         component_id = data.get("id")
         props = data.get("props")
+        remove_props = data.get("remove_props", [])
         prop_meta = data.get("prop_meta")
 
         if not isinstance(component_id, str) or not component_id:
@@ -121,6 +126,19 @@ class UpdateMessage:
 
         if not isinstance(props, dict):
             raise ValueError("Update message requires props.")
+
+        if not isinstance(remove_props, list):
+            raise ValueError(
+                "Update message remove_props must be a list."
+            )
+
+        if not all(
+            isinstance(name, str) and name
+            for name in remove_props
+        ):
+            raise ValueError(
+                "Update message remove_props must contain valid names."
+            )
 
         if prop_meta is not None and not isinstance(prop_meta, dict):
             raise ValueError(
@@ -130,6 +148,7 @@ class UpdateMessage:
         return cls(
             component_id=component_id,
             props=props,
+            remove_props=remove_props,
             prop_meta=prop_meta,
         )
 
