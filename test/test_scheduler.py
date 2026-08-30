@@ -226,3 +226,32 @@ def test_flush_clears_before_callback():
     scheduler.flush()
 
     assert len(dirty) == 0
+
+
+def test_scheduler_flush_can_be_scheduled_only_once_per_batch():
+    dirty = DirtyNodes()
+    component = Component(type="Heading")
+    scheduled = []
+    processed = []
+
+    scheduler = Scheduler(
+        dirty,
+        lambda node: processed.append(node),
+        schedule_flush=lambda: scheduled.append(True),
+    )
+
+    dirty.mark(component)
+
+    scheduler.request()
+    scheduler.request()
+    scheduler.request()
+
+    assert scheduled == [True]
+
+    scheduler.flush()
+
+    assert processed == [component]
+
+    scheduler.request()
+
+    assert scheduled == [True, True]

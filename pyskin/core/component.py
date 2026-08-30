@@ -19,6 +19,11 @@ class Component:
     children: list[Child] = field(default_factory=list)
     events: dict[str, EventHandler] = field(default_factory=dict)
     id: str = field(default_factory=lambda: uuid.uuid4().hex[:10])
+    _parent: Component | None = field(
+        default=None,
+        init=False,
+        repr=False,
+    )
     _mutation_subscribers: list[MutationSubscriber] = field(
         default_factory=list,
         init=False,
@@ -35,6 +40,20 @@ class Component:
                     raise ValueError(
                         "A component cannot contain itself."
                     )
+
+                ancestor = self
+                while ancestor is not None:
+                    if ancestor is child:
+                        raise ValueError(
+                            "A component cannot contain an ancestor."
+                        )
+                    ancestor = ancestor._parent
+
+                if child._parent is not None:
+                    old_parent = child._parent
+
+                    if child in old_parent.children:
+                        old_parent.children.remove(child)
 
                 child._parent = self
 
@@ -60,6 +79,9 @@ class Component:
             raise ValueError(
                 "Child is not present in this component."
             ) from None
+
+        if isinstance(child, Component):
+            child._parent = None
 
         event = {
             "type": "remove",
@@ -130,6 +152,27 @@ class Component:
 
         normalized_index = index
 
+        for child in children:
+            if isinstance(child, Component):
+                if child is self:
+                    raise ValueError(
+                        "A component cannot contain itself."
+                    )
+
+                ancestor = self
+                while ancestor is not None:
+                    if ancestor is child:
+                        raise ValueError(
+                            "A component cannot contain an ancestor."
+                        )
+                    ancestor = ancestor._parent
+
+                if child._parent is not None:
+                    old_parent = child._parent
+
+                    if child in old_parent.children:
+                        old_parent.children.remove(child)
+
         for offset, child in enumerate(children):
             self.children.insert(
                 normalized_index + offset,
@@ -162,6 +205,25 @@ class Component:
             raise ValueError(
                 "Child is not attached to this parent."
             ) from exc
+
+        if isinstance(new_child, Component):
+            if new_child is self:
+                raise ValueError(
+                    "A component cannot contain itself."
+                )
+
+            ancestor = self
+            while ancestor is not None:
+                if new_child is ancestor:
+                    raise ValueError(
+                        "A component cannot contain an ancestor."
+                    )
+                ancestor = getattr(ancestor, "_parent", None)
+
+            old_parent = getattr(new_child, "_parent", None)
+
+            if old_parent is not None and new_child in old_parent.children:
+                old_parent.children.remove(new_child)
 
         self.children[index] = new_child
 
@@ -211,7 +273,33 @@ class Component:
         self,
         *children: Child,
     ) -> "Component":
+        for child in children:
+            if isinstance(child, Component):
+                if child is self:
+                    raise ValueError(
+                        "A component cannot contain itself."
+                    )
+
+                ancestor = self
+                while ancestor is not None:
+                    if child is ancestor:
+                        raise ValueError(
+                            "A component cannot contain an ancestor."
+                        )
+                    ancestor = getattr(ancestor, "_parent", None)
+
         old_children = list(self.children)
+
+        for child in children:
+            if isinstance(child, Component):
+                old_parent = getattr(child, "_parent", None)
+
+                if (
+                    old_parent is not None
+                    and old_parent is not self
+                    and child in old_parent.children
+                ):
+                    old_parent.children.remove(child)
 
         self.children = list(children)
 

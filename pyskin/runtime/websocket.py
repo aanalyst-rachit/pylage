@@ -88,7 +88,10 @@ class WebSocketServer:
             return
 
         self._loop.call_soon_threadsafe(
-            self._scheduler.flush,
+            lambda: self._loop.call_later(
+                0,
+                self._scheduler.flush,
+            )
         )
 
     def _scheduled_update(

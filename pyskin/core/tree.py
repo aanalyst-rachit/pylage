@@ -63,6 +63,8 @@ class TreeMutationObserver:
         self.root = root
         self.callback = callback
         self._subscriptions = []
+        self._component_unsubscribers: dict[str, Any] = {}
+        self._bound_components: set[str] = set()
 
         self._bind_tree(root)
 
@@ -70,20 +72,71 @@ class TreeMutationObserver:
         if not isinstance(node, Component):
             return
 
+        if node.id in self._bound_components:
+            return
+
+        self._bound_components.add(node.id)
+
         unsubscribe = node.subscribe_mutation(
             self._on_mutation
         )
 
         self._subscriptions.append(unsubscribe)
+        self._component_unsubscribers[node.id] = unsubscribe
 
         for child in node.children:
             self._bind_tree(child)
 
     def _on_mutation(self, event: dict[str, Any]) -> None:
-        for child in event.get("children", []):
-            self._bind_tree(child)
+        event_type = event.get("type")
+
+        if event_type == "add":
+            for child in event.get("children", []):
+                self._bind_tree(child)
+
+        elif event_type == "remove":
+            for child in event.get("children", []):
+                self._unbind_tree(child)
+
+        elif event_type == "clear":
+            for child in event.get("children", []):
+                self._unbind_tree(child)
+
+        elif event_type == "set_children":
+            for child in event.get("old_children", []):
+                self._unbind_tree(child)
+
+            for child in event.get("children", []):
+                self._bind_tree(child)
+
+        elif event_type == "replace":
+            old_child = event.get("old_child")
+            new_child = event.get("new_child")
+
+            if isinstance(old_child, Component):
+                self._unbind_tree(old_child)
+
+            if isinstance(new_child, Component):
+                self._bind_tree(new_child)
 
         self.callback(event)
+
+    def _unbind_tree(self, node: Any) -> None:
+        if not isinstance(node, Component):
+            return
+
+        for child in list(node.children):
+            self._unbind_tree(child)
+
+        unsubscribe = self._component_unsubscribers.pop(node.id, None)
+
+        if unsubscribe is not None:
+            unsubscribe()
+
+        self._bound_components.discard(node.id)
+
+        if unsubscribe is not None and unsubscribe in self._subscriptions:
+            self._subscriptions.remove(unsubscribe)
 
     def stop(self) -> None:
         """Remove all mutation subscriptions."""
@@ -92,4 +145,6 @@ class TreeMutationObserver:
             unsubscribe()
 
         self._subscriptions.clear()
+        self._component_unsubscribers.clear()
+        self._bound_components.clear()
 
