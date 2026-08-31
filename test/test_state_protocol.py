@@ -1,6 +1,6 @@
 import json
 
-print("=== PYSKIN STATE PROTOCOL TEST ===")
+print("=== PYLAGE STATE PROTOCOL TEST ===")
 
 message = {
     "type": "update",

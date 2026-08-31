@@ -1,5 +1,5 @@
 ============================================================
-FILE: pyskin/app.py
+FILE: pylage/app.py
 ============================================================
 from __future__ import annotations
 
@@ -7,14 +7,14 @@ from pathlib import Path
 import time
 import webbrowser
 
-from pyskin.core.component import Component
-from pyskin.runtime import Runtime
+from pylage.core.component import Component
+from pylage.runtime import Runtime
 
 
 def run(
     app: Component,
     *,
-    title: str = "PySkin App",
+    title: str = "PyLage App",
     output: str | Path = "index.html",
     serve: bool = False,
     host: str = "127.0.0.1",
@@ -22,7 +22,7 @@ def run(
     open_browser: bool = True,
 ) -> Path:
     """
-    Render and optionally serve a PySkin application.
+    Render and optionally serve a PyLage application.
 
     Default behavior remains file-only rendering.
 
@@ -32,11 +32,11 @@ def run(
 
     if not isinstance(app, Component):
         raise TypeError(
-            "pyskin.run() expects a Component as the root app."
+            "pylage.run() expects a Component as the root app."
         )
 
     if not serve:
-        from pyskin.renderers.html import render_document
+        from pylage.renderers.html import render_document
 
         document = render_document(
             app,
@@ -63,7 +63,7 @@ def run(
     output_path = runtime.render()
     url = runtime.start()
 
-    print(f"PySkin app running at {url}")
+    print(f"PyLage app running at {url}")
     print("Press Ctrl+C to stop.")
 
     if open_browser:
@@ -73,7 +73,7 @@ def run(
         while True:
             time.sleep(0.25)
     except KeyboardInterrupt:
-        print("\nStopping PySkin...")
+        print("\nStopping PyLage...")
 
     finally:
         runtime.stop()
@@ -81,14 +81,14 @@ def run(
     return output_path
 
 ============================================================
-FILE: pyskin/components/basic.py
+FILE: pylage/components/basic.py
 ============================================================
 from __future__ import annotations
 
 from typing import Any
 
-from pyskin.core.component import Component, component
-from pyskin.core.state import State
+from pylage.core.component import Component, component
+from pylage.core.state import State
 
 
 def Text(text: Any, **props: Any) -> Component:
@@ -104,7 +104,7 @@ def Row(*children, **props: Any) -> Component:
 
 
 def Card(*children, **props: Any) -> Component:
-    from pyskin.core.registry import PropDefinition, registry
+    from pylage.core.registry import PropDefinition, registry
 
     if not registry.has("Card"):
         registry.register(
@@ -132,7 +132,7 @@ def Divider(*children, **props: Any) -> Component:
     return component("Divider", *children, **props)
 
 def Badge(*children, **props: Any) -> Component:
-    from pyskin.core.registry import PropDefinition, registry
+    from pylage.core.registry import PropDefinition, registry
 
     if not registry.has("Badge"):
         registry.register(
@@ -156,7 +156,7 @@ def Badge(*children, **props: Any) -> Component:
 
 
 def Avatar(*children, **props: Any) -> Component:
-    from pyskin.core.registry import PropDefinition, registry
+    from pylage.core.registry import PropDefinition, registry
 
     if not registry.has("Avatar"):
         registry.register(
@@ -180,7 +180,7 @@ def Avatar(*children, **props: Any) -> Component:
 
 
 def Accordion(*children, **props: Any) -> Component:
-    from pyskin.core.registry import PropDefinition, registry
+    from pylage.core.registry import PropDefinition, registry
 
     if not registry.has("Accordion"):
         registry.register(
@@ -204,7 +204,7 @@ def Accordion(*children, **props: Any) -> Component:
 
 
 def Carousel(*children, **props: Any) -> Component:
-    from pyskin.core.registry import PropDefinition, registry
+    from pylage.core.registry import PropDefinition, registry
 
     if not registry.has("Carousel"):
         registry.register(
@@ -232,7 +232,7 @@ def Grid(*children, **props: Any) -> Component:
 
 
 def Image(**props: Any) -> Component:
-    from pyskin.core.registry import PropDefinition, registry
+    from pylage.core.registry import PropDefinition, registry
 
     if not registry.has("Image"):
         registry.register(
@@ -267,7 +267,7 @@ def Image(**props: Any) -> Component:
 
 
 def Video(*children, **props: Any) -> Component:
-    from pyskin.core.registry import PropDefinition, registry
+    from pylage.core.registry import PropDefinition, registry
 
     if not registry.has("Video"):
         registry.register(
@@ -301,7 +301,7 @@ def Video(*children, **props: Any) -> Component:
 
 
 def Audio(*children, **props: Any) -> Component:
-    from pyskin.core.registry import PropDefinition, registry
+    from pylage.core.registry import PropDefinition, registry
 
     if not registry.has("Audio"):
         registry.register(
@@ -335,7 +335,7 @@ def Audio(*children, **props: Any) -> Component:
 
 
 def Icon(**props: Any) -> Component:
-    from pyskin.core.registry import PropDefinition, registry
+    from pylage.core.registry import PropDefinition, registry
 
     if not registry.has("Icon"):
         registry.register(
@@ -363,7 +363,7 @@ def Icon(**props: Any) -> Component:
 
 
 def Canvas(*children, **props: Any) -> Component:
-    from pyskin.core.registry import PropDefinition, registry
+    from pylage.core.registry import PropDefinition, registry
 
     if not registry.has("Canvas"):
         registry.register(
@@ -503,9 +503,9 @@ def Popover(*children, **props: Any) -> Component:
     return component("Popover", *children, **props)
 
 ============================================================
-FILE: pyskin/components/__init__.py
+FILE: pylage/components/__init__.py
 ============================================================
-from pyskin.components.basic import Canvas, Icon, Audio, Video, Image, Grid, Carousel, Accordion, Avatar, Badge, Divider, Button, Card, Column, Row, Dialog, Form, Heading, Input, Navigation, RadioGroup, Select, Slider, Switch, Table, Tabs, Text, Checkbox, DatePicker, Alert, Toast, Spinner, ProgressBar, Skeleton, Breadcrumbs, Pagination, Menu, Drawer, Tooltip, Popover
+from pylage.components.basic import Canvas, Icon, Audio, Video, Image, Grid, Carousel, Accordion, Avatar, Badge, Divider, Button, Card, Column, Row, Dialog, Form, Heading, Input, Navigation, RadioGroup, Select, Slider, Switch, Table, Tabs, Text, Checkbox, DatePicker, Alert, Toast, Spinner, ProgressBar, Skeleton, Breadcrumbs, Pagination, Menu, Drawer, Tooltip, Popover
 
 __all__ = [
     "Column",
@@ -539,18 +539,18 @@ __all__ = [
     "Popover",
 ]
 ============================================================
-FILE: pyskin/core/binding.py
+FILE: pylage/core/binding.py
 ============================================================
 from __future__ import annotations
 
 from typing import Any, Callable
 
-from pyskin.core.component import Component
-from pyskin.core.registry import registry
-from pyskin.core.state import State
-from pyskin.core.graph import DependencyGraph
-from pyskin.core.dirty import DirtyNodes
-from pyskin.core.scheduler import Scheduler
+from pylage.core.component import Component
+from pylage.core.registry import registry
+from pylage.core.state import State
+from pylage.core.graph import DependencyGraph
+from pylage.core.dirty import DirtyNodes
+from pylage.core.scheduler import Scheduler
 
 
 UpdateCallback = Callable[[Component, dict[str, Any]], None]
@@ -677,7 +677,7 @@ class StateBinding:
         self._subscriptions.clear()
 
 ============================================================
-FILE: pyskin/core/component.py
+FILE: pylage/core/component.py
 ============================================================
 from __future__ import annotations
 
@@ -685,7 +685,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 import uuid
 
-from pyskin.core.registry import registry
+from pylage.core.registry import registry
 
 
 Child = Any
@@ -1097,7 +1097,7 @@ def component(
     )
 
 ============================================================
-FILE: pyskin/core/diff.py
+FILE: pylage/core/diff.py
 ============================================================
 from __future__ import annotations
 
@@ -1262,13 +1262,13 @@ def _diff_children(
         )
 
 ============================================================
-FILE: pyskin/core/dirty.py
+FILE: pylage/core/dirty.py
 ============================================================
 from __future__ import annotations
 
-from pyskin.core.component import Component
-from pyskin.core.graph import DependencyGraph
-from pyskin.core.state import State
+from pylage.core.component import Component
+from pylage.core.graph import DependencyGraph
+from pylage.core.state import State
 
 
 class DirtyNodes:
@@ -1308,17 +1308,17 @@ class DirtyNodes:
         return len(self._nodes)
 
 ============================================================
-FILE: pyskin/core/events.py
+FILE: pylage/core/events.py
 ============================================================
 from __future__ import annotations
 
 from typing import Any
 
-from pyskin.core.component import Component
+from pylage.core.component import Component
 
 
 class EventDispatcher:
-    """Dispatches events from a PySkin component tree."""
+    """Dispatches events from a PyLage component tree."""
 
     def __init__(self, root: Component) -> None:
         if not isinstance(root, Component):
@@ -1381,13 +1381,13 @@ class EventDispatcher:
         return event in component.events
 
 ============================================================
-FILE: pyskin/core/graph.py
+FILE: pylage/core/graph.py
 ============================================================
 from __future__ import annotations
 
 from typing import Set, Tuple
-from pyskin.core.component import Component
-from pyskin.core.state import State
+from pylage.core.component import Component
+from pylage.core.state import State
 
 
 class DependencyGraph:
@@ -1418,18 +1418,18 @@ class DependencyGraph:
         self._state_to_components.clear()
 
 ============================================================
-FILE: pyskin/core/__init__.py
+FILE: pylage/core/__init__.py
 ============================================================
 
 ============================================================
-FILE: pyskin/core/ir.py
+FILE: pylage/core/ir.py
 ============================================================
 from __future__ import annotations
 
 import copy
 from typing import Any
-from pyskin.core.registry import registry
-from pyskin.core.state import State
+from pylage.core.registry import registry
+from pylage.core.state import State
 
 
 def _copy_ir_value(value: Any) -> Any:
@@ -1562,7 +1562,7 @@ class IRNode:
 
 
 def snapshot_to_ir(snapshot: dict[str, Any]) -> IRNode:
-    """Convert a PySkin snapshot into compiler-layer IR."""
+    """Convert a PyLage snapshot into compiler-layer IR."""
 
     if not isinstance(snapshot, dict):
         raise TypeError("snapshot must be a dictionary")
@@ -1806,7 +1806,7 @@ def plan_patches(
     current: dict[str, Any],
 ) -> list[dict[str, Any]]:
     """Plan patch operations from two snapshots."""
-    from pyskin.core.diff import diff
+    from pylage.core.diff import diff
 
     return diff(previous, current)
 
@@ -1841,14 +1841,14 @@ def optimize_ir(node: IRNode) -> IRNode:
     )
 
 ============================================================
-FILE: pyskin/core/patch.py
+FILE: pylage/core/patch.py
 ============================================================
 from __future__ import annotations
 
 from typing import Any
 
-from pyskin.core.diff import DiffOperation
-from pyskin.core.protocol import (
+from pylage.core.diff import DiffOperation
+from pylage.core.protocol import (
     TreeAddMessage,
     TreeRemoveMessage,
     TreeReplaceMessage,
@@ -1999,7 +1999,7 @@ def _require_index(value: Any) -> int | None:
     return value
 
 ============================================================
-FILE: pyskin/core/protocol.py
+FILE: pylage/core/protocol.py
 ============================================================
 from __future__ import annotations
 
@@ -2664,7 +2664,7 @@ class TreeRemoveMessage:
         return cls.from_dict(decoded)
 
 ============================================================
-FILE: pyskin/core/registry.py
+FILE: pylage/core/registry.py
 ============================================================
 from __future__ import annotations
 
@@ -2684,7 +2684,7 @@ class PropDefinition:
 
 @dataclass(frozen=True)
 class ComponentDefinition:
-    """Rendering definition for a PySkin component."""
+    """Rendering definition for a PyLage component."""
 
     type: str
     tag: str
@@ -2694,7 +2694,7 @@ class ComponentDefinition:
 
 
 class ComponentRegistry:
-    """Registry of known PySkin component rendering definitions."""
+    """Registry of known PyLage component rendering definitions."""
 
     def __init__(self) -> None:
         self._definitions: dict[str, ComponentDefinition] = {}
@@ -2826,7 +2826,7 @@ class ComponentRegistry:
 registry = ComponentRegistry()
 
 
-# Built-in PySkin component definitions.
+# Built-in PyLage component definitions.
 #
 # Text is a first-class UI component. Its text prop becomes
 # the rendered element content.
@@ -3672,21 +3672,21 @@ __all__ = [
 ]
 
 ============================================================
-FILE: pyskin/core/renderer.py
+FILE: pylage/core/renderer.py
 ============================================================
 from __future__ import annotations
 
 from html import escape
 from typing import Any
 
-from pyskin.core.component import Component
-from pyskin.core.state import State
-from pyskin.core.registry import registry
-from pyskin.styling import Style
+from pylage.core.component import Component
+from pylage.core.state import State
+from pylage.core.registry import registry
+from pylage.styling import Style
 
 
 class HTMLRenderer:
-    """Render a PySkin component tree into HTML."""
+    """Render a PyLage component tree into HTML."""
 
     def __init__(
         self,
@@ -3782,7 +3782,7 @@ class HTMLRenderer:
             for event in component.events
         )
 
-        return f' data-pyskin-events="{events}"'
+        return f' data-pylage-events="{events}"'
 
     def _render_children(self, component: Component) -> str:
         return "".join(
@@ -3799,7 +3799,7 @@ class HTMLRenderer:
         component_id = escape(component.id, quote=True)
 
         attributes = (
-            f'data-pyskin-id="{component_id}"'
+            f'data-pylage-id="{component_id}"'
             f'{self._event_attributes(component)}'
         )
 
@@ -4102,7 +4102,7 @@ class HTMLRenderer:
         if component.events:
             events = self._event_attributes(component)
         else:
-            events = ' data-pyskin-events="input,change"'
+            events = ' data-pylage-events="input,change"'
 
         attributes = self._render_prop_attributes(
             component,
@@ -4219,15 +4219,15 @@ def render(component: Component) -> str:
     return HTMLRenderer().render(component)
 
 ============================================================
-FILE: pyskin/core/scheduler.py
+FILE: pylage/core/scheduler.py
 ============================================================
 from __future__ import annotations
 
 from typing import Callable
 import threading
 
-from pyskin.core.component import Component
-from pyskin.core.dirty import DirtyNodes
+from pylage.core.component import Component
+from pylage.core.dirty import DirtyNodes
 
 
 class Scheduler:
@@ -4270,7 +4270,7 @@ class Scheduler:
             self.callback(node)
 
 ============================================================
-FILE: pyskin/core/snapshot.py
+FILE: pylage/core/snapshot.py
 ============================================================
 from __future__ import annotations
 
@@ -4278,9 +4278,9 @@ import copy
 import json
 from typing import Any
 
-from pyskin.core.component import Component
-from pyskin.core.registry import registry
-from pyskin.core.state import State
+from pylage.core.component import Component
+from pylage.core.registry import registry
+from pylage.core.state import State
 
 
 def _snapshot_value(value: Any) -> Any:
@@ -4366,7 +4366,7 @@ def component_to_snapshot(
     return snapshot
 
 ============================================================
-FILE: pyskin/core/state.py
+FILE: pylage/core/state.py
 ============================================================
 from __future__ import annotations
 
@@ -4377,7 +4377,7 @@ Subscriber = Callable[[Any, Any], None]
 
 
 class State:
-    """Reactive state value used by the pyskin runtime."""
+    """Reactive state value used by the pylage runtime."""
 
     def __init__(self, value: Any = None):
         self._value = value
@@ -4414,7 +4414,7 @@ class State:
         return f"State({self._value!r})"
 
 ============================================================
-FILE: pyskin/core/tree.py
+FILE: pylage/core/tree.py
 ============================================================
 from __future__ import annotations
 
@@ -4568,12 +4568,12 @@ class TreeMutationObserver:
 
 
 ============================================================
-FILE: pyskin/__init__.py
+FILE: pylage/__init__.py
 ============================================================
-from pyskin.app import run
-from pyskin.components import Canvas, Icon, Audio, Video, Image, Grid, Carousel, Accordion, Avatar, Badge, Divider, Button, Card, Column, Row, Dialog, Form, Heading, Input, Navigation, RadioGroup, Select, Slider, Switch, Table, Tabs, Text, Checkbox, DatePicker, Alert, Toast, Spinner, ProgressBar, Skeleton, Breadcrumbs, Pagination, Menu, Drawer, Tooltip, Popover
-from pyskin.core.state import State
-from pyskin.styling import Style, Theme, ResponsiveStyle
+from pylage.app import run
+from pylage.components import Canvas, Icon, Audio, Video, Image, Grid, Carousel, Accordion, Avatar, Badge, Divider, Button, Card, Column, Row, Dialog, Form, Heading, Input, Navigation, RadioGroup, Select, Slider, Switch, Table, Tabs, Text, Checkbox, DatePicker, Alert, Toast, Spinner, ProgressBar, Skeleton, Breadcrumbs, Pagination, Menu, Drawer, Tooltip, Popover
+from pylage.core.state import State
+from pylage.styling import Style, Theme, ResponsiveStyle
 
 __all__ = [
     "Accordion",
@@ -4624,15 +4624,15 @@ __all__ = [
 ]
 
 ============================================================
-FILE: pyskin/renderers/html.py
+FILE: pylage/renderers/html.py
 ============================================================
 from __future__ import annotations
 
 from html import escape
 
-from pyskin.core.component import Component
-from pyskin.core.renderer import render
-from pyskin.runtime.client import get_client_runtime
+from pylage.core.component import Component
+from pylage.core.renderer import render
+from pylage.runtime.client import get_client_runtime
 
 
 class HTMLDocumentRenderer:
@@ -4641,7 +4641,7 @@ class HTMLDocumentRenderer:
     def render(
         self,
         component: Component,
-        title: str = "PySkin App",
+        title: str = "PyLage App",
         websocket_url: str | None = None,
     ) -> str:
         body = render(component)
@@ -4701,7 +4701,7 @@ class HTMLDocumentRenderer:
 
 def render_document(
     component: Component,
-    title: str = "PySkin App",
+    title: str = "PyLage App",
     websocket_url: str | None = None,
 ) -> str:
     return HTMLDocumentRenderer().render(
@@ -4710,11 +4710,11 @@ def render_document(
         websocket_url=websocket_url,
     )
 ============================================================
-FILE: pyskin/renderers/__init__.py
+FILE: pylage/renderers/__init__.py
 ============================================================
 
 ============================================================
-FILE: pyskin/runtime/client.py
+FILE: pylage/runtime/client.py
 ============================================================
 from __future__ import annotations
 
@@ -4723,35 +4723,35 @@ CLIENT_RUNTIME = r"""
 (function () {
     "use strict";
 
-    window.PySkin = window.PySkin || {};
+    window.PyLage = window.PyLage || {};
 
     function connectWebSocket(url) {
         if (!url) {
             return null;
         }
 
-        console.log("[PySkin] Connecting:", url);
+        console.log("[PyLage] Connecting:", url);
 
         let socket;
 
         try {
             socket = new WebSocket(url);
         } catch (error) {
-            console.error("[PySkin] WebSocket creation failed", error);
+            console.error("[PyLage] WebSocket creation failed", error);
             return null;
         }
 
         socket.addEventListener("open", function () {
-            console.log("[PySkin] WebSocket connected");
-            window.PySkin.socket = socket;
+            console.log("[PyLage] WebSocket connected");
+            window.PyLage.socket = socket;
         });
 
         socket.addEventListener("close", function () {
-            console.log("[PySkin] WebSocket disconnected");
+            console.log("[PyLage] WebSocket disconnected");
         });
 
         socket.addEventListener("error", function (error) {
-            console.error("[PySkin] WebSocket error", error);
+            console.error("[PyLage] WebSocket error", error);
         });
 
         socket.addEventListener("message", function (event) {
@@ -4759,13 +4759,13 @@ CLIENT_RUNTIME = r"""
                 const message = JSON.parse(event.data);
 
                 if (
-                    window.PySkin &&
-                    typeof window.PySkin.onResponse === "function"
+                    window.PyLage &&
+                    typeof window.PyLage.onResponse === "function"
                 ) {
-                    window.PySkin.onResponse(message);
+                    window.PyLage.onResponse(message);
                 }
             } catch (error) {
-                console.error("[PySkin] Invalid server message", error);
+                console.error("[PyLage] Invalid server message", error);
             }
         });
 
@@ -4783,39 +4783,39 @@ CLIENT_RUNTIME = r"""
             message.payload = payload;
         }
 
-        const socket = window.PySkin.socket;
+        const socket = window.PyLage.socket;
 
         if (
             socket &&
             socket.readyState === WebSocket.OPEN
         ) {
-            console.log("[PySkin] Sending event:", message);
+            console.log("[PyLage] Sending event:", message);
             socket.send(JSON.stringify(message));
             return;
         }
 
         console.warn(
-            "[PySkin] WebSocket not ready; event not sent:",
+            "[PyLage] WebSocket not ready; event not sent:",
             message
         );
 
         if (
-            window.PySkin &&
-            typeof window.PySkin.onEvent === "function"
+            window.PyLage &&
+            typeof window.PyLage.onEvent === "function"
         ) {
-            window.PySkin.onEvent(message);
+            window.PyLage.onEvent(message);
         }
     }
 
     function handleEvent(event) {
-        const target = event.target.closest("[data-pyskin-id]");
+        const target = event.target.closest("[data-pylage-id]");
 
         if (!target) {
             return;
         }
 
-        const componentId = target.getAttribute("data-pyskin-id");
-        const eventNames = target.getAttribute("data-pyskin-events");
+        const componentId = target.getAttribute("data-pylage-id");
+        const eventNames = target.getAttribute("data-pylage-events");
 
         if (!componentId || !eventNames) {
             return;
@@ -4844,12 +4844,12 @@ CLIENT_RUNTIME = r"""
         sendEvent(componentId, event.type, payload);
     }
 
-    window.PySkin.onEvent = window.PySkin.onEvent || function (message) {
-        console.log("[PySkin event]", message);
+    window.PyLage.onEvent = window.PyLage.onEvent || function (message) {
+        console.log("[PyLage event]", message);
     };
 
-    window.PySkin.onResponse = window.PySkin.onResponse || function (message) {
-        console.log("[PySkin response]", message);
+    window.PyLage.onResponse = window.PyLage.onResponse || function (message) {
+        console.log("[PyLage response]", message);
 
         if (!message) {
             return;
@@ -4865,13 +4865,13 @@ CLIENT_RUNTIME = r"""
             }
 
             const component = document.querySelector(
-                '[data-pyskin-id="' +
+                '[data-pylage-id="' +
                 CSS.escape(message.component_id) +
                 '"]'
             );
 
             const newParent = document.querySelector(
-                '[data-pyskin-id="' +
+                '[data-pylage-id="' +
                 CSS.escape(message.new_parent_id) +
                 '"]'
             );
@@ -4887,7 +4887,7 @@ CLIENT_RUNTIME = r"""
 
         if (message.type === "tree_add") {
             const parent = document.querySelector(
-                '[data-pyskin-id="' + CSS.escape(message.parent_id) + '"]'
+                '[data-pylage-id="' + CSS.escape(message.parent_id) + '"]'
             );
 
             if (!parent || !Array.isArray(message.components)) {
@@ -4904,13 +4904,13 @@ CLIENT_RUNTIME = r"""
                 );
 
                 element.setAttribute(
-                    "data-pyskin-id",
+                    "data-pylage-id",
                     item.id
                 );
 
                 if (item.events) {
                     element.setAttribute(
-                        "data-pyskin-events",
+                        "data-pylage-events",
                         item.events
                     );
                 }
@@ -4986,7 +4986,7 @@ CLIENT_RUNTIME = r"""
                 }
 
                 const component = document.querySelector(
-                    '[data-pyskin-id="' + CSS.escape(componentId) + '"]'
+                    '[data-pylage-id="' + CSS.escape(componentId) + '"]'
                 );
 
                 if (component) {
@@ -4999,7 +4999,7 @@ CLIENT_RUNTIME = r"""
 
         if (message.type === "tree_clear") {
             const parent = document.querySelector(
-                '[data-pyskin-id="' +
+                '[data-pylage-id="' +
                 CSS.escape(message.parent_id) +
                 '"]'
             );
@@ -5014,7 +5014,7 @@ CLIENT_RUNTIME = r"""
 
             Array.from(parent.children).forEach(function (child) {
                 const componentId = child.getAttribute(
-                    "data-pyskin-id"
+                    "data-pylage-id"
                 );
 
                 if (componentIds.has(componentId)) {
@@ -5027,7 +5027,7 @@ CLIENT_RUNTIME = r"""
 
         if (message.type === "tree_set_children") {
             const parent = document.querySelector(
-                '[data-pyskin-id="' +
+                '[data-pylage-id="' +
                 CSS.escape(message.parent_id) +
                 '"]'
             );
@@ -5046,13 +5046,13 @@ CLIENT_RUNTIME = r"""
                 );
 
                 element.setAttribute(
-                    "data-pyskin-id",
+                    "data-pylage-id",
                     item.id
                 );
 
                 if (item.events) {
                     element.setAttribute(
-                        "data-pyskin-events",
+                        "data-pylage-events",
                         item.events
                     );
                 }
@@ -5110,7 +5110,7 @@ CLIENT_RUNTIME = r"""
 
         if (message.type === "tree_replace") {
             const oldComponent = document.querySelector(
-                '[data-pyskin-id="' +
+                '[data-pylage-id="' +
                 CSS.escape(message.old_component_id) +
                 '"]'
             );
@@ -5135,13 +5135,13 @@ CLIENT_RUNTIME = r"""
                 );
 
                 element.setAttribute(
-                    "data-pyskin-id",
+                    "data-pylage-id",
                     item.id
                 );
 
                 if (item.events) {
                     element.setAttribute(
-                        "data-pyskin-events",
+                        "data-pylage-events",
                         item.events
                     );
                 }
@@ -5198,7 +5198,7 @@ CLIENT_RUNTIME = r"""
         }
 
         const component = document.querySelector(
-            '[data-pyskin-id="' + CSS.escape(message.id) + '"]'
+            '[data-pylage-id="' + CSS.escape(message.id) + '"]'
         );
 
         if (!component) {
@@ -5229,7 +5229,7 @@ CLIENT_RUNTIME = r"""
                       }
                   } catch (error) {
                       console.warn(
-                          "[PySkin] Failed to clear removed DOM property:",
+                          "[PyLage] Failed to clear removed DOM property:",
                           htmlName,
                           error
                       );
@@ -5238,9 +5238,9 @@ CLIENT_RUNTIME = r"""
           });
 
           if (!message.props) {
-              window.PySkin.onUpdate =
-                  window.PySkin.onUpdate || function () {};
-              window.PySkin.onUpdate(message);
+              window.PyLage.onUpdate =
+                  window.PyLage.onUpdate || function () {};
+              window.PyLage.onUpdate(message);
               return;
           }
 
@@ -5275,7 +5275,7 @@ CLIENT_RUNTIME = r"""
                           component[htmlName] = value;
                       } catch (error) {
                           console.warn(
-                              "[PySkin] Failed to clear DOM property:",
+                              "[PyLage] Failed to clear DOM property:",
                               htmlName,
                               error
                           );
@@ -5291,7 +5291,7 @@ CLIENT_RUNTIME = r"""
                       return;
                   } catch (error) {
                       console.warn(
-                          "[PySkin] DOM property update failed:",
+                          "[PyLage] DOM property update failed:",
                           htmlName,
                           error
                       );
@@ -5304,40 +5304,40 @@ CLIENT_RUNTIME = r"""
               );
           });
 
-        window.PySkin.onUpdate = window.PySkin.onUpdate || function () {};
-        window.PySkin.onUpdate(message);
+        window.PyLage.onUpdate = window.PyLage.onUpdate || function () {};
+        window.PyLage.onUpdate(message);
     };
 
     document.addEventListener("click", handleEvent);
     document.addEventListener("input", handleEvent);
     document.addEventListener("change", handleEvent);
 
-    window.PySkin.socket = connectWebSocket(
-        window.PySkin.websocketUrl
+    window.PyLage.socket = connectWebSocket(
+        window.PyLage.websocketUrl
     );
 })();
 """
 
 
 def get_client_runtime(websocket_url: str | None = None) -> str:
-    """Return the embedded PySkin browser runtime."""
+    """Return the embedded PyLage browser runtime."""
 
     url = websocket_url or ""
 
     bootstrap = (
         "<script>\n"
-        "window.PySkin = window.PySkin || {};\n"
-        f"window.PySkin.websocketUrl = {url!r};\n"
+        "window.PyLage = window.PyLage || {};\n"
+        f"window.PyLage.websocketUrl = {url!r};\n"
         "</script>\n"
     )
 
     return bootstrap + CLIENT_RUNTIME
 
 ============================================================
-FILE: pyskin/runtime/__init__.py
+FILE: pylage/runtime/__init__.py
 ============================================================
-from pyskin.runtime.runtime import Runtime
-from pyskin.runtime.server import LocalServer
+from pylage.runtime.runtime import Runtime
+from pylage.runtime.server import LocalServer
 
 __all__ = [
     "Runtime",
@@ -5345,27 +5345,27 @@ __all__ = [
 ]
 
 ============================================================
-FILE: pyskin/runtime/runtime.py
+FILE: pylage/runtime/runtime.py
 ============================================================
 from __future__ import annotations
 
 from pathlib import Path
 
-from pyskin.core.component import Component
-from pyskin.renderers.html import render_document
+from pylage.core.component import Component
+from pylage.renderers.html import render_document
 
-from pyskin.runtime.server import LocalServer
-from pyskin.runtime.websocket import WebSocketServer
+from pylage.runtime.server import LocalServer
+from pylage.runtime.websocket import WebSocketServer
 
 
 class Runtime:
-    """Coordinates PySkin rendering and the local HTTP runtime."""
+    """Coordinates PyLage rendering and the local HTTP runtime."""
 
     def __init__(
         self,
         app: Component,
         *,
-        title: str = "PySkin App",
+        title: str = "PyLage App",
         output: str | Path = "index.html",
         host: str = "127.0.0.1",
         port: int = 0,
@@ -5482,7 +5482,7 @@ class Runtime:
         self.stop()
 
 ============================================================
-FILE: pyskin/runtime/server.py
+FILE: pylage/runtime/server.py
 ============================================================
 from __future__ import annotations
 
@@ -5536,7 +5536,7 @@ class _RequestHandler(BaseHTTPRequestHandler):
 
 
 class LocalServer:
-    """Small local HTTP server for a rendered PySkin app."""
+    """Small local HTTP server for a rendered PyLage app."""
 
     def __init__(
         self,
@@ -5568,7 +5568,7 @@ class LocalServer:
             raise RuntimeError("Server is already running.")
 
         handler = type(
-            "PySkinRequestHandler",
+            "PyLageRequestHandler",
             (_RequestHandler,),
             {
                 "directory": self.directory,
@@ -5610,7 +5610,7 @@ class LocalServer:
         self.stop()
 
 ============================================================
-FILE: pyskin/runtime/websocket.py
+FILE: pylage/runtime/websocket.py
 ============================================================
 from __future__ import annotations
 
@@ -5620,20 +5620,20 @@ from typing import Any, Optional
 
 from websockets.asyncio.server import Server, ServerConnection, serve
 
-from pyskin.core.binding import StateBinding
-from pyskin.core.component import Component
-from pyskin.core.events import EventDispatcher
-from pyskin.core.graph import DependencyGraph
-from pyskin.core.dirty import DirtyNodes
-from pyskin.core.scheduler import Scheduler
-from pyskin.core.state import State
-from pyskin.styling.style import Style
-from pyskin.styling.responsive import ResponsiveStyle
-from pyskin.core.protocol import EventMessage, UpdateMessage, TreeAddMessage, TreeRemoveMessage, TreeMoveMessage, TreeReplaceMessage, TreeRemoveMessage, TreeMoveMessage, TreeClearMessage, TreeSetChildrenMessage
+from pylage.core.binding import StateBinding
+from pylage.core.component import Component
+from pylage.core.events import EventDispatcher
+from pylage.core.graph import DependencyGraph
+from pylage.core.dirty import DirtyNodes
+from pylage.core.scheduler import Scheduler
+from pylage.core.state import State
+from pylage.styling.style import Style
+from pylage.styling.responsive import ResponsiveStyle
+from pylage.core.protocol import EventMessage, UpdateMessage, TreeAddMessage, TreeRemoveMessage, TreeMoveMessage, TreeReplaceMessage, TreeRemoveMessage, TreeMoveMessage, TreeClearMessage, TreeSetChildrenMessage
 
 
 class WebSocketServer:
-    """WebSocket transport for PySkin events and state updates."""
+    """WebSocket transport for PyLage events and state updates."""
 
     def __init__(
         self,
@@ -5679,7 +5679,7 @@ class WebSocketServer:
             scheduler=self._scheduler,
         )
 
-        from pyskin.core.tree import TreeMutationObserver
+        from pylage.core.tree import TreeMutationObserver
 
         self._tree_observer = TreeMutationObserver(
             root,
@@ -5711,7 +5711,7 @@ class WebSocketServer:
         )
 
     def _json_safe(self, value: Any) -> Any:
-        """Convert PySkin runtime values into JSON-safe values."""
+        """Convert PyLage runtime values into JSON-safe values."""
 
         if isinstance(value, State):
             return self._json_safe(value.value)
@@ -6107,7 +6107,7 @@ class WebSocketServer:
 
     def _get_component_definition(self, component: Component):
         """Resolve registry metadata for a component."""
-        from pyskin.core.registry import registry
+        from pylage.core.registry import registry
 
         return registry.get(component.type)
 
@@ -6282,23 +6282,23 @@ class EventMessageResponse:
         )
 
 ============================================================
-FILE: pyskin/styling/__init__.py
+FILE: pylage/styling/__init__.py
 ============================================================
-from pyskin.styling.style import Style
-from pyskin.styling.theme import Theme
-from pyskin.styling.responsive import ResponsiveStyle
+from pylage.styling.style import Style
+from pylage.styling.theme import Theme
+from pylage.styling.responsive import ResponsiveStyle
 
 __all__ = ["Style", "Theme", "ResponsiveStyle"]
 
 ============================================================
-FILE: pyskin/styling/responsive.py
+FILE: pylage/styling/responsive.py
 ============================================================
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
 
-from pyskin.styling.style import Style
+from pylage.styling.style import Style
 
 
 @dataclass(frozen=True)
@@ -6381,7 +6381,7 @@ class ResponsiveStyle:
 
 
 ============================================================
-FILE: pyskin/styling/style.py
+FILE: pylage/styling/style.py
 ============================================================
 from __future__ import annotations
 
@@ -6391,7 +6391,7 @@ from typing import Any
 
 @dataclass(frozen=True)
 class Style:
-    """Structured CSS style definition for PySkin components."""
+    """Structured CSS style definition for PyLage components."""
 
     color: Any = None
     background: Any = None
@@ -6495,7 +6495,7 @@ class Style:
         """Convert the style definition into a CSS declaration string."""
 
         # Import lazily to avoid a styling -> core import cycle.
-        from pyskin.core.state import State
+        from pylage.core.state import State
 
         declarations: list[str] = []
 
@@ -6539,7 +6539,7 @@ def _css_name(name: str) -> str:
     return name.replace("_", "-")
 
 ============================================================
-FILE: pyskin/styling/theme.py
+FILE: pylage/styling/theme.py
 ============================================================
 from __future__ import annotations
 
@@ -6550,7 +6550,7 @@ from typing import Any, Mapping
 
 @dataclass(frozen=True)
 class Theme:
-    """Immutable design-token theme for PySkin."""
+    """Immutable design-token theme for PyLage."""
 
     name: str = "default"
     colors: Mapping[str, Any] = field(default_factory=dict)

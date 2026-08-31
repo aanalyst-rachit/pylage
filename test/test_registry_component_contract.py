@@ -1,8 +1,8 @@
-from pyskin.core.component import component
-from pyskin.core.registry import PropDefinition, registry
+from pylage.core.component import component
+from pylage.core.registry import PropDefinition, registry
 
 
-print("=== PYSKIN COMPONENT REGISTRY CONTRACT TEST ===")
+print("=== PYLAGE COMPONENT REGISTRY CONTRACT TEST ===")
 
 
 # ---------------------------------------------------------

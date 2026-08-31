@@ -1,5 +1,5 @@
-from pyskin import Alert, Text, Button
-from pyskin.core.renderer import render
+from pylage import Alert, Text, Button
+from pylage.core.renderer import render
 
 
 def test_alert_renders_as_div():

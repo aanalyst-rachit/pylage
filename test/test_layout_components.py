@@ -1,6 +1,6 @@
-import pyskin as ps
+import pylage as ps
 
-from pyskin.core.renderer import render
+from pylage.core.renderer import render
 
 
 def test_column_is_flex_column_by_default():

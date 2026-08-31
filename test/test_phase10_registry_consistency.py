@@ -1,5 +1,5 @@
-import pyskin as ps
-from pyskin.core.registry import registry
+import pylage as ps
+from pylage.core.registry import registry
 
 
 DYNAMIC_COMPONENTS = [

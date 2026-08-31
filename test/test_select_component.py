@@ -1,5 +1,5 @@
-from pyskin import Select, Text, Button
-from pyskin.core.renderer import render
+from pylage import Select, Text, Button
+from pylage.core.renderer import render
 
 
 def test_select_renders_as_select():

@@ -1,8 +1,8 @@
-from pyskin.core.registry import registry
-from pyskin.core.renderer import HTMLRenderer
+from pylage.core.registry import registry
+from pylage.core.renderer import HTMLRenderer
 
 
-print("=== PYSKIN REGISTRY RENDERER IDEMPOTENCY TEST ===")
+print("=== PYLAGE REGISTRY RENDERER IDEMPOTENCY TEST ===")
 
 
 # First renderer initialization.
@@ -49,7 +49,7 @@ print("Repeated initialization preserves callbacks: PASS")
 
 
 # Both renderer instances must still work.
-from pyskin.components import Heading, Button
+from pylage.components import Heading, Button
 
 heading_html = renderer1.render(
     Heading("Hello")

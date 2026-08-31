@@ -1,8 +1,8 @@
 import asyncio
 import json
 
-from pyskin.core.component import Component
-from pyskin.runtime.websocket import WebSocketServer
+from pylage.core.component import Component
+from pylage.runtime.websocket import WebSocketServer
 
 
 def test_tree_move_is_broadcast_when_component_is_moved():

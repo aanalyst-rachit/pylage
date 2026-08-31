@@ -1,5 +1,5 @@
-from pyskin import Badge, Text
-from pyskin.core.renderer import render
+from pylage import Badge, Text
+from pylage.core.renderer import render
 
 
 def test_badge_creates_badge_component():

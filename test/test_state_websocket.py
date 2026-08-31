@@ -1,9 +1,9 @@
 import asyncio
 import json
 
-import pyskin as ps
+import pylage as ps
 
-from pyskin.runtime.websocket import WebSocketServer
+from pylage.runtime.websocket import WebSocketServer
 
 
 async def main():
@@ -18,7 +18,7 @@ async def main():
     try:
         url = server.start()
 
-        print("=== PYSKIN STATE WEBSOCKET TEST ===")
+        print("=== PYLAGE STATE WEBSOCKET TEST ===")
         print("URL:", url)
 
         import websockets

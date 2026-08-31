@@ -1,13 +1,13 @@
-import pyskin as ps
+import pylage as ps
 
 
 app = ps.Column(
-    ps.Heading("Hello PySkin"),
+    ps.Heading("Hello PyLage"),
     ps.Button("Click me"),
 )
 
 ps.run(
     app,
-    title="Hello PySkin",
+    title="Hello PyLage",
     serve=True,
 )

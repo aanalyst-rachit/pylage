@@ -1,5 +1,5 @@
-from pyskin import DatePicker
-from pyskin.core.renderer import render
+from pylage import DatePicker
+from pylage.core.renderer import render
 
 
 def test_datepicker_renders_as_date_input():

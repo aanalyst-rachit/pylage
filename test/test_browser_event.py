@@ -1,11 +1,11 @@
 from playwright.sync_api import sync_playwright, expect
 
-import pyskin as ps
-from pyskin.runtime import Runtime
+import pylage as ps
+from pylage.runtime import Runtime
 
 
 def test_browser_event():
-    print("=== PYSKIN BROWSER EVENT TEST ===")
+    print("=== PYLAGE BROWSER EVENT TEST ===")
 
     calls = []
 
@@ -47,7 +47,7 @@ def test_browser_event():
             page.goto(url)
 
             button_locator = page.locator(
-                f'[data-pyskin-id="{button.id}"]'
+                f'[data-pylage-id="{button.id}"]'
             )
 
             expect(button_locator).to_have_text("Click me")
@@ -57,7 +57,7 @@ def test_browser_event():
             button_locator.click()
 
             page.wait_for_function(
-                """() => window.__pyskin_event_test_done === true"""
+                """() => window.__pylage_event_test_done === true"""
             ) if False else None
 
             # Poll Python-side callback without arbitrary long waits.

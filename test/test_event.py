@@ -1,7 +1,7 @@
-import pyskin as ps
+import pylage as ps
 
 
-print("=== PYSKIN EVENT MODEL TEST ===")
+print("=== PYLAGE EVENT MODEL TEST ===")
 
 
 calls = []

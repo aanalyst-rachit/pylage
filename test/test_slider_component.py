@@ -1,5 +1,5 @@
-from pyskin import Slider
-from pyskin.core.renderer import render
+from pylage import Slider
+from pylage.core.renderer import render
 
 
 def test_slider_renders_as_range():

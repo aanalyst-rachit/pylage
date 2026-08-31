@@ -1,11 +1,11 @@
 from playwright.sync_api import sync_playwright, expect
 
-import pyskin as ps
-from pyskin.runtime import Runtime
+import pylage as ps
+from pylage.runtime import Runtime
 
 
 def test_browser_input_binding():
-    print("=== PYSKIN BROWSER INPUT BINDING TEST ===")
+    print("=== PYLAGE BROWSER INPUT BINDING TEST ===")
 
     name = ps.State("Dollar")
 
@@ -22,7 +22,7 @@ def test_browser_input_binding():
 
     runtime = Runtime(
         app,
-        title="PySkin Input Binding",
+        title="PyLage Input Binding",
         output="browser_input_binding/index.html",
     )
 
@@ -42,11 +42,11 @@ def test_browser_input_binding():
             page.goto(url)
 
             heading_locator = page.locator(
-                f'[data-pyskin-id="{heading.id}"]'
+                f'[data-pylage-id="{heading.id}"]'
             )
 
             input_locator = page.locator(
-                f'[data-pyskin-id="{input_box.id}"]'
+                f'[data-pylage-id="{input_box.id}"]'
             )
 
             expect(heading_locator).to_have_text("Dollar")

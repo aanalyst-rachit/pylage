@@ -1,5 +1,5 @@
-from pyskin import Breadcrumbs, Text, Button
-from pyskin.core.renderer import render
+from pylage import Breadcrumbs, Text, Button
+from pylage.core.renderer import render
 
 
 def test_breadcrumbs_renders_as_nav():

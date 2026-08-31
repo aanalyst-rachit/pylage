@@ -1,6 +1,6 @@
-# PySkin
+# PyLage
 
-**PySkin** is a reactive, server-driven, differential UI framework written entirely in Python. You build a component tree in Python, bind it to reactive `State` objects, and PySkin renders it to HTML — either as a static file or as a live, WebSocket-powered application where state changes on the server are diffed and patched straight into the browser DOM, with no client-side framework code to write.
+**PyLage** is a reactive, server-driven, differential UI framework written entirely in Python. You build a component tree in Python, bind it to reactive `State` objects, and PyLage renders it to HTML — either as a static file or as a live, WebSocket-powered application where state changes on the server are diffed and patched straight into the browser DOM, with no client-side framework code to write.
 
 ```
 Python State  →  DependencyGraph  →  DirtyNodes  →  Scheduler
@@ -47,19 +47,19 @@ Component Tree  ──── snapshot/diff/patch ────►  WebSocket  ─
 
 ## Installation
 
-PySkin is a local Python package (no PyPI release referenced in this codebase). Clone/copy the `pyskin/` package into your project and install its runtime dependency:
+PyLage is a local Python package (no PyPI release referenced in this codebase). Clone/copy the `pylage/` package into your project and install its runtime dependency:
 
 ```bash
 pip install websockets
 ```
 
-> The WebSocket server (`pyskin/runtime/websocket.py`) imports `websockets.asyncio.server`. Browser-integration tests additionally require `playwright` (`pip install playwright && playwright install chromium`), and `pytest-asyncio` is used by several async tests — these are **test-only** dependencies, not required to use PySkin itself.
+> The WebSocket server (`pylage/runtime/websocket.py`) imports `websockets.asyncio.server`. Browser-integration tests additionally require `playwright` (`pip install playwright && playwright install chromium`), and `pytest-asyncio` is used by several async tests — these are **test-only** dependencies, not required to use PyLage itself.
 
 Project layout expected on `PYTHONPATH`:
 
 ```
 your_project/
-├── pyskin/            # the framework package
+├── pylage/            # the framework package
 │   ├── app.py
 │   ├── components/
 │   ├── core/
@@ -75,20 +75,20 @@ your_project/
 
 ### 1. Static HTML rendering
 
-The simplest usage — build a tree, call `pyskin.run()`, get a self-contained HTML file back.
+The simplest usage — build a tree, call `pylage.run()`, get a self-contained HTML file back.
 
 ```python
-import pyskin as ps
+import pylage as ps
 
 app = ps.Column(
-    ps.Heading("Hello PySkin"),
+    ps.Heading("Hello PyLage"),
     ps.Text("This file was rendered statically."),
     ps.Button("Click me", variant="primary"),
 )
 
 output_path = ps.run(
     app,
-    title="My PySkin App",
+    title="My PyLage App",
     output="dist/index.html",   # defaults to "index.html"
 )
 
@@ -102,7 +102,7 @@ print("Rendered to:", output_path)
 Set `serve=True` to start a local HTTP + WebSocket server, wire up `State`, and get live DOM updates whenever Python-side state changes — including from Python-side timers/threads, not just click handlers.
 
 ```python
-import pyskin as ps
+import pylage as ps
 
 count = ps.State(0)
 
@@ -123,7 +123,7 @@ ps.run(
 )
 ```
 
-Two-way input binding works the same way — pass a `State` as `value=` to `Input` and PySkin wires the browser `input` event back to `state.set(...)` automatically:
+Two-way input binding works the same way — pass a `State` as `value=` to `Input` and PyLage wires the browser `input` event back to `state.set(...)` automatically:
 
 ```python
 name = ps.State("Dollar")
@@ -137,7 +137,7 @@ app = ps.Column(
 For production/embedded use without the blocking `run()` loop, drive the `Runtime` object directly:
 
 ```python
-from pyskin.runtime import Runtime
+from pylage.runtime import Runtime
 
 runtime = Runtime(app, title="My App", output="dist/index.html")
 url = runtime.start()      # returns "http://127.0.0.1:<port>/"
@@ -149,25 +149,25 @@ runtime.stop()
 
 ## Architecture Overview
 
-PySkin is organized into five layers. Data flows one way on state change, and the browser only ever receives small JSON patch messages, never a full re-render.
+PyLage is organized into five layers. Data flows one way on state change, and the browser only ever receives small JSON patch messages, never a full re-render.
 
 ```
 ┌───────────────────────────────────────────────────────────────────────┐
-│ 1. COMPONENT LAYER (pyskin/core/component.py, pyskin/components/)     │
+│ 1. COMPONENT LAYER (pylage/core/component.py, pylage/components/)     │
 │    Component: type, props, children, events, id (uuid4 hex[:10])      │
 │    component() factory splits on_* kwargs into `events`,              │
 │    consults ComponentRegistry for the prop contract                   │
 └───────────────────────────────────────────────────────────────────────┘
                                    │
 ┌───────────────────────────────────────────────────────────────────────┐
-│ 2. REGISTRY LAYER (pyskin/core/registry.py)                           │
+│ 2. REGISTRY LAYER (pylage/core/registry.py)                           │
 │    ComponentRegistry: type -> ComponentDefinition(tag, void, renderer,│
 │    props: {name: PropDefinition(kind, reactive, html_name)})          │
 │    Single source of truth used by HTMLRenderer, StateBinding, IR      │
 └───────────────────────────────────────────────────────────────────────┘
                                    │
 ┌───────────────────────────────────────────────────────────────────────┐
-│ 3. REACTIVITY LAYER (pyskin/core/state.py, graph.py, dirty.py,        │
+│ 3. REACTIVITY LAYER (pylage/core/state.py, graph.py, dirty.py,        │
 │    scheduler.py, binding.py)                                          │
 │    State.set() -> notifies subscribers                                │
 │    StateBinding walks the tree at construction time, subscribes to    │
@@ -193,7 +193,7 @@ PySkin is organized into five layers. Data flows one way on state change, and th
 └───────────────────────────────────────────────────────────────────────┘
                                    │
 ┌───────────────────────────────────────────────────────────────────────┐
-│ 5. RUNTIME / TRANSPORT LAYER (pyskin/runtime/)                        │
+│ 5. RUNTIME / TRANSPORT LAYER (pylage/runtime/)                        │
 │    LocalServer: threaded http.server serving the rendered index.html  │
 │    WebSocketServer: websockets.asyncio.server; binds StateBinding +   │
 │      TreeMutationObserver to the root, dispatches inbound `event`     │
@@ -207,7 +207,7 @@ PySkin is organized into five layers. Data flows one way on state change, and th
 ```
 
 **Round trip for a browser click:**
-`click` (DOM) → `data-pyskin-events` lookup → `sendEvent()` → WebSocket `event` message → `EventDispatcher.dispatch()` → your Python handler → `State.set()` → `StateBinding._changed()` → `DirtyNodes.mark()` + `Scheduler.request()` → (next loop tick) `Scheduler.flush()` → `UpdateMessage` broadcast → client `onResponse` → DOM attribute/text/property patch.
+`click` (DOM) → `data-pylage-events` lookup → `sendEvent()` → WebSocket `event` message → `EventDispatcher.dispatch()` → your Python handler → `State.set()` → `StateBinding._changed()` → `DirtyNodes.mark()` + `Scheduler.request()` → (next loop tick) `Scheduler.flush()` → `UpdateMessage` broadcast → client `onResponse` → DOM attribute/text/property patch.
 
 **Round trip for structural changes** (`component.add()`, `.remove()`, `.replace()`, `.clear()`, `.set_children()`, `.move_to()`): each mutation method emits a single mutation event synchronously to `TreeMutationObserver`, which is translated straight into a `Tree*Message` and broadcast — this path does **not** go through the scheduler/batching layer.
 
@@ -215,7 +215,7 @@ PySkin is organized into five layers. Data flows one way on state change, and th
 
 ## Component Reference
 
-All components are exported from the top-level `pyskin` package (`import pyskin as ps`). Every component maps 1:1 to an entry in `pyskin.core.registry.registry`.
+All components are exported from the top-level `pylage` package (`import pylage as ps`). Every component maps 1:1 to an entry in `pylage.core.registry.registry`.
 
 | Component | HTML tag | Void element | Notable props |
 |---|---|---|---|
@@ -253,12 +253,12 @@ All components are exported from the top-level `pyskin` package (`import pyskin 
 | `Tooltip(*children, **props)` | `span` | no | `class_name`, `title` |
 | `Popover(*children, **props)` | `div` | no | `class_name`, `title` |
 
-Every rendered element also carries `data-pyskin-id="<component.id>"` and, if the component has any `on_*` handlers, `data-pyskin-events="click,input,..."` — these two attributes are what the client runtime uses to route DOM events back to Python and apply patches.
+Every rendered element also carries `data-pylage-id="<component.id>"` and, if the component has any `on_*` handlers, `data-pylage-events="click,input,..."` — these two attributes are what the client runtime uses to route DOM events back to Python and apply patches.
 
 Unknown/custom component types still render (falling back to a `<div>` tag with generic attribute/text handling) so you can register your own components without modifying the framework:
 
 ```python
-from pyskin.core.registry import registry, PropDefinition
+from pylage.core.registry import registry, PropDefinition
 
 registry.register(
     "RatingStars",
@@ -275,7 +275,7 @@ registry.register(
 ## Styling & Theming
 
 ```python
-import pyskin as ps
+import pylage as ps
 
 card = ps.Card(
     ps.Text("Styled content"),
@@ -336,7 +336,7 @@ playwright install chromium   # only needed for browser tests
 pytest -q
 ```
 
-Latest recorded run: **463 passed** (see `pyskin_code_and_test_log.txt`, Section 3).
+Latest recorded run: **463 passed** (see `pylage_code_and_test_log.txt`, Section 3).
 
 Notable test categories:
 - `test_*_component.py` — one file per component, verifying tag, props, and children rendering.
@@ -351,8 +351,8 @@ Notable test categories:
 ## Project Layout
 
 ```
-pyskin/
-├── app.py                 # pyskin.run() — the top-level entry point
+pylage/
+├── app.py                 # pylage.run() — the top-level entry point
 ├── components/
 │   ├── basic.py            # Text, Column, Row, Card, Button, Input, ... factories
 │   └── __init__.py
@@ -393,4 +393,4 @@ See `Developer_Manual.md` → **Known Limitations & Edge Cases** for the full, t
 
 ## License
 
-No `LICENSE` file is present in the provided codebase — add one appropriate to your organization before distributing PySkin externally.
+No `LICENSE` file is present in the provided codebase — add one appropriate to your organization before distributing PyLage externally.

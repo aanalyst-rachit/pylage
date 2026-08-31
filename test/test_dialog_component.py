@@ -1,5 +1,5 @@
-from pyskin import Dialog, Text, Button
-from pyskin.core.renderer import render
+from pylage import Dialog, Text, Button
+from pylage.core.renderer import render
 
 
 def test_dialog_renders_as_dialog():

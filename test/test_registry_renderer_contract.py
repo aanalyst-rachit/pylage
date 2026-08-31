@@ -1,10 +1,10 @@
 import inspect
 
-from pyskin.core.registry import registry
-from pyskin.core.renderer import HTMLRenderer
+from pylage.core.registry import registry
+from pylage.core.renderer import HTMLRenderer
 
 
-print("=== PYSKIN REGISTRY → RENDERER CONTRACT TEST ===")
+print("=== PYLAGE REGISTRY → RENDERER CONTRACT TEST ===")
 
 
 # ------------------------------------------------------------

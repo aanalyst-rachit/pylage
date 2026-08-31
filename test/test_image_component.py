@@ -1,5 +1,5 @@
-from pyskin import Image
-from pyskin.core.renderer import render
+from pylage import Image
+from pylage.core.renderer import render
 
 
 def test_image_creates_image_component():

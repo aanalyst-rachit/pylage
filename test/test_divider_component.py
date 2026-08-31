@@ -1,5 +1,5 @@
-from pyskin import Divider
-from pyskin.core.renderer import render
+from pylage import Divider
+from pylage.core.renderer import render
 
 
 def test_divider_creates_divider_component():

@@ -1,11 +1,11 @@
 from pathlib import Path
 from urllib.request import urlopen
 
-from pyskin import Button, Column, Heading, run
-from pyskin.runtime import LocalServer
+from pylage import Button, Column, Heading, run
+from pylage.runtime import LocalServer
 
 
-print("=== PYSKIN RUNTIME LIFECYCLE TEST ===")
+print("=== PYLAGE RUNTIME LIFECYCLE TEST ===")
 
 app = Column(
     Heading("Runtime Test"),

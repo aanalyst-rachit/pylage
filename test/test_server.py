@@ -1,7 +1,7 @@
 from pathlib import Path
 from urllib.request import urlopen
 
-from pyskin.runtime import LocalServer
+from pylage.runtime import LocalServer
 
 
 output_dir = Path("test_output")
@@ -11,7 +11,7 @@ server = LocalServer(output_dir)
 try:
     url = server.start()
 
-    print("=== PYSKIN LOCAL SERVER TEST ===")
+    print("=== PYLAGE LOCAL SERVER TEST ===")
     print("URL:", url)
 
     with urlopen(url) as response:

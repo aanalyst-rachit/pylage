@@ -2,10 +2,10 @@ import re
 
 from pathlib import Path
 
-from pyskin.runtime.client import CLIENT_RUNTIME
+from pylage.runtime.client import CLIENT_RUNTIME
 
 
-print("=== PYSKIN BROWSER GENERIC REACTIVE PROP TEST ===")
+print("=== PYLAGE BROWSER GENERIC REACTIVE PROP TEST ===")
 
 
 # ------------------------------------------------------------
@@ -58,7 +58,7 @@ print("Generic DOM patching: PASS")
 # 4. Keep the client runtime source available for inspection.
 # ------------------------------------------------------------
 
-client_source = Path("pyskin/runtime/client.py").read_text(
+client_source = Path("pylage/runtime/client.py").read_text(
     encoding="utf-8"
 )
 

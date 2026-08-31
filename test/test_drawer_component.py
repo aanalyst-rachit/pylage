@@ -1,5 +1,5 @@
-from pyskin import Drawer, Text, Button
-from pyskin.core.renderer import render
+from pylage import Drawer, Text, Button
+from pylage.core.renderer import render
 
 
 def test_drawer_renders_as_aside():

@@ -3,14 +3,14 @@ import os
 import subprocess
 
 # Output filename
-OUTPUT_FILE = "pyskin_full_project_dump.md"
+OUTPUT_FILE = "pylage_full_project_dump.md"
 
 # Directories/files to ignore
 IGNORE_DIRS = {".git", "__pycache__", "venv", ".pytest_cache", "build", "dist", ".egg-info"}
 
 def collect_project_data():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as out:
-        out.write("# PySkin — Project Source Code & Test Logs\n\n")
+        out.write("# PyLage — Project Source Code & Test Logs\n\n")
 
         # 1. Run Tests & Capture Output Log
         out.write("## 1. Test Execution Logs\n\n")

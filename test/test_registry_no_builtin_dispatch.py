@@ -1,9 +1,9 @@
 import inspect
 
-from pyskin.core.renderer import HTMLRenderer
+from pylage.core.renderer import HTMLRenderer
 
 
-print("=== PYSKIN REGISTRY NO BUILTIN DISPATCH TEST ===")
+print("=== PYLAGE REGISTRY NO BUILTIN DISPATCH TEST ===")
 
 source = inspect.getsource(HTMLRenderer._render_component)
 

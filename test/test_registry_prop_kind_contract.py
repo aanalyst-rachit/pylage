@@ -1,7 +1,7 @@
-from pyskin.core.registry import ComponentRegistry, PropDefinition
+from pylage.core.registry import ComponentRegistry, PropDefinition
 
 
-print("=== PYSKIN PROP KIND CONTRACT TEST ===")
+print("=== PYLAGE PROP KIND CONTRACT TEST ===")
 
 
 registry = ComponentRegistry()

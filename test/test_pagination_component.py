@@ -1,5 +1,5 @@
-from pyskin import Pagination, Text, Button
-from pyskin.core.renderer import render
+from pylage import Pagination, Text, Button
+from pylage.core.renderer import render
 
 
 def test_pagination_renders_as_nav():

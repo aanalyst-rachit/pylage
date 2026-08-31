@@ -1,10 +1,10 @@
-from pyskin.core.registry import (
+from pylage.core.registry import (
     ComponentRegistry,
     PropDefinition,
 )
 
 
-print("=== PYSKIN REGISTRY PROPS TEST ===")
+print("=== PYLAGE REGISTRY PROPS TEST ===")
 
 registry = ComponentRegistry()
 

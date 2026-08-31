@@ -1,7 +1,7 @@
-# PySkin — Developer Manual
+# PyLage — Developer Manual
 
-Version basis: source + test suite as captured in `pyskin_source_code.txt` and
-`pyskin_code_and_test_log.txt` (463 tests passing). This manual documents the
+Version basis: source + test suite as captured in `pylage_source_code.txt` and
+`pylage_code_and_test_log.txt` (463 tests passing). This manual documents the
 framework as implemented — every code reference below points at a real
 module, class, or function in the codebase, not a proposed API.
 
@@ -22,7 +22,7 @@ module, class, or function in the codebase, not a proposed API.
 11. [Styling System](#11-styling-system)
 12. [Compiler-Layer IR (Experimental)](#12-compiler-layer-ir-experimental)
 13. [Full Component Catalog](#13-full-component-catalog)
-14. [Extending PySkin](#14-extending-pyskin)
+14. [Extending PyLage](#14-extending-pylage)
 15. [Testing & Benchmarking](#15-testing--benchmarking)
 16. [Known Limitations & Edge Cases](#16-known-limitations--edge-cases)
 17. [Troubleshooting](#17-troubleshooting)
@@ -31,7 +31,7 @@ module, class, or function in the codebase, not a proposed API.
 
 ## 1. Design Philosophy
 
-PySkin follows a **server-authoritative, differential-update** model, similar
+PyLage follows a **server-authoritative, differential-update** model, similar
 in spirit to Phoenix LiveView or Laravel Livewire, but implemented in pure
 Python with no external templating engine:
 
@@ -58,19 +58,19 @@ Python with no external templating engine:
  Python developer code
         │
         ▼
- pyskin.components.basic  (Text, Column, Button, ...)  ──► pyskin.core.component.component()
+ pylage.components.basic  (Text, Column, Button, ...)  ──► pylage.core.component.component()
         │                                                        │
         │                                                        ▼
-        │                                          pyskin.core.registry.registry
+        │                                          pylage.core.registry.registry
         │                                          (ComponentDefinition / PropDefinition)
         ▼
    Component tree (dataclass graph, parent-linked, mutation-observable)
         │
-        ├──────────────► pyskin.core.renderer.HTMLRenderer.render()  ──► static HTML
-        │                  (used by pyskin.renderers.html.render_document
-        │                   for pyskin.run(serve=False))
+        ├──────────────► pylage.core.renderer.HTMLRenderer.render()  ──► static HTML
+        │                  (used by pylage.renderers.html.render_document
+        │                   for pylage.run(serve=False))
         │
-        └──────────────► pyskin.core.binding.StateBinding(root, callback, graph, dirty, scheduler)
+        └──────────────► pylage.core.binding.StateBinding(root, callback, graph, dirty, scheduler)
                             walks tree, subscribes State props
                                    │
                 State.set() ──────┤
@@ -80,17 +80,17 @@ Python with no external templating engine:
                           (coalesced) Scheduler.flush()
                                    │
                                    ▼
-                      pyskin.runtime.websocket.WebSocketServer._scheduled_update()
+                      pylage.runtime.websocket.WebSocketServer._scheduled_update()
                                    │
                                    ▼
                       protocol.UpdateMessage.to_json() ──► broadcast to all clients
                                    │
                                    ▼
-                      pyskin.runtime.client.CLIENT_RUNTIME (browser)
-                      window.PySkin.onResponse(message) → DOM patch
+                      pylage.runtime.client.CLIENT_RUNTIME (browser)
+                      window.PyLage.onResponse(message) → DOM patch
 ```
 
-Parallel to the state pipeline, `pyskin.core.tree.TreeMutationObserver`
+Parallel to the state pipeline, `pylage.core.tree.TreeMutationObserver`
 listens to every `Component.subscribe_mutation()` callback and, inside
 `WebSocketServer._on_tree_mutation()`, converts `add` / `remove` / `replace`
 / `clear` / `set_children` / `move` events directly into
@@ -105,37 +105,37 @@ structural changes are never batched or delayed.
 
 | Module | Responsibility |
 |---|---|
-| `pyskin/app.py` | `run()` — top-level entry point; static-file mode vs. `Runtime`-backed serve mode |
-| `pyskin/core/component.py` | `Component` dataclass + mutation API (`add`, `remove`, `insert`, `replace`, `clear`, `set_children`, `move_to`, `on`, `subscribe_mutation`); `component()` factory |
-| `pyskin/core/registry.py` | `ComponentRegistry`, `ComponentDefinition`, `PropDefinition`; the global `registry` singleton pre-populated with all built-in components |
-| `pyskin/core/renderer.py` | `HTMLRenderer` — Component tree → HTML string, registry-driven |
-| `pyskin/core/state.py` | `State` — minimal observable value container |
-| `pyskin/core/graph.py` | `DependencyGraph` — `State → {(Component, prop_name)}` |
-| `pyskin/core/dirty.py` | `DirtyNodes` — ordered dirty-component set |
-| `pyskin/core/scheduler.py` | `Scheduler` — coalesced flush scheduling |
-| `pyskin/core/binding.py` | `StateBinding` — wires `State` subscriptions into a Component tree |
-| `pyskin/core/events.py` | `EventDispatcher` — routes `(component_id, event, payload)` to a handler |
-| `pyskin/core/snapshot.py` | `component_to_snapshot()` — Component → JSON-safe dict |
-| `pyskin/core/diff.py` | `diff(previous, current)` — snapshot diffing |
-| `pyskin/core/patch.py` | `operation_to_message()` / `operations_to_messages()` / `operations_to_json()` |
-| `pyskin/core/protocol.py` | Wire-format dataclasses: `EventMessage`, `UpdateMessage`, `TreeAddMessage`, `TreeRemoveMessage`, `TreeMoveMessage`, `TreeReplaceMessage`, `TreeSetChildrenMessage`, `TreeClearMessage` |
-| `pyskin/core/ir.py` | Experimental compiler-layer intermediate representation (`IRNode`, `normalize_ir`, `analyze_ir`, `validate_ir`, `optimize_ir`, `constant_fold`, `analyze_ir_dependencies`, `plan_patches`) |
-| `pyskin/core/tree.py` | `print_tree`, `collect_ids`, `count_components`, `TreeMutationObserver` |
-| `pyskin/components/basic.py` | Public component factory functions |
-| `pyskin/renderers/html.py` | `HTMLDocumentRenderer` — wraps rendered body in a full `<html>` doc + embeds client runtime |
-| `pyskin/runtime/runtime.py` | `Runtime` — coordinates `LocalServer` + `WebSocketServer` lifecycle |
-| `pyskin/runtime/server.py` | `LocalServer` — threaded `http.server.ThreadingHTTPServer` serving one static file |
-| `pyskin/runtime/websocket.py` | `WebSocketServer` — live transport, JSON-safety conversion, broadcast |
-| `pyskin/runtime/client.py` | `CLIENT_RUNTIME` — embedded vanilla-JS client, `get_client_runtime()` |
-| `pyskin/styling/style.py` | `Style` — immutable structured CSS declaration |
-| `pyskin/styling/responsive.py` | `ResponsiveStyle` — breakpoint-based `Style` composition |
-| `pyskin/styling/theme.py` | `Theme` — CSS custom-property token system |
+| `pylage/app.py` | `run()` — top-level entry point; static-file mode vs. `Runtime`-backed serve mode |
+| `pylage/core/component.py` | `Component` dataclass + mutation API (`add`, `remove`, `insert`, `replace`, `clear`, `set_children`, `move_to`, `on`, `subscribe_mutation`); `component()` factory |
+| `pylage/core/registry.py` | `ComponentRegistry`, `ComponentDefinition`, `PropDefinition`; the global `registry` singleton pre-populated with all built-in components |
+| `pylage/core/renderer.py` | `HTMLRenderer` — Component tree → HTML string, registry-driven |
+| `pylage/core/state.py` | `State` — minimal observable value container |
+| `pylage/core/graph.py` | `DependencyGraph` — `State → {(Component, prop_name)}` |
+| `pylage/core/dirty.py` | `DirtyNodes` — ordered dirty-component set |
+| `pylage/core/scheduler.py` | `Scheduler` — coalesced flush scheduling |
+| `pylage/core/binding.py` | `StateBinding` — wires `State` subscriptions into a Component tree |
+| `pylage/core/events.py` | `EventDispatcher` — routes `(component_id, event, payload)` to a handler |
+| `pylage/core/snapshot.py` | `component_to_snapshot()` — Component → JSON-safe dict |
+| `pylage/core/diff.py` | `diff(previous, current)` — snapshot diffing |
+| `pylage/core/patch.py` | `operation_to_message()` / `operations_to_messages()` / `operations_to_json()` |
+| `pylage/core/protocol.py` | Wire-format dataclasses: `EventMessage`, `UpdateMessage`, `TreeAddMessage`, `TreeRemoveMessage`, `TreeMoveMessage`, `TreeReplaceMessage`, `TreeSetChildrenMessage`, `TreeClearMessage` |
+| `pylage/core/ir.py` | Experimental compiler-layer intermediate representation (`IRNode`, `normalize_ir`, `analyze_ir`, `validate_ir`, `optimize_ir`, `constant_fold`, `analyze_ir_dependencies`, `plan_patches`) |
+| `pylage/core/tree.py` | `print_tree`, `collect_ids`, `count_components`, `TreeMutationObserver` |
+| `pylage/components/basic.py` | Public component factory functions |
+| `pylage/renderers/html.py` | `HTMLDocumentRenderer` — wraps rendered body in a full `<html>` doc + embeds client runtime |
+| `pylage/runtime/runtime.py` | `Runtime` — coordinates `LocalServer` + `WebSocketServer` lifecycle |
+| `pylage/runtime/server.py` | `LocalServer` — threaded `http.server.ThreadingHTTPServer` serving one static file |
+| `pylage/runtime/websocket.py` | `WebSocketServer` — live transport, JSON-safety conversion, broadcast |
+| `pylage/runtime/client.py` | `CLIENT_RUNTIME` — embedded vanilla-JS client, `get_client_runtime()` |
+| `pylage/styling/style.py` | `Style` — immutable structured CSS declaration |
+| `pylage/styling/responsive.py` | `ResponsiveStyle` — breakpoint-based `Style` composition |
+| `pylage/styling/theme.py` | `Theme` — CSS custom-property token system |
 
 ---
 
 ## 4. Component Model
 
-### 4.1 `Component` dataclass (`pyskin/core/component.py`)
+### 4.1 `Component` dataclass (`pylage/core/component.py`)
 
 ```python
 @dataclass
@@ -149,7 +149,7 @@ class Component:
 ```
 
 - `id` is a 10-character hex UUID fragment, used as the DOM anchor
-  (`data-pyskin-id`) and as the key for `EventDispatcher`/patch targeting.
+  (`data-pylage-id`) and as the key for `EventDispatcher`/patch targeting.
 - **`__hash__`** is defined by `id` alone — components are hashable and safe
   to use as `dict`/`set` keys (used by `DirtyNodes`, `DependencyGraph`).
 - **Parent tracking**: every mutation method (`add`, `insert`, `replace`,
@@ -184,13 +184,13 @@ class Component:
   known component, and any props on an unknown component type, are kept for
   backward compatibility.
 
-### 4.3 Component-specific factory behavior (`pyskin/components/basic.py`)
+### 4.3 Component-specific factory behavior (`pylage/components/basic.py`)
 
 Most factories are one-line wrappers around `component(...)`. Two are
 notable:
 
 - **`Input(value="", **props)`** — if `value` is a `State` instance and
-  `on_input` was not explicitly supplied, PySkin auto-installs an
+  `on_input` was not explicitly supplied, PyLage auto-installs an
   `on_input` handler that calls `value.set(payload["value"])` whenever the
   browser sends an `input` event with a `value` payload. This is the
   mechanism behind two-way binding; it only fires for dict payloads
@@ -249,17 +249,17 @@ class ComponentDefinition:
 | `unregister(type)` | Removes a type (no-op if absent) |
 | `types()` | Tuple of all registered type names |
 
-The registry is a **process-global singleton** (`pyskin.core.registry.registry`).
+The registry is a **process-global singleton** (`pylage.core.registry.registry`).
 Tests that mutate it for isolated scenarios generally construct a fresh
 `ComponentRegistry()` and pass it explicitly (`HTMLRenderer(registry_instance=...)`)
 rather than mutating the shared instance — this is the recommended pattern
-for custom/isolated component sets (see [§14](#14-extending-pyskin)).
+for custom/isolated component sets (see [§14](#14-extending-pylage)).
 
 ---
 
 ## 6. Rendering Pipeline
 
-### 6.1 `HTMLRenderer` (`pyskin/core/renderer.py`)
+### 6.1 `HTMLRenderer` (`pylage/core/renderer.py`)
 
 Constructed as `HTMLRenderer(registry_instance=None, theme=None)`. On
 construction, `_register_builtin_renderers()` attaches Python callback
@@ -276,8 +276,8 @@ Rendering algorithm (`_render_component`):
 2. If the definition has a custom `renderer` callback, delegate entirely to
    it: `definition.renderer(self, component)`.
 3. Otherwise, generically render:
-   - `data-pyskin-id="<id>"` always.
-   - `data-pyskin-events="a,b,c"` if `component.events` is non-empty.
+   - `data-pylage-id="<id>"` always.
+   - `data-pylage-events="a,b,c"` if `component.events` is non-empty.
    - `style` attribute resolved via `_render_common_attributes` (supports a
      component-type `default_style` merged with a user `Style`/`ResponsiveStyle`
      value, which may itself be a `State`).
@@ -292,18 +292,18 @@ Rendering algorithm (`_render_component`):
 4. Special-cased components (`Column`/`Row` inject a default flex `Style`;
    `Card` also injects a default block-layout `Style`; `Breadcrumbs` wraps
    children in `<ol><li>...</li></ol>`; `Input`/`Slider` force
-   `data-pyskin-events="input,change"` when no explicit handler is present,
+   `data-pylage-events="input,change"` when no explicit handler is present,
    and `Slider` forces `type="range"`; `Checkbox`/`Switch` default
    `_html_type="checkbox"`, `DatePicker` defaults `_html_type="date"`).
 
 `render(component)` at module scope is a convenience wrapper:
 `HTMLRenderer().render(component)`.
 
-### 6.2 `HTMLDocumentRenderer` (`pyskin/renderers/html.py`)
+### 6.2 `HTMLDocumentRenderer` (`pylage/renderers/html.py`)
 
 Wraps `render(component)` in a full `<!DOCTYPE html>` document, escapes
 `title`, and splits `get_client_runtime(websocket_url)`'s bootstrap
-`<script>` (which sets `window.PySkin.websocketUrl`) from the raw client
+`<script>` (which sets `window.PyLage.websocketUrl`) from the raw client
 JS so both end up correctly wrapped in real `<script>` tags in the final
 document body.
 
@@ -311,7 +311,7 @@ document body.
 
 ## 7. Reactivity Pipeline
 
-### 7.1 `State` (`pyskin/core/state.py`)
+### 7.1 `State` (`pylage/core/state.py`)
 
 ```python
 state = State(initial_value)
@@ -330,20 +330,20 @@ unsubscribe()
   added during a notification do **not** receive that same notification
   (verified by `test_subscriber_iteration_is_stable`).
 
-### 7.2 `DependencyGraph` (`pyskin/core/graph.py`)
+### 7.2 `DependencyGraph` (`pylage/core/graph.py`)
 
 Maps `State -> set[(Component, prop_name)]`. `add_dependency`,
 `remove_dependency` (auto-deletes the key once its set is empty),
 `get_dependents`, `clear`.
 
-### 7.3 `DirtyNodes` (`pyskin/core/dirty.py`)
+### 7.3 `DirtyNodes` (`pylage/core/dirty.py`)
 
 A `set[Component]` for O(1) membership plus a parallel ordered `list` for
 deterministic flush order. `mark()` is idempotent (a component marked twice
 appears once, in its *first* mark position). `mark_from_state(state, graph)`
 marks every component dependent on a given state via the graph.
 
-### 7.4 `StateBinding` (`pyskin/core/binding.py`)
+### 7.4 `StateBinding` (`pylage/core/binding.py`)
 
 ```python
 StateBinding(root, callback, graph=None, dirty=None, scheduler=None)
@@ -370,7 +370,7 @@ StateBinding(root, callback, graph=None, dirty=None, scheduler=None)
     inspection, without requiring a flush).
 - `stop()` unsubscribes everything; idempotent.
 
-### 7.5 `Scheduler` (`pyskin/core/scheduler.py`)
+### 7.5 `Scheduler` (`pylage/core/scheduler.py`)
 
 ```python
 Scheduler(dirty, callback, schedule_flush=None)
@@ -403,12 +403,12 @@ collapse into exactly one `UpdateMessage` per affected component
 ## 8. Snapshot / Diff / Patch Pipeline
 
 This pipeline exists primarily to support **compiler-layer** and
-**batch-reconciliation** use cases (see `pyskin/core/ir.py`'s
+**batch-reconciliation** use cases (see `pylage/core/ir.py`'s
 `plan_patches`) — the live `WebSocketServer` uses the reactive pipeline
 (§7) for prop-level updates and `TreeMutationObserver` (§9.3) directly for
 structural updates, rather than diffing full snapshots on every change.
 
-### 8.1 `component_to_snapshot(component)` (`pyskin/core/snapshot.py`)
+### 8.1 `component_to_snapshot(component)` (`pylage/core/snapshot.py`)
 
 Recursively converts a `Component` into a JSON-safe dict:
 `{id, type, tag, events (comma-joined string), props (State-unwrapped,
@@ -417,7 +417,7 @@ raising `TypeError` with a clear message if any prop value is not JSON
 serializable (e.g. a raw callable). Non-`Component` children (plain strings,
 numbers, `None`) are silently skipped.
 
-### 8.2 `diff(previous, current)` (`pyskin/core/diff.py`)
+### 8.2 `diff(previous, current)` (`pylage/core/diff.py`)
 
 Pure function over two snapshot dicts. Produces a deterministic, ordered
 list of operations:
@@ -434,7 +434,7 @@ list of operations:
   current-tree position); ids present in both → recursive `_diff_node`.
 
 ### 8.3 `operation_to_message` / `operations_to_messages` / `operations_to_json`
-(`pyskin/core/patch.py`)
+(`pylage/core/patch.py`)
 
 Maps each diff operation dict to its protocol dataclass counterpart:
 `update → UpdateMessage`, `insert → TreeAddMessage`, `remove →
@@ -448,10 +448,10 @@ or malformed data.
 
 ## 9. Runtime & Transport
 
-### 9.1 `pyskin.run()` (`pyskin/app.py`)
+### 9.1 `pylage.run()` (`pylage/app.py`)
 
 ```python
-def run(app, *, title="PySkin App", output="index.html", serve=False,
+def run(app, *, title="PyLage App", output="index.html", serve=False,
         host="127.0.0.1", port=0, open_browser=True) -> Path
 ```
 
@@ -465,7 +465,7 @@ def run(app, *, title="PySkin App", output="index.html", serve=False,
   for embedding inside an existing event loop or web framework — use
   `Runtime` directly for that (see Quickstart in `README.md`).
 
-### 9.2 `Runtime` (`pyskin/runtime/runtime.py`)
+### 9.2 `Runtime` (`pylage/runtime/runtime.py`)
 
 Owns an optional `LocalServer` and `WebSocketServer`. `start()`:
 1. Creates and starts a `WebSocketServer` (port `0` = OS-assigned).
@@ -478,7 +478,7 @@ Owns an optional `LocalServer` and `WebSocketServer`. `start()`:
 `stop()` is idempotent (no-op if `_server is None`) and stops both
 sub-servers. Supports `with Runtime(app) as runtime:` context-manager usage.
 
-### 9.3 `WebSocketServer` (`pyskin/runtime/websocket.py`)
+### 9.3 `WebSocketServer` (`pylage/runtime/websocket.py`)
 
 - Runs its own `asyncio` event loop on a dedicated daemon thread
   (`_thread_main`); `start()` blocks the caller until the server thread
@@ -522,7 +522,7 @@ sub-servers. Supports `with Runtime(app) as runtime:` context-manager usage.
   clears all state — safe to call when never started (`_thread is None`
   short-circuits).
 
-### 9.4 `LocalServer` (`pyskin/runtime/server.py`)
+### 9.4 `LocalServer` (`pylage/runtime/server.py`)
 
 A minimal `ThreadingHTTPServer` serving **exactly one file** (`filename`,
 default `index.html`) at `/` or `/<filename>` — any other path returns `404`.
@@ -533,20 +533,20 @@ joins with a 2s timeout.
 
 ## 10. Client Runtime (Browser JS)
 
-`pyskin/runtime/client.py` embeds a self-contained IIFE
+`pylage/runtime/client.py` embeds a self-contained IIFE
 (`CLIENT_RUNTIME`) with no external dependencies. Key behaviors:
 
 - `connectWebSocket(url)` — no-ops if `url` is falsy (static-file mode has
   no live updates); logs connect/disconnect/error to `console`.
 - Delegated event listeners on `document` for `click`/`input`/`change`:
-  `handleEvent` walks up via `event.target.closest("[data-pyskin-id]")`,
-  checks the element's `data-pyskin-events` allow-list, builds a `payload`
+  `handleEvent` walks up via `event.target.closest("[data-pylage-id]")`,
+  checks the element's `data-pylage-events` allow-list, builds a `payload`
   (`{value: target.value}` for `input`/`change` events on elements with a
   DOM `value` property), and calls `sendEvent(componentId, eventType, payload)`.
 - `sendEvent` sends immediately over an open socket; if the socket isn't
-  ready, it logs a warning and calls `window.PySkin.onEvent(message)` as a
-  fallback hook (overridable by consumers embedding PySkin in a larger app).
-- `window.PySkin.onResponse` is the single message dispatcher, handling
+  ready, it logs a warning and calls `window.PyLage.onEvent(message)` as a
+  fallback hook (overridable by consumers embedding PyLage in a larger app).
+- `window.PyLage.onResponse` is the single message dispatcher, handling
   `tree_move` (via `appendChild`, preserving the existing subtree — **not**
   a destroy/recreate), `tree_add` (recursive `createTreeNode`, with
   index-aware `insertBefore` vs. `appendChild`), `tree_remove`
@@ -571,7 +571,7 @@ joins with a 2s timeout.
 
 ## 11. Styling System
 
-### 11.1 `Style` (`pyskin/styling/style.py`)
+### 11.1 `Style` (`pylage/styling/style.py`)
 
 An immutable dataclass with ~50 explicit CSS-adjacent fields (box model,
 typography, flex, grid, border, misc) plus `custom: dict[str, Any] | None`
@@ -587,7 +587,7 @@ for arbitrary `--custom-property: value` declarations.
   (`override` wins on key collision). This is how component default layout
   styles (e.g. `Column`'s flex defaults) combine with user-supplied `style=`.
 
-### 11.2 `ResponsiveStyle` (`pyskin/styling/responsive.py`)
+### 11.2 `ResponsiveStyle` (`pylage/styling/responsive.py`)
 
 `base`/`sm`/`md`/`lg`/`xl` each an optional `Style`. `to_css()` emits the
 base style unwrapped, then each breakpoint wrapped in
@@ -597,7 +597,7 @@ base style unwrapped, then each breakpoint wrapped in
 integration (e.g. writing responsive rules into a separate stylesheet
 instead of inline `style=`).
 
-### 11.3 `Theme` (`pyskin/styling/theme.py`)
+### 11.3 `Theme` (`pylage/styling/theme.py`)
 
 Immutable; wraps `colors`/`spacing`/`radius`/`fonts` dicts in
 `MappingProxyType` at `__post_init__` (mutation attempts raise `TypeError`).
@@ -612,7 +612,7 @@ non-`None` token, in the fixed order `color → spacing → radius → font`.
 
 ## 12. Compiler-Layer IR (Experimental)
 
-`pyskin/core/ir.py` implements an intermediate representation **explicitly
+`pylage/core/ir.py` implements an intermediate representation **explicitly
 decoupled from the runtime** — it does not evaluate `State`, does not touch
 styles, and does not run diff/patch/event logic on its own initiative
 (each function's docstring states this constraint, and it's enforced by
@@ -624,7 +624,7 @@ tests like `test_no_runtime_evaluation`).
   (`_copy_ir_value`), so subsequent `.set()` calls on that `State` continue
   to notify the original subscribers even after IR normalization/optimization.
 - `snapshot_to_ir(snapshot)` — converts a `component_to_snapshot()` output
-  into an `IRNode` tree, using `snapshot["type"]` (the PySkin component
+  into an `IRNode` tree, using `snapshot["type"]` (the PyLage component
   type) as `component_id`, **not** `snapshot["tag"]` (the HTML tag).
 - `normalize_ir(node)` — deep, non-mutating canonical copy.
 - `analyze_ir(node)` — returns `{total_nodes, node_ids, component_ids,
@@ -658,7 +658,7 @@ ahead-of-time compilation or static-analysis tool.
 ## 13. Full Component Catalog
 
 Below is the exhaustive registry contract for every built-in component
-(`pyskin/core/registry.py`). `html_name` defaults to the prop name itself
+(`pylage/core/registry.py`). `html_name` defaults to the prop name itself
 when omitted.
 
 | Type | Tag | Void | Props (`name: kind[, html_name]`) |
@@ -712,13 +712,13 @@ when omitted.
 
 ---
 
-## 14. Extending PySkin
+## 14. Extending PyLage
 
 ### 14.1 Register a fully custom component
 
 ```python
-from pyskin.core.registry import registry, PropDefinition
-from pyskin.core.component import component
+from pylage.core.registry import registry, PropDefinition
+from pylage.core.component import component
 
 registry.register(
     "RatingStars",
@@ -742,7 +742,7 @@ widget = RatingStars(value=4, class_name="stars", label="4 / 5")
 def render_rating(renderer, component):
     value = renderer._value(component.props.get("value", 0))
     stars = "★" * int(value) + "☆" * (5 - int(value))
-    return f'<div data-pyskin-id="{component.id}">{stars}</div>'
+    return f'<div data-pylage-id="{component.id}">{stars}</div>'
 
 registry.set_renderer("RatingStars", render_rating)
 ```
@@ -771,11 +771,11 @@ calls will not push updates to this component (verified by
 
 For any tool that needs to render or analyze components without touching
 the shared global registry, construct a fresh instance and pass it through
-explicitly rather than mutating `pyskin.core.registry.registry`:
+explicitly rather than mutating `pylage.core.registry.registry`:
 
 ```python
-from pyskin.core.registry import ComponentRegistry
-from pyskin.core.renderer import HTMLRenderer
+from pylage.core.registry import ComponentRegistry
+from pylage.core.renderer import HTMLRenderer
 
 local_registry = ComponentRegistry()
 local_registry.register("Widget", "div")
@@ -792,7 +792,7 @@ playwright install chromium
 pytest -q
 ```
 
-Recorded result: **463 passed in 16.45s** (see `pyskin_code_and_test_log.txt`,
+Recorded result: **463 passed in 16.45s** (see `pylage_code_and_test_log.txt`,
 Section 3).
 
 Test suite structure highlights:
@@ -842,9 +842,9 @@ Test suite structure highlights:
 
 These are real, code-verified characteristics of the current implementation
 — documented here so they are not mistaken for bugs when integrating
-PySkin into a larger system.
+PyLage into a larger system.
 
-1. **Global, mutable registry.** `pyskin.core.registry.registry` is a
+1. **Global, mutable registry.** `pylage.core.registry.registry` is a
    process-wide singleton. `register()` on an existing type name silently
    **replaces** the definition (last write wins). Tests that need isolation
    construct a fresh `ComponentRegistry()` — application code doing dynamic
@@ -852,7 +852,7 @@ PySkin into a larger system.
    cross-module collisions.
 
 2. **`events` diff operations have no protocol message.**
-   `pyskin/core/patch.py::operation_to_message` explicitly raises
+   `pylage/core/patch.py::operation_to_message` explicitly raises
    `ValueError` for `operation_type == "events"`. If you drive the
    diff/patch pipeline directly (rather than the live `WebSocketServer`,
    which handles event wiring separately via `EventDispatcher`), a
@@ -865,7 +865,7 @@ PySkin into a larger system.
    fires — always construct a new value (or a shallow copy) when updating
    collection-typed state.
 
-4. **Single-file `LocalServer`.** `pyskin/runtime/server.py`'s
+4. **Single-file `LocalServer`.** `pylage/runtime/server.py`'s
    `_RequestHandler` only serves the exact `filename` it was configured
    with, at `/` or `/<filename>` — any other path (e.g. relative asset
    references, favicon requests) returns `404`. There is no static-asset
@@ -915,7 +915,7 @@ PySkin into a larger system.
     far from where they are eventually rendered.
 
 11. **Playwright/`websockets` are runtime-optional but test-required.**
-    Core PySkin usage (`Component`, `render()`, static `run()`) has zero
+    Core PyLage usage (`Component`, `render()`, static `run()`) has zero
     third-party dependencies. Live serving requires `websockets`;
     Playwright-based browser tests require `playwright` and a Chromium
     install (`playwright install chromium`) — omitting these only breaks

@@ -1,9 +1,9 @@
-from pyskin.core.component import Component
-from pyskin.core.registry import ComponentRegistry
-from pyskin.core.renderer import HTMLRenderer
+from pylage.core.component import Component
+from pylage.core.registry import ComponentRegistry
+from pylage.core.renderer import HTMLRenderer
 
 
-print("=== PYSKIN REGISTRY OVERRIDE TEST ===")
+print("=== PYLAGE REGISTRY OVERRIDE TEST ===")
 
 
 def render_custom(renderer, component):
@@ -19,7 +19,7 @@ registry.register(
     "h1",
     props={
         "text": __import__(
-            "pyskin.core.registry",
+            "pylage.core.registry",
             fromlist=["PropDefinition"],
         ).PropDefinition(
             "text",

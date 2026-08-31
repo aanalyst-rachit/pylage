@@ -1,9 +1,9 @@
 from time import perf_counter
 
-from pyskin.core.component import Component
-from pyskin.core.snapshot import component_to_snapshot
-from pyskin.core.diff import diff
-from pyskin.core.patch import operations_to_messages
+from pylage.core.component import Component
+from pylage.core.snapshot import component_to_snapshot
+from pylage.core.diff import diff
+from pylage.core.patch import operations_to_messages
 
 
 def _build_tree(count: int) -> Component:

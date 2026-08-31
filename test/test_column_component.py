@@ -1,5 +1,5 @@
-from pyskin import Column, Text, Button
-from pyskin.core.renderer import render
+from pylage import Column, Text, Button
+from pylage.core.renderer import render
 
 
 def test_column_renders_as_div():

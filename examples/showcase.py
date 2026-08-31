@@ -1,5 +1,5 @@
-from pyskin.app import run
-from pyskin.components import (
+from pylage.app import run
+from pylage.components import (
     Accordion,
     Badge,
     Button,
@@ -11,7 +11,7 @@ from pyskin.components import (
     Row,
     Text,
 )
-from pyskin.core.state import State
+from pylage.core.state import State
 
 # --- 1. Global State Management ---
 selected_component = State("Button")
@@ -42,7 +42,7 @@ code_editor_panel = Card(
     ),
     Input(value=custom_label, on_change=update_label, placeholder="Change Button Text..."),
     Card(
-        Heading("Generated PySkin Code:", level=3),
+        Heading("Generated PyLage Code:", level=3),
         Text(code_snippet),  # Bind directly to dynamic State
         style="background: #1e1e1e; color: #00ff00; padding: 12px; font-family: monospace; border-radius: 6px;",
     ),
@@ -76,10 +76,10 @@ visual_preview_panel = Card(
 
 # --- 4. Main Layout Assembly ---
 showcase_app = Column(
-    Heading("PySkin Interactive Showcase & Documentation", level=1),
+    Heading("PyLage Interactive Showcase & Documentation", level=1),
     Row(code_editor_panel, visual_preview_panel),
     style="max-width: 1200px; margin: 0 auto; padding: 20px;",
 )
 
 if __name__ == "__main__":
-    run(showcase_app, title="PySkin Playground", serve=True)
+    run(showcase_app, title="PyLage Playground", serve=True)

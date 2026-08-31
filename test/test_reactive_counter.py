@@ -1,12 +1,12 @@
 import asyncio
 import json
 
-import pyskin as ps
+import pylage as ps
 from websockets.asyncio.client import connect
-from pyskin.runtime.websocket import WebSocketServer
+from pylage.runtime.websocket import WebSocketServer
 
 
-print("=== PYSKIN REACTIVE COUNTER TEST ===")
+print("=== PYLAGE REACTIVE COUNTER TEST ===")
 
 count = ps.State(0)
 
@@ -111,4 +111,4 @@ def test_sync_wrapper():
         server.stop()
 
     print("Final state:", count.value)
-    print("=== PYSKIN REACTIVE COUNTER PASS ===")
+    print("=== PYLAGE REACTIVE COUNTER PASS ===")

@@ -1,5 +1,5 @@
-from pyskin import Tooltip, Text, Button
-from pyskin.core.renderer import render
+from pylage import Tooltip, Text, Button
+from pylage.core.renderer import render
 
 
 def test_tooltip_renders_as_span():

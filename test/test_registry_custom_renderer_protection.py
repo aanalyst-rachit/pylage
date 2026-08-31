@@ -1,8 +1,8 @@
-from pyskin.core.registry import ComponentRegistry
-from pyskin.core.renderer import HTMLRenderer
+from pylage.core.registry import ComponentRegistry
+from pylage.core.renderer import HTMLRenderer
 
 
-print("=== PYSKIN CUSTOM RENDERER PROTECTION TEST ===")
+print("=== PYLAGE CUSTOM RENDERER PROTECTION TEST ===")
 
 
 local_registry = ComponentRegistry()

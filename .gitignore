@@ -19,3 +19,6 @@ serve_output/
 ws_diag/
 
 index.html
+
+dist/
+*.egg-info/

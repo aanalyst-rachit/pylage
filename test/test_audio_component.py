@@ -1,5 +1,5 @@
-from pyskin import Audio
-from pyskin.core.renderer import render
+from pylage import Audio
+from pylage.core.renderer import render
 
 
 def test_audio_creates_audio_component():

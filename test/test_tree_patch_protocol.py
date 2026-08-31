@@ -1,4 +1,4 @@
-from pyskin.core.protocol import TreeAddMessage
+from pylage.core.protocol import TreeAddMessage
 
 
 def test_tree_add_message_round_trip():
@@ -97,8 +97,8 @@ def test_tree_add_message_preserves_nested_children():
 
 
 
-from pyskin.core.patch import operation_to_message, operations_to_messages
-from pyskin.core.protocol import UpdateMessage
+from pylage.core.patch import operation_to_message, operations_to_messages
+from pylage.core.protocol import UpdateMessage
 
 
 def test_replace_operation_converts_to_tree_replace_message():
@@ -168,7 +168,7 @@ def test_replace_operation_requires_index():
         )
 
 
-from pyskin.core.patch import operations_to_json
+from pylage.core.patch import operations_to_json
 
 
 def test_replace_diff_operation_produces_protocol_json():
@@ -206,7 +206,7 @@ def test_replace_diff_operation_produces_protocol_json():
     }
 
 
-from pyskin.core.diff import diff
+from pylage.core.diff import diff
 
 
 def test_diff_replace_flows_through_patch_engine():

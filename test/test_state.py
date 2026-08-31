@@ -1,7 +1,7 @@
-from pyskin.core.state import State
+from pylage.core.state import State
 
 
-print("=== PYSKIN STATE TEST ===")
+print("=== PYLAGE STATE TEST ===")
 
 count = State(0)
 

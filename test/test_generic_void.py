@@ -1,9 +1,9 @@
-from pyskin.core.component import Component
-from pyskin.core.registry import PropDefinition, registry
-from pyskin.core.renderer import render
+from pylage.core.component import Component
+from pylage.core.registry import PropDefinition, registry
+from pylage.core.renderer import render
 
 
-print("=== PYSKIN GENERIC VOID RENDER TEST ===")
+print("=== PYLAGE GENERIC VOID RENDER TEST ===")
 
 registry.register(
     "Divider",

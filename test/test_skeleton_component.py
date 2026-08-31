@@ -1,5 +1,5 @@
-from pyskin import Skeleton
-from pyskin.core.renderer import render
+from pylage import Skeleton
+from pylage.core.renderer import render
 
 
 def test_skeleton_renders_as_div():

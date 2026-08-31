@@ -1,5 +1,5 @@
-from pyskin import Grid, Text, Button
-from pyskin.core.renderer import render
+from pylage import Grid, Text, Button
+from pylage.core.renderer import render
 
 
 def test_grid_creates_grid_component():

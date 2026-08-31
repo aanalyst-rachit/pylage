@@ -1,5 +1,5 @@
-from pyskin import Spinner
-from pyskin.core.renderer import render
+from pylage import Spinner
+from pylage.core.renderer import render
 
 
 def test_spinner_renders_as_div():

@@ -1,4 +1,4 @@
-import pyskin as ps
+import pylage as ps
 
 
 def test_responsive_style_can_be_created():

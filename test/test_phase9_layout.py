@@ -1,5 +1,5 @@
-import pyskin as ps
-from pyskin.core.renderer import render
+import pylage as ps
+from pylage.core.renderer import render
 
 
 def test_layout_exports():

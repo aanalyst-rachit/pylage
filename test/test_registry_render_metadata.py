@@ -1,9 +1,9 @@
-from pyskin.core.component import Component
-from pyskin.core.registry import registry
-from pyskin.core.renderer import HTMLRenderer
-from pyskin.core.state import State
+from pylage.core.component import Component
+from pylage.core.registry import registry
+from pylage.core.renderer import HTMLRenderer
+from pylage.core.state import State
 
-print("=== PYSKIN REGISTRY RENDER METADATA TEST ===")
+print("=== PYLAGE REGISTRY RENDER METADATA TEST ===")
 
 renderer = HTMLRenderer()
 
@@ -23,7 +23,7 @@ print("Rendered HTML:")
 print(html)
 
 # Component identity must be present.
-assert f'data-pyskin-id="{component.id}"' in html
+assert f'data-pylage-id="{component.id}"' in html
 
 # Registry-driven props must reach the rendered DOM.
 assert "Save" in html

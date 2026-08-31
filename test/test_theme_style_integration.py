@@ -1,4 +1,4 @@
-import pyskin as ps
+import pylage as ps
 
 
 def test_theme_token_can_be_used_as_style_value():
@@ -57,7 +57,7 @@ def test_theme_tokens_can_build_component_style():
         style=style,
     )
 
-    from pyskin.core.renderer import render
+    from pylage.core.renderer import render
 
     html = render(component)
 

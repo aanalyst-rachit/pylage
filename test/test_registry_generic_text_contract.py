@@ -1,9 +1,9 @@
-from pyskin.core.component import component
-from pyskin.core.registry import ComponentRegistry, PropDefinition
-from pyskin.core.renderer import HTMLRenderer
+from pylage.core.component import component
+from pylage.core.registry import ComponentRegistry, PropDefinition
+from pylage.core.renderer import HTMLRenderer
 
 
-print("=== PYSKIN REGISTRY GENERIC TEXT CONTRACT TEST ===")
+print("=== PYLAGE REGISTRY GENERIC TEXT CONTRACT TEST ===")
 
 
 registry = ComponentRegistry()

@@ -1,8 +1,8 @@
 from time import perf_counter
 
-from pyskin.core.component import Component
-from pyskin.core.graph import DependencyGraph
-from pyskin.core.state import State
+from pylage.core.component import Component
+from pylage.core.graph import DependencyGraph
+from pylage.core.state import State
 
 
 SIZES = (10, 100, 1_000, 10_000)

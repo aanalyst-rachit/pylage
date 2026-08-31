@@ -1,9 +1,9 @@
-from pyskin.core.component import Component
-from pyskin.core.registry import ComponentRegistry, PropDefinition
-from pyskin.core.state import State
+from pylage.core.component import Component
+from pylage.core.registry import ComponentRegistry, PropDefinition
+from pylage.core.state import State
 
 
-print("=== PYSKIN REGISTRY REACTIVE UPDATE CONTRACT TEST ===")
+print("=== PYLAGE REGISTRY REACTIVE UPDATE CONTRACT TEST ===")
 
 
 registry = ComponentRegistry()

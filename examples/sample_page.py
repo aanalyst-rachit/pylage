@@ -1,4 +1,4 @@
-from pyskin import (
+from pylage import (
     run,
     Column,
     Row,
@@ -145,16 +145,16 @@ app = Column(
     # ========================================================
 
     Column(
-        Heading("PySkin Component Showcase"),
+        Heading("PyLage Component Showcase"),
 
         Text(
             "A complete visual demonstration of the currently "
-            "registered PySkin components and their supported props."
+            "registered PyLage components and their supported props."
         ),
 
         Text(
             "Everything below is generated using Python-native "
-            "PySkin components."
+            "PyLage components."
         ),
 
         Row(
@@ -796,7 +796,7 @@ app = Column(
         Heading("13. Table"),
 
         Table(
-            Text("PySkin"),
+            Text("PyLage"),
             Text("Component"),
             Text("Props"),
             class_name="demo-table",
@@ -982,7 +982,7 @@ app = Column(
 
     Card(
         Text(
-            "PySkin — Python-native UI framework"
+            "PyLage — Python-native UI framework"
         ),
 
         Text(
@@ -1005,7 +1005,7 @@ app = Column(
 if __name__ == "__main__":
     output = run(
         app,
-        title="PySkin — Complete Component Showcase",
+        title="PyLage — Complete Component Showcase",
         output="sample.html",
         open_browser=False,
     )

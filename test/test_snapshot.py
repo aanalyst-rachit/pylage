@@ -3,9 +3,9 @@ import json
 
 import pytest
 
-from pyskin.core.component import Component
-from pyskin.core.snapshot import component_to_snapshot
-from pyskin.core.state import State
+from pylage.core.component import Component
+from pylage.core.snapshot import component_to_snapshot
+from pylage.core.state import State
 
 
 def test_component_to_snapshot_serializes_component():

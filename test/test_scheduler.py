@@ -1,8 +1,8 @@
-from pyskin.core.component import Component
-from pyskin.core.dirty import DirtyNodes
-from pyskin.core.scheduler import Scheduler
-from pyskin.core.state import State
-from pyskin.core.binding import StateBinding
+from pylage.core.component import Component
+from pylage.core.dirty import DirtyNodes
+from pylage.core.scheduler import Scheduler
+from pylage.core.state import State
+from pylage.core.binding import StateBinding
 
 
 def test_scheduler_request_coalescing():

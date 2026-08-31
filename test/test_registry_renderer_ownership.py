@@ -1,9 +1,9 @@
 import inspect
 
-from pyskin.core.renderer import HTMLRenderer
+from pylage.core.renderer import HTMLRenderer
 
 
-print("=== PYSKIN REGISTRY RENDERER OWNERSHIP TEST ===")
+print("=== PYLAGE REGISTRY RENDERER OWNERSHIP TEST ===")
 
 
 source = inspect.getsource(HTMLRenderer._register_builtin_renderers)

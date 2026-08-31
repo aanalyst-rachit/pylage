@@ -1,9 +1,9 @@
-from pyskin.core.component import Component
-from pyskin.core.registry import PropDefinition, registry
-from pyskin.core.renderer import HTMLRenderer
+from pylage.core.component import Component
+from pylage.core.registry import PropDefinition, registry
+from pylage.core.renderer import HTMLRenderer
 
 
-print("=== PYSKIN CUSTOM REGISTRY PROP RENDERING TEST ===")
+print("=== PYLAGE CUSTOM REGISTRY PROP RENDERING TEST ===")
 
 
 registry.register(

@@ -2,12 +2,12 @@ import threading
 import time
 import webbrowser
 
-import pyskin as ps
-from pyskin.core.component import Component
-from pyskin.runtime import Runtime
+import pylage as ps
+from pylage.core.component import Component
+from pylage.runtime import Runtime
 
 
-print("=== PYSKIN BROWSER GENERIC REACTIVE PROPS TEST ===")
+print("=== PYLAGE BROWSER GENERIC REACTIVE PROPS TEST ===")
 
 text = ps.State("Hello")
 value = ps.State("100")
@@ -28,7 +28,7 @@ app = ps.Column(button)
 
 runtime = Runtime(
     app,
-    title="PySkin Generic Reactive Props",
+    title="PyLage Generic Reactive Props",
     output="browser_reactive_props/index.html",
 )
 
@@ -85,7 +85,7 @@ try:
     print("=== ALL UPDATES SENT ===")
     print()
     print("Check the browser DevTools console.")
-    print("You should see [PySkin response] update messages.")
+    print("You should see [PyLage response] update messages.")
     print()
     print("Press Ctrl+C after confirming the DOM changes.")
 

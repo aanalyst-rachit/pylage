@@ -1,5 +1,5 @@
-from pyskin import ProgressBar
-from pyskin.core.renderer import render
+from pylage import ProgressBar
+from pylage.core.renderer import render
 
 
 def test_progress_bar_renders_as_progress():

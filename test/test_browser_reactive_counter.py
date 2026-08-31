@@ -1,12 +1,12 @@
 import pytest
 from playwright.sync_api import sync_playwright, expect
 
-import pyskin as ps
-from pyskin.runtime import Runtime
+import pylage as ps
+from pylage.runtime import Runtime
 
 
 def test_browser_reactive_counter():
-    print("=== PYSKIN BROWSER REACTIVE COUNTER TEST ===")
+    print("=== PYLAGE BROWSER REACTIVE COUNTER TEST ===")
 
     count = ps.State(0)
 
@@ -28,7 +28,7 @@ def test_browser_reactive_counter():
 
     runtime = Runtime(
         app,
-        title="PySkin Reactive Counter",
+        title="PyLage Reactive Counter",
         output="browser_reactive_counter/index.html",
     )
 
@@ -48,11 +48,11 @@ def test_browser_reactive_counter():
             page.goto(url)
 
             heading_locator = page.locator(
-                f'[data-pyskin-id="{heading.id}"]'
+                f'[data-pylage-id="{heading.id}"]'
             )
 
             button_locator = page.locator(
-                f'[data-pyskin-id="{button.id}"]'
+                f'[data-pylage-id="{button.id}"]'
             )
 
             expect(heading_locator).to_have_text("0")

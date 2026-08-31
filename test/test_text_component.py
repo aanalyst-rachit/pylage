@@ -1,20 +1,20 @@
-from pyskin import Text
-from pyskin.core.renderer import render
+from pylage import Text
+from pylage.core.renderer import render
 
 
 def test_text_creates_text_component():
-    text = Text("Hello PySkin")
+    text = Text("Hello PyLage")
 
     assert text.type == "Text"
-    assert text.props["text"] == "Hello PySkin"
+    assert text.props["text"] == "Hello PyLage"
 
 
 def test_text_renders_as_plain_text():
-    text = Text("Hello PySkin")
+    text = Text("Hello PyLage")
 
     html = render(text)
 
-    assert "Hello PySkin" in html
+    assert "Hello PyLage" in html
     assert "<div" in html
 
 
@@ -28,7 +28,7 @@ def test_text_escapes_html():
 
 
 def test_text_supports_state():
-    from pyskin import State
+    from pylage import State
 
     state = State("Initial")
     text = Text(state)

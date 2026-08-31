@@ -1,11 +1,11 @@
-from pyskin.core.binding import StateBinding
-from pyskin.core.component import Component
-from pyskin.core.registry import ComponentRegistry, PropDefinition
-from pyskin.core.state import State
-import pyskin.core.binding as binding_module
+from pylage.core.binding import StateBinding
+from pylage.core.component import Component
+from pylage.core.registry import ComponentRegistry, PropDefinition
+from pylage.core.state import State
+import pylage.core.binding as binding_module
 
 
-print("=== PYSKIN REGISTRY STATE BINDING CONTRACT TEST ===")
+print("=== PYLAGE REGISTRY STATE BINDING CONTRACT TEST ===")
 
 
 registry = ComponentRegistry()

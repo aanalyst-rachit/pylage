@@ -1,4 +1,4 @@
-from pyskin.core.protocol import TreeMoveMessage
+from pylage.core.protocol import TreeMoveMessage
 
 
 def test_tree_move_message_round_trip():

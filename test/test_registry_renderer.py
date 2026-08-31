@@ -1,12 +1,12 @@
-import pyskin as ps
+import pylage as ps
 
-from pyskin.core.component import Component
-from pyskin.core.registry import registry
-from pyskin.core.renderer import render
+from pylage.core.component import Component
+from pylage.core.registry import registry
+from pylage.core.renderer import render
 
 
 def test_registry_renderer():
-    print("=== PYSKIN REGISTRY RENDERER TEST ===")
+    print("=== PYLAGE REGISTRY RENDERER TEST ===")
 
     # Built-in component
     heading = ps.Heading("Hello")
@@ -17,7 +17,7 @@ def test_registry_renderer():
 
     assert "<h1" in html
     assert "Hello" in html
-    assert 'data-pyskin-id="' in html
+    assert 'data-pylage-id="' in html
 
     print("Built-in registry rendering: PASS")
 
@@ -45,7 +45,7 @@ def test_registry_renderer():
         )
 
         return (
-            f'<article data-pyskin-id="{component.id}">'
+            f'<article data-pylage-id="{component.id}">'
             f"{text}"
             f"</article>"
         )

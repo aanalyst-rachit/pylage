@@ -1,10 +1,10 @@
 from urllib.request import urlopen
 
-import pyskin as ps
-from pyskin.runtime import Runtime
+import pylage as ps
+from pylage.runtime import Runtime
 
 
-print("=== PYSKIN RUNTIME API TEST ===")
+print("=== PYLAGE RUNTIME API TEST ===")
 
 app = ps.Column(
     ps.Heading("Hello Runtime"),

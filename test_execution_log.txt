@@ -1,27 +1,27 @@
 ============================= test session starts ==============================
-platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /home/racit/Desktop/curser project/pyskin/.venv/bin/python3
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /home/racit/Desktop/curser project/pylage/.venv/bin/python3
 cachedir: .pytest_cache
-rootdir: /home/racit/Desktop/curser project/pyskin
+rootdir: /home/racit/Desktop/curser project/pylage
 configfile: pytest.ini
 plugins: playwright-0.9.0, asyncio-1.4.0, base-url-2.1.0
 asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
-collecting ... === PYSKIN BROWSER GENERIC REACTIVE PROP TEST ===
+collecting ... === PYLAGE BROWSER GENERIC REACTIVE PROP TEST ===
 Generic prop iteration: PASS
 No hard-coded reactive prop dispatch: PASS
 Generic DOM patching: PASS
 Embedded client runtime: PASS
 
 === BROWSER GENERIC REACTIVE PROP TEST PASS ===
-=== PYSKIN CLIENT RUNTIME TEST ===
+=== PYLAGE CLIENT RUNTIME TEST ===
 Runtime bytes: 17137
 Runtime present: PASS
 Event detection logic: PASS
 Event message generation: PASS
 === CLIENT RUNTIME PASS ===
-=== PYSKIN COMPONENT TREE ===
+=== PYLAGE COMPONENT TREE ===
 Column [ccb4020321]
   Heading [7b38654390]
-    props={'text': 'Hello pyskin'}
+    props={'text': 'Hello pylage'}
   'Plain text'
   Button [77cbbc8044]
     props={'text': 'Click me', 'variant': 'primary'}
@@ -35,51 +35,51 @@ ccb4020321
 Components: 3
 Unique IDs: 3
 Children of root: 3
-=== PYSKIN EVENT MODEL TEST ===
+=== PYLAGE EVENT MODEL TEST ===
 Type: Button
 Props: {'text': 'Click me'}
 Events: ['click']
 Handler: <function clicked at 0x7ef6118660c0>
 Calls: ['clicked']
 === EVENT MODEL PASS ===
-=== PYSKIN EVENT DISPATCH TEST ===
+=== PYLAGE EVENT DISPATCH TEST ===
 Component indexed: True
 Click event: True
 Change event: True
 Click result: None
 Calls: ['clicked', {'value': 'hello'}]
 === EVENT DISPATCH PASS ===
-=== PYSKIN EVENT RENDER TEST ===
-<button data-pyskin-id="b9da2649ab" data-pyskin-events="click">Click me</button>
+=== PYLAGE EVENT RENDER TEST ===
+<button data-pylage-id="b9da2649ab" data-pylage-events="click">Click me</button>
 Event metadata: PASS
 Callback isolation: PASS
 No-event regression: PASS
 === EVENT RENDER PASS ===
-=== PYSKIN GENERIC VOID RENDER TEST ===
-<hr data-pyskin-id="b833b8d2b6" class="separator" title="Section divider">
+=== PYLAGE GENERIC VOID RENDER TEST ===
+<hr data-pylage-id="b833b8d2b6" class="separator" title="Section divider">
 Registry void contract: PASS
 Generic void rendering: PASS
 Void has no closing tag: PASS
 
 === GENERIC VOID RENDER PASS ===
-=== PYSKIN INPUT TWO-WAY BINDING TEST ===
+=== PYLAGE INPUT TWO-WAY BINDING TEST ===
 WebSocket: ws://127.0.0.1:44945/
 Heading ID: 15559ce258
 Input ID: fd17e45e17
 Initial: Dollar
-=== PYSKIN EVENT PROTOCOL TEST ===
+=== PYLAGE EVENT PROTOCOL TEST ===
 Dict: {'type': 'event', 'id': 'abc123', 'event': 'click'}
 JSON: {"type":"event","id":"abc123","event":"click"}
 Round trip: EventMessage(component_id='abc123', event='click', payload=None)
 Payload JSON: {"type":"event","id":"xyz789","event":"change","payload":{"value":"hello"}}
 Payload round trip: EventMessage(component_id='xyz789', event='change', payload={'value': 'hello'})
 === EVENT PROTOCOL PASS ===
-=== PYSKIN REACTIVE COUNTER TEST ===
+=== PYLAGE REACTIVE COUNTER TEST ===
 WebSocket: ws://127.0.0.1:45671/
 Initial: 0
 Heading ID: a792c7490e
 Button ID: 07d26cafc1
-=== PYSKIN GENERIC REACTIVE PROPS TEST ===
+=== PYLAGE GENERIC REACTIVE PROPS TEST ===
 WebSocket: ws://127.0.0.1:42717/
 Component ID: f026bc4ef7
 Initial:
@@ -87,24 +87,24 @@ Initial:
   value = 100
   disabled = False
   title = Initial title
-=== PYSKIN COMPONENT REGISTRY TEST ===
+=== PYLAGE COMPONENT REGISTRY TEST ===
 Built-in components: PASS
 Custom registration: PASS
 Unregister: PASS
 
 === COMPONENT REGISTRY PASS ===
-=== PYSKIN BUILTIN PROP CONTRACT TEST ===
-<h1 data-pyskin-id="2da29a4141">Hello</h1>
+=== PYLAGE BUILTIN PROP CONTRACT TEST ===
+<h1 data-pylage-id="2da29a4141">Hello</h1>
 Heading text contract: PASS
-<button data-pyskin-id="3d7e86f4d2" value="save" disabled title="Save button">Save</button>
+<button data-pylage-id="3d7e86f4d2" value="save" disabled title="Save button">Save</button>
 Button prop contract: PASS
-<button data-pyskin-id="51ec9cac2f">Save</button>
+<button data-pylage-id="51ec9cac2f">Save</button>
 Boolean false contract: PASS
-<input data-pyskin-id="f2808a8be6" data-pyskin-events="input,change" value="Dollar" disabled title="Name input">
+<input data-pylage-id="f2808a8be6" data-pylage-events="input,change" value="Dollar" disabled title="Name input">
 Input prop contract: PASS
 
 === BUILTIN PROP CONTRACT PASS ===
-=== PYSKIN COMPONENT REGISTRY CONTRACT TEST ===
+=== PYLAGE COMPONENT REGISTRY CONTRACT TEST ===
 Component(type='Button', id='cd12e6e8e4', props={'text': 'Save', 'value': 'save', 'disabled': True, 'title': 'Save button'}, children=[], events=[])
 Built-in props accepted: PASS
 Event props separated: PASS
@@ -112,134 +112,134 @@ Custom registered props accepted: PASS
 Unknown component compatibility: PASS
 
 === COMPONENT REGISTRY CONTRACT PASS ===
-=== PYSKIN CUSTOM REGISTRY PROP RENDERING TEST ===
-<section data-pyskin-id="06ab5b5d3c" class="premium-card" hidden data-id="card-01">Hello Card</section>
+=== PYLAGE CUSTOM REGISTRY PROP RENDERING TEST ===
+<section data-pylage-id="06ab5b5d3c" class="premium-card" hidden data-id="card-01">Hello Card</section>
 Registry text props: PASS
 Registry HTML names: PASS
 Registry boolean props: PASS
 Registry custom attributes: PASS
-<section data-pyskin-id="d9998bb18f">Title<h1 data-pyskin-id="58e0e9938b">Child</h1></section>
+<section data-pylage-id="d9998bb18f">Title<h1 data-pylage-id="58e0e9938b">Child</h1></section>
 Text prop + children: PASS
 
 === CUSTOM REGISTRY PROP RENDERING PASS ===
-=== PYSKIN CUSTOM RENDERER PROTECTION TEST ===
+=== PYLAGE CUSTOM RENDERER PROTECTION TEST ===
 Custom renderer registration: PASS
 Custom renderer preservation: PASS
 Custom renderer remains functional: PASS
 
 === CUSTOM RENDERER PROTECTION PASS ===
-=== PYSKIN REGISTRY DOM METADATA TEST ===
+=== PYLAGE REGISTRY DOM METADATA TEST ===
 Registry HTML metadata: PASS
 DOM mapping metadata: PASS
 
 === REGISTRY DOM METADATA TEST PASS ===
-=== PYSKIN REGISTRY GENERIC TEXT CONTRACT TEST ===
-<section data-pyskin-id="72b1651e8e" data-id="card-01">Premium Card</section>
+=== PYLAGE REGISTRY GENERIC TEXT CONTRACT TEST ===
+<section data-pylage-id="72b1651e8e" data-id="card-01">Premium Card</section>
 Registry-defined text prop rendering: PASS
-<article data-pyskin-id="e63b111345">Dynamic Panel</article>
+<article data-pylage-id="e63b111345">Dynamic Panel</article>
 Arbitrary registry text prop: PASS
 
 === REGISTRY GENERIC TEXT CONTRACT PASS ===
-=== PYSKIN REGISTRY GLOBAL PROP ALIAS TEST ===
-<div data-pyskin-id="db799523f2" class="probe" for="target"></div>
+=== PYLAGE REGISTRY GLOBAL PROP ALIAS TEST ===
+<div data-pylage-id="db799523f2" class="probe" for="target"></div>
 Registry class_name → class: PASS
 Registry html_for → for: PASS
 Renderer alias fallback removed: PASS
 
 === REGISTRY GLOBAL PROP ALIAS PASS ===
-=== PYSKIN PROP HTML NAME CONTRACT TEST ===
+=== PYLAGE PROP HTML NAME CONTRACT TEST ===
 None html_name: PASS
 Valid html_name: PASS
 Empty html_name rejection: PASS
 Non-string html_name rejection: PASS
 
 === PROP HTML NAME CONTRACT PASS ===
-=== PYSKIN REGISTRY NO BUILTIN DISPATCH TEST ===
+=== PYLAGE REGISTRY NO BUILTIN DISPATCH TEST ===
 No builtin dispatch in _render_component: PASS
 Registry-driven component resolution: PASS
 
 === REGISTRY NO BUILTIN DISPATCH TEST PASS ===
-=== PYSKIN REGISTRY OVERRIDE TEST ===
+=== PYLAGE REGISTRY OVERRIDE TEST ===
 <article data-custom="yes">CUSTOM</article>
 Custom override preserved: PASS
 
 === REGISTRY OVERRIDE PASS ===
-=== PYSKIN PROP KIND CONTRACT TEST ===
+=== PYLAGE PROP KIND CONTRACT TEST ===
 Supported prop kinds: PASS
 Invalid prop kind rejection: PASS
 Empty prop kind rejection: PASS
 
 === PROP KIND CONTRACT PASS ===
-=== PYSKIN REGISTRY PROP MAPPING TEST ===
+=== PYLAGE REGISTRY PROP MAPPING TEST ===
 WebSocket: ws://127.0.0.1:33521/
 Component ID: d8227d01b6
-=== PYSKIN REGISTRY PROPS TEST ===
+=== PYLAGE REGISTRY PROPS TEST ===
 Prop registration: PASS
 Prop metadata storage: PASS
 Prop definition contract: PASS
 
 === REGISTRY PROPS PASS ===
-=== PYSKIN PROP REACTIVE CONTRACT TEST ===
+=== PYLAGE PROP REACTIVE CONTRACT TEST ===
 Boolean reactive values: PASS
 Non-boolean reactive rejection: PASS
 
 === PROP REACTIVE CONTRACT PASS ===
-=== PYSKIN REGISTRY REACTIVE UPDATE CONTRACT TEST ===
+=== PYLAGE REGISTRY REACTIVE UPDATE CONTRACT TEST ===
 Registry reactive metadata: PASS
 State change notification: PASS
 State-backed component prop: PASS
 
 === REGISTRY REACTIVE UPDATE CONTRACT PASS ===
-=== PYSKIN REGISTRY RENDER METADATA TEST ===
+=== PYLAGE REGISTRY RENDER METADATA TEST ===
 Rendered HTML:
-<button data-pyskin-id="8ad716e1c7" value="123" disabled title="Save button">Save</button>
+<button data-pylage-id="8ad716e1c7" value="123" disabled title="Save button">Save</button>
 Registry-driven HTML rendering: PASS
 Registry prop metadata: PASS
 
 === REGISTRY RENDER METADATA TEST PASS ===
-=== PYSKIN REGISTRY → RENDERER CONTRACT TEST ===
+=== PYLAGE REGISTRY → RENDERER CONTRACT TEST ===
 Builtin registry coverage: PASS
 Registry renderer attachment: PASS
 Renderer registry resolution: PASS
 Component contracts: PASS
 
 === REGISTRY → RENDERER CONTRACT PASS ===
-=== PYSKIN REGISTRY RENDERER IDEMPOTENCY TEST ===
+=== PYLAGE REGISTRY RENDERER IDEMPOTENCY TEST ===
 First renderer registration: PASS
 Repeated initialization preserves callbacks: PASS
 Renderer functionality after repeated initialization: PASS
 
 === REGISTRY RENDERER IDEMPOTENCY PASS ===
-=== PYSKIN REGISTRY RENDERER OWNERSHIP TEST ===
+=== PYLAGE REGISTRY RENDERER OWNERSHIP TEST ===
 Renderer attachment uses registry API: PASS
 Component dispatch remains generic: PASS
 Registry-owned renderer invocation: PASS
 
 === REGISTRY RENDERER OWNERSHIP PASS ===
-=== PYSKIN REGISTRY STATE BINDING CONTRACT TEST ===
+=== PYLAGE REGISTRY STATE BINDING CONTRACT TEST ===
 reactive=True binding: PASS
 reactive=False suppression: PASS
 Binding unsubscribe: PASS
 
 === REGISTRY STATE BINDING CONTRACT PASS ===
-=== PYSKIN REGISTRY UPDATE MESSAGE CONTRACT TEST ===
+=== PYLAGE REGISTRY UPDATE MESSAGE CONTRACT TEST ===
 Registry metadata serialization: PASS
 Registry metadata JSON round-trip: PASS
 Backward-compatible UpdateMessage: PASS
 
 === REGISTRY UPDATE MESSAGE CONTRACT PASS ===
-=== PYSKIN REGISTRY VOID TEST ===
-<input data-pyskin-id="c6451724db" value="Dollar" title="Test input">
+=== PYLAGE REGISTRY VOID TEST ===
+<input data-pylage-id="c6451724db" value="Dollar" title="Test input">
 Void definition: PASS
 Void rendering: PASS
 No closing tag: PASS
 
 === REGISTRY VOID PASS ===
-=== PYSKIN RUN TEST ===
+=== PYLAGE RUN TEST ===
 Output: test_output/index.html
 Exists: True
 Size: 17565 bytes
-=== PYSKIN RUN COMPATIBILITY TEST ===
+=== PYLAGE RUN COMPATIBILITY TEST ===
 Return type: PosixPath
 Output: compat_output/index.html
 Exists: True
@@ -247,7 +247,7 @@ Title: True
 Heading: True
 Button: True
 === RUN COMPATIBILITY PASS ===
-=== PYSKIN SERVE MODE TEST ===
+=== PYLAGE SERVE MODE TEST ===
 Output: serve_output/index.html
 URL: http://127.0.0.1:45241/
 Status: 200
@@ -256,7 +256,7 @@ Heading: True
 Button: True
 Runtime stopped.
 === SERVE MODE PASS ===
-=== PYSKIN RUNTIME LIFECYCLE TEST ===
+=== PYLAGE RUNTIME LIFECYCLE TEST ===
 HTML: runtime_output/index.html
 HTML exists: True
 Server URL: http://127.0.0.1:37397/
@@ -267,7 +267,7 @@ Request 3: 200 17546 bytes
 Server stopped.
 After stop: URLError
 === RUNTIME LIFECYCLE PASS ===
-=== PYSKIN RUNTIME API TEST ===
+=== PYLAGE RUNTIME API TEST ===
 Before start: False
 Running: True
 URL: http://127.0.0.1:43815/
@@ -276,26 +276,26 @@ Title: True
 Heading: True
 After stop: False
 === RUNTIME API PASS ===
-=== PYSKIN LOCAL SERVER TEST ===
+=== PYLAGE LOCAL SERVER TEST ===
 URL: http://127.0.0.1:37251/
 Status: 200
 Content-Type: text/html; charset=utf-8
 Bytes: 17565
 HTML: <!DOCTYPE html> <html lang="en"> <head>     <meta charset="UTF-8">     <meta nam
 Server stopped.
-=== PYSKIN STATE TEST ===
+=== PYLAGE STATE TEST ===
 Initial: 0
 Changed: 0 -> 1
 Changed: 1 -> 2
 Current: 2
 After unsubscribe: 3
-=== PYSKIN STATE PROTOCOL TEST ===
+=== PYLAGE STATE PROTOCOL TEST ===
 Encoded: {"type":"update","id":"component123","props":{"text":"Hello"}}
 Type: PASS
 Component ID: PASS
 Props: PASS
 === STATE PROTOCOL PASS ===
-=== PYSKIN STATE WEBSOCKET TEST ===
+=== PYLAGE STATE WEBSOCKET TEST ===
 URL: ws://127.0.0.1:36785/
 Connected: PASS
 Received: {"type":"update","id":"a48b3cf9c9","props":{"text":1},"prop_meta":{"text":{"kind":"text","html_name":null}}}
@@ -303,7 +303,7 @@ Update type: PASS
 Component ID: PASS
 Updated value: PASS
 === STATE WEBSOCKET PASS ===
-=== PYSKIN WEBSOCKET TEST ===
+=== PYLAGE WEBSOCKET TEST ===
 URL: ws://127.0.0.1:40043/
 Running: True
 Response: {"type":"response","ok":true,"result":"handler-ok"}
@@ -330,7 +330,7 @@ UNBATCHED
 
 processing reduction: 1000.0x
 PASSED
-test/test_browser_event.py::test_browser_event === PYSKIN BROWSER EVENT TEST ===
+test/test_browser_event.py::test_browser_event === PYLAGE BROWSER EVENT TEST ===
 URL: http://127.0.0.1:39127/
 WebSocket: ws://127.0.0.1:46171/
 Button ID: d9a14b38e9
@@ -344,7 +344,7 @@ Callback isolation: PASS
 === BROWSER EVENT PASS ===
 Runtime stopped.
 PASSED
-test/test_browser_input_binding.py::test_browser_input_binding === PYSKIN BROWSER INPUT BINDING TEST ===
+test/test_browser_input_binding.py::test_browser_input_binding === PYLAGE BROWSER INPUT BINDING TEST ===
 HTTP: http://127.0.0.1:40285/
 WebSocket: ws://127.0.0.1:34685/
 Heading ID: 125ae2be28
@@ -361,7 +361,7 @@ Final state: Racit
 === BROWSER INPUT BINDING PASS ===
 Runtime stopped.
 PASSED
-test/test_browser_reactive_counter.py::test_browser_reactive_counter === PYSKIN BROWSER REACTIVE COUNTER TEST ===
+test/test_browser_reactive_counter.py::test_browser_reactive_counter === PYLAGE BROWSER REACTIVE COUNTER TEST ===
 HTTP: http://127.0.0.1:36709/
 WebSocket: ws://127.0.0.1:46145/
 Heading ID: d456a2bc40
@@ -598,7 +598,7 @@ Received: {"type":"response","ok":true,"result":2}
 Received: {"type":"update","id":"a792c7490e","props":{"text":2},"prop_meta":{"text":{"kind":"text","html_name":null}}}
 Second click/state update: PASS
 Final state: 2
-=== PYSKIN REACTIVE COUNTER PASS ===
+=== PYLAGE REACTIVE COUNTER PASS ===
 PASSED
 test/test_reactive_pipeline.py::test_state_change_flows_through_reactive_pipeline PASSED
 test/test_reactive_props.py::test_sync_wrapper WebSocket connected: PASS
@@ -621,12 +621,12 @@ title attribute metadata: PASS
 
 === REGISTRY PROP MAPPING TEST PASS ===
 PASSED
-test/test_registry_renderer.py::test_registry_renderer === PYSKIN REGISTRY RENDERER TEST ===
-<h1 data-pyskin-id="1c44028276">Hello</h1>
+test/test_registry_renderer.py::test_registry_renderer === PYLAGE REGISTRY RENDERER TEST ===
+<h1 data-pylage-id="1c44028276">Hello</h1>
 Built-in registry rendering: PASS
-<section data-pyskin-id="d65ed97f83">Hello Card</section>
+<section data-pylage-id="d65ed97f83">Hello Card</section>
 Custom registry rendering: PASS
-<article data-pyskin-id="a1bb61f226">Custom</article>
+<article data-pylage-id="a1bb61f226">Custom</article>
 Custom renderer dispatch: PASS
 
 === REGISTRY RENDERER PASS ===

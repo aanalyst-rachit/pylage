@@ -1,4 +1,4 @@
-from pyskin.core.protocol import TreeSetChildrenMessage
+from pylage.core.protocol import TreeSetChildrenMessage
 
 
 def test_tree_set_children_message_round_trip():

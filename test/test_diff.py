@@ -1,4 +1,4 @@
-from pyskin.core.diff import diff
+from pylage.core.diff import diff
 
 
 def snapshot(

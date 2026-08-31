@@ -1,5 +1,5 @@
-from pyskin import Toast
-from pyskin.core.renderer import render
+from pylage import Toast
+from pylage.core.renderer import render
 
 
 def test_toast_renders_as_div():

@@ -1,9 +1,9 @@
-from pyskin.core.component import Component
-from pyskin.core.registry import registry
-from pyskin.core.renderer import render
+from pylage.core.component import Component
+from pylage.core.registry import registry
+from pylage.core.renderer import render
 
 
-print("=== PYSKIN REGISTRY VOID TEST ===")
+print("=== PYLAGE REGISTRY VOID TEST ===")
 
 registry.register("RawInput", "input", void=True)
 

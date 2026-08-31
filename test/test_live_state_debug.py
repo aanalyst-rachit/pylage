@@ -1,10 +1,10 @@
 import time
 
-import pyskin as ps
-from pyskin.runtime import Runtime
+import pylage as ps
+from pylage.runtime import Runtime
 
 
-print("=== PYSKIN LIVE STATE DEBUG ===")
+print("=== PYLAGE LIVE STATE DEBUG ===")
 
 count = ps.State(0)
 
@@ -14,7 +14,7 @@ app = ps.Column(
 
 runtime = Runtime(
     app,
-    title="PySkin Live State Debug",
+    title="PyLage Live State Debug",
     output="live_state_debug/index.html",
 )
 

@@ -1,11 +1,11 @@
 import asyncio
 import json
 
-import pyskin as ps
-from pyskin.runtime.websocket import WebSocketServer
+import pylage as ps
+from pylage.runtime.websocket import WebSocketServer
 
 
-print("=== PYSKIN INPUT TWO-WAY BINDING TEST ===")
+print("=== PYLAGE INPUT TWO-WAY BINDING TEST ===")
 
 name = ps.State("Dollar")
 

@@ -1,8 +1,8 @@
-# 🐍 PySkin / PU — MASTER BLUEPRINT v4
+# 🐍 PyLage / PU — MASTER BLUEPRINT v4
 
-**Project:** PySkin
+**Project:** PyLage
 **Long-term vision:** PU — Python Universal UI Framework
-**Repository:** `aanalyst-rachit/pyskin`
+**Repository:** `aanalyst-rachit/pylage`
 **Branch:** `main`
 
 ---
@@ -30,12 +30,12 @@ COMPLETE ✅
 
 # 1. 🎯 FINAL GOAL
 
-PySkin ka ultimate goal ek **Python-first, low-latency, fine-grained reactive UI framework** banana hai.
+PyLage ka ultimate goal ek **Python-first, low-latency, fine-grained reactive UI framework** banana hai.
 
 Developer experience:
 
 ```python
-import pyskin as ps
+import pylage as ps
 
 count = ps.State(0)
 
@@ -80,7 +80,7 @@ Long-term architecture:
 Python Application
         │
         ▼
-    PySkin API
+    PyLage API
         │
         ▼
  Component Tree
@@ -116,7 +116,7 @@ Python Application
                      PYTHON APPLICATION
                             │
                             ▼
-                       PySkin API
+                       PyLage API
                             │
                             ▼
                      Component Tree
@@ -429,7 +429,7 @@ Conceptual result:
 
 ```html
 <button
-    data-pyskin-id="..."
+    data-pylage-id="..."
     value="123"
     disabled
     title="Save button"
@@ -719,7 +719,7 @@ Therefore current system proves:
 
 It does not yet prove:
 
-> **PySkin can automatically determine the smallest affected UI region.**
+> **PyLage can automatically determine the smallest affected UI region.**
 
 That is the next architectural challenge.
 
@@ -1321,7 +1321,7 @@ Large dependency graphs
 ## PHASE 8 — DESKTOP / NATIVE
 
 ```text
-PySkin API
+PyLage API
      ↓
 Shared UI representation
      ↓
@@ -1491,9 +1491,9 @@ Historical files currently exist:
 Examples:
 
 ```text
-pyskin/core/protocol.py.bak
-pyskin/core/component.py.v01
-pyskin/core/registry.py.before_*
+pylage/core/protocol.py.bak
+pylage/core/component.py.v01
+pylage/core/registry.py.before_*
 ```
 
 These should eventually be cleaned or moved outside the source tree.
@@ -1690,7 +1690,7 @@ GPU backend
 
 Therefore:
 
-> **The difficult part of PySkin begins with the reactive runtime architecture.**
+> **The difficult part of PyLage begins with the reactive runtime architecture.**
 
 ---
 
@@ -1775,7 +1775,7 @@ This is the key architectural acceptance test.
 Eventually:
 
 ```python
-import pyskin as ps
+import pylage as ps
 
 name = ps.State("Dollar")
 count = ps.State(0)
@@ -1830,7 +1830,7 @@ Developer ko implementation details nahi dekhni chahiye.
 
 # 46. 🏆 FINAL DEFINITION OF SUCCESS
 
-PySkin successful tab maana jayega jab:
+PyLage successful tab maana jayega jab:
 
 ```text
 Python-only developer API
@@ -1858,7 +1858,7 @@ and these claims are backed by actual benchmarks.
 
 ```text
 PROJECT
-PySkin / PU
+PyLage / PU
 
 BRANCH
 main
@@ -1907,12 +1907,12 @@ CORE FOUNDATION
 NORTH STAR
 Python should be the UI programming model;
 browser/native rendering complexity should remain hidden
-inside PySkin.
+inside PyLage.
 ```
 
 ---
 
 # ⭐ ONE-LINE PROJECT NORTH STAR
 
-> **PySkin ka goal “Python se HTML banana” nahi hai; goal hai Python ko ek serious, low-latency, fine-grained reactive UI programming model banana jiske peeche browser/native rendering complexity completely hidden ho.**
+> **PyLage ka goal “Python se HTML banana” nahi hai; goal hai Python ko ek serious, low-latency, fine-grained reactive UI programming model banana jiske peeche browser/native rendering complexity completely hidden ho.**
 

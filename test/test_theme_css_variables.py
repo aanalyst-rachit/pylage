@@ -1,4 +1,4 @@
-import pyskin as ps
+import pylage as ps
 
 
 def test_theme_css_variables_can_be_used_by_style():
@@ -46,8 +46,8 @@ def test_theme_css_can_be_combined_with_component_style():
         padding="var(--spacing-md)",
     )
 
-    from pyskin import Text
-    from pyskin.core.renderer import render
+    from pylage import Text
+    from pylage.core.renderer import render
 
     html = render(
         Text(

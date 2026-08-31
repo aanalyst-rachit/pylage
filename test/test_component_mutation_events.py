@@ -1,4 +1,4 @@
-from pyskin.core.component import Component
+from pylage.core.component import Component
 
 
 def test_add_notifies_tree_mutation_listener():

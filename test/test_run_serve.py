@@ -2,11 +2,11 @@ import threading
 import time
 from urllib.request import urlopen
 
-import pyskin as ps
-from pyskin.runtime import Runtime
+import pylage as ps
+from pylage.runtime import Runtime
 
 
-print("=== PYSKIN SERVE MODE TEST ===")
+print("=== PYLAGE SERVE MODE TEST ===")
 
 app = ps.Column(
     ps.Heading("Served App"),

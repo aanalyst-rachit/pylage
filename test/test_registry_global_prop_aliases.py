@@ -1,9 +1,9 @@
-from pyskin.core.component import Component
-from pyskin.core.registry import PropDefinition, registry
-from pyskin.core.renderer import HTMLRenderer
+from pylage.core.component import Component
+from pylage.core.registry import PropDefinition, registry
+from pylage.core.renderer import HTMLRenderer
 
 
-print("=== PYSKIN REGISTRY GLOBAL PROP ALIAS TEST ===")
+print("=== PYLAGE REGISTRY GLOBAL PROP ALIAS TEST ===")
 
 
 # ---------------------------------------------------------
@@ -53,7 +53,7 @@ print("Registry html_for → for: PASS")
 # renderer must NOT contain semantic alias fallback.
 # ---------------------------------------------------------
 renderer_source = open(
-    "pyskin/core/renderer.py",
+    "pylage/core/renderer.py",
     encoding="utf-8",
 ).read()
 

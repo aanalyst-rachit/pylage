@@ -1,20 +1,20 @@
-# 🐍 PySkin / PU — PHASE ROADMAP
+# 🐍 PyLage / PU — PHASE ROADMAP
 
 > Purpose: This file is the compact phase tracker and architectural
-> checkpoint for the PySkin project.
+> checkpoint for the PyLage project.
 >
 > Long-term vision:
 > Build a Python-first, low-latency, fine-grained reactive UI framework
 > where developers use Python only and browser/native rendering complexity
-> remains hidden inside PySkin.
+> remains hidden inside PyLage.
 
 ---
 
 # 🔒 PROJECT IDENTITY
 
-Project: PySkin
+Project: PyLage
 Long-term vision: PU — Python Universal UI Framework
-Repository: https://github.com/aanalyst-rachit/pyskin
+Repository: https://github.com/aanalyst-rachit/pylage
 Branch: main
 
 Current architectural phase:
@@ -31,11 +31,11 @@ Latest focused IR validation:
 
 Master blueprint:
 
-    project pyskin blueprint.txt
+    project pylage blueprint.txt
 
 Phase tracker:
 
-    PYSKIN_PHASES.md
+    PYLAGE_PHASES.md
 
 ---
 
@@ -43,7 +43,7 @@ Phase tracker:
 
 Python application
         ↓
-PySkin API
+PyLage API
         ↓
 Component Tree
         ↓
@@ -69,8 +69,8 @@ Browser / Future Native Backend
 
 Core principle:
 
-> PySkin is not just a Python-to-HTML generator.
-> PySkin is a Python-first reactive UI programming model.
+> PyLage is not just a Python-to-HTML generator.
+> PyLage is a Python-first reactive UI programming model.
 
 ---
 
@@ -379,7 +379,7 @@ Completed:
 
 Implementation:
 
-- `pyskin/core/snapshot.py`
+- `pylage/core/snapshot.py`
 - `test/test_snapshot.py`
 
 Definition of done:
@@ -736,7 +736,7 @@ Completed:
 
 Implementation:
 
-    pyskin/core/ir.py
+    pylage/core/ir.py
 
 ---
 
@@ -1016,7 +1016,7 @@ Status: 🔴 FUTURE
 
 Target:
 
-    PySkin API
+    PyLage API
         ↓
     Shared UI Representation / IR
         ↓
@@ -1193,7 +1193,7 @@ Immediate practical milestone:
 
     Build and validate a real sample web page
             ↓
-    Exercise PySkin components
+    Exercise PyLage components
             ↓
     Exercise styling
             ↓
@@ -1355,4 +1355,4 @@ Current architectural phase:
 Current practical objective:
 
     Build a sample web page and use it as the first real-world
-    end-to-end validation of the PySkin architecture.
+    end-to-end validation of the PyLage architecture.

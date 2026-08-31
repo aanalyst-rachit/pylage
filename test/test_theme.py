@@ -1,6 +1,6 @@
 import pytest
 
-from pyskin import Theme
+from pylage import Theme
 
 
 def test_theme_can_be_created():

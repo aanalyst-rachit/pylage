@@ -1,5 +1,5 @@
-from pyskin import Table, Text
-from pyskin.core.renderer import render
+from pylage import Table, Text
+from pylage.core.renderer import render
 
 
 def test_table_renders_as_table():

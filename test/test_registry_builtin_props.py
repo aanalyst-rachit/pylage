@@ -1,9 +1,9 @@
-import pyskin as ps
-from pyskin.core.component import Component
-from pyskin.core.renderer import render
+import pylage as ps
+from pylage.core.component import Component
+from pylage.core.renderer import render
 
 
-print("=== PYSKIN BUILTIN PROP CONTRACT TEST ===")
+print("=== PYLAGE BUILTIN PROP CONTRACT TEST ===")
 
 
 # ---------------------------------------------------------
@@ -22,7 +22,7 @@ print(html)
 
 assert "<h1" in html
 assert "Hello" in html
-assert 'data-pyskin-id="' in html
+assert 'data-pylage-id="' in html
 
 print("Heading text contract: PASS")
 

@@ -1,5 +1,5 @@
-from pyskin.core.component import Component
-from pyskin.core.tree import collect_ids, count_components
+from pylage.core.component import Component
+from pylage.core.tree import collect_ids, count_components
 
 
 def test_collect_ids_returns_empty_for_non_component():
@@ -68,7 +68,7 @@ def test_count_components_does_not_depend_on_component_ids():
 
 
 def test_print_tree_prints_nested_components_and_text(capsys):
-    from pyskin.core.tree import print_tree
+    from pylage.core.tree import print_tree
 
     root = Component(type="Column")
     child = Component(
@@ -89,7 +89,7 @@ def test_print_tree_prints_nested_components_and_text(capsys):
 
 
 def test_print_tree_handles_non_component(capsys):
-    from pyskin.core.tree import print_tree
+    from pylage.core.tree import print_tree
 
     print_tree("hello")
 

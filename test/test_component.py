@@ -1,6 +1,6 @@
-from pyskin.core.component import component
-from pyskin.core.tree import print_tree
-from pyskin.core.tree import collect_ids, count_components
+from pylage.core.component import component
+from pylage.core.tree import print_tree
+from pylage.core.tree import collect_ids, count_components
 
 
 def Heading(text):
@@ -16,13 +16,13 @@ def Column(*children):
 
 
 app = Column(
-    Heading("Hello pyskin"),
+    Heading("Hello pylage"),
     "Plain text",
     Button("Click me", variant="primary"),
     None,
 )
 
-print("=== PYSKIN COMPONENT TREE ===")
+print("=== PYLAGE COMPONENT TREE ===")
 print_tree(app)
 
 print("\n=== COMPONENT IDS ===")

@@ -2,11 +2,11 @@ import pytest
 import asyncio
 import json
 
-import pyskin as ps
-from pyskin.core.component import Component
-from pyskin.runtime.websocket import WebSocketServer
+import pylage as ps
+from pylage.core.component import Component
+from pylage.runtime.websocket import WebSocketServer
 
-print("=== PYSKIN REGISTRY PROP MAPPING TEST ===")
+print("=== PYLAGE REGISTRY PROP MAPPING TEST ===")
 
 class_name = ps.State("primary")
 disabled = ps.State(False)

@@ -3,11 +3,11 @@ import json
 
 from websockets.asyncio.client import connect
 
-import pyskin as ps
-from pyskin.runtime.websocket import WebSocketServer
+import pylage as ps
+from pylage.runtime.websocket import WebSocketServer
 
 
-print("=== PYSKIN WEBSOCKET TEST ===")
+print("=== PYLAGE WEBSOCKET TEST ===")
 
 
 calls = []

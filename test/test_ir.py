@@ -2,7 +2,7 @@ import copy
 
 import pytest
 
-from pyskin.core.ir import IRNode, snapshot_to_ir
+from pylage.core.ir import IRNode, snapshot_to_ir
 
 
 def test_irnode_construction():
@@ -436,7 +436,7 @@ def test_no_runtime_evaluation():
 
 
 def test_normalize_ir_preserves_identity_and_structure():
-    from pyskin.core.ir import normalize_ir
+    from pylage.core.ir import normalize_ir
 
     child = IRNode(
         node_id="child",
@@ -470,7 +470,7 @@ def test_normalize_ir_preserves_identity_and_structure():
 
 
 def test_normalize_ir_preserves_child_order():
-    from pyskin.core.ir import normalize_ir
+    from pylage.core.ir import normalize_ir
 
     node = IRNode(
         node_id="root",
@@ -505,7 +505,7 @@ def test_normalize_ir_preserves_child_order():
 
 
 def test_normalize_ir_deep_copies_props():
-    from pyskin.core.ir import normalize_ir
+    from pylage.core.ir import normalize_ir
 
     props = {
         "metadata": {
@@ -532,7 +532,7 @@ def test_normalize_ir_deep_copies_props():
 
 
 def test_normalize_ir_does_not_mutate_source():
-    from pyskin.core.ir import normalize_ir
+    from pylage.core.ir import normalize_ir
 
     node = IRNode(
         node_id="1",
@@ -555,7 +555,7 @@ def test_normalize_ir_does_not_mutate_source():
 
 
 def test_normalize_ir_preserves_opaque_style_ref():
-    from pyskin.core.ir import normalize_ir
+    from pylage.core.ir import normalize_ir
 
     style_ref = {
         "name": "button-style",
@@ -576,14 +576,14 @@ def test_normalize_ir_preserves_opaque_style_ref():
 
 
 def test_normalize_ir_rejects_non_ir_node():
-    from pyskin.core.ir import normalize_ir
+    from pylage.core.ir import normalize_ir
 
     with pytest.raises(TypeError):
         normalize_ir("not an IR node")
 
 
 def test_normalize_ir_preserves_identity_and_structure():
-    from pyskin.core.ir import normalize_ir
+    from pylage.core.ir import normalize_ir
 
     child = IRNode(
         node_id="child",
@@ -617,14 +617,14 @@ def test_normalize_ir_preserves_identity_and_structure():
 
 
 def test_normalize_ir_rejects_invalid_input():
-    from pyskin.core.ir import normalize_ir
+    from pylage.core.ir import normalize_ir
 
     with pytest.raises(TypeError):
         normalize_ir("not an IR node")
 
 
 def test_normalize_ir_deep_copies_props():
-    from pyskin.core.ir import normalize_ir
+    from pylage.core.ir import normalize_ir
 
     props = {
         "metadata": {
@@ -651,7 +651,7 @@ def test_normalize_ir_deep_copies_props():
 
 
 def test_normalize_ir_preserves_child_order():
-    from pyskin.core.ir import normalize_ir
+    from pylage.core.ir import normalize_ir
 
     children = [
         IRNode(
@@ -681,7 +681,7 @@ def test_normalize_ir_preserves_child_order():
 
 
 def test_analyze_ir_returns_tree_statistics():
-    from pyskin.core.ir import analyze_ir
+    from pylage.core.ir import analyze_ir
 
     node = IRNode(
         node_id="root",
@@ -719,7 +719,7 @@ def test_analyze_ir_returns_tree_statistics():
 
 
 def test_analyze_ir_detects_duplicate_node_ids():
-    from pyskin.core.ir import analyze_ir
+    from pylage.core.ir import analyze_ir
 
     node = IRNode(
         node_id="root",
@@ -747,14 +747,14 @@ def test_analyze_ir_detects_duplicate_node_ids():
 
 
 def test_analyze_ir_rejects_non_ir_node():
-    from pyskin.core.ir import analyze_ir
+    from pylage.core.ir import analyze_ir
 
     with pytest.raises(TypeError):
         analyze_ir("invalid")
 
 
 def test_analyze_ir_does_not_mutate_ir():
-    from pyskin.core.ir import analyze_ir
+    from pylage.core.ir import analyze_ir
 
     node = IRNode(
         node_id="root",
@@ -773,7 +773,7 @@ def test_analyze_ir_does_not_mutate_ir():
 
 
 def test_validate_ir_accepts_valid_tree():
-    from pyskin.core.ir import validate_ir
+    from pylage.core.ir import validate_ir
 
     node = IRNode(
         node_id="root",
@@ -797,14 +797,14 @@ def test_validate_ir_accepts_valid_tree():
 
 
 def test_validate_ir_rejects_non_ir_node():
-    from pyskin.core.ir import validate_ir
+    from pylage.core.ir import validate_ir
 
     with pytest.raises(TypeError):
         validate_ir("not-an-ir-node")
 
 
 def test_validate_ir_rejects_duplicate_node_ids():
-    from pyskin.core.ir import validate_ir
+    from pylage.core.ir import validate_ir
 
     child = IRNode(
         node_id="duplicate",
@@ -834,7 +834,7 @@ def test_validate_ir_rejects_duplicate_node_ids():
 
 
 def test_validate_ir_does_not_mutate_tree():
-    from pyskin.core.ir import validate_ir
+    from pylage.core.ir import validate_ir
 
     node = IRNode(
         node_id="root",
@@ -865,7 +865,7 @@ def test_validate_ir_does_not_mutate_tree():
 
 
 def test_validate_ir_checks_nested_duplicate_ids():
-    from pyskin.core.ir import validate_ir
+    from pylage.core.ir import validate_ir
 
     node = IRNode(
         node_id="root",
@@ -907,7 +907,7 @@ def test_validate_ir_checks_nested_duplicate_ids():
 
 
 def test_validate_ir_preserves_valid_style_ref():
-    from pyskin.core.ir import validate_ir
+    from pylage.core.ir import validate_ir
 
     node = IRNode(
         node_id="root",
@@ -923,7 +923,7 @@ def test_validate_ir_preserves_valid_style_ref():
 
 
 def test_constant_fold_preserves_literal_values():
-    from pyskin.core.ir import constant_fold
+    from pylage.core.ir import constant_fold
 
     assert constant_fold(10) == 10
     assert constant_fold("Hello") == "Hello"
@@ -931,25 +931,25 @@ def test_constant_fold_preserves_literal_values():
 
 
 def test_constant_fold_evaluates_constant_arithmetic():
-    from pyskin.core.ir import constant_fold
+    from pylage.core.ir import constant_fold
 
     assert constant_fold(("add", 2, 3)) == 5
 
 
 def test_constant_fold_is_recursive():
-    from pyskin.core.ir import constant_fold
+    from pylage.core.ir import constant_fold
 
     assert constant_fold(("mul", ("add", 2, 3), 4)) == 20
 
 
 def test_constant_fold_does_not_evaluate_unsafe_values():
-    from pyskin.core.ir import constant_fold
+    from pylage.core.ir import constant_fold
 
     assert constant_fold(("div", 10, 0)) == ("div", 10, 0)
     assert constant_fold(("unknown", 2, 3)) == ("unknown", 2, 3)
 
 def test_analyze_ir_dependencies():
-    from pyskin.core.ir import analyze_ir_dependencies
+    from pylage.core.ir import analyze_ir_dependencies
 
     node = IRNode(
         node_id="root",
@@ -963,8 +963,8 @@ def test_analyze_ir_dependencies():
     assert result["node_ids"] == ["root"]
 
 def test_analyze_ir_dependencies_excludes_non_reactive_props():
-    from pyskin.core.ir import analyze_ir_dependencies
-    from pyskin.core.registry import PropDefinition, registry
+    from pylage.core.ir import analyze_ir_dependencies
+    from pylage.core.registry import PropDefinition, registry
 
     registry.register(
         "StaticButton",
@@ -986,7 +986,7 @@ def test_analyze_ir_dependencies_excludes_non_reactive_props():
     assert result["dependencies"] == []
 
 def test_analyze_ir_dependencies_includes_nested_nodes():
-    from pyskin.core.ir import analyze_ir_dependencies
+    from pylage.core.ir import analyze_ir_dependencies
 
     node = IRNode(
         node_id="root",
@@ -1010,7 +1010,7 @@ def test_analyze_ir_dependencies_includes_nested_nodes():
     ] if False else result["dependencies"]
 
 def test_analyze_ir_dependencies_includes_nested_nodes():
-    from pyskin.core.ir import analyze_ir_dependencies
+    from pylage.core.ir import analyze_ir_dependencies
 
     node = IRNode(
         node_id="root",
@@ -1032,8 +1032,8 @@ def test_analyze_ir_dependencies_includes_nested_nodes():
     assert {"node_id": "child", "prop_name": "text"} in result["dependencies"]
 
 def test_analyze_ir_dependencies_detects_state():
-    from pyskin.core.ir import analyze_ir_dependencies
-    from pyskin.core.state import State
+    from pylage.core.ir import analyze_ir_dependencies
+    from pylage.core.state import State
 
     state = State("Hello")
 
@@ -1051,9 +1051,9 @@ def test_analyze_ir_dependencies_detects_state():
     ]
 
 def test_analyze_ir_dependencies_respects_reactive_contract():
-    from pyskin.core.ir import analyze_ir_dependencies
-    from pyskin.core.registry import PropDefinition, registry
-    from pyskin.core.state import State
+    from pylage.core.ir import analyze_ir_dependencies
+    from pylage.core.registry import PropDefinition, registry
+    from pylage.core.state import State
 
     registry.register(
         "StaticButton",
@@ -1075,13 +1075,13 @@ def test_analyze_ir_dependencies_respects_reactive_contract():
     assert result["dependencies"] == []
 
 def test_analyze_ir_dependencies_rejects_non_ir_node():
-    from pyskin.core.ir import analyze_ir_dependencies
+    from pylage.core.ir import analyze_ir_dependencies
 
     with pytest.raises(TypeError):
         analyze_ir_dependencies("invalid")
 
 def test_analyze_ir_dependencies_does_not_mutate_ir():
-    from pyskin.core.ir import analyze_ir_dependencies
+    from pylage.core.ir import analyze_ir_dependencies
 
     node = IRNode(
         node_id="root",
@@ -1097,7 +1097,7 @@ def test_analyze_ir_dependencies_does_not_mutate_ir():
     assert node.props == before
 
 def test_plan_patches_returns_diff_operations():
-    from pyskin.core.ir import plan_patches
+    from pylage.core.ir import plan_patches
 
     previous = {
         "id": "root",
@@ -1123,7 +1123,7 @@ def test_plan_patches_returns_diff_operations():
     ]
 
 def test_plan_patches_returns_empty_for_identical_snapshots():
-    from pyskin.core.ir import plan_patches
+    from pylage.core.ir import plan_patches
 
     snapshot = {
         "id": "root",
@@ -1135,13 +1135,13 @@ def test_plan_patches_returns_empty_for_identical_snapshots():
     assert plan_patches(snapshot, snapshot) == []
 
 def test_plan_patches_rejects_invalid_snapshots():
-    from pyskin.core.ir import plan_patches
+    from pylage.core.ir import plan_patches
 
     with pytest.raises(TypeError):
         plan_patches([], {})
 
 def test_plan_patches_detects_insert():
-    from pyskin.core.ir import plan_patches
+    from pylage.core.ir import plan_patches
 
     previous = {
         "id": "root",
@@ -1167,7 +1167,7 @@ def test_plan_patches_detects_insert():
     assert plan_patches(previous, current)[0]["type"] == "insert"
 
 def test_plan_patches_detects_remove():
-    from pyskin.core.ir import plan_patches
+    from pylage.core.ir import plan_patches
 
     previous = {
         "id": "root",
@@ -1193,7 +1193,7 @@ def test_plan_patches_detects_remove():
     assert plan_patches(previous, current)[0]["type"] == "remove"
 
 def test_plan_patches_detects_prop_update():
-    from pyskin.core.ir import plan_patches
+    from pylage.core.ir import plan_patches
 
     previous = {
         "id": "root",
@@ -1221,7 +1221,7 @@ def test_plan_patches_detects_prop_update():
     ]
 
 def test_plan_patches_does_not_mutate_inputs():
-    from pyskin.core.ir import plan_patches
+    from pylage.core.ir import plan_patches
     import copy
 
     previous = {
@@ -1247,7 +1247,7 @@ def test_plan_patches_does_not_mutate_inputs():
     assert current == current_before
 
 def test_plan_patches_detects_nested_prop_update():
-    from pyskin.core.ir import plan_patches
+    from pylage.core.ir import plan_patches
 
     previous = {
         "id": "root",
@@ -1289,7 +1289,7 @@ def test_plan_patches_detects_nested_prop_update():
     ]
 
 def test_plan_patches_detects_event_change():
-    from pyskin.core.ir import plan_patches
+    from pylage.core.ir import plan_patches
 
     previous = {
         "id": "button",
@@ -1318,7 +1318,7 @@ def test_plan_patches_detects_event_change():
     ]
 
 def test_plan_patches_detects_type_change():
-    from pyskin.core.ir import plan_patches
+    from pylage.core.ir import plan_patches
 
     previous = {
         "id": "root",
@@ -1339,7 +1339,7 @@ def test_plan_patches_detects_type_change():
     assert operations[0]["type"] == "replace"
 
 def test_plan_patches_preserves_diff_order():
-    from pyskin.core.ir import plan_patches
+    from pylage.core.ir import plan_patches
 
     previous = {
         "id": "root",
@@ -1369,7 +1369,7 @@ def test_plan_patches_preserves_diff_order():
 
 
 def test_optimize_ir_folds_constant_props():
-    from pyskin.core.ir import IRNode, optimize_ir
+    from pylage.core.ir import IRNode, optimize_ir
 
     node = IRNode(
         node_id="root",
@@ -1384,7 +1384,7 @@ def test_optimize_ir_folds_constant_props():
 
 
 def test_optimize_ir_folds_nested_constant_props():
-    from pyskin.core.ir import IRNode, optimize_ir
+    from pylage.core.ir import IRNode, optimize_ir
 
     node = IRNode(
         node_id="root",
@@ -1399,7 +1399,7 @@ def test_optimize_ir_folds_nested_constant_props():
 
 
 def test_optimize_ir_recursively_optimizes_children():
-    from pyskin.core.ir import IRNode, optimize_ir
+    from pylage.core.ir import IRNode, optimize_ir
 
     node = IRNode(
         node_id="root",
@@ -1421,7 +1421,7 @@ def test_optimize_ir_recursively_optimizes_children():
 
 
 def test_optimize_ir_preserves_identity_and_structure():
-    from pyskin.core.ir import IRNode, optimize_ir
+    from pylage.core.ir import IRNode, optimize_ir
 
     node = IRNode(
         node_id="root",
@@ -1441,7 +1441,7 @@ def test_optimize_ir_preserves_identity_and_structure():
 
 
 def test_optimize_ir_does_not_mutate_source():
-    from pyskin.core.ir import IRNode, optimize_ir
+    from pylage.core.ir import IRNode, optimize_ir
 
     node = IRNode(
         node_id="root",
@@ -1458,7 +1458,7 @@ def test_optimize_ir_does_not_mutate_source():
 
 
 def test_optimize_ir_preserves_unsafe_values():
-    from pyskin.core.ir import IRNode, optimize_ir
+    from pylage.core.ir import IRNode, optimize_ir
 
     node = IRNode(
         node_id="root",
@@ -1473,15 +1473,15 @@ def test_optimize_ir_preserves_unsafe_values():
 
 
 def test_optimize_ir_rejects_non_ir_node():
-    from pyskin.core.ir import optimize_ir
+    from pylage.core.ir import optimize_ir
 
     with pytest.raises(TypeError):
         optimize_ir("invalid")
 
 
 def test_optimize_ir_preserves_state_identity():
-    from pyskin.core.ir import IRNode, optimize_ir
-    from pyskin.core.state import State
+    from pylage.core.ir import IRNode, optimize_ir
+    from pylage.core.state import State
 
     state = State("Hello")
 
@@ -1498,8 +1498,8 @@ def test_optimize_ir_preserves_state_identity():
 
 
 def test_optimize_ir_does_not_copy_state_subscribers():
-    from pyskin.core.ir import IRNode, optimize_ir
-    from pyskin.core.state import State
+    from pylage.core.ir import IRNode, optimize_ir
+    from pylage.core.state import State
 
     state = State("Hello")
     calls = []
@@ -1522,8 +1522,8 @@ def test_optimize_ir_does_not_copy_state_subscribers():
 
 
 def test_optimize_ir_preserves_state_inside_non_constant_expression():
-    from pyskin.core.ir import IRNode, optimize_ir
-    from pyskin.core.state import State
+    from pylage.core.ir import IRNode, optimize_ir
+    from pylage.core.state import State
 
     state = State(10)
 
@@ -1544,7 +1544,7 @@ def test_optimize_ir_preserves_state_inside_non_constant_expression():
 
 
 def test_constant_fold_preserves_folded_children_in_dynamic_expression():
-    from pyskin.core.ir import constant_fold
+    from pylage.core.ir import constant_fold
 
     result = constant_fold(("add", ("mul", 2, 3), "dynamic"))
 
@@ -1552,8 +1552,8 @@ def test_constant_fold_preserves_folded_children_in_dynamic_expression():
 
 
 def test_constant_fold_preserves_state_in_nested_expression():
-    from pyskin.core.ir import constant_fold
-    from pyskin.core.state import State
+    from pylage.core.ir import constant_fold
+    from pylage.core.state import State
 
     state = State(10)
 

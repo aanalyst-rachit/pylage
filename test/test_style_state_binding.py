@@ -1,4 +1,4 @@
-import pyskin as ps
+import pylage as ps
 
 
 def test_style_state_updates_component_binding():

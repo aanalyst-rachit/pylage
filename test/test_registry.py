@@ -1,12 +1,12 @@
-import pyskin as ps
+import pylage as ps
 
-from pyskin.core.registry import (
+from pylage.core.registry import (
     ComponentRegistry,
     registry,
 )
 
 
-print("=== PYSKIN COMPONENT REGISTRY TEST ===")
+print("=== PYLAGE COMPONENT REGISTRY TEST ===")
 
 assert registry.has("Column")
 assert registry.has("Heading")

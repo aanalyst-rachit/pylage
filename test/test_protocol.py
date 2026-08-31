@@ -1,7 +1,7 @@
-from pyskin.core.protocol import EventMessage
+from pylage.core.protocol import EventMessage
 
 
-print("=== PYSKIN EVENT PROTOCOL TEST ===")
+print("=== PYLAGE EVENT PROTOCOL TEST ===")
 
 
 message = EventMessage(

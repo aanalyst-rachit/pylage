@@ -1,9 +1,9 @@
 from pathlib import Path
 
-import pyskin as ps
+import pylage as ps
 
 
-print("=== PYSKIN RUN COMPATIBILITY TEST ===")
+print("=== PYLAGE RUN COMPATIBILITY TEST ===")
 
 app = ps.Column(
     ps.Heading("Compatibility Test"),

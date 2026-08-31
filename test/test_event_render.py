@@ -1,9 +1,9 @@
-import pyskin as ps
+import pylage as ps
 
-from pyskin.core.renderer import render
+from pylage.core.renderer import render
 
 
-print("=== PYSKIN EVENT RENDER TEST ===")
+print("=== PYLAGE EVENT RENDER TEST ===")
 
 
 def clicked():
@@ -19,8 +19,8 @@ html = render(button)
 
 print(html)
 
-assert 'data-pyskin-id="' in html
-assert 'data-pyskin-events="click"' in html
+assert 'data-pylage-id="' in html
+assert 'data-pylage-events="click"' in html
 assert ">Click me</button>" in html
 
 # Python callback itself must never appear in HTML.
@@ -34,7 +34,7 @@ plain_button = ps.Button("Plain")
 
 plain_html = render(plain_button)
 
-assert "data-pyskin-events" not in plain_html
+assert "data-pylage-events" not in plain_html
 
 print("No-event regression: PASS")
 

@@ -1,8 +1,8 @@
-import pyskin as ps
-from pyskin.core.events import EventDispatcher
+import pylage as ps
+from pylage.core.events import EventDispatcher
 
 
-print("=== PYSKIN EVENT DISPATCH TEST ===")
+print("=== PYLAGE EVENT DISPATCH TEST ===")
 
 calls = []
 

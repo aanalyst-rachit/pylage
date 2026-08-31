@@ -1,11 +1,11 @@
 import asyncio
 import json
 
-import pyskin as ps
-from pyskin.core.component import Component
-from pyskin.runtime.websocket import WebSocketServer
+import pylage as ps
+from pylage.core.component import Component
+from pylage.runtime.websocket import WebSocketServer
 
-print("=== PYSKIN GENERIC REACTIVE PROPS TEST ===")
+print("=== PYLAGE GENERIC REACTIVE PROPS TEST ===")
 
 text = ps.State("Hello")
 value = ps.State("100")

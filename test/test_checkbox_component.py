@@ -1,5 +1,5 @@
-from pyskin import Checkbox
-from pyskin.core.renderer import render
+from pylage import Checkbox
+from pylage.core.renderer import render
 
 
 def test_checkbox_renders_as_checkbox():

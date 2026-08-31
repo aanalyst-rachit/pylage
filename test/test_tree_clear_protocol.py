@@ -1,4 +1,4 @@
-from pyskin.core.protocol import TreeClearMessage
+from pylage.core.protocol import TreeClearMessage
 
 
 def test_tree_clear_message_round_trip():

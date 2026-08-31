@@ -1,6 +1,6 @@
-import pyskin as ps
+import pylage as ps
 
-from pyskin.core.renderer import HTMLRenderer
+from pylage.core.renderer import HTMLRenderer
 
 
 def test_responsive_layout_constraints():

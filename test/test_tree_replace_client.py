@@ -1,4 +1,4 @@
-from pyskin.runtime.client import CLIENT_RUNTIME
+from pylage.runtime.client import CLIENT_RUNTIME
 
 
 def test_tree_replace_client_replaces_old_node_at_same_position():

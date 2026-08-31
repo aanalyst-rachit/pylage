@@ -1,5 +1,5 @@
-from pyskin import RadioGroup, Text, Button
-from pyskin.core.renderer import render
+from pylage import RadioGroup, Text, Button
+from pylage.core.renderer import render
 
 
 def test_radio_group_renders_as_container():

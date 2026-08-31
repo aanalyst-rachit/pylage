@@ -2,8 +2,8 @@ import asyncio
 import json
 import time
 
-import pyskin as ps
-from pyskin.runtime.websocket import WebSocketServer
+import pylage as ps
+from pylage.runtime.websocket import WebSocketServer
 
 
 def test_phase6_websocket_state_update_latency():

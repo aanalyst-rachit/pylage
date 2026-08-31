@@ -2,11 +2,11 @@
 import threading
 import time
 
-import pyskin as ps
-from pyskin.runtime import Runtime
+import pylage as ps
+from pylage.runtime import Runtime
 
 
-print("=== PYSKIN LIVE BROWSER STATE TEST ===")
+print("=== PYLAGE LIVE BROWSER STATE TEST ===")
 
 count = ps.State(0)
 
@@ -16,7 +16,7 @@ app = ps.Column(
 
 runtime = Runtime(
     app,
-    title="PySkin Live State",
+    title="PyLage Live State",
     output="live_state_output/index.html",
 )
 

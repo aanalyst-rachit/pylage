@@ -1,4 +1,4 @@
-import pyskin as ps
+import pylage as ps
 
 
 def test_style_supports_layout_constraints():
@@ -75,7 +75,7 @@ def test_column_can_override_default_layout_style():
         ),
     )
 
-    from pyskin.core.renderer import render
+    from pylage.core.renderer import render
 
     html = render(column)
 

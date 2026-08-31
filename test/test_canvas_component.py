@@ -1,5 +1,5 @@
-from pyskin import Canvas
-from pyskin.core.renderer import render
+from pylage import Canvas
+from pylage.core.renderer import render
 
 
 def test_canvas_creates_canvas_component():

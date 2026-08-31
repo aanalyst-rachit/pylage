@@ -1,5 +1,5 @@
-from pyskin import Tabs, Text, Button
-from pyskin.core.renderer import render
+from pylage import Tabs, Text, Button
+from pylage.core.renderer import render
 
 
 def test_tabs_renders():

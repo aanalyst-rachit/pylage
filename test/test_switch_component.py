@@ -1,5 +1,5 @@
-from pyskin import Switch
-from pyskin.core.renderer import render
+from pylage import Switch
+from pylage.core.renderer import render
 
 
 def test_switch_renders_as_checkbox():

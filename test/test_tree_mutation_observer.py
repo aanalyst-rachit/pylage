@@ -1,5 +1,5 @@
-from pyskin.core.component import Component
-from pyskin.core.tree import TreeMutationObserver
+from pylage.core.component import Component
+from pylage.core.tree import TreeMutationObserver
 
 
 def test_observer_receives_nested_add_mutations():

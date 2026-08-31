@@ -1,9 +1,9 @@
-import pyskin as ps
+import pylage as ps
 
-from pyskin.core.binding import StateBinding
-from pyskin.core.dirty import DirtyNodes
-from pyskin.core.graph import DependencyGraph
-from pyskin.core.scheduler import Scheduler
+from pylage.core.binding import StateBinding
+from pylage.core.dirty import DirtyNodes
+from pylage.core.graph import DependencyGraph
+from pylage.core.scheduler import Scheduler
 
 
 def test_multiple_state_changes_are_coalesced_into_one_flush():

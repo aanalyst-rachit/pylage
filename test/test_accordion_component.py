@@ -1,5 +1,5 @@
-from pyskin import Accordion, Text, Button
-from pyskin.core.renderer import render
+from pylage import Accordion, Text, Button
+from pylage.core.renderer import render
 
 
 def test_accordion_creates_accordion_component():

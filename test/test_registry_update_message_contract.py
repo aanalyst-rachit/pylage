@@ -1,9 +1,9 @@
 import json
 
-from pyskin.core.protocol import UpdateMessage
+from pylage.core.protocol import UpdateMessage
 
 
-print("=== PYSKIN REGISTRY UPDATE MESSAGE CONTRACT TEST ===")
+print("=== PYLAGE REGISTRY UPDATE MESSAGE CONTRACT TEST ===")
 
 
 # ------------------------------------------------------------

@@ -1,5 +1,5 @@
-from pyskin import Video
-from pyskin.core.renderer import render
+from pylage import Video
+from pylage.core.renderer import render
 
 
 def test_video_creates_video_component():

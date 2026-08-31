@@ -1,7 +1,7 @@
 import pytest
-from pyskin.core.component import Component
-from pyskin.core.state import State
-from pyskin.core.graph import DependencyGraph
+from pylage.core.component import Component
+from pylage.core.state import State
+from pylage.core.graph import DependencyGraph
 
 
 def test_add_and_get_dependents():

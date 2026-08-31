@@ -1,6 +1,6 @@
-import pyskin as ps
-from pyskin.core.binding import StateBinding
-from pyskin.core.graph import DependencyGraph
+import pylage as ps
+from pylage.core.binding import StateBinding
+from pylage.core.graph import DependencyGraph
 
 
 def test_state_binding_builds_dependency_graph():

@@ -1,7 +1,7 @@
-from pyskin.core.component import Component
-from pyskin.core.state import State
-from pyskin.core.graph import DependencyGraph
-from pyskin.core.dirty import DirtyNodes
+from pylage.core.component import Component
+from pylage.core.state import State
+from pylage.core.graph import DependencyGraph
+from pylage.core.dirty import DirtyNodes
 
 
 def test_state_change_marks_dependent_component_dirty():

@@ -1,5 +1,5 @@
-from pyskin import Card, Text
-from pyskin.core.renderer import render
+from pylage import Card, Text
+from pylage.core.renderer import render
 
 
 def test_card_creates_card_component():
