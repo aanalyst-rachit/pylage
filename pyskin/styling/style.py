@@ -73,6 +73,7 @@ class Style:
     box_shadow: Any = None
     opacity: Any = None
     overflow: Any = None
+    box_sizing: Any = None
     cursor: Any = None
 
     custom: dict[str, Any] | None = None

@@ -4,29 +4,48 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
 from typing import Optional
+from urllib.parse import urlparse
 
 
 class _RequestHandler(BaseHTTPRequestHandler):
     directory: Path
+    filename: str = "index.html"
 
     def do_GET(self) -> None:
-        if self.path not in ("/", "/index.html"):
+        path = urlparse(self.path).path
+
+        if path not in ("/", f"/{self.filename}"):
             self.send_error(404, "Not Found")
             return
 
         try:
-            content = self.directory.joinpath("index.html").read_bytes()
+            content = self.directory.joinpath(
+                self.filename
+            ).read_bytes()
         except FileNotFoundError:
-            self.send_error(404, "index.html not found")
+            self.send_error(
+                404,
+                f"{self.filename} not found",
+            )
             return
 
         self.send_response(200)
-        self.send_header("Content-Type", "text/html; charset=utf-8")
-        self.send_header("Content-Length", str(len(content)))
+        self.send_header(
+            "Content-Type",
+            "text/html; charset=utf-8",
+        )
+        self.send_header(
+            "Content-Length",
+            str(len(content)),
+        )
         self.end_headers()
         self.wfile.write(content)
 
-    def log_message(self, format: str, *args: object) -> None:
+    def log_message(
+        self,
+        format: str,
+        *args: object,
+    ) -> None:
         return
 
 
@@ -38,10 +57,12 @@ class LocalServer:
         directory: str | Path,
         host: str = "127.0.0.1",
         port: int = 0,
+        filename: str = "index.html",
     ) -> None:
         self.directory = Path(directory).resolve()
         self.host = host
         self.port = port
+        self.filename = Path(filename).name
 
         self._server: Optional[ThreadingHTTPServer] = None
         self._thread: Optional[Thread] = None
@@ -51,7 +72,10 @@ class LocalServer:
         if self._server is None:
             raise RuntimeError("Server is not running.")
 
-        return f"http://{self.host}:{self._server.server_port}/"
+        return (
+            f"http://{self.host}:"
+            f"{self._server.server_port}/"
+        )
 
     def start(self) -> str:
         if self._server is not None:
@@ -60,7 +84,10 @@ class LocalServer:
         handler = type(
             "PySkinRequestHandler",
             (_RequestHandler,),
-            {"directory": self.directory},
+            {
+                "directory": self.directory,
+                "filename": self.filename,
+            },
         )
 
         self._server = ThreadingHTTPServer(

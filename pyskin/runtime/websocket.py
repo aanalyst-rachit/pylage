@@ -13,6 +13,8 @@ from pyskin.core.graph import DependencyGraph
 from pyskin.core.dirty import DirtyNodes
 from pyskin.core.scheduler import Scheduler
 from pyskin.core.state import State
+from pyskin.styling.style import Style
+from pyskin.styling.responsive import ResponsiveStyle
 from pyskin.core.protocol import EventMessage, UpdateMessage, TreeAddMessage, TreeRemoveMessage, TreeMoveMessage, TreeReplaceMessage, TreeRemoveMessage, TreeMoveMessage, TreeClearMessage, TreeSetChildrenMessage
 
 
@@ -94,6 +96,95 @@ class WebSocketServer:
             )
         )
 
+    def _json_safe(self, value: Any) -> Any:
+        """Convert PySkin runtime values into JSON-safe values."""
+
+        if isinstance(value, State):
+            return self._json_safe(value.value)
+
+        if isinstance(value, Style):
+            return {
+                "color": self._json_safe(value.color),
+                "background": self._json_safe(value.background),
+                "background_color": self._json_safe(value.background_color),
+                "font_size": self._json_safe(value.font_size),
+                "font_weight": self._json_safe(value.font_weight),
+                "font_family": self._json_safe(value.font_family),
+                "line_height": self._json_safe(value.line_height),
+                "text_align": self._json_safe(value.text_align),
+                "margin": self._json_safe(value.margin),
+                "margin_top": self._json_safe(value.margin_top),
+                "margin_right": self._json_safe(value.margin_right),
+                "margin_bottom": self._json_safe(value.margin_bottom),
+                "margin_left": self._json_safe(value.margin_left),
+                "padding": self._json_safe(value.padding),
+                "padding_top": self._json_safe(value.padding_top),
+                "padding_right": self._json_safe(value.padding_right),
+                "padding_bottom": self._json_safe(value.padding_bottom),
+                "padding_left": self._json_safe(value.padding_left),
+                "width": self._json_safe(value.width),
+                "min_width": self._json_safe(value.min_width),
+                "max_width": self._json_safe(value.max_width),
+                "height": self._json_safe(value.height),
+                "min_height": self._json_safe(value.min_height),
+                "max_height": self._json_safe(value.max_height),
+                "display": self._json_safe(value.display),
+                "position": self._json_safe(value.position),
+                "top": self._json_safe(value.top),
+                "right": self._json_safe(value.right),
+                "bottom": self._json_safe(value.bottom),
+                "left": self._json_safe(value.left),
+                "flex_direction": self._json_safe(value.flex_direction),
+                "flex_wrap": self._json_safe(value.flex_wrap),
+                "justify_content": self._json_safe(value.justify_content),
+                "align_items": self._json_safe(value.align_items),
+                "align_content": self._json_safe(value.align_content),
+                "flex": self._json_safe(value.flex),
+                "flex_grow": self._json_safe(value.flex_grow),
+                "flex_shrink": self._json_safe(value.flex_shrink),
+                "flex_basis": self._json_safe(value.flex_basis),
+                "gap": self._json_safe(value.gap),
+                "row_gap": self._json_safe(value.row_gap),
+                "column_gap": self._json_safe(value.column_gap),
+                "grid_template_columns": self._json_safe(value.grid_template_columns),
+                "grid_template_rows": self._json_safe(value.grid_template_rows),
+                "grid_column": self._json_safe(value.grid_column),
+                "grid_row": self._json_safe(value.grid_row),
+                "border": self._json_safe(value.border),
+                "border_width": self._json_safe(value.border_width),
+                "border_style": self._json_safe(value.border_style),
+                "border_color": self._json_safe(value.border_color),
+                "border_radius": self._json_safe(value.border_radius),
+                "box_shadow": self._json_safe(value.box_shadow),
+                "opacity": self._json_safe(value.opacity),
+                "overflow": self._json_safe(value.overflow),
+                "cursor": self._json_safe(value.cursor),
+                "custom": self._json_safe(value.custom),
+            }
+
+        if isinstance(value, ResponsiveStyle):
+            return {
+                "base": self._json_safe(value.base),
+                "sm": self._json_safe(value.sm),
+                "md": self._json_safe(value.md),
+                "lg": self._json_safe(value.lg),
+                "xl": self._json_safe(value.xl),
+            }
+
+        if isinstance(value, dict):
+            return {
+                str(key): self._json_safe(item)
+                for key, item in value.items()
+            }
+
+        if isinstance(value, (list, tuple)):
+            return [self._json_safe(item) for item in value]
+
+        if isinstance(value, (str, int, float, bool)) or value is None:
+            return value
+
+        return str(value)
+
     def _scheduled_update(
         self,
         component: Component,
@@ -103,10 +194,7 @@ class WebSocketServer:
         props: dict[str, Any] = {}
 
         for prop_name, value in component.props.items():
-            if isinstance(value, State):
-                props[prop_name] = value.value
-            else:
-                props[prop_name] = value
+            props[prop_name] = self._json_safe(value)
 
         self._on_state_change(component, props)
 

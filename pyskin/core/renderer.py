@@ -44,11 +44,17 @@ class HTMLRenderer:
             "Form": lambda renderer, component:
                 renderer._render_form(component),
 
+            "Card": lambda renderer, component:
+                renderer._render_card(component),
+
             "Text": lambda renderer, component:
                 renderer._render_text(component),
 
             "Heading": lambda renderer, component:
                 renderer._render_heading(component),
+
+            "Breadcrumbs": lambda renderer, component:
+                renderer._render_breadcrumbs(component),
 
             "Button": lambda renderer, component:
                 renderer._render_button(component),
@@ -285,9 +291,12 @@ class HTMLRenderer:
         )
         children = self._render_children(component)
 
+        definition = self.registry.get(component.type)
+        tag = definition.tag if definition is not None else "div"
+
         return (
-            f'<div {common}{props}>'
-            f'{children}</div>'
+            f'<{tag} {common}{props}>'
+            f'{children}</{tag}>'
         )
 
     def _render_row(self, component: Component) -> str:
@@ -309,6 +318,56 @@ class HTMLRenderer:
             f'{children}</div>'
         )
 
+    def _render_card(self, component: Component) -> str:
+        """Render Card using its registry-defined HTML tag."""
+
+        common = self._render_common_attributes(
+            component,
+            default_style=Style(
+                display="block",
+                width="100%",
+                box_sizing="border-box",
+            ),
+        )
+
+        props = self._render_prop_attributes(
+            component,
+            excluded={"children"},
+        )
+
+        children = self._render_children(component)
+
+        # Registry-defined text props become element content.
+        text_values: list[str] = []
+
+        definition = self.registry.get(component.type)
+
+        if definition is not None and definition.props is not None:
+            for prop_name, prop_definition in definition.props.items():
+                if prop_definition.kind != "text":
+                    continue
+
+                value = component.props.get(prop_name)
+
+                if value is None:
+                    continue
+
+                value = self._value(value)
+
+                if value is not None:
+                    text_values.append(escape(str(value)))
+
+        if text_values:
+            children = "".join(text_values) + children
+
+        tag = definition.tag if definition is not None else "div"
+
+        return (
+            f'<{tag} {common}{props}>'
+            f'{children}</{tag}>'
+        )
+
+
     def _render_text(self, component: Component) -> str:
         common = self._render_common_attributes(component)
 
@@ -329,10 +388,36 @@ class HTMLRenderer:
             component.props.get("text", "")
         )
 
+        definition = self.registry.get("Heading")
+        tag = definition.tag if definition is not None else "h1"
+
         return (
-            f"<h1 {common}>"
+            f"<{tag} {common}>"
             f"{escape(str(text))}"
-            f"</h1>"
+            f"</{tag}>"
+        )
+
+    def _render_breadcrumbs(self, component: Component) -> str:
+        common = self._render_common_attributes(component)
+
+        attributes = self._render_prop_attributes(
+            component,
+            excluded={"text", "children"},
+        )
+
+        if attributes:
+            attributes = " " + attributes
+
+        items = "".join(
+            f"<li>{self._render_component(child)}</li>"
+            for child in component.children
+            if isinstance(child, Component)
+        )
+
+        return (
+            f'<nav {common}{attributes} aria-label="Breadcrumb">'
+            f"<ol>{items}</ol>"
+            f"</nav>"
         )
 
     def _render_input(self, component: Component) -> str:

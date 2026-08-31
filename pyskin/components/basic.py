@@ -357,9 +357,6 @@ def Checkbox(**props: Any) -> Component:
 def RadioGroup(*children, **props: Any) -> Component:
     return component("RadioGroup", *children, **props)
 
-def RadioGroup(*children, **props: Any) -> Component:
-    return component("RadioGroup", *children, **props)
-
 
 def Switch(**props: Any) -> Component:
     return component("Switch", **props)
