@@ -134,3 +134,29 @@ def snapshot_to_ir(snapshot: dict[str, Any]) -> IRNode:
         children=ir_children,
         style_ref=None,
     )
+
+def normalize_ir(node: IRNode) -> IRNode:
+    """Return a canonical compiler-layer copy of an IR tree.
+
+    Normalization is intentionally compiler-only. It preserves component
+    identity, node identity, child ordering, and opaque style references
+    without evaluating runtime state, rendering styles, or consulting
+    runtime dependency/diff/patch systems.
+    """
+
+    if not isinstance(node, IRNode):
+        raise TypeError("node must be an IRNode")
+
+    normalized_children = [
+        normalize_ir(child)
+        for child in node.children
+    ]
+
+    return IRNode(
+        node_id=node.node_id,
+        node_type=node.node_type,
+        component_id=node.component_id,
+        props=copy.deepcopy(node.props),
+        children=normalized_children,
+        style_ref=copy.deepcopy(node.style_ref),
+    )

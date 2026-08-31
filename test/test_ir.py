@@ -433,3 +433,248 @@ def test_no_runtime_evaluation():
 
     assert ir_node.component_id == "Button"
     assert ir_node.style_ref is None
+
+
+def test_normalize_ir_preserves_identity_and_structure():
+    from pyskin.core.ir import normalize_ir
+
+    child = IRNode(
+        node_id="child",
+        node_type="component",
+        component_id="Text",
+        props={"text": "Hello"},
+    )
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"class": "primary"},
+        children=[child],
+        style_ref="style-ref",
+    )
+
+    normalized = normalize_ir(node)
+
+    assert normalized is not node
+    assert normalized.node_id == "root"
+    assert normalized.node_type == "component"
+    assert normalized.component_id == "Button"
+    assert normalized.props == {"class": "primary"}
+    assert normalized.style_ref == "style-ref"
+
+    assert len(normalized.children) == 1
+    assert normalized.children[0] is not child
+    assert normalized.children[0].node_id == "child"
+    assert normalized.children[0].component_id == "Text"
+
+
+def test_normalize_ir_preserves_child_order():
+    from pyskin.core.ir import normalize_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        children=[
+            IRNode(
+                node_id="a",
+                node_type="component",
+                component_id="Text",
+            ),
+            IRNode(
+                node_id="b",
+                node_type="component",
+                component_id="Button",
+            ),
+            IRNode(
+                node_id="c",
+                node_type="component",
+                component_id="Input",
+            ),
+        ],
+    )
+
+    normalized = normalize_ir(node)
+
+    assert [child.node_id for child in normalized.children] == [
+        "a",
+        "b",
+        "c",
+    ]
+
+
+def test_normalize_ir_deep_copies_props():
+    from pyskin.core.ir import normalize_ir
+
+    props = {
+        "metadata": {
+            "items": ["one", "two"],
+        },
+    }
+
+    node = IRNode(
+        node_id="1",
+        node_type="component",
+        component_id="Button",
+        props=props,
+    )
+
+    normalized = normalize_ir(node)
+
+    props["metadata"]["items"].append("three")
+
+    assert normalized.props == {
+        "metadata": {
+            "items": ["one", "two"],
+        },
+    }
+
+
+def test_normalize_ir_does_not_mutate_source():
+    from pyskin.core.ir import normalize_ir
+
+    node = IRNode(
+        node_id="1",
+        node_type="component",
+        component_id="Button",
+        props={
+            "metadata": {
+                "enabled": True,
+            },
+        },
+    )
+
+    original_props = copy.deepcopy(node.props)
+    original_children = list(node.children)
+
+    normalize_ir(node)
+
+    assert node.props == original_props
+    assert node.children == original_children
+
+
+def test_normalize_ir_preserves_opaque_style_ref():
+    from pyskin.core.ir import normalize_ir
+
+    style_ref = {
+        "name": "button-style",
+        "version": 1,
+    }
+
+    node = IRNode(
+        node_id="1",
+        node_type="component",
+        component_id="Button",
+        style_ref=style_ref,
+    )
+
+    normalized = normalize_ir(node)
+
+    assert normalized.style_ref == style_ref
+    assert normalized.style_ref is not style_ref
+
+
+def test_normalize_ir_rejects_non_ir_node():
+    from pyskin.core.ir import normalize_ir
+
+    with pytest.raises(TypeError):
+        normalize_ir("not an IR node")
+
+
+def test_normalize_ir_preserves_identity_and_structure():
+    from pyskin.core.ir import normalize_ir
+
+    child = IRNode(
+        node_id="child",
+        node_type="component",
+        component_id="Text",
+        props={"text": "Hello"},
+    )
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"class": "primary"},
+        children=[child],
+        style_ref="style-ref",
+    )
+
+    normalized = normalize_ir(node)
+
+    assert normalized is not node
+    assert normalized.node_id == "root"
+    assert normalized.node_type == "component"
+    assert normalized.component_id == "Button"
+    assert normalized.props == {"class": "primary"}
+    assert normalized.style_ref == "style-ref"
+
+    assert len(normalized.children) == 1
+    assert normalized.children[0] is not child
+    assert normalized.children[0].node_id == "child"
+    assert normalized.children[0].component_id == "Text"
+
+
+def test_normalize_ir_rejects_invalid_input():
+    from pyskin.core.ir import normalize_ir
+
+    with pytest.raises(TypeError):
+        normalize_ir("not an IR node")
+
+
+def test_normalize_ir_deep_copies_props():
+    from pyskin.core.ir import normalize_ir
+
+    props = {
+        "metadata": {
+            "items": ["one", "two"],
+        }
+    }
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props=props,
+    )
+
+    normalized = normalize_ir(node)
+
+    props["metadata"]["items"].append("three")
+
+    assert normalized.props == {
+        "metadata": {
+            "items": ["one", "two"],
+        }
+    }
+
+
+def test_normalize_ir_preserves_child_order():
+    from pyskin.core.ir import normalize_ir
+
+    children = [
+        IRNode(
+            node_id="1",
+            node_type="component",
+            component_id="Text",
+            props={"text": "One"},
+        ),
+        IRNode(
+            node_id="2",
+            node_type="component",
+            component_id="Text",
+            props={"text": "Two"},
+        ),
+    ]
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        children=children,
+    )
+
+    normalized = normalize_ir(node)
+
+    assert [child.node_id for child in normalized.children] == ["1", "2"]
