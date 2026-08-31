@@ -19,7 +19,7 @@ Branch: main
 
 Current architectural phase:
 
-    Phase 9 — Compiler / UI IR
+    Phase 10 — Multi-Backend Architecture
 
 Latest validated regression:
 
@@ -688,7 +688,7 @@ Future work:
 
 # PHASE 9 — COMPILER / UI IR
 
-Status: 🟢 ACTIVE
+Status: ✅ COMPLETE
 
 Objective:
 
@@ -1005,8 +1005,8 @@ Do not allow compiler optimization to:
 - replace runtime dependency tracking
 - replace runtime scheduling
 
-Compiler optimization is now complete, but Phase 9 itself remains active
-until the compiler/runtime boundary and remaining IR edge cases are audited.
+Phase 9 compiler/runtime boundaries have been validated through focused IR
+coverage and the full regression suite. Phase 9 is complete.
 
 ---
 
@@ -1121,19 +1121,22 @@ Do not begin this before software architecture and benchmarks justify it.
             ↓
     Phase 9 — Compiler / UI IR
             ↓
+        ✅ COMPLETE
+            ↓
+    Phase 10 — Multi-Backend Architecture
+            ↓
         🟢 ACTIVE
             ↓
-    Phase 9G — IR Optimization
-            ↓
-        ✅ COMPLETE
-
----
 
 # 🎯 CURRENT ACTIVE TASK
 
-Phase 9 — Compiler / UI IR
+Phase 10 — Multi-Backend Architecture
 
-Current completed milestone:
+Current Phase 9 completion record:
+
+    Phase 9 — Compiler / UI IR
+        ↓
+    ✅ COMPLETE
 
     IR Foundation
         ↓
@@ -1153,25 +1156,57 @@ Current completed milestone:
         ↓
     463-Test Regression
 
-Optimization is complete.
+Validated Phase 9 results:
 
-Next Phase 9 work:
+    Focused IR suite: 73 passed
+    Full regression: 463 passed
+    Git commit: accba10
+    Git tag: phase-9-complete
 
-    Compiler/runtime boundary audit
-        ↓
-    IR edge-case coverage
-        ↓
-    Optimization benchmark coverage
-        ↓
-    Compiler/runtime contract validation
-        ↓
-    Phase 9 completion review
+Phase 9 optimization:
 
-Only after Phase 9 is architecturally stable:
+    COMPLETE
 
-    Phase 10 — Multi-Backend Architecture
+Validated optimization guarantees:
 
----
+- Safe constants are folded.
+- Runtime values remain runtime values.
+- State identity is preserved.
+- State subscribers remain attached.
+- State objects are not evaluated during optimization.
+- Dynamic State expressions remain dynamic.
+- Source IR remains immutable.
+
+Current Phase 10 direction:
+
+    Shared UI Representation / IR
+              ↓
+       Backend abstraction
+              ↓
+        Web backend
+              ↓
+      Future Desktop backend
+              ↓
+       Future Native backend
+
+Immediate practical milestone:
+
+    Build and validate a real sample web page
+            ↓
+    Exercise PySkin components
+            ↓
+    Exercise styling
+            ↓
+    Exercise reactive State
+            ↓
+    Exercise diff / patch pipeline
+            ↓
+    Validate the framework end-to-end
+
+Architectural rule:
+
+> Phase 10 should validate the existing architecture through real
+> applications before introducing additional backend complexity.
 
 # 🧪 TESTING POLICY
 
@@ -1272,8 +1307,6 @@ Priority:
           ↓
     Compiler Optimization
           ↓
-    Compiler Boundary Audit
-          ↓
     Multi-Backend
 
 ---
@@ -1283,9 +1316,18 @@ Priority:
 Latest validated state:
 
     Phase 9 — Compiler / UI IR
-    IR optimization milestone complete
-    Full regression: 463 passed
+    ✅ COMPLETE
+
+Phase 9 validation:
+
     Focused IR suite: 73 passed
+    Full regression: 463 passed
+
+Phase 9 Git checkpoint:
+
+    Commit: accba10
+    Message: feat: complete phase 9 compiler and UI IR
+    Tag: phase-9-complete
 
 Phase 9 capabilities:
 
@@ -1298,10 +1340,6 @@ Phase 9 capabilities:
     plan_patches
     optimize_ir
 
-Optimization:
-
-    COMPLETE
-
 Runtime safety:
 
     State identity preserved
@@ -1309,31 +1347,12 @@ Runtime safety:
     Source IR remains immutable
     Dynamic State expressions remain dynamic
 
-Current working objective:
+Current architectural phase:
 
-    Complete Phase 9 compiler boundary and edge-case audit.
+    Phase 10 — Multi-Backend Architecture
+    🟢 ACTIVE
 
-Next major milestone:
+Current practical objective:
 
-    Phase 9 completion review
-        ↓
-    Phase 10 multi-backend architecture
-
----
-
-# 🏁 PROJECT PRINCIPLE
-
-> Build the smallest architecture that proves the next capability.
-
-> Do not optimize assumptions.
-
-> Do not add abstraction without a demonstrated architectural need.
-
-> Runtime State belongs to the runtime.
-
-> Compiler optimization belongs to the compiler.
-
-> Tests are architectural evidence.
-
-> Every major phase must leave the project more deterministic,
-> measurable, and extensible.
+    Build a sample web page and use it as the first real-world
+    end-to-end validation of the PySkin architecture.
