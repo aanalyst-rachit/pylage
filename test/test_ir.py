@@ -770,3 +770,154 @@ def test_analyze_ir_does_not_mutate_ir():
 
     assert node.props == before
     assert node.children == children_before
+
+
+def test_validate_ir_accepts_valid_tree():
+    from pyskin.core.ir import validate_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        children=[
+            IRNode(
+                node_id="child-1",
+                node_type="component",
+                component_id="Text",
+            ),
+            IRNode(
+                node_id="child-2",
+                node_type="component",
+                component_id="Button",
+            ),
+        ],
+    )
+
+    assert validate_ir(node) is None
+
+
+def test_validate_ir_rejects_non_ir_node():
+    from pyskin.core.ir import validate_ir
+
+    with pytest.raises(TypeError):
+        validate_ir("not-an-ir-node")
+
+
+def test_validate_ir_rejects_duplicate_node_ids():
+    from pyskin.core.ir import validate_ir
+
+    child = IRNode(
+        node_id="duplicate",
+        node_type="component",
+        component_id="Text",
+    )
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        children=[
+            child,
+            IRNode(
+                node_id="duplicate",
+                node_type="component",
+                component_id="Button",
+            ),
+        ],
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="Duplicate IR node_id",
+    ):
+        validate_ir(node)
+
+
+def test_validate_ir_does_not_mutate_tree():
+    from pyskin.core.ir import validate_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        props={
+            "data": {
+                "items": ["one", "two"],
+            }
+        },
+        children=[
+            IRNode(
+                node_id="child",
+                node_type="component",
+                component_id="Text",
+            )
+        ],
+    )
+
+    original_props = copy.deepcopy(node.props)
+    original_children = list(node.children)
+
+    validate_ir(node)
+
+    assert node.props == original_props
+    assert node.children == original_children
+    assert node.children[0].node_id == "child"
+
+
+def test_validate_ir_checks_nested_duplicate_ids():
+    from pyskin.core.ir import validate_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        children=[
+            IRNode(
+                node_id="branch",
+                node_type="component",
+                component_id="Column",
+                children=[
+                    IRNode(
+                        node_id="leaf",
+                        node_type="component",
+                        component_id="Text",
+                    )
+                ],
+            ),
+            IRNode(
+                node_id="branch-2",
+                node_type="component",
+                component_id="Column",
+                children=[
+                    IRNode(
+                        node_id="leaf",
+                        node_type="component",
+                        component_id="Button",
+                    )
+                ],
+            ),
+        ],
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="Duplicate IR node_id",
+    ):
+        validate_ir(node)
+
+
+def test_validate_ir_preserves_valid_style_ref():
+    from pyskin.core.ir import validate_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        style_ref={
+            "style_id": "button-primary",
+        },
+    )
+
+    assert validate_ir(node) is None
+
+

@@ -207,3 +207,57 @@ def analyze_ir(node: IRNode) -> dict[str, Any]:
         "duplicate_node_ids": duplicate_node_ids,
         "is_valid": not duplicate_node_ids,
     }
+
+def validate_ir(node: IRNode) -> None:
+    """Validate the structural integrity of an IR tree.
+
+    Validation is compiler-only and does not mutate the supplied tree or
+    evaluate runtime state, styles, dependencies, or events.
+    """
+
+    if not isinstance(node, IRNode):
+        raise TypeError("node must be an IRNode")
+
+    seen_node_ids: set[str] = set()
+
+    def visit(current: IRNode) -> None:
+        if not isinstance(current, IRNode):
+            raise TypeError("IR tree contains a non-IRNode child")
+
+        if current.node_id in seen_node_ids:
+            raise ValueError(
+                f"Duplicate IR node_id: {current.node_id!r}"
+            )
+
+        seen_node_ids.add(current.node_id)
+
+        if current.node_type not in IRNode.VALID_NODE_TYPES:
+            raise ValueError(
+                f"Invalid IR node_type: {current.node_type!r}"
+            )
+
+        if current.node_type == "component":
+            if (
+                not isinstance(current.component_id, str)
+                or not current.component_id
+            ):
+                raise ValueError(
+                    "Component IR nodes require a non-empty "
+                    "component_id"
+                )
+
+        if not isinstance(current.props, dict):
+            raise ValueError(
+                f"IR node {current.node_id!r} has invalid props"
+            )
+
+        if not isinstance(current.children, list):
+            raise ValueError(
+                f"IR node {current.node_id!r} has invalid children"
+            )
+
+        for child in current.children:
+            visit(child)
+
+    visit(node)
+
