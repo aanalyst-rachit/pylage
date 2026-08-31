@@ -1,7 +1,7 @@
 # 🐍 PySkin / PU — PHASE ROADMAP
 
-> Purpose: This file is the compact phase tracker for the PySkin project.
-> Update phase status here instead of rewriting the full master blueprint.
+> Purpose: This file is the compact phase tracker and architectural
+> checkpoint for the PySkin project.
 >
 > Long-term vision:
 > Build a Python-first, low-latency, fine-grained reactive UI framework
@@ -17,17 +17,25 @@ Long-term vision: PU — Python Universal UI Framework
 Repository: https://github.com/aanalyst-rachit/pyskin
 Branch: main
 
-Current stable checkpoint:
-- Commit: 38efd85 — test: add phase 2e batching benchmark
-- Tag: phase-2e-batching
-- Tests: 117 passed
-- Status: Tree mutation + dependency graph + dirty tracking + scheduler foundation stable; batching remains
+Current architectural phase:
+
+    Phase 9 — Compiler / UI IR
+
+Latest validated regression:
+
+    463 passed
+
+Latest focused IR validation:
+
+    73 passed
 
 Master blueprint:
-- `project pyskin blueprint.txt`
 
-This file:
-- `PYSKIN_PHASES.md`
+    project pyskin blueprint.txt
+
+Phase tracker:
+
+    PYSKIN_PHASES.md
 
 ---
 
@@ -93,7 +101,7 @@ Goals:
 - State foundation
 - Basic HTML rendering
 
-Definition of done:
+Completed:
 
 - Components can be constructed.
 - Components form a tree.
@@ -101,6 +109,12 @@ Definition of done:
 - Events can be attached.
 - State can hold reactive values.
 - Basic HTML can be rendered.
+
+Definition of done:
+
+- Foundation APIs are functional.
+- Component tree semantics are stable.
+- State foundation is available to the reactive runtime.
 
 ---
 
@@ -136,8 +150,8 @@ Completed:
 
 Remaining:
 
-- Complete runtime semantics of reactive metadata
-- Further renderer genericization
+- Final runtime edge-case audit for reactive metadata
+- Further renderer genericization where architecturally justified
 
 Important rule:
 
@@ -147,74 +161,9 @@ Important rule:
 
 # PHASE 2 — FINE-GRAINED REACTIVE RUNTIME
 
-Status: 🟢 ACTIVE
+Status: ✅ COMPLETE
 
-Current phase.
-
-## Phase 2 — Completed Tree Mutation Runtime Foundation
-
-The following tree-mutation infrastructure is now implemented and covered
-by focused runtime/protocol/client tests:
-
-- `Component.add()`
-- `Component.insert()`
-- `Component.remove()`
-- `Component.move_to()`
-- `Component.replace()`
-- `Component.clear()`
-- `Component.set_children()`
-
-Mutation event system:
-
-- Atomic mutation events
-- Mutation subscribers
-- Replace mutation events
-- Clear mutation events
-- Set-children mutation events
-- Correct parent ownership updates
-
-Tree protocol:
-
-- `tree_add`
-- `tree_remove`
-- `tree_move`
-- `tree_replace`
-- `tree_clear`
-- `tree_set_children`
-
-Runtime:
-
-- WebSocket mutation broadcasting
-- Recursive subtree serialization
-- Nested replacement support
-- Nested set-children support
-- Empty-clear no-op behavior
-
-Client runtime:
-
-- Indexed tree insertion
-- Tree move DOM patch
-- Recursive tree replacement
-- Tree clear DOM patch
-- Recursive tree set-children DOM replacement
-
-Validation:
-
-    Full test suite: 106 passed
-
-Architectural significance:
-
-> This establishes the mutation-to-DOM transport foundation required by
-> the later fine-grained reactive runtime.
-
-Important:
-
-> This does NOT mean Phase 2 reactive semantics are complete.
-> Dependency tracking, dirty-node tracking, scheduling, and batching
-> remain separate tasks.
-
-
-Main objective:
+Objective:
 
 Turn:
 
@@ -236,12 +185,18 @@ into:
       ↓
     Browser
 
-## Phase 2A — Reactive Semantics
+Phase 2 established the fine-grained reactive runtime foundation.
+
+---
+
+## PHASE 2A — REACTIVE SEMANTICS
 
 Status: 🟢 VALIDATED
 
 Completed:
-- `reactive=True` / `reactive=False` registry contracts
+
+- `reactive=True` registry contract
+- `reactive=False` registry contract
 - State-to-component reactive binding
 - Generic reactive prop updates
 - Registry-driven reactive behavior
@@ -249,47 +204,47 @@ Completed:
 - State value resolution before serialization
 - Reactive browser DOM update path
 
-Validation:
-- Reactive registry/state contract tests passing
-- WebSocket reactive pipeline passing
-- Browser reactive counter passing
+Defined semantics:
 
-Remaining:
-- Final semantic edge-case audit
-- Confirm batching interaction with reactive semantics
+### `reactive=True`
 
-Define precisely:
+A prop participates in the reactive update pipeline when its
+value is backed by reactive state.
 
-- What `reactive=True` means
-- What `reactive=False` means
-- Which State values create dependencies
-- When dependencies are registered
-- When updates are emitted
-- When updates are suppressed
+### `reactive=False`
 
-Definition of done:
+A prop does not participate in automatic reactive dependency updates,
+even when a State-like value is supplied.
 
-- Runtime behavior matches registry metadata.
-- Semantics are covered by focused tests.
+### Dependency creation
+
+Reactive State values are connected to their consuming component props
+during StateBinding.
+
+### Update emission
+
+A state change produces an update only when the corresponding dependency
+is reactive and the value actually changes.
+
+### Update suppression
+
+No update is emitted for unchanged state values or non-reactive props.
 
 ---
 
-## Phase 2B — Dependency Graph
+## PHASE 2B — DEPENDENCY GRAPH
 
 Status: ✅ COMPLETE
 
 Completed:
+
 - Dependency registration
 - State → Component → Prop dependency mapping
 - Multiple dependents
 - Dependency lookup
 - Integration with StateBinding
 - Lifecycle-safe binding foundation
-
-Validation:
-- `test_dependency_graph.py`
-- `test_state_binding_graph.py`
-- Full relevant suite passing
+- Duplicate subscription protection
 
 Target model:
 
@@ -305,15 +260,6 @@ When State A changes:
     X + Y → affected
     Z     → untouched
 
-Required capabilities:
-
-- Register dependency
-- Remove dependency
-- Find dependents
-- Handle multiple dependents
-- Avoid duplicate subscriptions
-- Handle component lifecycle safely
-
 Definition of done:
 
 - State changes identify only affected components.
@@ -321,20 +267,17 @@ Definition of done:
 
 ---
 
-## Phase 2C — Dirty Node Tracking
+## PHASE 2C — DIRTY NODE TRACKING
 
 Status: ✅ COMPLETE
 
 Completed:
+
 - Dirty node marking
 - Duplicate dirty-node suppression
 - Dirty node collection
 - Scheduler integration
 - Deterministic processing foundation
-
-Validation:
-- `test_dirty_nodes.py`
-- Reactive pipeline tests passing
 
 Target:
 
@@ -344,145 +287,65 @@ Target:
         ↓
     dirty set
 
-Example:
-
-    dirty_nodes = {
-        component_123,
-        component_456
-    }
-
-Requirements:
-
-- Mark node dirty
-- Avoid duplicate dirty entries
-- Clear dirty state after processing
-- Preserve deterministic processing order where required
-
 Definition of done:
 
 - Only affected nodes enter the update pipeline.
 
 ---
 
-## Phase 2D — Update Scheduler
+## PHASE 2D — UPDATE SCHEDULER
 
-Status: ✅ COMPLETE — PRE-BATCH SCHEDULER
+Status: ✅ COMPLETE
 
 Completed:
+
 - Scheduler abstraction
 - Dirty node processing
 - Component update scheduling
 - Integration with StateBinding
 - State value resolution during scheduled update
 - Reactive update dispatch
+- Deterministic scheduling behavior
 
-Important:
-- Current scheduler is immediate/pre-batch.
-- It does NOT yet provide multi-update coalescing.
+Architectural note:
 
-Validation:
-- `test_scheduler.py`
-- `test_reactive_pipeline.py`
-- `test_websocket_reactive_pipeline.py`
-- Full suite: 117 passed
-
-Target:
-
-    State changes
-        ↓
-    mark dirty
-        ↓
-    schedule update
-        ↓
-    process dirty nodes
-
-Questions to solve:
-
-- Immediate vs deferred updates
-- Synchronous batching
-- Event-loop integration
-- Re-entrant State changes
-- Multiple State changes in one event
-
-Do not assume batching improves performance.
-Benchmark it.
-
-Definition of done:
-
-- Updates are scheduled deterministically.
-- No unnecessary duplicate processing occurs.
+> The scheduler provides the processing boundary required by batching.
 
 ---
 
-## Phase 2E — Batching
+## PHASE 2E — BATCHING
 
 Status: ✅ COMPLETE
 
 Completed:
+
 - Coalesced scheduler flush
 - Duplicate scheduler request suppression
 - Multiple State changes coalesced into one processing cycle
 - Multiple States affecting one component processed once
 - Final State value observed during scheduled processing
 - Re-entrant State changes deferred to the next scheduler cycle
-- Deterministic dirty-node processing preserved
-- WebSocket runtime integration validated
-- Batching benchmark added
+- Deterministic dirty-node processing
+- WebSocket runtime integration
+- Batching benchmark
 
-Validation:
-- Focused batching tests passing
-- Focused WebSocket batching tests passing
-- Full test suite: 126 passed
-- Benchmark: 1000 state changes → 1 processing cycle
-- Benchmark processing reduction: 1000x
+Validated benchmark:
 
+    1000 state changes
+        ↓
+    1 processing cycle
 
-First target:
+Processing reduction:
 
-    count.set(1)
-    count.set(2)
-    count.set(3)
-
-should be experimentally evaluated for:
-
-    one scheduled processing cycle
-    final value = 3
-
-Requirements:
-- Define batching boundary
-- Define flush semantics
-- Prevent duplicate component processing
-- Handle multiple States affecting one component
-- Handle re-entrant State changes
-- Preserve deterministic behavior
-- Measure update count before/after batching
-
-Do not assume batching is faster.
-Benchmark actual latency and update counts.
-
-Definition of done:
-- Batching semantics explicitly defined.
-- Focused batching tests pass.
-- Existing 117-test suite remains green.
-- No regression in WebSocket/browser reactivity.
-
-Example:
-
-    count.set(1)
-    count.set(2)
-    count.set(3)
-
-Potential target:
-
-    one update
-    final value = 3
-
-But this must be validated against actual runtime semantics.
+    1000x
 
 Definition of done:
 
-- Multiple related changes can be coalesced safely.
-- Tests verify final state and update count.
+- Multiple related changes can be safely coalesced.
+- Final state is observed.
+- Duplicate processing is suppressed.
+- Re-entrant updates remain deterministic.
+- WebSocket/browser reactivity remains intact.
 
 ---
 
@@ -502,20 +365,6 @@ Target:
          ↓
     Previous + Current
 
-Requirements:
-
-- Stable node identity
-- Stable component identity
-- Props representation
-- Text representation
-- Children representation
-- Deterministic structure
-
-Important:
-
-> Do not build a huge compiler/IR system here.
-> Build only the representation required by the reactive runtime.
-
 Completed:
 
 - Stable UI snapshot representation
@@ -533,20 +382,10 @@ Implementation:
 - `pyskin/core/snapshot.py`
 - `test/test_snapshot.py`
 
-Validation:
-
-- Snapshot tests: 5 passed
-- Tree replacement/set-children runtime tests: 5 passed
-- Full test suite: 165 passed
-
-Checkpoint:
-
-- Commit: `f9c9001` — Complete Phase 3 runtime tree and snapshot work
-
 Definition of done:
 
-- Current UI state can be represented deterministically. ✅
-- Previous and current representations can be compared. ✅
+- Current UI state can be represented deterministically.
+- Previous and current representations can be compared.
 
 ---
 
@@ -560,13 +399,11 @@ Calculate the smallest meaningful UI change.
 
 Example:
 
-Before:
+    Before:
+        <span>10</span>
 
-    <span>10</span>
-
-After:
-
-    <span>11</span>
+    After:
+        <span>11</span>
 
 Target:
 
@@ -576,7 +413,7 @@ Not:
 
     full application rerender
 
-Responsibilities:
+Completed:
 
 - Prop diff
 - Text diff
@@ -586,11 +423,16 @@ Responsibilities:
 - Remove
 - Replace
 - Update
+- Event change handling
+- Nested diff handling
+- Deterministic diff ordering
+- No-op detection
 
 Definition of done:
 
-- Correct minimal diffs for supported UI structures.
+- Correct minimal diffs are produced.
 - Unchanged nodes generate no operations.
+- Nested changes are represented correctly.
 
 ---
 
@@ -614,7 +456,7 @@ Pipeline:
        ↓
     Browser
 
-Possible operations:
+Supported operation categories:
 
 - set attribute
 - remove attribute
@@ -624,22 +466,50 @@ Possible operations:
 - insert node
 - remove node
 - replace node
+- tree add
+- tree remove
+- tree move
+- tree replace
+- tree clear
+- tree set-children
+- events update
 
-Exact protocol must be designed after diff semantics are stable.
+Completed:
+
+- Patch operation generation
+- Patch application foundation
+- Tree mutation protocol
+- Recursive subtree serialization
+- Recursive client DOM replacement
+- Client tree insertion
+- Client tree removal
+- Client tree movement
+- Client tree clearing
+- Client set-children replacement
+- WebSocket mutation broadcasting
+- Reactive WebSocket patch path
+
+Architectural rule:
+
+> Patch semantics must remain smaller than the UI representation they
+> transform.
 
 Definition of done:
 
-- Patch operations correctly transform old DOM state into new DOM state.
+- Patch operations can transform old UI state into new UI state.
+- Browser/client state remains synchronized with server state.
 
 ---
 
 # PHASE 6 — PERFORMANCE / BENCHMARKS
 
-Status: 🟢 COMPLETE
+Status: 🟢 COMPLETE / BASELINE ESTABLISHED
 
-Measure real performance.
+Objective:
 
-Required benchmarks:
+Measure real runtime performance instead of relying on assumptions.
+
+Benchmark areas:
 
 - State update latency
 - Event latency
@@ -650,48 +520,45 @@ Required benchmarks:
 - Memory usage
 - Component count scaling
 - Dependency graph scaling
+- Scheduler/batching behavior
 
-Test sizes:
+Validated:
 
-- 10 nodes
-- 100 nodes
-- 1,000 nodes
-- 10,000 nodes
+- Dependency graph lookup scaling
+- Dependency registration scaling
+- WebSocket state update latency
+- WebSocket tree patch latency
+- WebSocket client scaling
+- Batching processing reduction
 
-Validated results:
+Validated dependency graph scale:
 
-- Dependency graph lookup scaling validated through 10,000 dependencies.
-- Dependency registration scaling validated through 10,000 dependencies.
-- WebSocket state update latency benchmarked with 100 updates.
-- WebSocket tree patch latency benchmarked with 100 patches.
-- WebSocket client scaling validated with 10, 50, and 100 clients.
-- Full regression suite: 208 passed.
+    10,000 dependencies
 
-Performance checkpoint:
+Validated WebSocket client scale:
 
-    Dependency graph lookup:
-        10,000 dependencies → ~0.000000315s per lookup
+    10 clients
+    50 clients
+    100 clients
 
-    Dependency registration:
-        10,000 dependencies → ~0.000003186s per registration
+Batching benchmark:
 
-    WebSocket state update:
-        100 updates → ~0.002204652s per update
-
-    WebSocket tree patch:
-        100 patches → ~0.000805323s per patch
-
-    WebSocket client scaling:
-        10 clients  → ~0.000716038s per client
-        50 clients  → ~0.000310202s per client
-        100 clients → ~0.000310139s per client
-
-    Full regression suite:
-        316 passed
+    1000 state changes
+        ↓
+    1 processing cycle
 
 Important:
 
 > Performance claims must come from benchmarks, not assumptions.
+
+Future performance work:
+
+- More realistic application workloads
+- Memory profiling
+- Larger component trees
+- Browser-side measurements
+- End-to-end latency
+- Optimization regression benchmarks
 
 ---
 
@@ -699,30 +566,24 @@ Important:
 
 Status: ✅ COMPLETE
 
-Phase 7 has been implemented and validated after the reactive
-runtime and rendering infrastructure became stable.
+Objective:
 
-Completion criteria:
+Provide the target foundational UI component library.
 
-- All target UI component APIs implemented.
-- Public component exports completed.
-- Registry definitions completed.
-- HTML rendering contracts completed.
-- Component-specific regression tests added.
-- Full regression suite passing.
+Completed:
 
-Final component count:
+- Public component exports
+- Registry definitions
+- HTML rendering contracts
+- Component-specific regression tests
+- Target component APIs
 
-    38 / 38 target components implemented
+Final target:
 
-Final regression:
+    38 / 38 components implemented
 
-    316 passed
+Core primitives:
 
-
-Target Components:
-
-## Core Primitives
 - Text
 - Heading
 - Button
@@ -734,7 +595,8 @@ Target Components:
 - Navigation
 - Tabs
 
-## Data Input & Selection
+Data input and selection:
+
 - Checkbox
 - Radio Group
 - Switch / Toggle
@@ -742,14 +604,16 @@ Target Components:
 - Slider
 - DatePicker
 
-## Feedback & Status Indicators
+Feedback and status:
+
 - Alert
 - Toast / Notification
 - Spinner / Loader
 - Progress Bar
 - Skeleton
 
-## Navigation & Overlay
+Navigation and overlay:
+
 - Breadcrumbs
 - Pagination
 - Menu / ContextMenu
@@ -757,7 +621,8 @@ Target Components:
 - Tooltip
 - Popover
 
-## Data Display & Layout
+Data display and layout:
+
 - Badge / Tag
 - Avatar
 - Accordion
@@ -765,21 +630,29 @@ Target Components:
 - Divider
 - Grid / Flex Container
 
-## Media & Canvas
+Media and canvas:
+
 - Image
 - Video
 - Audio
 - Icon
 - Canvas / SVG Container
 
+Architectural rule:
+
+> Component expansion must follow actual framework requirements rather
+> than becoming a substitute for core runtime work.
+
+---
 
 # PHASE 8 — STYLING SYSTEM
 
-Status: 🟢 ACTIVE
+Status: 🟡 PARTIAL / FOUNDATION EXISTS
 
-Phase 8 is the current active architectural phase.
+Objective:
 
-Phase 7 UI Component System is complete and validated.
+Provide a Python-first styling layer independent from the core reactive
+engine.
 
 Goals:
 
@@ -790,35 +663,350 @@ Goals:
 - CSS generation
 - Layout constraints
 
-Potential future API:
+Potential API:
 
     ps.Text(
         "Hello",
         style=ps.Style(...)
     )
 
-Keep styling independent from the core reactive engine.
+Architectural rule:
+
+> Styling must remain independent from the core reactive engine.
+
+Future work:
+
+- Complete public styling API
+- Theme system
+- Responsive primitives
+- CSS generation guarantees
+- Layout constraints
+- Style normalization
+- Browser style patch integration
 
 ---
 
 # PHASE 9 — COMPILER / UI IR
 
-Status: 🟡 EARLY / ~10%
+Status: 🟢 ACTIVE
 
-Potential systems:
+Objective:
 
-- UI IR
-- Normalization
-- Static analysis
+Introduce a small compiler-layer intermediate representation capable
+of normalizing UI structures, performing safe static analysis, applying
+safe constant folding, analyzing dependencies, planning patches, and
+optimizing IR without taking ownership of runtime behavior.
+
+Core principle:
+
+> The compiler layer must remain separate from the runtime layer.
+
+Target:
+
+    Snapshot / Component Representation
+             ↓
+           UI IR
+             ↓
+       Normalization
+             ↓
+       Static Analysis
+             ↓
+      Safe Optimization
+             ↓
+       Patch Planning
+             ↓
+          Runtime
+
+---
+
+## PHASE 9A — IR FOUNDATION
+
+Status: ✅ COMPLETE
+
+Completed:
+
+- `IRNode`
+- Node validation
+- Component identity
+- Node identity
+- Props representation
+- Children representation
+- Style reference representation
+- Snapshot-to-IR conversion
+
+Implementation:
+
+    pyskin/core/ir.py
+
+---
+
+## PHASE 9B — IR NORMALIZATION
+
+Status: ✅ COMPLETE
+
+Completed:
+
+- `normalize_ir`
+- Canonical compiler-layer copies
+- Stable node identity
+- Stable component identity
+- Stable child ordering
+- Props preservation
+- Opaque style reference preservation
+- Source immutability
+
+Architectural rule:
+
+> Normalization must not evaluate runtime State, resolve styles, execute
+> events, or invoke runtime dependency/diff/patch systems.
+
+---
+
+## PHASE 9C — STATIC IR ANALYSIS
+
+Status: ✅ COMPLETE
+
+Completed:
+
+- `analyze_ir`
+- Node counting
+- Ordered node identity collection
+- Component identity analysis
+- Duplicate node ID detection
+- Structural validation
+
+Definition of done:
+
+- IR can be inspected without mutating runtime state.
+
+---
+
+## PHASE 9D — CONSTANT FOLDING
+
+Status: ✅ COMPLETE
+
+Completed:
+
+- `constant_fold`
+- Addition folding
+- Subtraction folding
+- Multiplication folding
+- Division folding
+- Recursive constant folding
+- Unsafe division protection
+- Unknown operation preservation
+- Literal preservation
+
+Example:
+
+    ("add", 10, 20)
+            ↓
+           30
+
+Nested example:
+
+    ("mul", ("add", 2, 3), 4)
+            ↓
+           20
+
+Safety rule:
+
+> Only compiler-safe constant expressions may be evaluated.
+
+Runtime State must never be evaluated as a compile-time constant.
+
+---
+
+## PHASE 9E — IR DEPENDENCY ANALYSIS
+
+Status: ✅ COMPLETE
+
+Completed:
+
+- `analyze_ir_dependencies`
+- Node traversal
+- Reactive prop detection
+- Registry-aware reactive metadata
+- State dependency representation
+- Nested dependency analysis
+- Non-reactive prop exclusion
+
+Target:
+
+    State
+      ↓
+    IR prop
+      ↓
+    Component
+      ↓
+    Dependency information
+
+Architectural rule:
+
+> IR dependency analysis describes dependencies; it does not replace the
+> runtime dependency graph.
+
+---
+
+## PHASE 9F — PATCH PLANNING
+
+Status: ✅ COMPLETE
+
+Completed:
+
+- `plan_patches`
+- Integration with existing diff semantics
+- Minimal update planning
+- Insert planning
+- Remove planning
+- Replace planning
+- Event update planning
+- Nested patch planning
+- Deterministic operation ordering
+
+Architectural rule:
+
+> Patch planning reuses stable diff semantics instead of creating a
+> second incompatible diff engine.
+
+---
+
+## PHASE 9G — IR OPTIMIZATION
+
+Status: ✅ COMPLETE
+
+Completed:
+
+- `optimize_ir`
+- Recursive child optimization
+- Constant prop folding
+- Nested constant expression folding
+- Unsafe expression preservation
+- Source immutability
+- Node identity preservation
+- Child ordering preservation
+- Style reference preservation
+- State identity preservation
+- Runtime State safety
+- Dynamic expression preservation
+
+State safety validation:
+
+    State("Hello")
+        ↓
+    optimize_ir()
+        ↓
+    same State object
+
+Dynamic expression validation:
+
+    ("add", State(10), 5)
+        ↓
+    optimize_ir()
+        ↓
+    ("add", same State object, 5)
+
+Validated guarantees:
+
+- State objects are not cloned.
+- State subscribers are not copied.
+- State objects are not evaluated.
+- Runtime State remains attached to the runtime.
+- Dynamic State expressions remain dynamic.
+- Constant values can still be folded safely.
+
+Important rule:
+
+> Optimization may transform compile-time constants, but must never
+> clone, evaluate, or detach runtime State objects.
+
+---
+
+# PHASE 9 VALIDATION
+
+Latest focused IR validation:
+
+    test/test_ir.py
+    73 passed
+
+Latest full regression:
+
+    463 passed
+
+Current Phase 9 milestone:
+
+    IR Foundation              ✅
+    IR Normalization            ✅
+    Static Analysis             ✅
+    Constant Folding            ✅
+    Dependency Analysis         ✅
+    Patch Planning              ✅
+    IR Optimization             ✅
+
+Optimization status:
+
+    COMPLETE
+
+Optimization validation:
+
 - Constant folding
-- Dependency analysis
-- Patch planning
-- Optimization
+- Recursive folding
+- Unsafe expression preservation
+- IR tree optimization
+- Child optimization
+- Source immutability
+- State identity preservation
+- State subscriber preservation
+- State preservation inside dynamic expressions
 
-Rule:
+Definition of done for completed optimization milestone:
 
-> Do not build a large compiler before reactive semantics,
-> dependency tracking, diffing, and patching are stable.
+- Safe constants are folded.
+- Runtime values remain runtime values.
+- State identity is preserved.
+- State subscribers remain attached.
+- Source IR is not mutated.
+- Existing runtime behavior remains green.
+
+---
+
+# 🧩 PHASE 9 ARCHITECTURAL BOUNDARY
+
+Compiler layer:
+
+    IR
+    Normalization
+    Static Analysis
+    Constant Folding
+    Dependency Analysis
+    Patch Planning
+    Optimization
+
+Runtime layer:
+
+    State
+    Dependency Graph
+    Dirty Nodes
+    Scheduler
+    Batching
+    Component Tree
+    WebSocket
+    Client Runtime
+
+These layers must remain separate.
+
+Do not allow compiler optimization to:
+
+- mutate live State
+- subscribe to State
+- execute events
+- render DOM
+- own WebSocket connections
+- replace runtime dependency tracking
+- replace runtime scheduling
+
+Compiler optimization is now complete, but Phase 9 itself remains active
+until the compiler/runtime boundary and remaining IR edge cases are audited.
 
 ---
 
@@ -835,14 +1023,25 @@ Target:
     ┌───────────────┬───────────────┐
     ↓               ↓               ↓
    Web           Desktop          Future
+                                  Native
 
-Potential native technologies:
+Potential backends:
+
+- Web
+- Desktop
+- Mobile
+- Future native rendering
+
+Potential technologies:
 
 - Skia
 - WebGPU
 - OpenGL
 - Vulkan
 - Native platform APIs
+
+Do not begin serious multi-backend work until the shared UI IR and
+compiler boundaries are sufficiently stable.
 
 ---
 
@@ -870,13 +1069,11 @@ Possible technologies:
 - Vulkan
 - Native GPU APIs
 
-Do not begin this before the software architecture and benchmarks justify it.
+Do not begin this before software architecture and benchmarks justify it.
 
 ---
 
-# 🔥 CURRENT PHASE — PHASE 8
-
-Current architectural progression:
+# 🔥 CURRENT ARCHITECTURAL PROGRESSION
 
     Phase 2A — Reactive Semantics
             ↓
@@ -892,9 +1089,13 @@ Current architectural progression:
             ↓
     Phase 2D — Scheduler
             ↓
-        ✅ PRE-BATCH COMPLETE
+        ✅ COMPLETE
             ↓
     Phase 2E — Batching
+            ↓
+        ✅ COMPLETE
+            ↓
+    Phase 3 — UI Snapshot
             ↓
         ✅ COMPLETE
             ↓
@@ -904,48 +1105,73 @@ Current architectural progression:
             ↓
     Phase 5 — Patch Engine
             ↓
-        ✅ COMPLETE
+        🟢 COMPLETE
             ↓
-    Phase 6 — Performance / Benchmarks
+    Phase 6 — Performance Baseline
             ↓
-        ✅ COMPLETE
+        🟢 COMPLETE
             ↓
-    Phase 7 — UI Component System
+    Phase 7 — UI Components
             ↓
         ✅ COMPLETE
             ↓
     Phase 8 — Styling System
             ↓
-        🟢 ACTIVE
+        🟡 PARTIAL
             ↓
     Phase 9 — Compiler / UI IR
             ↓
-        🔴 FUTURE
-
-Current active architectural task:
-
-    Phase 8 — Styling System
-
-Primary goals:
-
-    Python style API
+        🟢 ACTIVE
             ↓
-    Themes
+    Phase 9G — IR Optimization
             ↓
-    Responsive design
-            ↓
-    Layout
-            ↓
-    CSS generation
-            ↓
-    Layout constraints
+        ✅ COMPLETE
 
-Phase 8 must remain independent from the core reactive engine.
+---
 
-Phase 7 completion record:
+# 🎯 CURRENT ACTIVE TASK
 
-    38 / 38 target components implemented
-    316 tests passed
+Phase 9 — Compiler / UI IR
+
+Current completed milestone:
+
+    IR Foundation
+        ↓
+    Normalization
+        ↓
+    Static Analysis
+        ↓
+    Constant Folding
+        ↓
+    Dependency Analysis
+        ↓
+    Patch Planning
+        ↓
+    IR Optimization
+        ↓
+    State Identity Safety
+        ↓
+    463-Test Regression
+
+Optimization is complete.
+
+Next Phase 9 work:
+
+    Compiler/runtime boundary audit
+        ↓
+    IR edge-case coverage
+        ↓
+    Optimization benchmark coverage
+        ↓
+    Compiler/runtime contract validation
+        ↓
+    Phase 9 completion review
+
+Only after Phase 9 is architecturally stable:
+
+    Phase 10 — Multi-Backend Architecture
+
+---
 
 # 🧪 TESTING POLICY
 
@@ -975,11 +1201,22 @@ Never:
 
 Tests must prove architecture, not only implementation details.
 
+Required validation:
+
+    pytest -q
+
+Before commit:
+
+    git diff --check
+    git status
+    git diff
+
 ---
 
 # 🔐 CHECKPOINT POLICY
 
-Create a Git checkpoint before every major phase.
+Create a Git checkpoint before every major phase or risky architectural
+change.
 
 Checkpoint format:
 
@@ -1006,9 +1243,9 @@ Before risky changes:
 
 # 🚫 DO NOT DO YET
 
-Until the reactive runtime is stable:
+Until the compiler/runtime architecture is stable:
 
-- Do not build 100+ components
+- Do not build a huge compiler
 - Do not build desktop backend
 - Do not build mobile backend
 - Do not build GPU backend
@@ -1016,153 +1253,87 @@ Until the reactive runtime is stable:
 - Do not build authentication
 - Do not build AI layer
 - Do not build a huge CSS framework
-- Do not build a huge compiler
+- Do not add components without architectural need
+- Do not move runtime responsibilities into compiler code
 
 Priority:
 
-    State
-      ↓
-    Dependency
-      ↓
-    Dirty
-      ↓
-    Scheduler
-      ↓
+    Reactive Runtime
+          ↓
+    Snapshot
+          ↓
     Diff
-      ↓
+          ↓
     Patch
-      ↓
+          ↓
     Performance
+          ↓
+    UI IR
+          ↓
+    Compiler Optimization
+          ↓
+    Compiler Boundary Audit
+          ↓
+    Multi-Backend
 
 ---
 
 # 📌 CURRENT CHECKPOINT
 
-Commits:
+Latest validated state:
 
-    1834443 feat: complete phase 2e reactive batching pipeline
-    38efd85 test: add phase 2e batching benchmark
+    Phase 9 — Compiler / UI IR
+    IR optimization milestone complete
+    Full regression: 463 passed
+    Focused IR suite: 73 passed
 
-Message:
+Phase 9 capabilities:
 
-    test: add phase 6 websocket performance benchmarks
+    IRNode
+    snapshot_to_ir
+    normalize_ir
+    analyze_ir
+    constant_fold
+    analyze_ir_dependencies
+    plan_patches
+    optimize_ir
 
-Tag:
+Optimization:
 
-    phase-6-websocket-performance-baseline
+    COMPLETE
 
-Tests:
+Runtime safety:
 
-    208 passed
+    State identity preserved
+    State subscribers preserved
+    Source IR remains immutable
+    Dynamic State expressions remain dynamic
 
-Working tree:
+Current working objective:
 
-    Phase 6 performance benchmark stable
-    WebSocket client scaling validated through 100 clients
-    Full regression suite green
+    Complete Phase 9 compiler boundary and edge-case audit.
 
+Next major milestone:
 
-Milestone:
-
-    Component Mutation
-          ↓
-    Mutation Events
-          ↓
-    Tree Protocol
-          ↓
-    WebSocket Runtime
-          ↓
-    Recursive Client DOM Patches
-          ↓
-    Reactive Semantics
-          ↓
-    Dependency Graph
-          ↓
-    Dirty Nodes
-          ↓
-    Scheduler
-
-Current next task:
-
-    Phase 6 — Performance / Benchmarks
-          ↓
-    Benchmark harness
-          ↓
-    Runtime measurements
-          ↓
-    Patch/network measurements
-          ↓
-    Scaling measurements
-          ↓
-    Benchmark-backed performance baseline
+    Phase 9 completion review
+        ↓
+    Phase 10 multi-backend architecture
 
 ---
 
-# 📝 PHASE UPDATE RULE
+# 🏁 PROJECT PRINCIPLE
 
-When a phase progresses, update ONLY this file.
+> Build the smallest architecture that proves the next capability.
 
-For each phase update:
+> Do not optimize assumptions.
 
-1. Change `Status`
-2. Update completed items
-3. Update remaining items
-4. Update definition of done if architecture changed
-5. Record the latest checkpoint commit/tag
+> Do not add abstraction without a demonstrated architectural need.
 
-Do not rewrite the complete master blueprint unless the overall architecture itself changes.
+> Runtime State belongs to the runtime.
 
----
+> Compiler optimization belongs to the compiler.
 
-# 🧠 ASSISTANT + DEVELOPER WORKING RULE
+> Tests are architectural evidence.
 
-Before changing code:
-
-1. Read this phase tracker.
-2. Identify the current phase.
-3. Identify the current sub-phase/task.
-4. Inspect the existing implementation.
-5. Make the smallest architectural change.
-6. Add focused tests.
-7. Run relevant tests.
-8. Run full suite.
-9. Review diff.
-10. Commit checkpoint when milestone is stable.
-
-Never skip architecture review just because a feature appears simple.
-
----
-
-# 🏁 FINAL SUCCESS CRITERIA
-
-PySkin succeeds when:
-
-    Python-only developer API
-            +
-    Fine-grained reactivity
-            +
-    Dependency-aware updates
-            +
-    Minimal DOM/network patches
-            +
-    Low event latency
-            +
-    Scalable component tree
-            +
-    Generic registry architecture
-            +
-    Extensible renderer system
-            +
-    Multiple backends
-            +
-    Benchmark-backed performance
-
----
-
-# ⭐ PROJECT NORTH STAR
-
-> PySkin ka goal “Python se HTML banana” nahi hai.
->
-> Goal hai Python ko ek serious, low-latency, fine-grained reactive UI
-> programming model banana jiske peeche browser/native rendering
-> complexity completely hidden ho.
+> Every major phase must leave the project more deterministic,
+> measurable, and extensible.

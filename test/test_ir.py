@@ -1366,3 +1366,201 @@ def test_plan_patches_preserves_diff_order():
 
     assert operations[0]["type"] == "update"
     assert operations[1]["type"] == "insert"
+
+
+def test_optimize_ir_folds_constant_props():
+    from pyskin.core.ir import IRNode, optimize_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"width": ("add", 10, 20)},
+    )
+
+    optimized = optimize_ir(node)
+
+    assert optimized.props == {"width": 30}
+
+
+def test_optimize_ir_folds_nested_constant_props():
+    from pyskin.core.ir import IRNode, optimize_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"value": ("mul", ("add", 2, 3), 4)},
+    )
+
+    optimized = optimize_ir(node)
+
+    assert optimized.props == {"value": 20}
+
+
+def test_optimize_ir_recursively_optimizes_children():
+    from pyskin.core.ir import IRNode, optimize_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        children=[
+            IRNode(
+                node_id="child",
+                node_type="component",
+                component_id="Button",
+                props={"width": ("add", 5, 5)},
+            )
+        ],
+    )
+
+    optimized = optimize_ir(node)
+
+    assert optimized.children[0].props == {"width": 10}
+
+
+def test_optimize_ir_preserves_identity_and_structure():
+    from pyskin.core.ir import IRNode, optimize_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"value": ("add", 1, 2)},
+        style_ref={"style_id": "primary"},
+    )
+
+    optimized = optimize_ir(node)
+
+    assert optimized is not node
+    assert optimized.node_id == "root"
+    assert optimized.node_type == "component"
+    assert optimized.component_id == "Button"
+    assert optimized.style_ref == {"style_id": "primary"}
+
+
+def test_optimize_ir_does_not_mutate_source():
+    from pyskin.core.ir import IRNode, optimize_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"width": ("add", 10, 20)},
+    )
+
+    original_props = copy.deepcopy(node.props)
+
+    optimize_ir(node)
+
+    assert node.props == original_props
+
+
+def test_optimize_ir_preserves_unsafe_values():
+    from pyskin.core.ir import IRNode, optimize_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"value": ("div", 10, 0)},
+    )
+
+    optimized = optimize_ir(node)
+
+    assert optimized.props == {"value": ("div", 10, 0)}
+
+
+def test_optimize_ir_rejects_non_ir_node():
+    from pyskin.core.ir import optimize_ir
+
+    with pytest.raises(TypeError):
+        optimize_ir("invalid")
+
+
+def test_optimize_ir_preserves_state_identity():
+    from pyskin.core.ir import IRNode, optimize_ir
+    from pyskin.core.state import State
+
+    state = State("Hello")
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"text": state},
+    )
+
+    optimized = optimize_ir(node)
+
+    assert optimized.props["text"] is state
+
+
+def test_optimize_ir_does_not_copy_state_subscribers():
+    from pyskin.core.ir import IRNode, optimize_ir
+    from pyskin.core.state import State
+
+    state = State("Hello")
+    calls = []
+
+    state.subscribe(lambda old, new: calls.append((old, new)))
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"text": state},
+    )
+
+    optimized = optimize_ir(node)
+
+    optimized.props["text"].set("World")
+
+    assert calls == [("Hello", "World")]
+    assert optimized.props["text"] is state
+
+
+def test_optimize_ir_preserves_state_inside_non_constant_expression():
+    from pyskin.core.ir import IRNode, optimize_ir
+    from pyskin.core.state import State
+
+    state = State(10)
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "value": ("add", state, 5),
+        },
+    )
+
+    optimized = optimize_ir(node)
+
+    assert optimized.props["value"][0] == "add"
+    assert optimized.props["value"][1] is state
+    assert optimized.props["value"][2] == 5
+
+
+def test_constant_fold_preserves_folded_children_in_dynamic_expression():
+    from pyskin.core.ir import constant_fold
+
+    result = constant_fold(("add", ("mul", 2, 3), "dynamic"))
+
+    assert result == ("add", 6, "dynamic")
+
+
+def test_constant_fold_preserves_state_in_nested_expression():
+    from pyskin.core.ir import constant_fold
+    from pyskin.core.state import State
+
+    state = State(10)
+
+    result = constant_fold(
+        ("mul", ("add", 2, 3), state)
+    )
+
+    assert result[0] == "mul"
+    assert result[1] == 5
+    assert result[2] is state

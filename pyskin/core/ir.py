@@ -3,6 +3,40 @@ from __future__ import annotations
 import copy
 from typing import Any
 from pyskin.core.registry import registry
+from pyskin.core.state import State
+
+
+def _copy_ir_value(value: Any) -> Any:
+    """Deep-copy compiler values while preserving runtime State identity."""
+
+    if isinstance(value, State):
+        return value
+
+    if isinstance(value, dict):
+        return {
+            key: _copy_ir_value(item)
+            for key, item in value.items()
+        }
+
+    if isinstance(value, list):
+        return [
+            _copy_ir_value(item)
+            for item in value
+        ]
+
+    if isinstance(value, tuple):
+        return tuple(
+            _copy_ir_value(item)
+            for item in value
+        )
+
+    if isinstance(value, set):
+        return {
+            _copy_ir_value(item)
+            for item in value
+        }
+
+    return copy.deepcopy(value)
 
 
 class IRNode:
@@ -28,7 +62,7 @@ class IRNode:
         self.node_id = node_id
         self.node_type = node_type
         self.component_id = component_id
-        self.props = copy.deepcopy(props) if props is not None else {}
+        self.props = _copy_ir_value(props) if props is not None else {}
         self.children = list(children) if children is not None else []
         self.style_ref = style_ref
 
@@ -265,7 +299,10 @@ def validate_ir(node: IRNode) -> None:
 
 
 def constant_fold(value: Any) -> Any:
-    """Fold a small set of compiler-safe constant expressions."""
+    """Fold compiler-safe constant expressions without touching runtime state."""
+
+    if isinstance(value, State):
+        return value
 
     if not isinstance(value, tuple) or len(value) != 3:
         return copy.deepcopy(value)
@@ -279,10 +316,10 @@ def constant_fold(value: Any) -> Any:
     right = constant_fold(right)
 
     if not isinstance(left, (int, float)) or isinstance(left, bool):
-        return copy.deepcopy(value)
+        return (operator, left, right)
 
     if not isinstance(right, (int, float)) or isinstance(right, bool):
-        return copy.deepcopy(value)
+        return (operator, left, right)
 
     if operator == "add":
         return left + right
@@ -292,10 +329,10 @@ def constant_fold(value: Any) -> Any:
         return left * right
     if operator == "div":
         if right == 0:
-            return copy.deepcopy(value)
+            return (operator, left, right)
         return left / right
 
-    return copy.deepcopy(value)
+    return (operator, left, right)
 
 def analyze_ir_dependencies(node: IRNode) -> dict[str, Any]:
     """Analyze reactive prop dependencies in an IR tree."""
@@ -346,3 +383,33 @@ def plan_patches(
     from pyskin.core.diff import diff
 
     return diff(previous, current)
+
+def optimize_ir(node: IRNode) -> IRNode:
+    """Return an optimized compiler-layer copy of an IR tree.
+
+    Optimization is compiler-only. It preserves node identity, structure,
+    child ordering, and opaque style references while applying safe
+    constant folding to IR prop values.
+    """
+
+    if not isinstance(node, IRNode):
+        raise TypeError("node must be an IRNode")
+
+    optimized_props = {
+        name: constant_fold(value)
+        for name, value in node.props.items()
+    }
+
+    optimized_children = [
+        optimize_ir(child)
+        for child in node.children
+    ]
+
+    return IRNode(
+        node_id=node.node_id,
+        node_type=node.node_type,
+        component_id=node.component_id,
+        props=optimized_props,
+        children=optimized_children,
+        style_ref=copy.deepcopy(node.style_ref),
+    )
