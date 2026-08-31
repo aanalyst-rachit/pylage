@@ -337,3 +337,12 @@ def analyze_ir_dependencies(node: IRNode) -> dict[str, Any]:
         "node_ids": node_ids,
         "dependencies": dependencies,
     }
+
+def plan_patches(
+    previous: dict[str, Any],
+    current: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Plan patch operations from two snapshots."""
+    from pyskin.core.diff import diff
+
+    return diff(previous, current)

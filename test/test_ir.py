@@ -1095,3 +1095,274 @@ def test_analyze_ir_dependencies_does_not_mutate_ir():
     analyze_ir_dependencies(node)
 
     assert node.props == before
+
+def test_plan_patches_returns_diff_operations():
+    from pyskin.core.ir import plan_patches
+
+    previous = {
+        "id": "root",
+        "type": "Text",
+        "props": {"text": "Hello"},
+        "children": [],
+    }
+
+    current = {
+        "id": "root",
+        "type": "Text",
+        "props": {"text": "World"},
+        "children": [],
+    }
+
+    assert plan_patches(previous, current) == [
+        {
+            "type": "update",
+            "id": "root",
+            "props": {"text": "World"},
+            "remove_props": [],
+        }
+    ]
+
+def test_plan_patches_returns_empty_for_identical_snapshots():
+    from pyskin.core.ir import plan_patches
+
+    snapshot = {
+        "id": "root",
+        "type": "Text",
+        "props": {"text": "Hello"},
+        "children": [],
+    }
+
+    assert plan_patches(snapshot, snapshot) == []
+
+def test_plan_patches_rejects_invalid_snapshots():
+    from pyskin.core.ir import plan_patches
+
+    with pytest.raises(TypeError):
+        plan_patches([], {})
+
+def test_plan_patches_detects_insert():
+    from pyskin.core.ir import plan_patches
+
+    previous = {
+        "id": "root",
+        "type": "Column",
+        "props": {},
+        "children": [],
+    }
+
+    current = {
+        "id": "root",
+        "type": "Column",
+        "props": {},
+        "children": [
+            {
+                "id": "child",
+                "type": "Text",
+                "props": {"text": "Hello"},
+                "children": [],
+            }
+        ],
+    }
+
+    assert plan_patches(previous, current)[0]["type"] == "insert"
+
+def test_plan_patches_detects_remove():
+    from pyskin.core.ir import plan_patches
+
+    previous = {
+        "id": "root",
+        "type": "Column",
+        "props": {},
+        "children": [
+            {
+                "id": "child",
+                "type": "Text",
+                "props": {"text": "Hello"},
+                "children": [],
+            }
+        ],
+    }
+
+    current = {
+        "id": "root",
+        "type": "Column",
+        "props": {},
+        "children": [],
+    }
+
+    assert plan_patches(previous, current)[0]["type"] == "remove"
+
+def test_plan_patches_detects_prop_update():
+    from pyskin.core.ir import plan_patches
+
+    previous = {
+        "id": "root",
+        "type": "Button",
+        "props": {"text": "Save"},
+        "children": [],
+    }
+
+    current = {
+        "id": "root",
+        "type": "Button",
+        "props": {"text": "Submit"},
+        "children": [],
+    }
+
+    operations = plan_patches(previous, current)
+
+    assert operations == [
+        {
+            "type": "update",
+            "id": "root",
+            "props": {"text": "Submit"},
+            "remove_props": [],
+        }
+    ]
+
+def test_plan_patches_does_not_mutate_inputs():
+    from pyskin.core.ir import plan_patches
+    import copy
+
+    previous = {
+        "id": "root",
+        "type": "Text",
+        "props": {"text": "Hello"},
+        "children": [],
+    }
+
+    current = {
+        "id": "root",
+        "type": "Text",
+        "props": {"text": "World"},
+        "children": [],
+    }
+
+    previous_before = copy.deepcopy(previous)
+    current_before = copy.deepcopy(current)
+
+    plan_patches(previous, current)
+
+    assert previous == previous_before
+    assert current == current_before
+
+def test_plan_patches_detects_nested_prop_update():
+    from pyskin.core.ir import plan_patches
+
+    previous = {
+        "id": "root",
+        "type": "Column",
+        "props": {},
+        "children": [
+            {
+                "id": "child",
+                "type": "Text",
+                "props": {"text": "Hello"},
+                "children": [],
+            }
+        ],
+    }
+
+    current = {
+        "id": "root",
+        "type": "Column",
+        "props": {},
+        "children": [
+            {
+                "id": "child",
+                "type": "Text",
+                "props": {"text": "World"},
+                "children": [],
+            }
+        ],
+    }
+
+    operations = plan_patches(previous, current)
+
+    assert operations == [
+        {
+            "type": "update",
+            "id": "child",
+            "props": {"text": "World"},
+            "remove_props": [],
+        }
+    ]
+
+def test_plan_patches_detects_event_change():
+    from pyskin.core.ir import plan_patches
+
+    previous = {
+        "id": "button",
+        "type": "Button",
+        "events": "click",
+        "props": {},
+        "children": [],
+    }
+
+    current = {
+        "id": "button",
+        "type": "Button",
+        "events": "click,focus",
+        "props": {},
+        "children": [],
+    }
+
+    operations = plan_patches(previous, current)
+
+    assert operations == [
+        {
+            "type": "events",
+            "id": "button",
+            "events": "click,focus",
+        }
+    ]
+
+def test_plan_patches_detects_type_change():
+    from pyskin.core.ir import plan_patches
+
+    previous = {
+        "id": "root",
+        "type": "Text",
+        "props": {},
+        "children": [],
+    }
+
+    current = {
+        "id": "root",
+        "type": "Button",
+        "props": {},
+        "children": [],
+    }
+
+    operations = plan_patches(previous, current)
+
+    assert operations[0]["type"] == "replace"
+
+def test_plan_patches_preserves_diff_order():
+    from pyskin.core.ir import plan_patches
+
+    previous = {
+        "id": "root",
+        "type": "Column",
+        "props": {},
+        "children": [],
+    }
+
+    current = {
+        "id": "root",
+        "type": "Column",
+        "props": {"class": "new"},
+        "children": [
+            {
+                "id": "child",
+                "type": "Text",
+                "props": {"text": "Hello"},
+                "children": [],
+            }
+        ],
+    }
+
+    operations = plan_patches(previous, current)
+
+    assert operations[0]["type"] == "update"
+    assert operations[1]["type"] == "insert"
