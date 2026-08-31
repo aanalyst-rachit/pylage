@@ -160,3 +160,50 @@ def normalize_ir(node: IRNode) -> IRNode:
         children=normalized_children,
         style_ref=copy.deepcopy(node.style_ref),
     )
+
+def analyze_ir(node: IRNode) -> dict[str, Any]:
+    """Perform lightweight static analysis of an IR tree.
+
+    The analyzer is compiler-only. It does not evaluate runtime state,
+    resolve styles, execute events, or mutate the supplied IR tree.
+    """
+
+    if not isinstance(node, IRNode):
+        raise TypeError("node must be an IRNode")
+
+    seen_node_ids: set[str] = set()
+    ordered_node_ids: list[str] = []
+    component_ids: list[str] = []
+    duplicate_node_ids: list[str] = []
+    total_nodes = 0
+
+    def visit(current: IRNode) -> None:
+        nonlocal total_nodes
+
+        if not isinstance(current, IRNode):
+            raise TypeError("IR tree contains a non-IRNode child")
+
+        total_nodes += 1
+
+        if current.node_id in seen_node_ids:
+            if current.node_id not in duplicate_node_ids:
+                duplicate_node_ids.append(current.node_id)
+        else:
+            seen_node_ids.add(current.node_id)
+            ordered_node_ids.append(current.node_id)
+
+        if current.component_id is not None:
+            component_ids.append(current.component_id)
+
+        for child in current.children:
+            visit(child)
+
+    visit(node)
+
+    return {
+        "total_nodes": total_nodes,
+        "node_ids": ordered_node_ids,
+        "component_ids": component_ids,
+        "duplicate_node_ids": duplicate_node_ids,
+        "is_valid": not duplicate_node_ids,
+    }

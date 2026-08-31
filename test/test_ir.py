@@ -678,3 +678,95 @@ def test_normalize_ir_preserves_child_order():
     normalized = normalize_ir(node)
 
     assert [child.node_id for child in normalized.children] == ["1", "2"]
+
+
+def test_analyze_ir_returns_tree_statistics():
+    from pyskin.core.ir import analyze_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        children=[
+            IRNode(
+                node_id="child-1",
+                node_type="component",
+                component_id="Text",
+            ),
+            IRNode(
+                node_id="child-2",
+                node_type="component",
+                component_id="Button",
+            ),
+        ],
+    )
+
+    result = analyze_ir(node)
+
+    assert result["total_nodes"] == 3
+    assert result["node_ids"] == [
+        "root",
+        "child-1",
+        "child-2",
+    ]
+    assert result["component_ids"] == [
+        "Column",
+        "Text",
+        "Button",
+    ]
+    assert result["duplicate_node_ids"] == []
+    assert result["is_valid"] is True
+
+
+def test_analyze_ir_detects_duplicate_node_ids():
+    from pyskin.core.ir import analyze_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        children=[
+            IRNode(
+                node_id="same",
+                node_type="component",
+                component_id="Text",
+            ),
+            IRNode(
+                node_id="same",
+                node_type="component",
+                component_id="Button",
+            ),
+        ],
+    )
+
+    result = analyze_ir(node)
+
+    assert result["total_nodes"] == 3
+    assert result["duplicate_node_ids"] == ["same"]
+    assert result["is_valid"] is False
+
+
+def test_analyze_ir_rejects_non_ir_node():
+    from pyskin.core.ir import analyze_ir
+
+    with pytest.raises(TypeError):
+        analyze_ir("invalid")
+
+
+def test_analyze_ir_does_not_mutate_ir():
+    from pyskin.core.ir import analyze_ir
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"text": "Hello"},
+    )
+
+    before = copy.deepcopy(node.props)
+    children_before = list(node.children)
+
+    analyze_ir(node)
+
+    assert node.props == before
+    assert node.children == children_before
