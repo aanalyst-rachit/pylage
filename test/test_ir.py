@@ -921,3 +921,29 @@ def test_validate_ir_preserves_valid_style_ref():
     assert validate_ir(node) is None
 
 
+
+def test_constant_fold_preserves_literal_values():
+    from pyskin.core.ir import constant_fold
+
+    assert constant_fold(10) == 10
+    assert constant_fold("Hello") == "Hello"
+    assert constant_fold(True) is True
+
+
+def test_constant_fold_evaluates_constant_arithmetic():
+    from pyskin.core.ir import constant_fold
+
+    assert constant_fold(("add", 2, 3)) == 5
+
+
+def test_constant_fold_is_recursive():
+    from pyskin.core.ir import constant_fold
+
+    assert constant_fold(("mul", ("add", 2, 3), 4)) == 20
+
+
+def test_constant_fold_does_not_evaluate_unsafe_values():
+    from pyskin.core.ir import constant_fold
+
+    assert constant_fold(("div", 10, 0)) == ("div", 10, 0)
+    assert constant_fold(("unknown", 2, 3)) == ("unknown", 2, 3)

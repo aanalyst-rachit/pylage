@@ -261,3 +261,37 @@ def validate_ir(node: IRNode) -> None:
 
     visit(node)
 
+
+
+def constant_fold(value: Any) -> Any:
+    """Fold a small set of compiler-safe constant expressions."""
+
+    if not isinstance(value, tuple) or len(value) != 3:
+        return copy.deepcopy(value)
+
+    operator, left, right = value
+
+    if operator not in {"add", "sub", "mul", "div"}:
+        return copy.deepcopy(value)
+
+    left = constant_fold(left)
+    right = constant_fold(right)
+
+    if not isinstance(left, (int, float)) or isinstance(left, bool):
+        return copy.deepcopy(value)
+
+    if not isinstance(right, (int, float)) or isinstance(right, bool):
+        return copy.deepcopy(value)
+
+    if operator == "add":
+        return left + right
+    if operator == "sub":
+        return left - right
+    if operator == "mul":
+        return left * right
+    if operator == "div":
+        if right == 0:
+            return copy.deepcopy(value)
+        return left / right
+
+    return copy.deepcopy(value)
