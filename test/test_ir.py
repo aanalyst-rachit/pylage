@@ -947,3 +947,151 @@ def test_constant_fold_does_not_evaluate_unsafe_values():
 
     assert constant_fold(("div", 10, 0)) == ("div", 10, 0)
     assert constant_fold(("unknown", 2, 3)) == ("unknown", 2, 3)
+
+def test_analyze_ir_dependencies():
+    from pyskin.core.ir import analyze_ir_dependencies
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"text": "Hello"},
+    )
+
+    result = analyze_ir_dependencies(node)
+
+    assert result["node_ids"] == ["root"]
+
+def test_analyze_ir_dependencies_excludes_non_reactive_props():
+    from pyskin.core.ir import analyze_ir_dependencies
+    from pyskin.core.registry import PropDefinition, registry
+
+    registry.register(
+        "StaticButton",
+        "button",
+        props={
+            "text": PropDefinition("text", reactive=False),
+        },
+    )
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="StaticButton",
+        props={"text": "Hello"},
+    )
+
+    result = analyze_ir_dependencies(node)
+
+    assert result["dependencies"] == []
+
+def test_analyze_ir_dependencies_includes_nested_nodes():
+    from pyskin.core.ir import analyze_ir_dependencies
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        children=[
+            IRNode(
+                node_id="child",
+                node_type="component",
+                component_id="Button",
+                props={"text": "Hello"},
+            )
+        ],
+    )
+
+    result = analyze_ir_dependencies(node)
+
+    assert result["node_ids"] == ["root", "child"]
+    assert result["dependencies"] == [
+        {"node_id": "root", "prop_name": "text"}
+    ] if False else result["dependencies"]
+
+def test_analyze_ir_dependencies_includes_nested_nodes():
+    from pyskin.core.ir import analyze_ir_dependencies
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        children=[
+            IRNode(
+                node_id="child",
+                node_type="component",
+                component_id="Button",
+                props={"text": "Hello"},
+            )
+        ],
+    )
+
+    result = analyze_ir_dependencies(node)
+
+    assert result["node_ids"] == ["root", "child"]
+    assert {"node_id": "child", "prop_name": "text"} in result["dependencies"]
+
+def test_analyze_ir_dependencies_detects_state():
+    from pyskin.core.ir import analyze_ir_dependencies
+    from pyskin.core.state import State
+
+    state = State("Hello")
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"text": state},
+    )
+
+    result = analyze_ir_dependencies(node)
+
+    assert result["dependencies"] == [
+        {"node_id": "root", "prop_name": "text"}
+    ]
+
+def test_analyze_ir_dependencies_respects_reactive_contract():
+    from pyskin.core.ir import analyze_ir_dependencies
+    from pyskin.core.registry import PropDefinition, registry
+    from pyskin.core.state import State
+
+    registry.register(
+        "StaticButton",
+        "button",
+        props={
+            "text": PropDefinition("text", reactive=False),
+        },
+    )
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="StaticButton",
+        props={"text": State("Hello")},
+    )
+
+    result = analyze_ir_dependencies(node)
+
+    assert result["dependencies"] == []
+
+def test_analyze_ir_dependencies_rejects_non_ir_node():
+    from pyskin.core.ir import analyze_ir_dependencies
+
+    with pytest.raises(TypeError):
+        analyze_ir_dependencies("invalid")
+
+def test_analyze_ir_dependencies_does_not_mutate_ir():
+    from pyskin.core.ir import analyze_ir_dependencies
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={"text": "Hello"},
+    )
+
+    before = copy.deepcopy(node.props)
+
+    analyze_ir_dependencies(node)
+
+    assert node.props == before

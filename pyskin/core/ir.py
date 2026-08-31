@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 from typing import Any
+from pyskin.core.registry import registry
 
 
 class IRNode:
@@ -295,3 +296,44 @@ def constant_fold(value: Any) -> Any:
         return left / right
 
     return copy.deepcopy(value)
+
+def analyze_ir_dependencies(node: IRNode) -> dict[str, Any]:
+    """Analyze reactive prop dependencies in an IR tree."""
+
+    if not isinstance(node, IRNode):
+        raise TypeError("node must be an IRNode")
+
+    node_ids: list[str] = []
+    dependencies: list[dict[str, str]] = []
+
+    def visit(current: IRNode) -> None:
+        node_ids.append(current.node_id)
+
+        definition = registry.get(current.component_id)
+
+        for prop_name in current.props:
+            if definition is None or definition.props is None:
+                reactive = True
+            else:
+                prop_definition = definition.props.get(prop_name)
+                reactive = (
+                    True
+                    if prop_definition is None
+                    else prop_definition.reactive
+                )
+
+            if reactive:
+                dependencies.append({
+                    "node_id": current.node_id,
+                    "prop_name": prop_name,
+                })
+
+        for child in current.children:
+            visit(child)
+
+    visit(node)
+
+    return {
+        "node_ids": node_ids,
+        "dependencies": dependencies,
+    }
