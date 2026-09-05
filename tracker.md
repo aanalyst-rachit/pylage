@@ -363,21 +363,18 @@ rules - PYTHON TERMINAL RULE + MD FILE RULE
 
 ---
 
-# PHASE 12 — High-Level Recipes (skip in v.1.0.0 will upgrde in future in paid version)
+# PHASE 12 — High-Level Recipes
 
-* [ ] Login page
-* [ ] Signup page
-* [ ] Dashboard
-* [ ] Admin panel
-* [ ] Profile page
-* [ ] Settings page
-* [ ] Pricing section
-* [ ] Empty page
-* [ ] Error page
-* [ ] Data management page
-* [ ] CRUD page
-* [ ] Analytics dashboard
-
+* [x] Login page
+* [x] Signup page
+* [x] Dashboard
+* [x] Admin panel
+* [x] Profile page
+* [x] Settings page
+* [x] Pricing section
+* [x] Empty page
+* [x] Error page
+* [x] Data management page
 Potential API:
 
 ```python
@@ -709,3 +706,8 @@ Jab `.md` file create/update karni ho:
 6. `>`, `$`, backticks, quotes aur special characters safely preserve hone chahiye.
 7. Command directly copy-paste karke `.md` file create/update ho sake.
 8. File create/update ke baad `git diff --check` se verify karna.
+
+# FUTURE IDEAS
+
+* CRUD page
+* Analytics dashboard
