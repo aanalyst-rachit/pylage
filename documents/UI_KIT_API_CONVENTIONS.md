@@ -6,11 +6,11 @@ The PyLage UI Kit is a semantic developer-experience layer above the existing Py
 
 It does not replace the renderer, component factory, registry, state engine, styling system, theme system, or layout engine.
 
-Architecture: User API → pylage_ui → existing pylage / pylage_layout → renderer / reactive runtime
+Architecture: User API → pylage.UI → existing PyLage components and systems → renderer / reactive runtime
 
 ## Naming
 
-The public UI Kit API uses lowercase Python names such as `ps.button()`, `ps.card()`, `ps.text()`, `ps.heading()`, `ps.input()`, `ps.select()`, `ps.form()`, `ps.badge()`, `ps.alert()`, `ps.dialog()`, `ps.drawer()`, `ps.tabs()`, and `ps.table()`.
+The public UI Kit API uses lowercase Python names such as `pl.button()`, `pl.card()`, `pl.text()`, `pl.heading()`, `pl.input()`, `pl.select()`, `pl.form()`, `pl.badge()`, `pl.alert()`, `pl.dialog()`, `pl.drawer()`, `pl.tabs()`, and `pl.table()`.
 
 These APIs wrap existing PyLage capabilities rather than creating duplicate rendering primitives.
 
@@ -20,7 +20,7 @@ Components that contain child content use positional `*children`. Existing PyLag
 
 ## Primary Content
 
-Components with an obvious primary value may expose that value as the first semantic argument, for example `ps.button("Save")`, `ps.text("Hello")`, and `ps.heading("Dashboard")`.
+Components with an obvious primary value may expose that value as the first semantic argument, for example `pl.button("Save")`, `pl.text("Hello")`, and `pl.heading("Dashboard")`.
 
 ## Props
 
@@ -28,7 +28,7 @@ The UI Kit exposes documented semantic properties while preserving the underlyin
 
 ## Events
 
-The existing `on_*` convention is authoritative. Examples include `ps.button("Save", on_click=save)` and `ps.input(value=state, on_input=handle_input)`.
+The existing `on_*` convention is authoritative. Examples include `pl.button("Save", on_click=save)` and `pl.input(value=state, on_input=handle_input)`.
 
 ## Reactive State
 
@@ -42,13 +42,66 @@ The existing `Style` abstraction remains authoritative. The UI Kit provides sens
 
 The existing `ResponsiveStyle` abstraction remains authoritative. UI Kit responsive defaults must use the existing responsive infrastructure.
 
+## Layout API
+
+The UI Kit layout API reuses the existing PyLage layout primitives and does not introduce a second layout engine.
+
+Public layout wrappers include `pl.row()` and `pl.column()`. They delegate to the existing PyLage Row and Column components and use the established UI Kit responsive style resolution.
+
+### Responsive Shorthand
+
+Layout wrappers accept `responsive={...}` mappings using the existing `ResponsiveStyle` infrastructure.
+
+Example:
+
+```python
+pl.row(
+    item1,
+    item2,
+    responsive={
+        "base": {"flex_direction": "column"},
+        "md": {"flex_direction": "row"},
+        "lg": {"gap": "xl"},
+    },
+)
+```
+
+Responsive mappings may use existing CSS property names and spacing tokens. The UI Kit does not create a competing breakpoint or responsive engine.
+
+### Spacing Shorthand
+
+Layout wrappers support semantic spacing shorthand backed by the existing `SPACING` tokens.
+
+```python
+pl.column(child, p="lg")
+pl.column(child, px="md", py="lg")
+pl.column(child, pt="sm", pb="xl")
+pl.column(child, m="md")
+pl.column(child, mx="lg", my="sm")
+pl.row(a, b, gap="md")
+```
+
+Supported padding shorthand includes `p`, `px`, `py`, `pt`, `pr`, `pb`, and `pl`. Supported margin shorthand includes `m`, `mx`, `my`, `mt`, `mr`, `mb`, and `ml`. `gap`, `row_gap`, and `column_gap` accept existing spacing tokens as well.
+
+### Style Precedence
+
+Layout styling follows this precedence order:
+
+`layout defaults` → `shorthand` → `explicit style=`
+
+An explicit `style=` value therefore has the highest precedence and can override shorthand or responsive base styling.
+
+### Layout Engine Reuse
+
+The UI Kit layout layer wraps or composes existing PyLage layout primitives. It must not duplicate the layout engine, responsive engine, or spacing token system.
+
 ## Theme and Tokens
 
-The existing `Theme` and `pylage_layout.tokens` systems remain authoritative for colors, spacing, radius, fonts, and semantic design tokens. The UI Kit must not create a competing theme or token system.
+The existing `Theme` and PyLage design tokens remain authoritative for colors, spacing, radius, fonts, and semantic design tokens. The UI Kit must not create a competing theme or token system.
 
 ## Variants
 
-Semantic variants use `variant` where appropriate, for example `ps.button("Save", variant="primary")` and `ps.badge("Active", variant="success")`.
+Semantic variants use `variant` where appropriate, for example `pl.button("Save", variant="primary")` and `pl.badge("Active", variant="success")`.
 
 The UI Kit may standardize its supported vocabulary without breaking existing engine-level APIs.
 
@@ -60,7 +113,7 @@ Where a component has meaningful size variants, the UI Kit may expose `size="sm"
 
 The UI Kit may expose `visible` where the underlying component supports visibility behavior. It must not create a second visibility mechanism.
 
-Disabled behavior uses the existing `disabled` property, for example `ps.button("Save", disabled=True)`.
+Disabled behavior uses the existing `disabled` property, for example `pl.button("Save", disabled=True)`.
 
 ## Interaction States
 

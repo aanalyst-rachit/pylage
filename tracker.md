@@ -336,26 +336,26 @@ rules - PYTHON TERMINAL RULE + MD FILE RULE
 
 Do NOT create a separate layout engine. Layout capabilities belong to the existing `pylage.UI` architecture.
 
-* [ ] Determine direct re-exports
+* [x] Determine direct re-exports
   - Row wrapper added around the existing PyLage Row component.
   - Column wrapper added around the existing PyLage Column component.
   - Both use the existing UI Kit responsive style resolution.
   - Both are publicly exported through pylage.UI.layout and pylage.UI.
   - Neither duplicates the layout engine.
-* [ ] Responsive shorthand
-* [ ] Spacing shorthand
-* [ ] Dashboard layout helpers
-* [ ] Verify no duplicate layout engine
+* [x] Responsive shorthand
+* [x] Spacing shorthand
+* [x] Dashboard layout helpers
+* [x] Verify no duplicate layout engine
 
 Potential API:
 
 ```python
-ps.container(...)
-ps.stack(...)
-ps.row(...)
-ps.grid(...)
-ps.columns(...)
-ps.sidebar(...)
+pl.container(...)
+pl.stack(...)
+pl.row(...)
+pl.grid(...)
+pl.columns(...)
+pl.sidebar(...)
 ```
 
 work flow - reuse/create/------>manual create-------> manual verify---->documentation-----> tracker update---git checkpoint
