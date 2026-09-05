@@ -394,13 +394,13 @@ rules - PYTHON TERMINAL RULE + MD FILE RULE
 
 Reuse existing responsive infrastructure.
 
-* [ ] Responsive defaults
-* [ ] Mobile behavior
-* [ ] Tablet behavior
-* [ ] Desktop behavior
-* [ ] Responsive components
-* [ ] Responsive recipes
-* [ ] Developer overrides
+* [x] Responsive defaults
+* [x] Mobile behavior
+* [x] Tablet behavior
+* [x] Desktop behavior
+* [x] Responsive components
+* [x] Responsive recipes
+* [x] Developer overrides
 
 ### Goal
 
