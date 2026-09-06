@@ -7,13 +7,12 @@ from typing import Any
 from pylage.UI.components.card import card
 from pylage.UI.components.dialog import dialog
 from pylage.ENGINE import Style
-from pylage.UI.tokens import SPACING
 
 __all__ = ["modal"]
 
 
 _BASE_STYLE = Style(
-    padding=SPACING["lg"],
+    padding="var(--spacing-lg)",
 )
 
 

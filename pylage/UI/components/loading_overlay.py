@@ -9,7 +9,6 @@ from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
 from pylage.UI.components.dialog import dialog
 from pylage.UI.layout.column import column
-from pylage.UI.tokens import COLORS, SPACING
 
 __all__ = ["loading_overlay"]
 
@@ -30,7 +29,7 @@ _OVERLAY_STYLE = Style(
     border="none",
     border_radius=0,
     z_index=1100,
-    color=COLORS["text"],
+    color="var(--color-text)",
 )
 
 _CONTENT_STYLE = Style(
@@ -41,15 +40,15 @@ _CONTENT_STYLE = Style(
     flex_direction="column",
     align_items="center",
     justify_content="center",
-    gap=SPACING["sm"],
-    padding=SPACING["lg"],
+    gap="var(--spacing-sm)",
+    padding="var(--spacing-lg)",
     text_align="center",
 )
 
 _TEXT_STYLE = Style(
     font_size="1rem",
     font_weight="500",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 

@@ -7,6 +7,14 @@ def test_loading_state_returns_column():
     assert ls.type == "Column"
     assert isinstance(ls, type(Column()))
 
+def test_loading_state_default_style_contract():
+    ls = ui.loading_state()
+    style = ls.props["style"]
+    assert style.padding == "var(--spacing-2xl)"
+    assert style.background_color == "var(--color-background)"
+    assert style.border_radius == "var(--radius-xl)"
+
+
 def test_loading_state_default_content():
     html = render(ui.loading_state())
     assert "Loading..." in html

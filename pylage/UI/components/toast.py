@@ -6,7 +6,6 @@ from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
 from pylage.ENGINE import Toast as _Toast
 from pylage.ENGINE.core.component import Component
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 
 __all__ = ["toast"]
@@ -14,34 +13,34 @@ __all__ = ["toast"]
 
 _VARIANT_STYLES: dict[str, Style] = {
     "default": Style(
-        background_color=COLORS["surface_variant"],
-        color=COLORS["text"],
-        border="1px solid " + COLORS["border"],
+        background_color="var(--color-surface-variant)",
+        color="var(--color-text)",
+        border="1px solid " + "var(--color-border)",
     ),
     "info": Style(
-        background_color=COLORS["info"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["info"],
+        background_color="var(--color-info)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-info)",
     ),
     "success": Style(
-        background_color=COLORS["success"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["success"],
+        background_color="var(--color-success)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-success)",
     ),
     "warning": Style(
-        background_color=COLORS["warning"],
-        color=COLORS["text"],
-        border="1px solid " + COLORS["warning"],
+        background_color="var(--color-warning)",
+        color="var(--color-text)",
+        border="1px solid " + "var(--color-warning)",
     ),
     "danger": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["danger"],
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-danger)",
     ),
     "error": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["danger"],
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-danger)",
     ),
 }
 
@@ -49,9 +48,9 @@ _VARIANT_STYLES: dict[str, Style] = {
 _BASE_STYLE = Style(
     display="flex",
     flex_direction="column",
-    gap=SPACING["xs"],
-    padding=SPACING["md"],
-    border_radius=RADIUS["md"],
+    gap="var(--spacing-xs)",
+    padding="var(--spacing-md)",
+    border_radius="var(--radius-md)",
 )
 
 

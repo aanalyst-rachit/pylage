@@ -16,10 +16,10 @@ def test_metric_default_style_contract():
     metric = ui.metric(label="Revenue", value="₹42,000")
     style = metric.props["style"]
 
-    assert style.background_color == "#ffffff"
-    assert style.padding == "1.5rem"
-    assert style.border_radius == "0.75rem"
-    assert style.border == "1px solid #e2e8f0"
+    assert style.background_color == "var(--color-background)"
+    assert style.padding == "var(--spacing-lg)"
+    assert style.border_radius == "var(--radius-xl)"
+    assert style.border == "1px solid var(--color-border)"
 
 
 def test_metric_renders_semantic_content():
@@ -62,7 +62,7 @@ def test_metric_custom_style_overrides_defaults():
 
     assert style.padding == "2rem"
     assert style.border == "2px solid #111827"
-    assert style.background_color == "#ffffff"
+    assert style.background_color == "var(--color-background)"
 
 
 def test_metric_forwards_engine_props():

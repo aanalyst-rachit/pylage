@@ -6,13 +6,12 @@ from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Row as _Row
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, SPACING
 from .card import card as _card
 
 _TITLE_STYLE = Style(
     font_size="1.125rem",
     font_weight="600",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
@@ -48,7 +47,7 @@ def dashboard_card(
                     justify_content="space-between",
                     align_items="center",
                     width="100%",
-                    margin_bottom=SPACING["sm"],
+                    margin_bottom="var(--spacing-sm)",
                 ),
             )
             content.append(top_row)
@@ -59,7 +58,7 @@ def dashboard_card(
     content.extend(children)
 
     if footer is not None:
-        content.append(_Text(footer, style=Style(font_size="0.75rem", color=COLORS["text_muted"])) if isinstance(footer, str) else footer)
+        content.append(_Text(footer, style=Style(font_size="0.75rem", color="var(--color-text-muted)")) if isinstance(footer, str) else footer)
 
     return _card(
         *content,

@@ -3,13 +3,12 @@ from __future__ import annotations
 from typing import Any, Mapping
 from pylage.ENGINE import Grid as _Grid
 from pylage.ENGINE import Style
-from pylage.UI.tokens import SPACING
 from .metric import metric as _metric
 
 _DEFAULT_GRID_STYLE = Style(
     display="grid",
     width="100%",
-    gap=SPACING["lg"],
+    gap="var(--spacing-lg)",
 )
 
 def stat_group(

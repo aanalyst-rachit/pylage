@@ -28,7 +28,7 @@ def test_text_preserves_reactive_state():
 def test_text_supports_muted_style():
     component = text("Secondary", muted=True)
 
-    assert component.props["style"].color == "#64748b"
+    assert component.props["style"].color == "var(--color-text-muted)"
 
 
 def test_text_supports_label_style():
@@ -44,7 +44,7 @@ def test_text_supports_caption_style():
     style = component.props["style"]
 
     assert style.font_size == "0.75rem"
-    assert style.color == "#64748b"
+    assert style.color == "var(--color-text-muted)"
 
 
 def test_text_custom_style_overrides_semantic_style():

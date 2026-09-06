@@ -5,7 +5,6 @@ from pylage.ENGINE import Column as _Column
 from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 _DEFAULT_CONTAINER_STYLE = Style(
     display="flex",
@@ -13,23 +12,23 @@ _DEFAULT_CONTAINER_STYLE = Style(
     align_items="center",
     justify_content="center",
     text_align="center",
-    padding=SPACING["2xl"],
-    background_color=COLORS["background"],
-    border=f"1px solid {COLORS['danger_border'] if 'danger_border' in COLORS else '#fecaca'}",
-    border_radius=RADIUS["xl"],
-    gap=SPACING["sm"],
+    padding="var(--spacing-2xl)",
+    background_color="var(--color-background)",
+    border="1px solid var(--color-danger-border)",
+    border_radius="var(--radius-xl)",
+    gap="var(--spacing-sm)",
 )
 
 _TITLE_STYLE = Style(
     font_size="1.125rem",
     font_weight="600",
-    color=COLORS["danger"] if "danger" in COLORS else "#dc2626",
+    color="var(--color-danger)",
     margin="0",
 )
 
 _DESC_STYLE = Style(
     font_size="0.875rem",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     max_width="28rem",
     margin="0",
     line_height="1.5",
@@ -41,11 +40,11 @@ _ICON_CONTAINER_STYLE = Style(
     justify_content="center",
     width="3.5rem",
     height="3.5rem",
-    border_radius=RADIUS["full"],
-    background_color="#fee2e2",
-    color="#dc2626",
+    border_radius="var(--radius-full)",
+    background_color="var(--color-danger-bg)",
+    color="var(--color-danger)",
     font_size="1.5rem",
-    margin_bottom=SPACING["xs"],
+    margin_bottom="var(--spacing-xs)",
 )
 
 def error_state(

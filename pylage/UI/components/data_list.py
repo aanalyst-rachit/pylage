@@ -5,30 +5,29 @@ from pylage.ENGINE import Column as _Column
 from pylage.ENGINE import Row as _Row
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 _DEFAULT_CONTAINER_STYLE = Style(
     display="flex",
     flex_direction="column",
     width="100%",
-    background_color=COLORS["background"],
-    border=f"1px solid {COLORS['border']}",
-    border_radius=RADIUS["xl"],
-    padding=SPACING["md"],
-    gap=SPACING["sm"],
+    background_color="var(--color-background)",
+    border="1px solid var(--color-border)",
+    border_radius="var(--radius-xl)",
+    padding="var(--spacing-md)",
+    gap="var(--spacing-sm)",
 )
 
 _LABEL_STYLE = Style(
     font_size="0.875rem",
     font_weight="500",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     margin="0",
 )
 
 _VALUE_STYLE = Style(
     font_size="0.875rem",
     font_weight="500",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
@@ -37,13 +36,13 @@ _ROW_HORIZONTAL_STYLE = Style(
     flex_direction="row",
     justify_content="space-between",
     align_items="center",
-    padding=f"{SPACING['xs']} 0",
+    padding="var(--spacing-xs) 0",
     width="100%",
 )
 
 _ROW_DIVIDED_STYLE = Style(
-    border_bottom=f"1px solid {COLORS['border_muted']}",
-    padding_bottom=SPACING["sm"],
+    border_bottom="1px solid var(--color-border-muted)",
+    padding_bottom="var(--spacing-sm)",
 )
 
 def data_list(
@@ -89,7 +88,7 @@ def data_list(
                 flex_direction="column",
                 gap="0.25rem",
                 width="100%",
-                padding=f"{SPACING['xs']} 0",
+                padding="var(--spacing-xs) 0",
             )
             if divided and not is_last:
                 col_style = col_style.merge(_ROW_DIVIDED_STYLE)

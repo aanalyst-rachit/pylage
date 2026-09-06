@@ -6,50 +6,49 @@ from pylage.ENGINE import Badge as _Badge
 from pylage.ENGINE import Text as _Text
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE import Style
-from pylage.UI.tokens import COLORS, RADIUS
 
 
 _VARIANT_STYLES: dict[str, Style] = {
     "default": Style(
-        background_color=COLORS["surface_variant"],
-        color=COLORS["text"],
-        border=f"1px solid {COLORS['border']}",
+        background_color="var(--color-surface-variant)",
+        color="var(--color-text)",
+        border="1px solid var(--color-border)",
     ),
     "primary": Style(
-        background_color=COLORS["primary"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['primary']}",
+        background_color="var(--color-primary)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-primary)",
     ),
     "secondary": Style(
-        background_color=COLORS["secondary"],
-        color=COLORS["secondary_contrast"],
-        border=f"1px solid {COLORS['secondary']}",
+        background_color="var(--color-secondary)",
+        color="var(--color-secondary-contrast)",
+        border="1px solid var(--color-secondary)",
     ),
     "success": Style(
-        background_color=COLORS["success"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['success']}",
+        background_color="var(--color-success)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-success)",
     ),
     "warning": Style(
-        background_color=COLORS["warning"],
-        color=COLORS["text"],
-        border=f"1px solid {COLORS['warning']}",
+        background_color="var(--color-warning)",
+        color="var(--color-text)",
+        border="1px solid var(--color-warning)",
     ),
     "danger": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['danger']}",
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-danger)",
     ),
     "info": Style(
-        background_color=COLORS["info"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['info']}",
+        background_color="var(--color-info)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-info)",
     ),
 }
 
 _BASE_STYLE = Style(
     padding="0.25rem 0.625rem",
-    border_radius=RADIUS["full"],
+    border_radius="var(--radius-full)",
     font_size="0.75rem",
     font_weight="600",
 )

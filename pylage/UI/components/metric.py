@@ -8,24 +8,23 @@ from pylage.ENGINE import Column as _Column
 from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Text as _Text
 
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 
 _DEFAULT_CARD_STYLE = Style(
     display="flex",
     flex_direction="column",
-    gap=SPACING["sm"],
-    padding=SPACING["lg"],
-    background_color=COLORS["background"],
-    border=f"1px solid {COLORS['border']}",
-    border_radius=RADIUS["xl"],
+    gap="var(--spacing-sm)",
+    padding="var(--spacing-lg)",
+    background_color="var(--color-background)",
+    border="1px solid var(--color-border)",
+    border_radius="var(--radius-xl)",
 )
 
 
 _LABEL_STYLE = Style(
     font_size="0.875rem",
     font_weight="500",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     margin="0",
 )
 
@@ -33,7 +32,7 @@ _LABEL_STYLE = Style(
 _VALUE_STYLE = Style(
     font_size="1.75rem",
     font_weight="700",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
@@ -41,14 +40,14 @@ _VALUE_STYLE = Style(
 _DELTA_STYLE = Style(
     font_size="0.875rem",
     font_weight="600",
-    color=COLORS["success"],
+    color="var(--color-success)",
     margin="0",
 )
 
 
 _DESCRIPTION_STYLE = Style(
     font_size="0.75rem",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     margin="0",
 )
 
@@ -84,7 +83,7 @@ def metric(
     if featured:
         card_style = card_style.merge(
             Style(
-                border=f"2px solid {COLORS['primary']}",
+                border="2px solid var(--color-primary)",
             )
         )
 
@@ -96,7 +95,7 @@ def metric(
             style=Style(
                 display="flex",
                 flex_direction="column",
-                gap=SPACING["sm"],
+                gap="var(--spacing-sm)",
             ),
         ),
         style=final_style,

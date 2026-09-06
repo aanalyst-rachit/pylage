@@ -17,11 +17,11 @@ def test_badge_default_contract():
 
     style = badge.props["style"]
 
-    assert style.background_color == "#f1f5f9"
-    assert style.color == "#0f172a"
-    assert style.border == "1px solid #e2e8f0"
+    assert style.background_color == "var(--color-surface-variant)"
+    assert style.color == "var(--color-text)"
+    assert style.border == "1px solid var(--color-border)"
     assert style.padding == "0.25rem 0.625rem"
-    assert style.border_radius == "9999px"
+    assert style.border_radius == "var(--radius-full)"
     assert style.font_size == "0.75rem"
     assert style.font_weight == "600"
 
@@ -42,12 +42,12 @@ def test_badge_supports_reactive_content():
 
 def test_badge_variants():
     expected = {
-        "primary": ("#3b82f6", "#ffffff"),
-        "secondary": ("#64748b", "#ffffff"),
-        "success": ("#22c55e", "#ffffff"),
-        "warning": ("#f59e0b", "#0f172a"),
-        "danger": ("#ef4444", "#ffffff"),
-        "info": ("#06b6d4", "#ffffff"),
+        "primary": ("var(--color-primary)", "var(--color-primary-contrast)"),
+        "secondary": ("var(--color-secondary)", "var(--color-secondary-contrast)"),
+        "success": ("var(--color-success)", "var(--color-primary-contrast)"),
+        "warning": ("var(--color-warning)", "var(--color-text)"),
+        "danger": ("var(--color-danger)", "var(--color-primary-contrast)"),
+        "info": ("var(--color-info)", "var(--color-primary-contrast)"),
     }
 
     for variant, (background, foreground) in expected.items():
@@ -61,7 +61,7 @@ def test_badge_variants():
 def test_badge_custom_style_overrides_defaults():
     custom = Style(
         background_color="#111827",
-        color="#ffffff",
+        color="var(--color-primary-contrast)",
         padding="0.5rem 1rem",
     )
 
@@ -69,9 +69,9 @@ def test_badge_custom_style_overrides_defaults():
     style = badge.props["style"]
 
     assert style.background_color == "#111827"
-    assert style.color == "#ffffff"
+    assert style.color == "var(--color-primary-contrast)"
     assert style.padding == "0.5rem 1rem"
-    assert style.border_radius == "9999px"
+    assert style.border_radius == "var(--radius-full)"
 
 
 def test_badge_does_not_leak_variant_to_engine_props():

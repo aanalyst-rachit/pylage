@@ -6,34 +6,33 @@ from pylage.ENGINE import Card as _Card
 from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 
 _VARIANT_STYLES: dict[str, Style] = {
     "default": Style(
-        background_color=COLORS["background"],
-        padding=SPACING["lg"],
-        border_radius=RADIUS["xl"],
-        border=f"1px solid {COLORS['border']}",
+        background_color="var(--color-background)",
+        padding="var(--spacing-lg)",
+        border_radius="var(--radius-xl)",
+        border="1px solid var(--color-border)",
     ),
     "elevated": Style(
-        background_color=COLORS["background"],
-        padding=SPACING["lg"],
-        border_radius=RADIUS["xl"],
-        border=f"1px solid {COLORS['border_muted']}",
+        background_color="var(--color-background)",
+        padding="var(--spacing-lg)",
+        border_radius="var(--radius-xl)",
+        border="1px solid var(--color-border-muted)",
         box_shadow="0 10px 15px -3px rgba(0,0,0,0.1)",
     ),
     "outlined": Style(
-        background_color=COLORS["background"],
-        padding=SPACING["lg"],
-        border_radius=RADIUS["xl"],
-        border=f"1px solid {COLORS['border_muted']}",
+        background_color="var(--color-background)",
+        padding="var(--spacing-lg)",
+        border_radius="var(--radius-xl)",
+        border="1px solid var(--color-border-muted)",
     ),
     "interactive": Style(
-        background_color=COLORS["background"],
-        padding=SPACING["lg"],
-        border_radius=RADIUS["xl"],
-        border=f"1px solid {COLORS['border']}",
+        background_color="var(--color-background)",
+        padding="var(--spacing-lg)",
+        border_radius="var(--radius-xl)",
+        border="1px solid var(--color-border)",
         cursor="pointer",
     ),
 }

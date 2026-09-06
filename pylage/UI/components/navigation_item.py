@@ -5,12 +5,11 @@ from typing import Any, Callable
 from pylage.ENGINE import Button as _Button
 from pylage.ENGINE import State
 from pylage.ENGINE import Style
-from pylage.UI.tokens import COLORS
 
 
 _BASE_STYLE = Style(
     background_color="transparent",
-    color=COLORS["text"],
+    color="var(--color-text)",
     border="1px solid transparent",
     border_radius="0.375rem",
     padding="0.5rem 0.75rem",
@@ -19,9 +18,9 @@ _BASE_STYLE = Style(
 
 
 _ACTIVE_STYLE = Style(
-    background_color=COLORS["primary"],
-    color=COLORS["primary_contrast"],
-    border=f"1px solid {COLORS['primary']}",
+    background_color="var(--color-primary)",
+    color="var(--color-primary-contrast)",
+    border="1px solid var(--color-primary)",
 )
 
 
@@ -37,13 +36,13 @@ def _resolve_reactive_style(
     custom = style or Style()
 
     background = State(
-        COLORS["primary"] if bool(active.value) else "transparent"
+        "var(--color-primary)" if bool(active.value) else "transparent"
     )
     color = State(
-        COLORS["primary_contrast"] if bool(active.value) else COLORS["text"]
+        "var(--color-primary-contrast)" if bool(active.value) else "var(--color-text)"
     )
     border = State(
-        f"1px solid {COLORS['primary']}"
+        "1px solid var(--color-primary)"
         if bool(active.value)
         else "1px solid transparent"
     )
@@ -62,15 +61,15 @@ def _resolve_reactive_style(
     def update_active(_old: Any, new: Any) -> None:
         if custom.background_color is None:
             background.set(
-                COLORS["primary"] if bool(new) else "transparent"
+                "var(--color-primary)" if bool(new) else "transparent"
             )
         if custom.color is None:
             color.set(
-                COLORS["primary_contrast"] if bool(new) else COLORS["text"]
+                "var(--color-primary-contrast)" if bool(new) else "var(--color-text)"
             )
         if custom.border is None:
             border.set(
-                f"1px solid {COLORS['primary']}"
+                "1px solid var(--color-primary)"
                 if bool(new)
                 else "1px solid transparent"
             )

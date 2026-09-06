@@ -6,7 +6,6 @@ from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Row as _Row
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, SPACING
 
 _DEFAULT_HEADER_STYLE = Style(
     display="flex",
@@ -14,20 +13,20 @@ _DEFAULT_HEADER_STYLE = Style(
     justify_content="space-between",
     align_items="center",
     width="100%",
-    padding_bottom=SPACING["md"],
-    border_bottom=f"1px solid {COLORS['border_muted']}",
+    padding_bottom="var(--spacing-md)",
+    border_bottom="1px solid var(--color-border-muted)",
 )
 
 _TITLE_STYLE = Style(
     font_size="1.5rem",
     font_weight="700",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
 _DESC_STYLE = Style(
     font_size="0.875rem",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     margin="0",
 )
 
@@ -63,7 +62,7 @@ def dashboard_header(
         if isinstance(actions, (list, tuple)):
             right_side = _Row(
                 *actions,
-                style=Style(display="flex", flex_direction="row", gap=SPACING["sm"], align_items="center"),
+                style=Style(display="flex", flex_direction="row", gap="var(--spacing-sm)", align_items="center"),
             )
         else:
             right_side = actions

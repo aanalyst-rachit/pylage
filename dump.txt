@@ -114,6 +114,7 @@ pylage-ui-speed/
 │   ├── UI_KIT_METRIC.md
 │   ├── UI_KIT_METRIC_GRID.md
 │   ├── UI_KIT_MODAL.md
+│   ├── UI_KIT_NAVIGATION.md
 │   ├── UI_KIT_POPOVER.md
 │   ├── UI_KIT_RADIO.md
 │   ├── UI_KIT_ROW.md
@@ -209,6 +210,7 @@ pylage-ui-speed/
 │   │   ├── layout
 │   │   │   ├── __init__.py
 │   │   │   ├── _common.py
+│   │   │   ├── _shorthand.py
 │   │   │   ├── center.py
 │   │   │   ├── column.py
 │   │   │   ├── container.py
@@ -464,6 +466,7 @@ pylage-ui-speed/
 │   ├── test_ui_kit_error_state.py
 │   ├── test_ui_kit_foundation.py
 │   ├── test_ui_kit_heading.py
+│   ├── test_ui_kit_layout_api.py
 │   ├── test_ui_kit_loading_overlay.py
 │   ├── test_ui_kit_loading_state.py
 │   ├── test_ui_kit_menu.py
@@ -493,7 +496,8 @@ pylage-ui-speed/
 ├── pytest.ini
 ├── README.MD
 ├── test.csv
-└── tracker.md
+├── tracker.md
+└── websaas.py
 
 ================================================================================
 SOURCE CODE DUMP
@@ -509,13 +513,13 @@ FILE: index.html
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyLage UI Kit Navigation Item Manual</title>
+    <title>PyLage App</title>
 </head>
 <body>
-<div data-pylage-id="92cf571c9e" style="width:100%;flex-direction:column@media (min-width:768px){flex-direction:row}@media (min-width:1024px){gap:2rem}"><h1 data-pylage-id="b6eb2b33e1">UI Kit Navigation Item — Manual Verification</h1><div data-pylage-id="27ec0905ba">Click an item. The selected item should become active and blue.</div><div data-pylage-id="f69d22d6e5">Selected: Home</div><div data-pylage-id="b4c5344d6a" style="width:100%;flex-direction:column@media (min-width:768px){flex-direction:row}@media (min-width:1024px){gap:2rem}"><button data-pylage-id="08135d00aa" data-pylage-events="click" style="color:#ffffff;background-color:#3b82f6;padding:0.5rem 0.75rem;border:1px solid #3b82f6;border-radius:0.375rem;cursor:pointer">Home</button><button data-pylage-id="55016bb8c5" data-pylage-events="click" style="color:#0f172a;background-color:transparent;padding:0.5rem 0.75rem;border:1px solid transparent;border-radius:0.375rem;cursor:pointer">Products</button><button data-pylage-id="673e9b8bf2" data-pylage-events="click" style="color:#0f172a;background-color:transparent;padding:0.5rem 0.75rem;border:1px solid transparent;border-radius:0.375rem;cursor:pointer">Settings</button><button data-pylage-id="41b7ca7549" data-pylage-events="click" style="color:#0f172a;background-color:transparent;padding:0.5rem 0.75rem;border:1px solid transparent;border-radius:0.375rem;cursor:pointer">Profile</button></div></div><style>[hidden] { display: none !important; }</style>
+<div data-pylage-id="7f76aabc92" style="display:flex;flex-direction:column"><div data-pylage-id="30bfe6a33e">WebSocket URL test</div></div><style>[hidden] { display: none !important; }</style>
 <script>
 window.PyLage = window.PyLage || {};
-window.PyLage.websocketUrl = 'ws://127.0.0.1:42055/';
+window.PyLage.websocketUrl = 'ws://127.0.0.1:38265/';
 </script>
 <script>
 (function () {
@@ -1819,6 +1823,199 @@ if __name__ == "__main__":
 
     # 3. GUI Start karein (Directly Qt engine target kiya hai)
     webview.start(gui="qt")
+
+================================================================================
+FILE: websaas.py
+================================================================================
+
+# websaas.py
+# Full-featured SaaS dashboard using ONLY pylage as pl (public API).
+
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import pylage as pl
+
+
+# ---------- Reactive State ----------
+dark_mode = pl.State(False)
+selected_page = pl.State("Dashboard")
+search_query = pl.State("")
+
+
+# ---------- Page: Dashboard ----------
+def dashboard_page():
+    """Analytics dashboard with stats, charts, and recent activity."""
+    return pl.Column(
+        # Stats row
+        pl.StatsSection(
+            metrics=[
+                {"label": "Total Revenue", "value": "$84,291", "change": "+22.5%"},
+                {"label": "Active Users", "value": "3,842", "change": "+12.3%"},
+                {"label": "Conversion Rate", "value": "18.6%", "change": "+4.1%"},
+                {"label": "Avg. Session", "value": "4m 32s", "change": "-2.1%"},
+            ]
+        ),
+        # Two-column layout for chart and activity
+        pl.TwoColumn(
+            pl.Card(
+                pl.Heading("Revenue Overview", level=3),
+                pl.Container(
+                    style=pl.Style(
+                        height="200px",
+                        background="linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        border_radius="0.5rem",
+                    )
+                ),
+                style=pl.Style(padding="1.25rem", background="#ffffff", border_radius="0.75rem"),
+            ),
+            pl.Card(
+                pl.Heading("Recent Activity", level=3),
+                pl.Column(
+                    pl.Text("🔹 User #1024 signed up", style=pl.Style(padding="0.25rem 0")),
+                    pl.Text("🔹 Invoice #INV-0421 paid", style=pl.Style(padding="0.25rem 0")),
+                    pl.Text("🔹 New integration: Slack", style=pl.Style(padding="0.25rem 0")),
+                    pl.Text("🔹 Deployed v2.4.1 to production", style=pl.Style(padding="0.25rem 0")),
+                ),
+                style=pl.Style(padding="1.25rem", background="#ffffff", border_radius="0.75rem"),
+            ),
+            style=pl.Style(gap="1.5rem", margin_top="1.5rem"),
+        ),
+        style=pl.Style(gap="1.5rem"),
+    )
+
+
+# ---------- Page: Users ----------
+def users_page():
+    """User management table with search and actions."""
+    return pl.Column(
+        pl.Row(
+            pl.Input(
+                placeholder="Search users...",
+                on_input=lambda p: search_query.set(p.get("value", "")),
+                style=pl.Style(width="300px", padding="0.5rem 1rem", border_radius="0.5rem"),
+            ),
+            pl.Button("+ Add User", style=pl.Style(background="#2563eb", color="#fff", padding="0.5rem 1.25rem", border_radius="0.5rem")),
+            style=pl.Style(justify_content="space-between", margin_bottom="1.5rem"),
+        ),
+        pl.Table(
+            headers=["User", "Role", "Status", "Last Active", "Actions"],
+            rows=[
+                ["Alice Johnson", "Admin", pl.Badge("Active", variant="success"), "2 min ago", pl.Button("Edit", style=pl.Style(font_size="0.75rem"))],
+                ["Bob Smith", "Editor", pl.Badge("Away", variant="warning"), "1 hour ago", pl.Button("Edit", style=pl.Style(font_size="0.75rem"))],
+                ["Carol White", "Viewer", pl.Badge("Inactive", variant="danger"), "3 days ago", pl.Button("Edit", style=pl.Style(font_size="0.75rem"))],
+            ],
+            style=pl.Style(width="100%", border_collapse="collapse"),
+        ),
+        style=pl.Style(gap="1.5rem"),
+    )
+
+
+# ---------- Page: Settings ----------
+def settings_page():
+    """Account and application settings."""
+    return pl.Column(
+        pl.Card(
+            pl.Heading("Profile Settings", level=3),
+            pl.Row(
+                pl.Column(
+                    pl.Text("Full Name", style=pl.Style(font_weight="600")),
+                    pl.Input(value="Rachit Analytics", style=pl.Style(width="100%", padding="0.5rem", border_radius="0.5rem")),
+                    pl.Text("Email", style=pl.Style(font_weight="600", margin_top="1rem")),
+                    pl.Input(value="rachit@example.com", style=pl.Style(width="100%", padding="0.5rem", border_radius="0.5rem")),
+                    style=pl.Style(flex="1"),
+                ),
+                pl.Column(
+                    pl.Avatar(initials="RA", size="large"),
+                    pl.Text("Profile Photo", style=pl.Style(font_weight="600", margin_top="0.5rem")),
+                    pl.Button("Upload", style=pl.Style(background="#e2e8f0", padding="0.5rem 1rem", border_radius="0.5rem")),
+                    style=pl.Style(align_items="center", flex="0 0 150px"),
+                ),
+                style=pl.Style(gap="2rem", align_items="flex-start"),
+            ),
+            pl.Button("Save Changes", style=pl.Style(background="#2563eb", color="#fff", padding="0.75rem 2rem", border_radius="0.5rem", margin_top="1.5rem")),
+            style=pl.Style(padding="1.5rem", background="#ffffff", border_radius="0.75rem"),
+        ),
+        pl.Card(
+            pl.Heading("Appearance", level=3),
+            pl.Row(
+                pl.Text("Dark Mode"),
+                pl.Switch(
+                    value=dark_mode,
+                    on_change=lambda v: dark_mode.set(v),
+                ),
+                style=pl.Style(align_items="center", gap="1rem"),
+            ),
+            style=pl.Style(padding="1.5rem", background="#ffffff", border_radius="0.75rem", margin_top="1.5rem"),
+        ),
+        style=pl.Style(gap="1.5rem"),
+    )
+
+
+# ---------- Page Router ----------
+def page_content():
+    """Render the selected page."""
+    page_map = {
+        "Dashboard": dashboard_page,
+        "Users": users_page,
+        "Settings": settings_page,
+    }
+    return page_map.get(selected_page.value, dashboard_page)()
+
+
+# ---------- Main App ----------
+def get_app():
+    """Assemble the full SaaS application."""
+    
+    # Sidebar Navigation
+    nav_items = pl.Column(
+        pl.Button("📊 Dashboard", on_click=lambda: selected_page.set("Dashboard"), style=pl.Style(width="100%", text_align="left", padding="0.75rem 1rem", border_radius="0.5rem")),
+        pl.Button("👥 Users", on_click=lambda: selected_page.set("Users"), style=pl.Style(width="100%", text_align="left", padding="0.75rem 1rem", border_radius="0.5rem")),
+        pl.Button("⚙️ Settings", on_click=lambda: selected_page.set("Settings"), style=pl.Style(width="100%", text_align="left", padding="0.75rem 1rem", border_radius="0.5rem")),
+        style=pl.Style(gap="0.5rem", padding="1rem"),
+    )
+
+    # Header
+    header = pl.Row(
+        pl.Heading("PyLage SaaS", level=1, style=pl.Style(font_size="1.5rem", margin=0)),
+        pl.Row(
+            pl.Icon(name="bell", style=pl.Style(width="24px", height="24px")),
+            pl.Avatar(initials="RA", size="small"),
+            style=pl.Style(align_items="center", gap="1rem"),
+        ),
+        style=pl.Style(justify_content="space-between", align_items="center", padding="0.75rem 2rem", background="var(--color-bg-surface)"),
+    )
+
+    # AppShell with sidebar layout
+    app = pl.AppShell(
+        header=header,
+        sidebar=pl.SidebarLayout(
+            sidebar=nav_items,
+            content=pl.Container(
+                page_content(),
+                style=pl.Style(padding="1.5rem", max_width="1200px"),
+            ),
+        ),
+        style=pl.Style(
+            min_height="100vh",
+            background="var(--color-bg-page)",
+            color="var(--color-text)",
+        ),
+    )
+
+    # Apply theme dynamically
+    theme = pl.DARK_THEME if dark_mode.value else pl.LIGHT_THEME
+    app.theme = theme
+
+    return app
+
+
+# ---------- Run the App ----------
+if __name__ == "__main__":
+    app = get_app()
+    pl.run(app, title="PyLage SaaS Dashboard", serve=True, open_browser=True)
 
 ================================================================================
 FILE: pylage/__init__.py
@@ -12123,6 +12320,127 @@ def resolve_style(custom_style: Style | ResponsiveStyle | None) -> Style | Respo
 
 
 ================================================================================
+FILE: pylage/UI/layout/_shorthand.py
+================================================================================
+
+from __future__ import annotations
+
+from typing import Any
+
+from pylage.ENGINE.styling.responsive import ResponsiveStyle
+from pylage.ENGINE.styling.style import Style
+from pylage.UI.tokens import SPACING
+
+
+SPACING_PROPS = {
+    "p": ("padding",),
+    "px": ("padding_left", "padding_right"),
+    "py": ("padding_top", "padding_bottom"),
+    "pt": ("padding_top",),
+    "pr": ("padding_right",),
+    "pb": ("padding_bottom",),
+    "pl": ("padding_left",),
+    "m": ("margin",),
+    "mx": ("margin_left", "margin_right"),
+    "my": ("margin_top", "margin_bottom"),
+    "mt": ("margin_top",),
+    "mr": ("margin_right",),
+    "mb": ("margin_bottom",),
+    "ml": ("margin_left",),
+    "gap": ("gap",),
+    "row_gap": ("row_gap",),
+    "column_gap": ("column_gap",),
+}
+
+
+def _resolve_spacing(value: Any) -> Any:
+    if isinstance(value, str) and value in SPACING:
+        return SPACING[value]
+    return value
+
+
+def spacing_style(props: dict[str, Any]) -> Style:
+    values: dict[str, Any] = {}
+
+    for shorthand, fields in SPACING_PROPS.items():
+        if shorthand not in props:
+            continue
+        value = _resolve_spacing(props.pop(shorthand))
+        for field in fields:
+            values[field] = value
+
+    return Style(**values)
+
+
+def responsive_style(value: dict[str, dict[str, Any]]) -> ResponsiveStyle:
+    styles: dict[str, Style | None] = {}
+
+    for breakpoint in ("base", "sm", "md", "lg", "xl"):
+        mapping = value.get(breakpoint)
+        if mapping is None:
+            styles[breakpoint] = None
+            continue
+
+        resolved = dict(mapping)
+        for field, field_value in list(resolved.items()):
+            resolved[field] = _resolve_spacing(field_value)
+        styles[breakpoint] = Style(**resolved)
+
+    return ResponsiveStyle(**styles)
+
+
+def build_layout_style(
+    default: ResponsiveStyle,
+    props: dict[str, Any],
+    responsive: dict[str, dict[str, Any]] | None = None,
+    style: Style | ResponsiveStyle | None = None,
+) -> Style | ResponsiveStyle:
+    spacing = spacing_style(props)
+
+    if responsive is not None:
+        responsive_value = responsive_style(responsive)
+        base = (default.base or Style()).merge(spacing)
+        responsive_value = ResponsiveStyle(
+            base=base.merge(responsive_value.base) if responsive_value.base else base,
+            sm=responsive_value.sm,
+            md=responsive_value.md,
+            lg=responsive_value.lg,
+            xl=responsive_value.xl,
+        )
+    else:
+        responsive_value = ResponsiveStyle(
+            base=(default.base or Style()).merge(spacing),
+            sm=default.sm,
+            md=default.md,
+            lg=default.lg,
+            xl=default.xl,
+        )
+
+    if style is None:
+        return responsive_value
+
+    if isinstance(style, ResponsiveStyle):
+        return ResponsiveStyle(
+            base=(responsive_value.base or Style()).merge(style.base),
+            sm=style.sm if style.sm is not None else responsive_value.sm,
+            md=style.md if style.md is not None else responsive_value.md,
+            lg=style.lg if style.lg is not None else responsive_value.lg,
+            xl=style.xl if style.xl is not None else responsive_value.xl,
+        )
+
+    if responsive is None:
+        return style
+
+    return ResponsiveStyle(
+        base=(responsive_value.base or Style()).merge(style),
+        sm=responsive_value.sm,
+        md=responsive_value.md,
+        lg=responsive_value.lg,
+        xl=responsive_value.xl,
+    )
+
+
+================================================================================
 FILE: pylage/UI/layout/center.py
 ================================================================================
 
@@ -12139,7 +12457,8 @@ from pylage.ENGINE.components.basic import Column as _Column
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
-from ._common import resolve_style
+from ._common import default_responsive_style
+from ._shorthand import build_layout_style
 
 __all__ = ["column"]
 
@@ -12147,7 +12466,8 @@ __all__ = ["column"]
 def column(*children: Any, style: Style | ResponsiveStyle | None = None, **props: Any) -> Component:
     """Create a UI Kit column using the existing PyLage Column component."""
     normalized_children = [child for child in children if child is not None]
-    return _Column(*normalized_children, style=resolve_style(style), **props)
+    responsive = props.pop("responsive", None)
+    return _Column(*normalized_children, style=build_layout_style(default_responsive_style(), props, responsive=responsive, style=style), **props)
 
 
 ================================================================================
@@ -12431,14 +12751,16 @@ from pylage.ENGINE.components.basic import Row as _Row
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
-from ._common import resolve_style
+from ._common import default_responsive_style
+from ._shorthand import build_layout_style
 
 __all__ = ["row"]
 
 def row(*children: Any, style: Style | ResponsiveStyle | None = None, **props: Any) -> Component:
     """Create a UI Kit row using the existing PyLage Row component."""
     normalized_children = [child for child in children if child is not None]
-    return _Row(*normalized_children, style=resolve_style(style), **props)
+    responsive = props.pop("responsive", None)
+    return _Row(*normalized_children, style=build_layout_style(default_responsive_style(), props, responsive=responsive, style=style), **props)
 
 
 ================================================================================
@@ -12659,7 +12981,6 @@ from pylage.ENGINE import Alert as _Alert
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
 from pylage.ENGINE.core.component import Component
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 
 __all__ = ["alert"]
@@ -12667,34 +12988,34 @@ __all__ = ["alert"]
 
 _VARIANT_STYLES: dict[str, Style] = {
     "default": Style(
-        background_color=COLORS["surface_variant"],
-        color=COLORS["text"],
-        border="1px solid " + COLORS["border"],
+        background_color="var(--color-surface-variant)",
+        color="var(--color-text)",
+        border="1px solid " + "var(--color-border)",
     ),
     "info": Style(
-        background_color=COLORS["info"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["info"],
+        background_color="var(--color-info)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-info)",
     ),
     "success": Style(
-        background_color=COLORS["success"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["success"],
+        background_color="var(--color-success)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-success)",
     ),
     "warning": Style(
-        background_color=COLORS["warning"],
-        color=COLORS["text"],
-        border="1px solid " + COLORS["warning"],
+        background_color="var(--color-warning)",
+        color="var(--color-text)",
+        border="1px solid " + "var(--color-warning)",
     ),
     "danger": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["danger"],
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-danger)",
     ),
     "error": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["danger"],
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-danger)",
     ),
 }
 
@@ -12702,9 +13023,9 @@ _VARIANT_STYLES: dict[str, Style] = {
 _BASE_STYLE = Style(
     display="flex",
     flex_direction="column",
-    gap=SPACING["xs"],
-    padding=SPACING["md"],
-    border_radius=RADIUS["md"],
+    gap="var(--spacing-xs)",
+    padding="var(--spacing-md)",
+    border_radius="var(--radius-md)",
 )
 
 
@@ -12796,50 +13117,49 @@ from pylage.ENGINE import Badge as _Badge
 from pylage.ENGINE import Text as _Text
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE import Style
-from pylage.UI.tokens import COLORS, RADIUS
 
 
 _VARIANT_STYLES: dict[str, Style] = {
     "default": Style(
-        background_color=COLORS["surface_variant"],
-        color=COLORS["text"],
-        border=f"1px solid {COLORS['border']}",
+        background_color="var(--color-surface-variant)",
+        color="var(--color-text)",
+        border="1px solid var(--color-border)",
     ),
     "primary": Style(
-        background_color=COLORS["primary"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['primary']}",
+        background_color="var(--color-primary)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-primary)",
     ),
     "secondary": Style(
-        background_color=COLORS["secondary"],
-        color=COLORS["secondary_contrast"],
-        border=f"1px solid {COLORS['secondary']}",
+        background_color="var(--color-secondary)",
+        color="var(--color-secondary-contrast)",
+        border="1px solid var(--color-secondary)",
     ),
     "success": Style(
-        background_color=COLORS["success"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['success']}",
+        background_color="var(--color-success)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-success)",
     ),
     "warning": Style(
-        background_color=COLORS["warning"],
-        color=COLORS["text"],
-        border=f"1px solid {COLORS['warning']}",
+        background_color="var(--color-warning)",
+        color="var(--color-text)",
+        border="1px solid var(--color-warning)",
     ),
     "danger": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['danger']}",
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-danger)",
     ),
     "info": Style(
-        background_color=COLORS["info"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['info']}",
+        background_color="var(--color-info)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-info)",
     ),
 }
 
 _BASE_STYLE = Style(
     padding="0.25rem 0.625rem",
-    border_radius=RADIUS["full"],
+    border_radius="var(--radius-full)",
     font_size="0.75rem",
     font_weight="600",
 )
@@ -12880,34 +13200,33 @@ from typing import Any
 
 from pylage.ENGINE import Button as _Button
 from pylage.ENGINE import Style
-from pylage.UI.tokens import COLORS
 
 
 _VARIANT_STYLES: dict[str, Style] = {
     "primary": Style(
-        background_color=COLORS["primary"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['primary']}",
+        background_color="var(--color-primary)",
+        color="var(--color-primary-contrast)",
+        border='1px solid var(--color-primary)',
     ),
     "secondary": Style(
-        background_color=COLORS["secondary"],
-        color=COLORS["secondary_contrast"],
-        border=f"1px solid {COLORS['secondary']}",
+        background_color="var(--color-secondary)",
+        color="var(--color-secondary-contrast)",
+        border='1px solid var(--color-secondary)',
     ),
     "outline": Style(
-        background_color=COLORS["background"],
-        color=COLORS["primary_hover"],
-        border=f"1px solid {COLORS['primary_hover']}",
+        background_color="var(--color-background)",
+        color="var(--color-primary-hover)",
+        border='1px solid var(--color-primary-hover)',
     ),
     "ghost": Style(
         background_color="transparent",
-        color=COLORS["text"],
+        color="var(--color-text)",
         border="1px solid transparent",
     ),
     "danger": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['danger']}",
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border='1px solid var(--color-danger)',
     ),
 }
 
@@ -12927,7 +13246,7 @@ _SIZE_STYLES: dict[str, Style] = {
 }
 
 _BASE_STYLE = Style(
-    border_radius="0.5rem",
+    border_radius="var(--radius-lg)",
     font_weight="600",
     cursor="pointer",
 )
@@ -12982,34 +13301,33 @@ from pylage.ENGINE import Card as _Card
 from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 
 _VARIANT_STYLES: dict[str, Style] = {
     "default": Style(
-        background_color=COLORS["background"],
-        padding=SPACING["lg"],
-        border_radius=RADIUS["xl"],
-        border=f"1px solid {COLORS['border']}",
+        background_color="var(--color-background)",
+        padding="var(--spacing-lg)",
+        border_radius="var(--radius-xl)",
+        border="1px solid var(--color-border)",
     ),
     "elevated": Style(
-        background_color=COLORS["background"],
-        padding=SPACING["lg"],
-        border_radius=RADIUS["xl"],
-        border=f"1px solid {COLORS['border_muted']}",
+        background_color="var(--color-background)",
+        padding="var(--spacing-lg)",
+        border_radius="var(--radius-xl)",
+        border="1px solid var(--color-border-muted)",
         box_shadow="0 10px 15px -3px rgba(0,0,0,0.1)",
     ),
     "outlined": Style(
-        background_color=COLORS["background"],
-        padding=SPACING["lg"],
-        border_radius=RADIUS["xl"],
-        border=f"1px solid {COLORS['border_muted']}",
+        background_color="var(--color-background)",
+        padding="var(--spacing-lg)",
+        border_radius="var(--radius-xl)",
+        border="1px solid var(--color-border-muted)",
     ),
     "interactive": Style(
-        background_color=COLORS["background"],
-        padding=SPACING["lg"],
-        border_radius=RADIUS["xl"],
-        border=f"1px solid {COLORS['border']}",
+        background_color="var(--color-background)",
+        padding="var(--spacing-lg)",
+        border_radius="var(--radius-xl)",
+        border="1px solid var(--color-border)",
         cursor="pointer",
     ),
 }
@@ -13419,25 +13737,24 @@ from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Row as _Row
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, SPACING
 
 _DEFAULT_SECTION_STYLE = Style(
     display="flex",
     flex_direction="column",
     width="100%",
-    gap=SPACING["md"],
+    gap="var(--spacing-md)",
 )
 
 _TITLE_STYLE = Style(
     font_size="1.25rem",
     font_weight="600",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
 _DESC_STYLE = Style(
     font_size="0.875rem",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     margin="0",
 )
 
@@ -13509,30 +13826,29 @@ from pylage.ENGINE import Column as _Column
 from pylage.ENGINE import Row as _Row
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 _DEFAULT_CONTAINER_STYLE = Style(
     display="flex",
     flex_direction="column",
     width="100%",
-    background_color=COLORS["background"],
-    border=f"1px solid {COLORS['border']}",
-    border_radius=RADIUS["xl"],
-    padding=SPACING["md"],
-    gap=SPACING["sm"],
+    background_color="var(--color-background)",
+    border="1px solid var(--color-border)",
+    border_radius="var(--radius-xl)",
+    padding="var(--spacing-md)",
+    gap="var(--spacing-sm)",
 )
 
 _LABEL_STYLE = Style(
     font_size="0.875rem",
     font_weight="500",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     margin="0",
 )
 
 _VALUE_STYLE = Style(
     font_size="0.875rem",
     font_weight="500",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
@@ -13541,13 +13857,13 @@ _ROW_HORIZONTAL_STYLE = Style(
     flex_direction="row",
     justify_content="space-between",
     align_items="center",
-    padding=f"{SPACING['xs']} 0",
+    padding="var(--spacing-xs) 0",
     width="100%",
 )
 
 _ROW_DIVIDED_STYLE = Style(
-    border_bottom=f"1px solid {COLORS['border_muted']}",
-    padding_bottom=SPACING["sm"],
+    border_bottom="1px solid var(--color-border-muted)",
+    padding_bottom="var(--spacing-sm)",
 )
 
 def data_list(
@@ -13593,7 +13909,7 @@ def data_list(
                 flex_direction="column",
                 gap="0.25rem",
                 width="100%",
-                padding=f"{SPACING['xs']} 0",
+                padding="var(--spacing-xs) 0",
             )
             if divided and not is_last:
                 col_style = col_style.merge(_ROW_DIVIDED_STYLE)
@@ -13620,13 +13936,12 @@ from typing import Any
 
 from pylage.ENGINE import DataFrame as _DataFrame
 from pylage.ENGINE import Style
-from pylage.UI.tokens import COLORS, RADIUS
 
 
 _DEFAULT_STYLE = Style(
     width="100%",
-    border=f"1px solid {COLORS['border']}",
-    border_radius=RADIUS["lg"],
+    border="1px solid var(--color-border)",
+    border_radius="var(--radius-lg)",
     overflow="hidden",
 )
 
@@ -13693,18 +14008,17 @@ from typing import Any
 from pylage.ENGINE import Dialog as _Dialog
 from pylage.ENGINE import Style
 from pylage.ENGINE.core.component import Component
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 
 __all__ = ["dialog"]
 
 
 _BASE_STYLE = Style(
-    padding=SPACING["lg"],
-    background_color=COLORS["background"],
-    color=COLORS["text"],
-    border=f"1px solid {COLORS['border']}",
-    border_radius=RADIUS["xl"],
+    padding="var(--spacing-lg)",
+    background_color="var(--color-background)",
+    color="var(--color-text)",
+    border="1px solid var(--color-border)",
+    border_radius="var(--radius-xl)",
 )
 
 
@@ -13766,7 +14080,6 @@ from pylage.ENGINE import Column as _Column
 from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 _DEFAULT_CONTAINER_STYLE = Style(
     display="flex",
@@ -13774,23 +14087,23 @@ _DEFAULT_CONTAINER_STYLE = Style(
     align_items="center",
     justify_content="center",
     text_align="center",
-    padding=SPACING["2xl"],
-    background_color=COLORS["background"],
-    border=f"1px dashed {COLORS['border_muted']}",
-    border_radius=RADIUS["xl"],
-    gap=SPACING["sm"],
+    padding="var(--spacing-2xl)",
+    background_color="var(--color-background)",
+    border="1px dashed var(--color-border-muted)",
+    border_radius="var(--radius-xl)",
+    gap="var(--spacing-sm)",
 )
 
 _TITLE_STYLE = Style(
     font_size="1.125rem",
     font_weight="600",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
 _DESC_STYLE = Style(
     font_size="0.875rem",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     max_width="28rem",
     margin="0",
     line_height="1.5",
@@ -13802,11 +14115,11 @@ _ICON_CONTAINER_STYLE = Style(
     justify_content="center",
     width="3.5rem",
     height="3.5rem",
-    border_radius=RADIUS["full"],
-    background_color=COLORS["surface"],
-    color=COLORS["text_muted"],
+    border_radius="var(--radius-full)",
+    background_color="var(--color-surface)",
+    color="var(--color-text-muted)",
     font_size="1.5rem",
-    margin_bottom=SPACING["xs"],
+    margin_bottom="var(--spacing-xs)",
 )
 
 def empty_state(
@@ -13856,7 +14169,6 @@ from pylage.ENGINE import Column as _Column
 from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 _DEFAULT_CONTAINER_STYLE = Style(
     display="flex",
@@ -13864,23 +14176,23 @@ _DEFAULT_CONTAINER_STYLE = Style(
     align_items="center",
     justify_content="center",
     text_align="center",
-    padding=SPACING["2xl"],
-    background_color=COLORS["background"],
-    border=f"1px solid {COLORS['danger_border'] if 'danger_border' in COLORS else '#fecaca'}",
-    border_radius=RADIUS["xl"],
-    gap=SPACING["sm"],
+    padding="var(--spacing-2xl)",
+    background_color="var(--color-background)",
+    border="1px solid var(--color-danger-border)",
+    border_radius="var(--radius-xl)",
+    gap="var(--spacing-sm)",
 )
 
 _TITLE_STYLE = Style(
     font_size="1.125rem",
     font_weight="600",
-    color=COLORS["danger"] if "danger" in COLORS else "#dc2626",
+    color="var(--color-danger)",
     margin="0",
 )
 
 _DESC_STYLE = Style(
     font_size="0.875rem",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     max_width="28rem",
     margin="0",
     line_height="1.5",
@@ -13892,11 +14204,11 @@ _ICON_CONTAINER_STYLE = Style(
     justify_content="center",
     width="3.5rem",
     height="3.5rem",
-    border_radius=RADIUS["full"],
-    background_color="#fee2e2",
-    color="#dc2626",
+    border_radius="var(--radius-full)",
+    background_color="var(--color-danger-bg)",
+    color="var(--color-danger)",
     font_size="1.5rem",
-    margin_bottom=SPACING["xs"],
+    margin_bottom="var(--spacing-xs)",
 )
 
 def error_state(
@@ -14090,7 +14402,6 @@ from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
 from pylage.UI.components.dialog import dialog
 from pylage.UI.layout.column import column
-from pylage.UI.tokens import COLORS, SPACING
 
 __all__ = ["loading_overlay"]
 
@@ -14111,7 +14422,7 @@ _OVERLAY_STYLE = Style(
     border="none",
     border_radius=0,
     z_index=1100,
-    color=COLORS["text"],
+    color="var(--color-text)",
 )
 
 _CONTENT_STYLE = Style(
@@ -14122,15 +14433,15 @@ _CONTENT_STYLE = Style(
     flex_direction="column",
     align_items="center",
     justify_content="center",
-    gap=SPACING["sm"],
-    padding=SPACING["lg"],
+    gap="var(--spacing-sm)",
+    padding="var(--spacing-lg)",
     text_align="center",
 )
 
 _TEXT_STYLE = Style(
     font_size="1rem",
     font_weight="500",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
@@ -14174,7 +14485,6 @@ from pylage.ENGINE import Column as _Column
 from pylage.ENGINE import Spinner as _Spinner
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 _DEFAULT_CONTAINER_STYLE = Style(
     display="flex",
@@ -14182,22 +14492,22 @@ _DEFAULT_CONTAINER_STYLE = Style(
     align_items="center",
     justify_content="center",
     text_align="center",
-    padding=SPACING["2xl"],
-    background_color=COLORS["background"],
-    border_radius=RADIUS["xl"],
-    gap=SPACING["sm"],
+    padding="var(--spacing-2xl)",
+    background_color="var(--color-background)",
+    border_radius="var(--radius-xl)",
+    gap="var(--spacing-sm)",
 )
 
 _TEXT_STYLE = Style(
     font_size="1rem",
     font_weight="500",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
 _DESC_STYLE = Style(
     font_size="0.875rem",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     max_width="24rem",
     margin="0",
     line_height="1.5",
@@ -14246,24 +14556,23 @@ from pylage.ENGINE import Column as _Column
 from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Text as _Text
 
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 
 _DEFAULT_CARD_STYLE = Style(
     display="flex",
     flex_direction="column",
-    gap=SPACING["sm"],
-    padding=SPACING["lg"],
-    background_color=COLORS["background"],
-    border=f"1px solid {COLORS['border']}",
-    border_radius=RADIUS["xl"],
+    gap="var(--spacing-sm)",
+    padding="var(--spacing-lg)",
+    background_color="var(--color-background)",
+    border="1px solid var(--color-border)",
+    border_radius="var(--radius-xl)",
 )
 
 
 _LABEL_STYLE = Style(
     font_size="0.875rem",
     font_weight="500",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     margin="0",
 )
 
@@ -14271,7 +14580,7 @@ _LABEL_STYLE = Style(
 _VALUE_STYLE = Style(
     font_size="1.75rem",
     font_weight="700",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
@@ -14279,14 +14588,14 @@ _VALUE_STYLE = Style(
 _DELTA_STYLE = Style(
     font_size="0.875rem",
     font_weight="600",
-    color=COLORS["success"],
+    color="var(--color-success)",
     margin="0",
 )
 
 
 _DESCRIPTION_STYLE = Style(
     font_size="0.75rem",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     margin="0",
 )
 
@@ -14322,7 +14631,7 @@ def metric(
     if featured:
         card_style = card_style.merge(
             Style(
-                border=f"2px solid {COLORS['primary']}",
+                border="2px solid var(--color-primary)",
             )
         )
 
@@ -14334,7 +14643,7 @@ def metric(
             style=Style(
                 display="flex",
                 flex_direction="column",
-                gap=SPACING["sm"],
+                gap="var(--spacing-sm)",
             ),
         ),
         style=final_style,
@@ -14375,17 +14684,16 @@ FILE: pylage/UI/components/navigation_item.py
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable
 
 from pylage.ENGINE import Button as _Button
 from pylage.ENGINE import State
 from pylage.ENGINE import Style
-from pylage.UI.tokens import COLORS
 
 
 _BASE_STYLE = Style(
     background_color="transparent",
-    color=COLORS["text"],
+    color="var(--color-text)",
     border="1px solid transparent",
     border_radius="0.375rem",
     padding="0.5rem 0.75rem",
@@ -14394,9 +14702,9 @@ _BASE_STYLE = Style(
 
 
 _ACTIVE_STYLE = Style(
-    background_color=COLORS["primary"],
-    color=COLORS["primary_contrast"],
-    border=f"1px solid {COLORS["primary"]}",
+    background_color="var(--color-primary)",
+    color="var(--color-primary-contrast)",
+    border="1px solid var(--color-primary)",
 )
 
 
@@ -14408,17 +14716,17 @@ def _resolve_style(active: bool, style: Style | None) -> Style:
 def _resolve_reactive_style(
     active: State,
     style: Style | None,
-) -> tuple[Style, callable]:
+) -> tuple[Style, Callable[[Any, Any], None]]:
     custom = style or Style()
 
     background = State(
-        COLORS["primary"] if bool(active.value) else "transparent"
+        "var(--color-primary)" if bool(active.value) else "transparent"
     )
     color = State(
-        COLORS["primary_contrast"] if bool(active.value) else COLORS["text"]
+        "var(--color-primary-contrast)" if bool(active.value) else "var(--color-text)"
     )
     border = State(
-        f"1px solid {COLORS["primary"]}"
+        "1px solid var(--color-primary)"
         if bool(active.value)
         else "1px solid transparent"
     )
@@ -14437,15 +14745,15 @@ def _resolve_reactive_style(
     def update_active(_old: Any, new: Any) -> None:
         if custom.background_color is None:
             background.set(
-                COLORS["primary"] if bool(new) else "transparent"
+                "var(--color-primary)" if bool(new) else "transparent"
             )
         if custom.color is None:
             color.set(
-                COLORS["primary_contrast"] if bool(new) else COLORS["text"]
+                "var(--color-primary-contrast)" if bool(new) else "var(--color-text)"
             )
         if custom.border is None:
             border.set(
-                f"1px solid {COLORS["primary"]}"
+                "1px solid var(--color-primary)"
                 if bool(new)
                 else "1px solid transparent"
             )
@@ -14580,13 +14888,12 @@ from __future__ import annotations
 from typing import Any, Mapping
 from pylage.ENGINE import Grid as _Grid
 from pylage.ENGINE import Style
-from pylage.UI.tokens import SPACING
 from .metric import metric as _metric
 
 _DEFAULT_GRID_STYLE = Style(
     display="grid",
     width="100%",
-    gap=SPACING["lg"],
+    gap="var(--spacing-lg)",
 )
 
 def stat_group(
@@ -14673,13 +14980,12 @@ from typing import Any
 
 from pylage.ENGINE import Style
 from pylage.ENGINE import Table as _Table
-from pylage.UI.tokens import COLORS, RADIUS
 
 
 _DEFAULT_STYLE = Style(
     width="100%",
-    border=f"1px solid {COLORS['border']}",
-    border_radius=RADIUS["lg"],
+    border="1px solid var(--color-border)",
+    border_radius="var(--radius-lg)",
     overflow="hidden",
 )
 
@@ -14712,21 +15018,20 @@ from typing import Any
 
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS
 
 
 _MUTED_STYLE = Style(
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
 )
 
 _LABEL_STYLE = Style(
-    color=COLORS["text"],
+    color="var(--color-text)",
     font_size="0.875rem",
     font_weight="500",
 )
 
 _CAPTION_STYLE = Style(
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     font_size="0.75rem",
 )
 
@@ -14876,7 +15181,6 @@ from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
 from pylage.ENGINE import Toast as _Toast
 from pylage.ENGINE.core.component import Component
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 
 __all__ = ["toast"]
@@ -14884,34 +15188,34 @@ __all__ = ["toast"]
 
 _VARIANT_STYLES: dict[str, Style] = {
     "default": Style(
-        background_color=COLORS["surface_variant"],
-        color=COLORS["text"],
-        border="1px solid " + COLORS["border"],
+        background_color="var(--color-surface-variant)",
+        color="var(--color-text)",
+        border="1px solid " + "var(--color-border)",
     ),
     "info": Style(
-        background_color=COLORS["info"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["info"],
+        background_color="var(--color-info)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-info)",
     ),
     "success": Style(
-        background_color=COLORS["success"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["success"],
+        background_color="var(--color-success)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-success)",
     ),
     "warning": Style(
-        background_color=COLORS["warning"],
-        color=COLORS["text"],
-        border="1px solid " + COLORS["warning"],
+        background_color="var(--color-warning)",
+        color="var(--color-text)",
+        border="1px solid " + "var(--color-warning)",
     ),
     "danger": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["danger"],
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-danger)",
     ),
     "error": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border="1px solid " + COLORS["danger"],
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border="1px solid " + "var(--color-danger)",
     ),
 }
 
@@ -14919,9 +15223,9 @@ _VARIANT_STYLES: dict[str, Style] = {
 _BASE_STYLE = Style(
     display="flex",
     flex_direction="column",
-    gap=SPACING["xs"],
-    padding=SPACING["md"],
-    border_radius=RADIUS["md"],
+    gap="var(--spacing-xs)",
+    padding="var(--spacing-md)",
+    border_radius="var(--radius-md)",
 )
 
 
@@ -14960,7 +15264,6 @@ from typing import Any
 from pylage.ENGINE import Badge as _Badge
 from pylage.ENGINE import Style, Text as _Text
 from pylage.ENGINE.core.component import Component
-from pylage.UI.tokens import COLORS, RADIUS
 
 
 _DIRECTION_CONFIG: dict[str, tuple[str, str]] = {
@@ -14971,25 +15274,25 @@ _DIRECTION_CONFIG: dict[str, tuple[str, str]] = {
 
 _VARIANT_STYLES: dict[str, Style] = {
     "success": Style(
-        background_color=COLORS["success"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['success']}",
+        background_color="var(--color-success)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-success)",
     ),
     "danger": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['danger']}",
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-danger)",
     ),
     "secondary": Style(
-        background_color=COLORS["secondary"],
-        color=COLORS["secondary_contrast"],
-        border=f"1px solid {COLORS['secondary']}",
+        background_color="var(--color-secondary)",
+        color="var(--color-secondary-contrast)",
+        border="1px solid var(--color-secondary)",
     ),
 }
 
 _BASE_STYLE = Style(
     padding="0.25rem 0.625rem",
-    border_radius=RADIUS["full"],
+    border_radius="var(--radius-full)",
     font_size="0.75rem",
     font_weight="600",
 )
@@ -23581,19 +23884,22 @@ def test_layout_public_api_exists():
         "Container",
         "Footer",
         "Header",
-        "Navigation",
-        "Pagination",
-        "Menu",
         "Section",
-        "SidebarLayout",
         "Split",
         "Stack",
         "TwoColumn",
         "ThreeColumn",
-        "topheader",
+        "row",
+        "column",
         "Topbar",
-            "row",
-            "column",
+        "topheader",
+        "navbar",
+        "navigation",
+        "sidebar_layout",
+        "tabs",
+        "pagination",
+        "menu",
+        "navigation_controls",
     }
 
     assert set(layouts.__all__) == expected
@@ -23886,15 +24192,22 @@ REQUIRED_EXPORTS = [
     "Container",
     "Footer",
     "Header",
-    "Navigation",
-    "Pagination",
-    "Menu",
     "Section",
-    "SidebarLayout",
     "Split",
     "Stack",
     "TwoColumn",
     "ThreeColumn",
+    "row",
+    "column",
+    "Topbar",
+    "topheader",
+    "navbar",
+    "navigation",
+    "sidebar_layout",
+    "tabs",
+    "pagination",
+    "menu",
+    "navigation_controls",
 ]
 
 
@@ -40723,11 +41036,11 @@ def test_badge_default_contract():
 
     style = badge.props["style"]
 
-    assert style.background_color == "#f1f5f9"
-    assert style.color == "#0f172a"
-    assert style.border == "1px solid #e2e8f0"
+    assert style.background_color == "var(--color-surface-variant)"
+    assert style.color == "var(--color-text)"
+    assert style.border == "1px solid var(--color-border)"
     assert style.padding == "0.25rem 0.625rem"
-    assert style.border_radius == "9999px"
+    assert style.border_radius == "var(--radius-full)"
     assert style.font_size == "0.75rem"
     assert style.font_weight == "600"
 
@@ -40748,12 +41061,12 @@ def test_badge_supports_reactive_content():
 
 def test_badge_variants():
     expected = {
-        "primary": ("#3b82f6", "#ffffff"),
-        "secondary": ("#64748b", "#ffffff"),
-        "success": ("#22c55e", "#ffffff"),
-        "warning": ("#f59e0b", "#0f172a"),
-        "danger": ("#ef4444", "#ffffff"),
-        "info": ("#06b6d4", "#ffffff"),
+        "primary": ("var(--color-primary)", "var(--color-primary-contrast)"),
+        "secondary": ("var(--color-secondary)", "var(--color-secondary-contrast)"),
+        "success": ("var(--color-success)", "var(--color-primary-contrast)"),
+        "warning": ("var(--color-warning)", "var(--color-text)"),
+        "danger": ("var(--color-danger)", "var(--color-primary-contrast)"),
+        "info": ("var(--color-info)", "var(--color-primary-contrast)"),
     }
 
     for variant, (background, foreground) in expected.items():
@@ -40767,7 +41080,7 @@ def test_badge_variants():
 def test_badge_custom_style_overrides_defaults():
     custom = Style(
         background_color="#111827",
-        color="#ffffff",
+        color="var(--color-primary-contrast)",
         padding="0.5rem 1rem",
     )
 
@@ -40775,9 +41088,9 @@ def test_badge_custom_style_overrides_defaults():
     style = badge.props["style"]
 
     assert style.background_color == "#111827"
-    assert style.color == "#ffffff"
+    assert style.color == "var(--color-primary-contrast)"
     assert style.padding == "0.5rem 1rem"
-    assert style.border_radius == "9999px"
+    assert style.border_radius == "var(--radius-full)"
 
 
 def test_badge_does_not_leak_variant_to_engine_props():
@@ -40891,10 +41204,10 @@ def test_button_default_contract():
     button = ps.button("Save")
     style = button.props["style"]
 
-    assert style.background_color == "#3b82f6"
-    assert style.color == "#ffffff"
-    assert style.border == "1px solid #3b82f6"
-    assert style.border_radius == "0.5rem"
+    assert style.background_color == "var(--color-primary)"
+    assert style.color == "var(--color-primary-contrast)"
+    assert style.border == "1px solid var(--color-primary)"
+    assert style.border_radius == "var(--radius-lg)"
     assert style.font_weight == "600"
     assert style.padding == "0.625rem 1rem"
     assert style.font_size == "1rem"
@@ -40904,11 +41217,11 @@ def test_button_default_contract():
 @pytest.mark.parametrize(
     ("variant", "background", "foreground", "border"),
     [
-        ("primary", "#3b82f6", "#ffffff", "1px solid #3b82f6"),
-        ("secondary", "#64748b", "#ffffff", "1px solid #64748b"),
-        ("outline", "#ffffff", "#2563eb", "1px solid #2563eb"),
-        ("ghost", "transparent", "#0f172a", "1px solid transparent"),
-        ("danger", "#ef4444", "#ffffff", "1px solid #ef4444"),
+        ("primary", "var(--color-primary)", "var(--color-primary-contrast)", "1px solid var(--color-primary)"),
+        ("secondary", "var(--color-secondary)", "var(--color-secondary-contrast)", "1px solid var(--color-secondary)"),
+        ("outline", "var(--color-background)", "var(--color-primary-hover)", "1px solid var(--color-primary-hover)"),
+        ("ghost", "transparent", "var(--color-text)", "1px solid transparent"),
+        ("danger", "var(--color-danger)", "var(--color-primary-contrast)", "1px solid var(--color-danger)"),
     ],
 )
 def test_button_variants(variant, background, foreground, border):
@@ -40934,6 +41247,28 @@ def test_button_sizes(size, padding, font_size):
 
     assert style.padding == padding
     assert style.font_size == font_size
+
+
+def test_button_variant_size_and_local_style_precedence():
+    button = ps.button(
+        "Action",
+        variant="danger",
+        size="lg",
+        style=Style(
+            background_color="#123456",
+            padding="2rem",
+        ),
+    )
+    style = button.props["style"]
+
+    # Local style wins over variant and size.
+    assert style.background_color == "#123456"
+    assert style.padding == "2rem"
+
+    # Unrelated values from the selected variant remain intact.
+    assert style.color == "var(--color-primary-contrast)"
+    assert style.border == "1px solid var(--color-danger)"
+
 
 
 def test_button_disabled_is_forwarded():
@@ -41020,10 +41355,10 @@ def test_card_default_style_contract():
     card = ui.card()
     style = card.props["style"]
 
-    assert style.background_color == "#ffffff"
-    assert style.padding == "1.5rem"
-    assert style.border_radius == "0.75rem"
-    assert style.border == "1px solid #e2e8f0"
+    assert style.background_color == "var(--color-background)"
+    assert style.padding == "var(--spacing-lg)"
+    assert style.border_radius == "var(--radius-xl)"
+    assert style.border == "1px solid var(--color-border)"
 
 
 def test_card_supports_heading_body_footer():
@@ -41074,10 +41409,10 @@ def test_card_elevated_variant():
 
     style = card.props["style"]
 
-    assert style.background_color == "#ffffff"
-    assert style.padding == "1.5rem"
-    assert style.border_radius == "0.75rem"
-    assert style.border == "1px solid #cbd5e1"
+    assert style.background_color == "var(--color-background)"
+    assert style.padding == "var(--spacing-lg)"
+    assert style.border_radius == "var(--radius-xl)"
+    assert style.border == "1px solid var(--color-border-muted)"
     assert style.box_shadow == "0 10px 15px -3px rgba(0,0,0,0.1)"
 
 
@@ -41086,9 +41421,9 @@ def test_card_outlined_variant():
 
     style = card.props["style"]
 
-    assert style.background_color == "#ffffff"
-    assert style.border == "1px solid #cbd5e1"
-    assert style.border_radius == "0.75rem"
+    assert style.background_color == "var(--color-background)"
+    assert style.border == "1px solid var(--color-border-muted)"
+    assert style.border_radius == "var(--radius-xl)"
 
 
 def test_card_interactive_variant():
@@ -41096,9 +41431,9 @@ def test_card_interactive_variant():
 
     style = card.props["style"]
 
-    assert style.background_color == "#ffffff"
-    assert style.border == "1px solid #e2e8f0"
-    assert style.border_radius == "0.75rem"
+    assert style.background_color == "var(--color-background)"
+    assert style.border == "1px solid var(--color-border)"
+    assert style.border_radius == "var(--radius-xl)"
     assert style.cursor == "pointer"
 
 
@@ -41120,7 +41455,27 @@ def test_card_custom_style_overrides_defaults():
     assert style.background_color == "#111827"
     assert style.padding == "2rem"
     assert style.border_radius == "1rem"
-    assert style.border == "1px solid #e2e8f0"
+    assert style.border == "1px solid var(--color-border)"
+
+
+def test_card_variant_and_local_style_precedence():
+    card = ui.card(
+        variant="elevated",
+        style=Style(
+            background_color="#111827",
+            border_radius="2rem",
+        ),
+    )
+    style = card.props["style"]
+
+    # Local style wins over the selected variant.
+    assert style.background_color == "#111827"
+    assert style.border_radius == "2rem"
+
+    # Unrelated elevated variant values remain intact.
+    assert style.border == "1px solid var(--color-border-muted)"
+    assert style.box_shadow == "0 10px 15px -3px rgba(0,0,0,0.1)"
+
 
 
 def test_card_forwards_events():
@@ -42509,6 +42864,86 @@ def test_heading_forwards_event_handler():
 
 
 ================================================================================
+FILE: test/test_ui_kit_layout_api.py
+================================================================================
+
+"""UI Kit Layout API regression tests for Phase 11."""
+
+from pylage import UI as ui
+from pylage.ENGINE import Style, ResponsiveStyle
+
+
+def test_responsive_shorthand_creates_responsive_style():
+    component = ui.row(
+        ui.text("A"),
+        responsive={
+            "base": {"flex_direction": "column"},
+            "md": {"flex_direction": "row"},
+            "lg": {"gap": "xl"},
+        },
+    )
+
+    style = component.props["style"]
+
+    assert isinstance(style, ResponsiveStyle)
+    assert style.base.flex_direction == "column"
+    assert style.md.flex_direction == "row"
+    assert style.lg.gap == "2rem"
+
+
+def test_spacing_shorthand_resolves_tokens():
+    component = ui.column(
+        ui.text("Content"),
+        p="lg",
+        px="md",
+        py="sm",
+        gap="md",
+    )
+
+    style = component.props["style"]
+    base = style.base
+
+    assert base.padding == "1.5rem"
+    assert base.padding_left == "1rem"
+    assert base.padding_right == "1rem"
+    assert base.padding_top == "0.5rem"
+    assert base.padding_bottom == "0.5rem"
+    assert base.gap == "1rem"
+
+
+def test_spacing_shorthand_explicit_style_wins():
+    component = ui.column(
+        ui.text("Content"),
+        p="lg",
+        style=Style(padding="4rem"),
+    )
+
+    style = component.props["style"]
+
+    assert style.padding == "4rem"
+
+
+
+def test_row_spacing_shorthand_resolves_tokens():
+    component = ui.row(
+        ui.text("A"),
+        ui.text("B"),
+        px="md",
+        py="lg",
+        gap="sm",
+    )
+
+    style = component.props["style"]
+    base = style.base
+
+    assert base.padding_left == "1rem"
+    assert base.padding_right == "1rem"
+    assert base.padding_top == "1.5rem"
+    assert base.padding_bottom == "1.5rem"
+    assert base.gap == "0.5rem"
+
+
+================================================================================
 FILE: test/test_ui_kit_loading_overlay.py
 ================================================================================
 
@@ -42657,6 +43092,14 @@ def test_loading_state_returns_column():
     assert ls.type == "Column"
     assert isinstance(ls, type(Column()))
 
+def test_loading_state_default_style_contract():
+    ls = ui.loading_state()
+    style = ls.props["style"]
+    assert style.padding == "var(--spacing-2xl)"
+    assert style.background_color == "var(--color-background)"
+    assert style.border_radius == "var(--radius-xl)"
+
+
 def test_loading_state_default_content():
     html = render(ui.loading_state())
     assert "Loading..." in html
@@ -42768,10 +43211,10 @@ def test_metric_default_style_contract():
     metric = ui.metric(label="Revenue", value="₹42,000")
     style = metric.props["style"]
 
-    assert style.background_color == "#ffffff"
-    assert style.padding == "1.5rem"
-    assert style.border_radius == "0.75rem"
-    assert style.border == "1px solid #e2e8f0"
+    assert style.background_color == "var(--color-background)"
+    assert style.padding == "var(--spacing-lg)"
+    assert style.border_radius == "var(--radius-xl)"
+    assert style.border == "1px solid var(--color-border)"
 
 
 def test_metric_renders_semantic_content():
@@ -42814,7 +43257,7 @@ def test_metric_custom_style_overrides_defaults():
 
     assert style.padding == "2rem"
     assert style.border == "2px solid #111827"
-    assert style.background_color == "#ffffff"
+    assert style.background_color == "var(--color-background)"
 
 
 def test_metric_forwards_engine_props():
@@ -43026,7 +43469,7 @@ def test_navigation_item_default_contract():
     style = item.props["style"]
 
     assert style.background_color == "transparent"
-    assert style.color == "#0f172a"
+    assert style.color == "var(--color-text)"
     assert style.border == "1px solid transparent"
     assert style.border_radius == "0.375rem"
     assert style.padding == "0.5rem 0.75rem"
@@ -43037,9 +43480,9 @@ def test_navigation_item_active_style():
     item = pl.navigation_item("Home", active=True)
     style = item.props["style"]
 
-    assert style.background_color == "#3b82f6"
-    assert style.color == "#ffffff"
-    assert style.border == "1px solid #3b82f6"
+    assert style.background_color == "var(--color-primary)"
+    assert style.color == "var(--color-primary-contrast)"
+    assert style.border == "1px solid var(--color-primary)"
 
 
 def test_navigation_item_custom_style_overrides_defaults():
@@ -43078,19 +43521,19 @@ def test_navigation_item_reactive_active_state():
     active = State(False)
     item = pl.navigation_item("Products", active=active)
 
-    assert item.props["style"].background_color == "transparent"
-    assert item.props["style"].color == "#0f172a"
+    assert item.props["style"].background_color.value == "transparent"
+    assert item.props["style"].color.value == "var(--color-text)"
 
     active.set(True)
 
-    assert item.props["style"].background_color == "#3b82f6"
-    assert item.props["style"].color == "#ffffff"
-    assert item.props["style"].border == "1px solid #3b82f6"
+    assert item.props["style"].background_color.value == "var(--color-primary)"
+    assert item.props["style"].color.value == "var(--color-primary-contrast)"
+    assert item.props["style"].border.value == "1px solid var(--color-primary)"
 
     active.set(False)
 
-    assert item.props["style"].background_color == "transparent"
-    assert item.props["style"].color == "#0f172a"
+    assert item.props["style"].background_color.value == "transparent"
+    assert item.props["style"].color.value == "var(--color-text)"
 
 
 def test_navigation_item_reactive_active_state_does_not_leak_prop():
@@ -43528,7 +43971,7 @@ def test_text_preserves_reactive_state():
 def test_text_supports_muted_style():
     component = text("Secondary", muted=True)
 
-    assert component.props["style"].color == "#64748b"
+    assert component.props["style"].color == "var(--color-text-muted)"
 
 
 def test_text_supports_label_style():
@@ -43544,7 +43987,7 @@ def test_text_supports_caption_style():
     style = component.props["style"]
 
     assert style.font_size == "0.75rem"
-    assert style.color == "#64748b"
+    assert style.color == "var(--color-text-muted)"
 
 
 def test_text_custom_style_overrides_semantic_style():
@@ -43736,7 +44179,7 @@ def test_trend_auto_detects_up_direction():
 
     assert "↑" in html
     assert "+12%" in html
-    assert style.background_color == "#22c55e"
+    assert style.background_color == "var(--color-success)"
 
 
 def test_trend_auto_detects_down_direction():
@@ -43746,7 +44189,7 @@ def test_trend_auto_detects_down_direction():
 
     assert "↓" in html
     assert "-8%" in html
-    assert style.background_color == "#ef4444"
+    assert style.background_color == "var(--color-danger)"
 
 
 def test_trend_defaults_to_neutral_direction():
@@ -43756,7 +44199,7 @@ def test_trend_defaults_to_neutral_direction():
 
     assert "→" in html
     assert "0%" in html
-    assert style.background_color == "#64748b"
+    assert style.background_color == "var(--color-secondary)"
 
 
 def test_trend_supports_explicit_direction():
@@ -43804,7 +44247,7 @@ def test_trend_custom_style_overrides_defaults():
 
     assert style.background_color == "#111827"
     assert style.padding == "0.5rem 1rem"
-    assert style.border_radius == "9999px"
+    assert style.border_radius == "var(--radius-full)"
 
 
 def test_trend_forwards_engine_props_and_events():

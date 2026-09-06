@@ -15,10 +15,10 @@ def test_card_default_style_contract():
     card = ui.card()
     style = card.props["style"]
 
-    assert style.background_color == "#ffffff"
-    assert style.padding == "1.5rem"
-    assert style.border_radius == "0.75rem"
-    assert style.border == "1px solid #e2e8f0"
+    assert style.background_color == "var(--color-background)"
+    assert style.padding == "var(--spacing-lg)"
+    assert style.border_radius == "var(--radius-xl)"
+    assert style.border == "1px solid var(--color-border)"
 
 
 def test_card_supports_heading_body_footer():
@@ -69,10 +69,10 @@ def test_card_elevated_variant():
 
     style = card.props["style"]
 
-    assert style.background_color == "#ffffff"
-    assert style.padding == "1.5rem"
-    assert style.border_radius == "0.75rem"
-    assert style.border == "1px solid #cbd5e1"
+    assert style.background_color == "var(--color-background)"
+    assert style.padding == "var(--spacing-lg)"
+    assert style.border_radius == "var(--radius-xl)"
+    assert style.border == "1px solid var(--color-border-muted)"
     assert style.box_shadow == "0 10px 15px -3px rgba(0,0,0,0.1)"
 
 
@@ -81,9 +81,9 @@ def test_card_outlined_variant():
 
     style = card.props["style"]
 
-    assert style.background_color == "#ffffff"
-    assert style.border == "1px solid #cbd5e1"
-    assert style.border_radius == "0.75rem"
+    assert style.background_color == "var(--color-background)"
+    assert style.border == "1px solid var(--color-border-muted)"
+    assert style.border_radius == "var(--radius-xl)"
 
 
 def test_card_interactive_variant():
@@ -91,9 +91,9 @@ def test_card_interactive_variant():
 
     style = card.props["style"]
 
-    assert style.background_color == "#ffffff"
-    assert style.border == "1px solid #e2e8f0"
-    assert style.border_radius == "0.75rem"
+    assert style.background_color == "var(--color-background)"
+    assert style.border == "1px solid var(--color-border)"
+    assert style.border_radius == "var(--radius-xl)"
     assert style.cursor == "pointer"
 
 
@@ -115,7 +115,27 @@ def test_card_custom_style_overrides_defaults():
     assert style.background_color == "#111827"
     assert style.padding == "2rem"
     assert style.border_radius == "1rem"
-    assert style.border == "1px solid #e2e8f0"
+    assert style.border == "1px solid var(--color-border)"
+
+
+def test_card_variant_and_local_style_precedence():
+    card = ui.card(
+        variant="elevated",
+        style=Style(
+            background_color="#111827",
+            border_radius="2rem",
+        ),
+    )
+    style = card.props["style"]
+
+    # Local style wins over the selected variant.
+    assert style.background_color == "#111827"
+    assert style.border_radius == "2rem"
+
+    # Unrelated elevated variant values remain intact.
+    assert style.border == "1px solid var(--color-border-muted)"
+    assert style.box_shadow == "0 10px 15px -3px rgba(0,0,0,0.1)"
+
 
 
 def test_card_forwards_events():

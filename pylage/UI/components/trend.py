@@ -5,7 +5,6 @@ from typing import Any
 from pylage.ENGINE import Badge as _Badge
 from pylage.ENGINE import Style, Text as _Text
 from pylage.ENGINE.core.component import Component
-from pylage.UI.tokens import COLORS, RADIUS
 
 
 _DIRECTION_CONFIG: dict[str, tuple[str, str]] = {
@@ -16,25 +15,25 @@ _DIRECTION_CONFIG: dict[str, tuple[str, str]] = {
 
 _VARIANT_STYLES: dict[str, Style] = {
     "success": Style(
-        background_color=COLORS["success"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['success']}",
+        background_color="var(--color-success)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-success)",
     ),
     "danger": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['danger']}",
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border="1px solid var(--color-danger)",
     ),
     "secondary": Style(
-        background_color=COLORS["secondary"],
-        color=COLORS["secondary_contrast"],
-        border=f"1px solid {COLORS['secondary']}",
+        background_color="var(--color-secondary)",
+        color="var(--color-secondary-contrast)",
+        border="1px solid var(--color-secondary)",
     ),
 }
 
 _BASE_STYLE = Style(
     padding="0.25rem 0.625rem",
-    border_radius=RADIUS["full"],
+    border_radius="var(--radius-full)",
     font_size="0.75rem",
     font_weight="600",
 )

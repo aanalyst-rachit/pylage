@@ -19,7 +19,7 @@ def test_trend_auto_detects_up_direction():
 
     assert "↑" in html
     assert "+12%" in html
-    assert style.background_color == "#22c55e"
+    assert style.background_color == "var(--color-success)"
 
 
 def test_trend_auto_detects_down_direction():
@@ -29,7 +29,7 @@ def test_trend_auto_detects_down_direction():
 
     assert "↓" in html
     assert "-8%" in html
-    assert style.background_color == "#ef4444"
+    assert style.background_color == "var(--color-danger)"
 
 
 def test_trend_defaults_to_neutral_direction():
@@ -39,7 +39,7 @@ def test_trend_defaults_to_neutral_direction():
 
     assert "→" in html
     assert "0%" in html
-    assert style.background_color == "#64748b"
+    assert style.background_color == "var(--color-secondary)"
 
 
 def test_trend_supports_explicit_direction():
@@ -87,7 +87,7 @@ def test_trend_custom_style_overrides_defaults():
 
     assert style.background_color == "#111827"
     assert style.padding == "0.5rem 1rem"
-    assert style.border_radius == "9999px"
+    assert style.border_radius == "var(--radius-full)"
 
 
 def test_trend_forwards_engine_props_and_events():

@@ -18,10 +18,10 @@ def test_button_default_contract():
     button = ps.button("Save")
     style = button.props["style"]
 
-    assert style.background_color == "#3b82f6"
-    assert style.color == "#ffffff"
-    assert style.border == "1px solid #3b82f6"
-    assert style.border_radius == "0.5rem"
+    assert style.background_color == "var(--color-primary)"
+    assert style.color == "var(--color-primary-contrast)"
+    assert style.border == "1px solid var(--color-primary)"
+    assert style.border_radius == "var(--radius-lg)"
     assert style.font_weight == "600"
     assert style.padding == "0.625rem 1rem"
     assert style.font_size == "1rem"
@@ -31,11 +31,11 @@ def test_button_default_contract():
 @pytest.mark.parametrize(
     ("variant", "background", "foreground", "border"),
     [
-        ("primary", "#3b82f6", "#ffffff", "1px solid #3b82f6"),
-        ("secondary", "#64748b", "#ffffff", "1px solid #64748b"),
-        ("outline", "#ffffff", "#2563eb", "1px solid #2563eb"),
-        ("ghost", "transparent", "#0f172a", "1px solid transparent"),
-        ("danger", "#ef4444", "#ffffff", "1px solid #ef4444"),
+        ("primary", "var(--color-primary)", "var(--color-primary-contrast)", "1px solid var(--color-primary)"),
+        ("secondary", "var(--color-secondary)", "var(--color-secondary-contrast)", "1px solid var(--color-secondary)"),
+        ("outline", "var(--color-background)", "var(--color-primary-hover)", "1px solid var(--color-primary-hover)"),
+        ("ghost", "transparent", "var(--color-text)", "1px solid transparent"),
+        ("danger", "var(--color-danger)", "var(--color-primary-contrast)", "1px solid var(--color-danger)"),
     ],
 )
 def test_button_variants(variant, background, foreground, border):
@@ -61,6 +61,28 @@ def test_button_sizes(size, padding, font_size):
 
     assert style.padding == padding
     assert style.font_size == font_size
+
+
+def test_button_variant_size_and_local_style_precedence():
+    button = ps.button(
+        "Action",
+        variant="danger",
+        size="lg",
+        style=Style(
+            background_color="#123456",
+            padding="2rem",
+        ),
+    )
+    style = button.props["style"]
+
+    # Local style wins over variant and size.
+    assert style.background_color == "#123456"
+    assert style.padding == "2rem"
+
+    # Unrelated values from the selected variant remain intact.
+    assert style.color == "var(--color-primary-contrast)"
+    assert style.border == "1px solid var(--color-danger)"
+
 
 
 def test_button_disabled_is_forwarded():

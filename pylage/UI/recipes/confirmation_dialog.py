@@ -8,7 +8,6 @@ from pylage.ENGINE import Style
 from pylage.UI.components.dialog import dialog
 from pylage.UI.components.button import button
 from pylage.UI.layout.row import row
-from pylage.UI.tokens import SPACING
 
 __all__ = ["confirmation_dialog"]
 
@@ -16,8 +15,8 @@ __all__ = ["confirmation_dialog"]
 _ACTIONS_STYLE = Style(
     display="flex",
     justify_content="flex-end",
-    gap=SPACING["sm"],
-    margin_top=SPACING["lg"],
+    gap="var(--spacing-sm)",
+    margin_top="var(--spacing-lg)",
 )
 
 

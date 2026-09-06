@@ -4,13 +4,12 @@ from typing import Any
 
 from pylage.ENGINE import DataFrame as _DataFrame
 from pylage.ENGINE import Style
-from pylage.UI.tokens import COLORS, RADIUS
 
 
 _DEFAULT_STYLE = Style(
     width="100%",
-    border=f"1px solid {COLORS['border']}",
-    border_radius=RADIUS["lg"],
+    border="1px solid var(--color-border)",
+    border_radius="var(--radius-lg)",
     overflow="hidden",
 )
 

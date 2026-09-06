@@ -4,7 +4,6 @@ from typing import Any
 
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
 from pylage.ENGINE.styling.style import Style
-from pylage.UI.tokens import SPACING
 
 
 SPACING_PROPS = {
@@ -29,10 +28,9 @@ SPACING_PROPS = {
 
 
 def _resolve_spacing(value: Any) -> Any:
-    if isinstance(value, str) and value in SPACING:
-        return SPACING[value]
+    if isinstance(value, str) and value in {"xs", "sm", "md", "lg", "xl"}:
+        return "var(--spacing-" + value + ")"
     return value
-
 
 def spacing_style(props: dict[str, Any]) -> Style:
     values: dict[str, Any] = {}

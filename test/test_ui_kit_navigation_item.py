@@ -17,7 +17,7 @@ def test_navigation_item_default_contract():
     style = item.props["style"]
 
     assert style.background_color == "transparent"
-    assert style.color == "#0f172a"
+    assert style.color == "var(--color-text)"
     assert style.border == "1px solid transparent"
     assert style.border_radius == "0.375rem"
     assert style.padding == "0.5rem 0.75rem"
@@ -28,9 +28,9 @@ def test_navigation_item_active_style():
     item = pl.navigation_item("Home", active=True)
     style = item.props["style"]
 
-    assert style.background_color == "#3b82f6"
-    assert style.color == "#ffffff"
-    assert style.border == "1px solid #3b82f6"
+    assert style.background_color == "var(--color-primary)"
+    assert style.color == "var(--color-primary-contrast)"
+    assert style.border == "1px solid var(--color-primary)"
 
 
 def test_navigation_item_custom_style_overrides_defaults():
@@ -70,18 +70,18 @@ def test_navigation_item_reactive_active_state():
     item = pl.navigation_item("Products", active=active)
 
     assert item.props["style"].background_color.value == "transparent"
-    assert item.props["style"].color.value == "#0f172a"
+    assert item.props["style"].color.value == "var(--color-text)"
 
     active.set(True)
 
-    assert item.props["style"].background_color.value == "#3b82f6"
-    assert item.props["style"].color.value == "#ffffff"
-    assert item.props["style"].border.value == "1px solid #3b82f6"
+    assert item.props["style"].background_color.value == "var(--color-primary)"
+    assert item.props["style"].color.value == "var(--color-primary-contrast)"
+    assert item.props["style"].border.value == "1px solid var(--color-primary)"
 
     active.set(False)
 
     assert item.props["style"].background_color.value == "transparent"
-    assert item.props["style"].color.value == "#0f172a"
+    assert item.props["style"].color.value == "var(--color-text)"
 
 
 def test_navigation_item_reactive_active_state_does_not_leak_prop():

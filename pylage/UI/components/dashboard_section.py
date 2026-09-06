@@ -6,25 +6,24 @@ from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Row as _Row
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, SPACING
 
 _DEFAULT_SECTION_STYLE = Style(
     display="flex",
     flex_direction="column",
     width="100%",
-    gap=SPACING["md"],
+    gap="var(--spacing-md)",
 )
 
 _TITLE_STYLE = Style(
     font_size="1.25rem",
     font_weight="600",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
 _DESC_STYLE = Style(
     font_size="0.875rem",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     margin="0",
 )
 

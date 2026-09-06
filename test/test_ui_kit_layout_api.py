@@ -19,7 +19,7 @@ def test_responsive_shorthand_creates_responsive_style():
     assert isinstance(style, ResponsiveStyle)
     assert style.base.flex_direction == "column"
     assert style.md.flex_direction == "row"
-    assert style.lg.gap == "2rem"
+    assert style.lg.gap == "var(--spacing-xl)"
 
 
 def test_spacing_shorthand_resolves_tokens():
@@ -34,12 +34,12 @@ def test_spacing_shorthand_resolves_tokens():
     style = component.props["style"]
     base = style.base
 
-    assert base.padding == "1.5rem"
-    assert base.padding_left == "1rem"
-    assert base.padding_right == "1rem"
-    assert base.padding_top == "0.5rem"
-    assert base.padding_bottom == "0.5rem"
-    assert base.gap == "1rem"
+    assert base.padding == "var(--spacing-lg)"
+    assert base.padding_left == "var(--spacing-md)"
+    assert base.padding_right == "var(--spacing-md)"
+    assert base.padding_top == "var(--spacing-sm)"
+    assert base.padding_bottom == "var(--spacing-sm)"
+    assert base.gap == "var(--spacing-md)"
 
 
 def test_spacing_shorthand_explicit_style_wins():
@@ -67,8 +67,8 @@ def test_row_spacing_shorthand_resolves_tokens():
     style = component.props["style"]
     base = style.base
 
-    assert base.padding_left == "1rem"
-    assert base.padding_right == "1rem"
-    assert base.padding_top == "1.5rem"
-    assert base.padding_bottom == "1.5rem"
-    assert base.gap == "0.5rem"
+    assert base.padding_left == "var(--spacing-md)"
+    assert base.padding_right == "var(--spacing-md)"
+    assert base.padding_top == "var(--spacing-lg)"
+    assert base.padding_bottom == "var(--spacing-lg)"
+    assert base.gap == "var(--spacing-sm)"

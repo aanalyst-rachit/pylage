@@ -3,12 +3,11 @@ from __future__ import annotations
 from typing import Any
 from pylage.ENGINE import Grid as _Grid
 from pylage.ENGINE import Style
-from pylage.UI.tokens import SPACING
 
 _DEFAULT_GRID_STYLE = Style(
     display="grid",
     width="100%",
-    gap=SPACING["xl"],
+    gap="var(--spacing-xl)",
 )
 
 _PRESETS: dict[str, str] = {

@@ -4,34 +4,33 @@ from typing import Any
 
 from pylage.ENGINE import Button as _Button
 from pylage.ENGINE import Style
-from pylage.UI.tokens import COLORS
 
 
 _VARIANT_STYLES: dict[str, Style] = {
     "primary": Style(
-        background_color=COLORS["primary"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['primary']}",
+        background_color="var(--color-primary)",
+        color="var(--color-primary-contrast)",
+        border='1px solid var(--color-primary)',
     ),
     "secondary": Style(
-        background_color=COLORS["secondary"],
-        color=COLORS["secondary_contrast"],
-        border=f"1px solid {COLORS['secondary']}",
+        background_color="var(--color-secondary)",
+        color="var(--color-secondary-contrast)",
+        border='1px solid var(--color-secondary)',
     ),
     "outline": Style(
-        background_color=COLORS["background"],
-        color=COLORS["primary_hover"],
-        border=f"1px solid {COLORS['primary_hover']}",
+        background_color="var(--color-background)",
+        color="var(--color-primary-hover)",
+        border='1px solid var(--color-primary-hover)',
     ),
     "ghost": Style(
         background_color="transparent",
-        color=COLORS["text"],
+        color="var(--color-text)",
         border="1px solid transparent",
     ),
     "danger": Style(
-        background_color=COLORS["danger"],
-        color=COLORS["primary_contrast"],
-        border=f"1px solid {COLORS['danger']}",
+        background_color="var(--color-danger)",
+        color="var(--color-primary-contrast)",
+        border='1px solid var(--color-danger)',
     ),
 }
 
@@ -51,7 +50,7 @@ _SIZE_STYLES: dict[str, Style] = {
 }
 
 _BASE_STYLE = Style(
-    border_radius="0.5rem",
+    border_radius="var(--radius-lg)",
     font_weight="600",
     cursor="pointer",
 )

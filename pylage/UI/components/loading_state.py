@@ -5,7 +5,6 @@ from pylage.ENGINE import Column as _Column
 from pylage.ENGINE import Spinner as _Spinner
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS, RADIUS, SPACING
 
 _DEFAULT_CONTAINER_STYLE = Style(
     display="flex",
@@ -13,22 +12,22 @@ _DEFAULT_CONTAINER_STYLE = Style(
     align_items="center",
     justify_content="center",
     text_align="center",
-    padding=SPACING["2xl"],
-    background_color=COLORS["background"],
-    border_radius=RADIUS["xl"],
-    gap=SPACING["sm"],
+    padding="var(--spacing-2xl)",
+    background_color="var(--color-background)",
+    border_radius="var(--radius-xl)",
+    gap="var(--spacing-sm)",
 )
 
 _TEXT_STYLE = Style(
     font_size="1rem",
     font_weight="500",
-    color=COLORS["text"],
+    color="var(--color-text)",
     margin="0",
 )
 
 _DESC_STYLE = Style(
     font_size="0.875rem",
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     max_width="24rem",
     margin="0",
     line_height="1.5",

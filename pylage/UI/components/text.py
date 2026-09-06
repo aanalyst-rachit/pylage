@@ -4,21 +4,20 @@ from typing import Any
 
 from pylage.ENGINE import Style
 from pylage.ENGINE import Text as _Text
-from pylage.UI.tokens import COLORS
 
 
 _MUTED_STYLE = Style(
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
 )
 
 _LABEL_STYLE = Style(
-    color=COLORS["text"],
+    color="var(--color-text)",
     font_size="0.875rem",
     font_weight="500",
 )
 
 _CAPTION_STYLE = Style(
-    color=COLORS["text_muted"],
+    color="var(--color-text-muted)",
     font_size="0.75rem",
 )
 
