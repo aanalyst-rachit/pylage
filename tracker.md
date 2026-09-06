@@ -411,6 +411,113 @@ rules - PYTHON TERMINAL RULE + MD FILE RULE
 ---
 
 # PHASE 14 — Customization
+### PHASE 14 COMPLETION RECORD
+
+**Status:** COMPLETE
+**Checkpoint:** `e80e9bb` — `feat: complete phase 14 customization and public API`
+
+#### 14.1 — Public API Contract Lock
+- Locked the user-facing API to `import pylage as pl`.
+- Kept `pylage.UI.*` and `pylage.ENGINE.*` as internal architecture.
+
+#### 14.2 — Variant System
+- Variant system implemented and verified.
+- Default component behavior preserved.
+
+#### 14.3 — Size System
+- Size system implemented and verified.
+- Public component usage supports values such as `size="lg"`.
+
+#### 14.4 — Theme Integration
+- Theme integration completed.
+- Public theme switching verified through `pl.set_theme(...)`.
+
+#### 14.5 — Style Overrides
+- Style overrides implemented.
+- Public style facade verified through `pl.style(...)`.
+- Style merging preserves component defaults.
+
+#### 14.6 — Semantic Colors
+- Semantic color customization completed and integrated with theming.
+
+#### 14.7 — Custom Tokens
+- Custom token support completed.
+- CSS-style custom tokens are preserved through the style system.
+
+#### 14.8 — Component-Level Overrides
+- Component-level overrides completed.
+- Navbar, Header, Footer and Topbar preserve base defaults when plain `Style` overrides are supplied.
+
+#### 14.9 — Global Theme System
+- Global theme system completed.
+- Public theme API verified.
+
+#### 14.10 — Responsive Styling
+- `ResponsiveStyle` integration completed.
+- Responsive behavior verified for layout and navigation components.
+- `Style.merge()` validates override types.
+- `resolve_style()` provides default responsive behavior.
+
+#### 14.11 — Responsive Regression Fixes
+- Fixed accidental `base_style` regression in `Container`.
+- Preserved responsive overrides while keeping normal `Style` overrides backward compatible.
+
+#### 14.12 — Demo Migration
+- Migrated `app/` to `demo/`.
+- Renamed manual demo modules to `demo_*.py`.
+- Demo package imports verified.
+- Sequential demo import smoke: **74 passed, 0 failed**.
+
+#### 14.13 — Public API Demo Repairs
+- Migrated legacy demo component references to the verified `pl.*` public API.
+- Fixed missing public API references and accidental `pl.pl.pl.*` corruption.
+- Targeted demo smoke passed.
+
+#### 14.14 — Documentation Migration
+- Migrated user-facing UI Kit examples to `import pylage as pl`.
+- Removed legacy public API usage from user-facing code blocks.
+- Final code-block audit: **0 legacy hits**.
+
+#### 14.15 — Public API Verification
+- Verified `pl.State`, `pl.Option`, `pl.style`, `pl.text`, and required UI APIs.
+- Verified `pl.modal` public API and signature.
+- Special documentation public API audit passed.
+
+#### 14.16 — Regression Verification
+- Manual and phase smoke tests passed.
+- Targeted theme, divider and navigation responsiveness tests passed.
+- Full regression suite: **993 passed**.
+- Final rerun after cleanup/staging: **993 passed**.
+
+#### 14.17 — Finalization
+- Test-generated HTML files are ignored through `.gitignore`.
+- Retained `dump_selected.py`, `dump_selected.txt`, and `websaas.py` as requested project files.
+- Final implementation checkpoint: `e80e9bb`.
+
+### Phase 14 Definition of Done
+
+```python
+import pylage as pl
+
+pl.card("Hello")
+
+pl.button(
+    "Save",
+    variant="primary",
+    size="lg",
+)
+
+pl.card(
+    "Advanced",
+    style=pl.style.elevated_card,
+)
+
+pl.set_theme("dark")
+
+pl.card("Dark themed card")
+```
+
+**Phase 14 is complete and its full history is now preserved in the master tracker.**
 
 Default:
 
@@ -436,15 +543,15 @@ pl.card(
 )
 ```
 
-* [ ] Variant system
-* [ ] Size system
-* [ ] Theme integration
-* [ ] Style overrides
-* [ ] Semantic colors
-* [ ] Custom tokens
-* [ ] Component-level overrides
-* [ ] set Global theme system
-* [ ] Global overrides
+* [x] Variant system
+* [x] Size system
+* [x] Theme integration
+* [x] Style overrides
+* [x] Semantic colors
+* [x] Custom tokens
+* [x] Component-level overrides
+* [x] set Global theme system
+* [x] Global overrides
 work flow - reuse/create/------>manual create-------> manual verify---->documentation----->tracker update---git checkpoint
 rules - PYTHON TERMINAL RULE + MD FILE RULE
 
@@ -635,7 +742,7 @@ PHASE 10  Navigation                [x]
 PHASE 11  Layout API                [x]
 PHASE 12  High-Level Recipes        [x]
 PHASE 13  Responsive Intelligence   [x]
-PHASE 14  Customization             [ ]
+PHASE 14  Customization             [x]
 PHASE 15  Accessibility             [ ]
 PHASE 16  Performance               [ ]
 PHASE 17  Test Matrix               [ ]
