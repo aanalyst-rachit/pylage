@@ -5,13 +5,13 @@
 ## Basic Usage
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.dashboard_section(
-    ps.card(heading="Node Alpha", body="Online"),
+pl.dashboard_section(
+    pl.card(heading="Node Alpha", body="Online"),
     title="Cluster Status",
     description="Live status of cluster nodes.",
-    action=ps.button("View Logs", variant="ghost"),
+    action=pl.button("View Logs", variant="ghost"),
 )
 ```
 

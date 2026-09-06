@@ -18,6 +18,23 @@ from .testimonial import Testimonial
 
 __all__ = [
     "Hero",
+    "BreadcrumbTrail",
+    "ContactSection",
+    "ContentSection",
+    "CTA",
+    "FAQ",
+    "FeatureSection",
+    "List",
+    "NewsletterSection",
+    "PricingSection",
+    "SearchBar",
+    "EmptyState",
+    "ErrorState",
+    "Loading",
+    "Metric",
+    "MetricCard",
+    "StatsSection",
+    "Testimonial",
     "breadcrumb_trail",
 ]
 

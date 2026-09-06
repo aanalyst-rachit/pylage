@@ -2,12 +2,12 @@
 
 ## Overview
 
-`ps.metric()` provides a semantic KPI/metric card API while reusing the existing PyLage Layout `Metric` pattern.
+`pl.metric()` provides a semantic KPI/metric card API while reusing the existing PyLage Layout `Metric` pattern.
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.metric(
+pl.metric(
     label="Revenue",
     value="₹42,000",
     delta="+12%",
@@ -17,18 +17,18 @@ ps.metric(
 
 ## KPI Usage
 
-`ps.metric()` is the standard UI Kit component for presenting Key Performance Indicators (KPIs).
+`pl.metric()` is the standard UI Kit component for presenting Key Performance Indicators (KPIs).
 
 Use it for dashboard values such as Revenue, Active Users, Conversion Rate,
 Orders, Latency, or other measurable business and system indicators.
 
-For this reason, the UI Kit does not provide a separate `ps.kpi()` component.
-A KPI is a use-case of `ps.metric()`, not a separate UI component.
+For this reason, the UI Kit does not provide a separate `pl.kpi()` component.
+A KPI is a use-case of `pl.metric()`, not a separate UI component.
 
 ## API
 
 ```python
-ps.metric(label, value, delta=None, description=None, *, style=None, **props)
+pl.metric(label, value, delta=None, description=None, *, style=None, **props)
 ```
 
 ### Parameters
@@ -65,10 +65,10 @@ A custom `Style` is merged over these defaults.
 
 ## Architecture
 
-`ps.metric()` is a WRAP/COMPOSE implementation. It does not introduce a new renderer, state engine, CSS engine, or layout engine. It delegates to the existing `pylage_layout.Metric` pattern.
+`pl.metric()` is a WRAP/COMPOSE implementation. It does not introduce a new renderer, state engine, CSS engine, or layout engine. It delegates to the existing `pylage_layout.Metric` pattern.
 
 The underlying metric pattern was also corrected so reactive/state-backed delta content is rendered through a primitive `Text` component.
 
 ## Manual Demo
 
-See `app/ui_kit_metric_manual.py` for the browser/manual smoke example.
+See `demo/demo_metric.py` for the browser/manual smoke example.

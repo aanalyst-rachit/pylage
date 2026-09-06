@@ -318,7 +318,7 @@ def test_phase_1_to_7_complete():
         ROOT / "pylage" / "UI" / "recipes",
         ROOT / "pylage" / "UI" / "themes",
         ROOT / "pylage" / "UI" / "tokens",
-        ROOT / "app",
+        ROOT / "demo",
     ]
 
     for directory in expected_directories:

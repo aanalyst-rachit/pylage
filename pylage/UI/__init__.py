@@ -20,6 +20,7 @@ from .recipes import __all__ as _recipe_all
 
 from . import themes
 from . import tokens
+from .colors import colors
 
 __version__ = "0.1.0"
 
@@ -32,6 +33,7 @@ __all__ = [
     "IMPORT_NAME",
     "PACKAGE_NAME",
     "__version__",
+    "colors",
     *_component_all,
     *_layout_all,
     *_pattern_all,

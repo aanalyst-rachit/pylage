@@ -1,15 +1,15 @@
 # PyLage UI Kit — Trend
 
-`ps.trend()` is a semantic UI Kit component for displaying directional change, movement, or comparison values.
+`pl.trend()` is a semantic UI Kit component for displaying directional change, movement, or comparison values.
 
-It is designed to complement `ps.metric()` and other dashboard components.
+It is designed to complement `pl.metric()` and other dashboard components.
 
 ## Quick Start
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-trend = ps.trend("+12%")
+trend = pl.trend("+12%")
 ```
 
 ## Direction Detection
@@ -17,9 +17,9 @@ trend = ps.trend("+12%")
 When `direction` is not provided, PyLage detects it from the value:
 
 ```python
-ps.trend("+12%")   # Up
-ps.trend("-8.5%")  # Down
-ps.trend("0%")     # Neutral
+pl.trend("+12%")   # Up
+pl.trend("-8.5%")  # Down
+pl.trend("0%")     # Neutral
 ```
 
 ## Explicit Direction
@@ -27,9 +27,9 @@ ps.trend("0%")     # Neutral
 Use `direction` when the text itself does not contain a `+` or `-` sign:
 
 ```python
-ps.trend("Improving", direction="up")
-ps.trend("Declining", direction="down")
-ps.trend("Stable", direction="neutral")
+pl.trend("Improving", direction="up")
+pl.trend("Declining", direction="down")
+pl.trend("Stable", direction="neutral")
 ```
 
 Available directions:
@@ -40,30 +40,30 @@ Available directions:
 
 ## Indicators
 
-By default, `ps.trend()` displays a directional indicator:
+By default, `pl.trend()` displays a directional indicator:
 
 ```python
-ps.trend("+12%")
-ps.trend("-8%")
-ps.trend("0%")
+pl.trend("+12%")
+pl.trend("-8%")
+pl.trend("0%")
 ```
 
 Hide the indicator when only semantic styling is needed:
 
 ```python
-ps.trend("+12%", show_indicator=False)
+pl.trend("+12%", show_indicator=False)
 ```
 
 ## Reactive Values
 
-`ps.trend()` supports reactive `pylage.State` values:
+`pl.trend()` supports reactive `pylage.State` values:
 
 ```python
-from pylage import State
-import pylage_ui as ps
 
-change = State("+12%")
-trend = ps.trend(change)
+import pylage as pl
+
+change = pl.State("+12%")
+trend = pl.trend(change)
 ```
 
 ## Custom Styling
@@ -71,26 +71,26 @@ trend = ps.trend(change)
 Custom styles override the default semantic styling:
 
 ```python
-from pylage import Style
-import pylage_ui as ps
 
-trend = ps.trend(
+import pylage as pl
+
+trend = pl.trend(
     "+12%",
-    style=Style(padding="0.5rem 1rem"),
+    style=pl.style(padding="0.5rem 1rem"),
 )
 ```
 
 ## Dashboard Usage
 
-Use `ps.trend()` alongside `ps.metric()` to show directional context:
+Use `pl.trend()` alongside `pl.metric()` to show directional context:
 
 ```python
-ps.metric(
+pl.metric(
     label="Revenue",
     value="₹42,000",
 )
 
-ps.trend("+12%")
+pl.trend("+12%")
 ```
 
-`ps.metric()` represents the primary KPI value, while `ps.trend()` communicates how that value is moving or changing.
+`pl.metric()` represents the primary KPI value, while `pl.trend()` communicates how that value is moving or changing.

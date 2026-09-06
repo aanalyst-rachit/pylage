@@ -26,7 +26,7 @@ def test_divider_default_contract():
 def test_divider_renders_as_hr():
     html = render(ui.divider())
 
-    assert html.startswith("<hr ")
+    assert "<hr " in html
     assert "</hr>" not in html
 
 

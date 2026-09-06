@@ -13,10 +13,10 @@ The recipe delegates directly to the existing PyLage `Popover` component.
 ## API
 
 ```python
-from pylage.UI.recipes import popover
+import pylage as pl
 
-popover(
-    Text("Popover content"),
+pl.popover(
+    pl.text("Popover content"),
     title="Additional information",
     class_name="ui-kit-popover",
 )
@@ -47,7 +47,7 @@ Focused verification completed with **19 tests passed** across the recipe audit 
 
 ## Manual Verification
 
-`app/ui_kit_popover_manual.py` was added to verify the UI Kit recipe through the normal PyLage application runtime.
+`demo/demo_popover.py` was added to verify the UI Kit recipe through the normal PyLage application runtime.
 
 Manual browser verification confirmed that the Popover examples render correctly and preserve their children and properties.
 

@@ -17,10 +17,10 @@ The UI Kit does not duplicate tooltip rendering, browser behavior, or client-sid
 ## API
 
 ```python
-from pylage.UI.recipes import tooltip
+import pylage as pl
 
-component = tooltip(
-    Text("Info"),
+component = pl.tooltip(
+    pl.text("Info"),
     title="Helpful information",
 )
 ```
@@ -54,7 +54,7 @@ Focused verification result:
 
 Manual application:
 
-- `app/ui_kit_tooltip_manual.py`
+- `demo/demo_tooltip.py`
 
 Verified:
 

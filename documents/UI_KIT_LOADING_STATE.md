@@ -1,21 +1,21 @@
 # UI Kit Loading State
 
-`pylage_ui.loading_state()` provides a semantic, high-level loader and spinner feedback card for data fetching and async operations.
+`pylage.loading_state()` provides a semantic, high-level loader and spinner feedback card for data fetching and async operations.
 
 ## Basic Usage
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.loading_state()
+pl.loading_state()
 ```
 
 ## Custom Text and Description
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.loading_state(
+pl.loading_state(
     text="Importing dataset...",
     description="Please wait while your data is parsed and verified.",
 )
@@ -34,11 +34,10 @@ ps.loading_state(
 ## Reactive Binding
 
 ```python
-from pylage import State
-import pylage_ui as ps
+import pylage as pl
 
-status = State("Connecting...")
-ps.loading_state(text=status)
+status = pl.State("Connecting...")
+pl.loading_state(text=status)
 ```
 
 ## Loading Overlay
@@ -48,9 +47,9 @@ ps.loading_state(text=status)
 ### Basic Usage
 
 ```python
-from pylage.UI import loading_overlay
+import pylage as pl
 
-overlay = loading_overlay(
+overlay = pl.loading_overlay(
     text="Please wait...",
     open=True,
     spinner=True,
@@ -60,11 +59,10 @@ overlay = loading_overlay(
 ### Reactive Visibility
 
 ```python
-from pylage import State
-from pylage.UI import loading_overlay
+import pylage as pl
 
-loading = State(False)
-overlay = loading_overlay(
+loading = pl.State(False)
+overlay = pl.loading_overlay(
     text="Please wait...",
     open=loading,
     spinner=True,

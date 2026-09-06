@@ -632,9 +632,9 @@ PHASE 07  Data/Dashboard            [x]
 PHASE 08  Forms                     [x]
 PHASE 09  Feedback/Overlays         [x]
 PHASE 10  Navigation                [x]
-PHASE 11  Layout API                [ ]
-PHASE 12  High-Level Recipes        [ ]
-PHASE 13  Responsive Intelligence   [ ]
+PHASE 11  Layout API                [x]
+PHASE 12  High-Level Recipes        [x]
+PHASE 13  Responsive Intelligence   [x]
 PHASE 14  Customization             [ ]
 PHASE 15  Accessibility             [ ]
 PHASE 16  Performance               [ ]
@@ -711,3 +711,12 @@ Jab `.md` file create/update karni ho:
 
 * CRUD page
 * Analytics dashboard
+## PHASE 14 CONTEXT — CURRENT POSITION
+
+**Current Phase:** PHASE 14 — Customization
+**Current Step:** 14.1 — Public API Contract Lock
+**Goal:** User-facing API must use only `import pylage as pl` → `pl.*`.
+**Locked Rule:** `pylage.UI.*` / `pylage.ENGINE.*` stay internal; public examples/tests/docs migrate to `pl.*`.
+**Next Action:** Audit root API, Style, Theme, and Engine integration before implementation.
+**Phase 14 Scope:** style → usage migration → variants → sizes → theme → global theme → custom tokens → semantic colors → component/global overrides → tests → docs → regression → checkpoint.
+**Do Not Mix:** Phase 15 Accessibility or Phase 16 Performance.

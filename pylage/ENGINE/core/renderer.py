@@ -7,6 +7,7 @@ from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.state import State
 from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.styling import Style
+from pylage.ENGINE.styling.global_theme import get_global_theme
 
 
 class HTMLRenderer:
@@ -98,8 +99,12 @@ class HTMLRenderer:
         if built_in_css:
             html = html + f"<style>{built_in_css}</style>"
 
-        if self._theme is not None:
-            theme_css = self._theme.to_css()
+        theme = self._theme
+        if theme is None:
+            theme = get_global_theme()
+
+        if theme is not None:
+            theme_css = theme.to_css()
 
             if theme_css:
                 html = (

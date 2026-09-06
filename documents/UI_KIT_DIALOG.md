@@ -92,7 +92,7 @@ This implementation follows the UI Kit architecture by reusing the existing engi
 - Engine props forwarding verified.
 - Custom style override verified.
 - Component child preservation verified.
-- Manual example: `app/dialog_manual.py`.
+- Manual example: `demo/demo_dialog.py`.
 
 ## Status
 

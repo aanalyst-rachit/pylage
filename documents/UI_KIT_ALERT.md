@@ -87,7 +87,7 @@ This implementation follows the UI Kit architecture by reusing the existing engi
 - Public API verified through `pylage.alert`.
 - `pylage.UI.alert` and `pylage.UI.components.alert` verified.
 - Alert is included in the public `__all__` export chain.
-- Manual example: `app/ui_kit_alert_manual.py`.
+- Manual example: `demo/demo_alert.py`.
 
 ## Status
 

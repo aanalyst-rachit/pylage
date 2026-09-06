@@ -6,6 +6,14 @@ from pylage.ENGINE import Heading as _Heading
 from pylage.ENGINE import Style
 
 
+_BASE_STYLE = Style(
+    margin="0",
+    color="var(--color-text)",
+    font_weight="700",
+    line_height="1.25",
+)
+
+
 def heading(
     value: Any,
     *,
@@ -16,6 +24,6 @@ def heading(
 
     return _Heading(
         value,
-        style=style,
+        style=_BASE_STYLE.merge(style),
         **props,
     )

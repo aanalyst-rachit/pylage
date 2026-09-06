@@ -5,19 +5,19 @@
 ## Basic Usage
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-app = ps.dashboard(
+app = pl.dashboard(
     title="Operations Overview",
     metrics=[
-        ps.metric(label="Revenue", value="$52,000", delta="+14%"),
-        ps.metric(label="Active Users", value="4,850", delta="+6%"),
+        pl.metric(label="Revenue", value="$52,000", delta="+14%"),
+        pl.metric(label="Active Users", value="4,850", delta="+6%"),
     ],
-    content=ps.dashboard_card(
+    content=pl.dashboard_card(
         title="Weekly Summary",
         body="All cluster nodes operational with zero reported incidents.",
     ),
-    table=ps.table(
+    table=pl.table(
         [["Cluster A", "Healthy"], ["Cluster B", "Healthy"]],
         headers=["Cluster", "Status"],
     ),

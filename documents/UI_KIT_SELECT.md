@@ -8,12 +8,12 @@ It provides a Python-first dropdown/select control without introducing a separat
 
 ## API
 
-    from pylage.UI import select
-    from pylage.ENGINE import Option
+    import pylage as pl
+    import pylage as pl
 
-    select(
-        Option("India", value="india"),
-        Option("Japan", value="japan"),
+    pl.select(
+        pl.Option("India", value="india"),
+        pl.Option("Japan", value="japan"),
         value="india",
     )
 
@@ -40,11 +40,11 @@ Common properties include:
 
 Use the existing engine `Option` component:
 
-    from pylage.ENGINE import Option
+    import pylage as pl
 
-    select(
-        Option("India", value="india"),
-        Option("Japan", value="japan"),
+    pl.select(
+        pl.Option("India", value="india"),
+        pl.Option("Japan", value="japan"),
     )
 
 Option labels and values are rendered through the existing Select renderer.
@@ -53,14 +53,14 @@ Option labels and values are rendered through the existing Select renderer.
 
 The existing engine Select accepts PyLage `State` values:
 
-    from pylage.ENGINE import State, Option
-    from pylage.UI import select
+    import pylage as pl
+    import pylage as pl
 
-    country = State("india")
+    country = pl.State("india")
 
-    country_select = select(
-        Option("India", value="india"),
-        Option("Japan", value="japan"),
+    country_select = pl.select(
+        pl.Option("India", value="india"),
+        pl.Option("Japan", value="japan"),
         value=country,
     )
 
@@ -73,9 +73,9 @@ Custom change handlers can be supplied through `on_change`:
     def handle_change(payload):
         print(payload)
 
-    select(
-        Option("India", value="india"),
-        Option("Japan", value="japan"),
+    pl.select(
+        pl.Option("India", value="india"),
+        pl.Option("Japan", value="japan"),
         on_change=handle_change,
     )
 
@@ -85,10 +85,10 @@ The existing browser runtime provides the Select event payload.
 
 Native multiple selection is supported:
 
-    select(
-        Option("Python", value="python"),
-        Option("JavaScript", value="javascript"),
-        Option("Rust", value="rust"),
+    pl.select(
+        pl.Option("Python", value="python"),
+        pl.Option("JavaScript", value="javascript"),
+        pl.Option("Rust", value="rust"),
         multiple=True,
         size=3,
     )
@@ -97,8 +97,8 @@ Native multiple selection is supported:
 
 The existing engine supports native disabled behavior:
 
-    select(
-        Option("Unavailable", value="unavailable"),
+    pl.select(
+        pl.Option("Unavailable", value="unavailable"),
         value="unavailable",
         disabled=True,
     )
@@ -107,12 +107,12 @@ The existing engine supports native disabled behavior:
 
 The wrapper accepts the existing PyLage `Style` object:
 
-    from pylage.ENGINE import Style
+    import pylage as pl
 
-    select(
-        Option("India", value="india"),
-        Option("Japan", value="japan"),
-        style=Style(
+    pl.select(
+        pl.Option("India", value="india"),
+        pl.Option("Japan", value="japan"),
+        style=pl.style(
             width="100%",
             padding="0.75rem",
         ),
@@ -151,13 +151,13 @@ The Select capability already existed in the PyLage engine and already provided:
 
 Therefore no new renderer, runtime, reactive engine, or duplicate Select implementation was required.
 
-The UI Kit layer exposes the existing capability through the public `select()` wrapper.
+The UI Kit layer exposes the existing capability through the public `pl.select()` wrapper.
 
 ## Manual Application
 
 Dedicated manual application:
 
-    app/ui_kit_select_manual.py
+    demo/demo_select_features.py
 
 The manual application covers:
 

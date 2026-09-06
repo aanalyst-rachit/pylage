@@ -1,25 +1,25 @@
 # UI Kit Badge
 
-`ps.badge()` provides a semantic UI Kit wrapper around the existing PyLage `Badge` primitive.
+`pl.badge()` provides a semantic UI Kit wrapper around the existing PyLage `Badge` primitive.
 
 ## Basic usage
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.badge("Active")
+pl.badge("Active")
 ```
 
 ## Variants
 
 ```python
-ps.badge("Default")
-ps.badge("Primary", variant="primary")
-ps.badge("Secondary", variant="secondary")
-ps.badge("Success", variant="success")
-ps.badge("Warning", variant="warning")
-ps.badge("Danger", variant="danger")
-ps.badge("Info", variant="info")
+pl.badge("Default")
+pl.badge("Primary", variant="primary")
+pl.badge("Secondary", variant="secondary")
+pl.badge("Success", variant="success")
+pl.badge("Warning", variant="warning")
+pl.badge("Danger", variant="danger")
+pl.badge("Info", variant="info")
 ```
 
 Supported variants:
@@ -39,11 +39,11 @@ Badges receive UI Kit defaults for compact padding, full radius, small typograph
 Custom styling can override the defaults:
 
 ```python
-from pylage import Style
 
-ps.badge(
+
+pl.badge(
     "Custom",
-    style=Style(
+    style=pl.style(
         font_size="0.875rem",
         padding="0.5rem 0.75rem",
     ),
@@ -55,9 +55,9 @@ ps.badge(
 Component children remain supported:
 
 ```python
-from pylage import Text
+import pylage as pl
 
-ps.badge(Text("Active"))
+pl.badge(pl.text("Active"))
 ```
 
 Primitive children are composed through the existing PyLage `Text` primitive rather than introducing a new renderer or Badge content engine.

@@ -1,20 +1,20 @@
 # UI Kit Card
 
-`pylage_ui.card()` provides a semantic, high-level Card API while reusing the existing PyLage Card and primitive components.
+`pylage.card()` provides a semantic, high-level Card API while reusing the existing PyLage Card and primitive components.
 
 ## Basic usage
 
 ```python
-import pylage_ui as ui
+import pylage as pl
 
-ui.card(heading="Revenue", body="₹42,000", footer="Monthly revenue")
+pl.card(heading="Revenue", body="₹42,000", footer="Monthly revenue")
 ```
 
 ## Optional sections
 
 ```python
-ui.card(heading="Revenue", body="₹42,000")
-ui.card(body="Nothing to show")
+pl.card(heading="Revenue", body="₹42,000")
+pl.card(body="Nothing to show")
 ```
 
 ## Variants
@@ -27,7 +27,7 @@ Supported variants:
 - `interactive`
 
 ```python
-ui.card(heading="Active Users", body="12,450", variant="elevated")
+pl.card(heading="Active Users", body="12,450", variant="elevated")
 ```
 
 ## Interactive card
@@ -35,7 +35,7 @@ ui.card(heading="Active Users", body="12,450", variant="elevated")
 Cards support the existing PyLage event system:
 
 ```python
-ui.card(
+pl.card(
     heading="Click me",
     body="Interactive content",
     variant="interactive",
@@ -50,13 +50,12 @@ Event handling uses the existing PyLage runtime event delegation.
 Existing PyLage children remain supported:
 
 ```python
-import pylage as ps
-import pylage_ui as ui
+import pylage as pl
 
-ui.card(
-    ps.Column(
-        ps.Heading("Custom Header"),
-        ps.Text("Custom body"),
+pl.card(
+    pl.column(
+        pl.heading("Custom Header"),
+        pl.text("Custom body"),
     ),
     variant="elevated",
 )
@@ -69,11 +68,11 @@ The UI Kit does not introduce separate CardHeader, CardBody, or CardFooter engin
 Use `style=` for customization:
 
 ```python
-from pylage import Style
+import pylage as pl
 
-ui.card(
+pl.card(
     heading="Revenue",
     body="₹42,000",
-    style=Style(background_color="#f8fafc"),
+    style=pl.style(background_color="#f8fafc"),
 )
 ```

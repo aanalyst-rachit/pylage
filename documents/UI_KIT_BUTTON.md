@@ -5,20 +5,20 @@ component and rendering infrastructure.
 
 ## Basic Usage
 
-    import pylage_ui as ps
+    import pylage as pl
 
-    button = ps.button("Save")
+    button = pl.button("Save")
 
 The UI Kit returns the existing PyLage Component; it does not introduce a
 second component or rendering system.
 
 ## Variants
 
-    ps.button("Primary")
-    ps.button("Secondary", variant="secondary")
-    ps.button("Outline", variant="outline")
-    ps.button("Ghost", variant="ghost")
-    ps.button("Danger", variant="danger")
+    pl.button("Primary")
+    pl.button("Secondary", variant="secondary")
+    pl.button("Outline", variant="outline")
+    pl.button("Ghost", variant="ghost")
+    pl.button("Danger", variant="danger")
 
 Supported variants:
 
@@ -32,9 +32,9 @@ The default variant is primary.
 
 ## Sizes
 
-    ps.button("Small", size="sm")
-    ps.button("Medium", size="md")
-    ps.button("Large", size="lg")
+    pl.button("Small", size="sm")
+    pl.button("Medium", size="md")
+    pl.button("Large", size="lg")
 
 Supported sizes:
 
@@ -46,7 +46,7 @@ The default size is md.
 
 ## Disabled State
 
-    ps.button("Save", disabled=True)
+    pl.button("Save", disabled=True)
 
 The disabled property is forwarded to the existing PyLage Button.
 
@@ -57,7 +57,7 @@ UI Kit callbacks use the existing PyLage on_* event convention:
     def save():
         print("saved")
 
-    ps.button("Save", on_click=save)
+    pl.button("Save", on_click=save)
 
 The callback remains part of the existing PyLage event system.
 
@@ -65,12 +65,11 @@ The callback remains part of the existing PyLage event system.
 
 The existing Style system can override UI Kit defaults:
 
-    from pylage import Style
-    import pylage_ui as ps
+    import pylage as pl
 
-    ps.button(
+    pl.button(
         "Custom",
-        style=Style(
+        style=pl.style(
             background_color="#123456",
             border_radius="999px",
         ),

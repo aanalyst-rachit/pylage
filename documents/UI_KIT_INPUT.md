@@ -2,7 +2,7 @@
 
 ## Overview
 
-`ps.input()` provides a Python-first single-line input control for the PyLage UI Kit.
+`pl.input()` provides a Python-first single-line input control for the PyLage UI Kit.
 
 It reuses the existing PyLage engine `Input` component and renderer without introducing a separate rendering or client-side implementation.
 
@@ -10,7 +10,7 @@ It reuses the existing PyLage engine `Input` component and renderer without intr
 
     import pylage as ps
 
-    ps.input(
+    pl.input(
         value="",
         input_type=None,
         style=None,
@@ -28,7 +28,7 @@ It reuses the existing PyLage engine `Input` component and renderer without intr
 
     import pylage as ps
 
-    ps.input(
+    pl.input(
         placeholder="Enter your name...",
     )
 
@@ -36,12 +36,12 @@ It reuses the existing PyLage engine `Input` component and renderer without intr
 
 The `input_type` argument maps to the existing native HTML input type.
 
-    ps.input(
+    pl.input(
         input_type="email",
         placeholder="Email address",
     )
 
-    ps.input(
+    pl.input(
         input_type="password",
         placeholder="Password",
     )
@@ -53,11 +53,11 @@ The wrapper passes this through to the existing PyLage engine as `_html_type`.
 A `State` can be supplied as the input value.
 
     import pylage as ps
-    from pylage.ENGINE import State
 
-    name = State("")
 
-    ps.input(
+    name = pl.State("")
+
+    pl.input(
         name,
         placeholder="Your name",
     )
@@ -71,7 +71,7 @@ Input supports the existing PyLage event system.
     def handle_input(payload):
         print(payload)
 
-    ps.input(
+    pl.input(
         "",
         on_input=handle_input,
     )
@@ -99,12 +99,12 @@ The `input_type` convenience parameter is specifically provided by the UI Kit wr
 
 Input accepts the standard PyLage `Style` object.
 
-    from pylage.ENGINE import Style
+
     import pylage as ps
 
-    ps.input(
+    pl.input(
         placeholder="Search...",
-        style=Style(
+        style=pl.style(
             width="100%",
             padding="0.75rem 1rem",
             border="1px solid #cbd5e1",
@@ -115,7 +115,7 @@ Input accepts the standard PyLage `Style` object.
 
 ## Disabled State
 
-    ps.input(
+    pl.input(
         value="This field cannot be edited.",
         disabled=True,
     )
@@ -152,7 +152,7 @@ The existing engine already provides:
 - Registry integration
 - Client runtime support
 
-The UI Kit layer exposes this existing capability through `ps.input()`.
+The UI Kit layer exposes this existing capability through `pl.input()`.
 
 ## Verification
 
@@ -182,7 +182,7 @@ The UI Kit manual application covers:
 
 Manual application:
 
-    app/ui_kit_input_manual.py
+    demo/demo_input_features.py
 
 ## Status
 

@@ -13,11 +13,11 @@ The wrapper delegates to the existing PyLage `Row` component and uses the establ
 ## API
 
 ```python
-from pylage.UI.layout import row
+import pylage as pl
 
-row(
-    Text("First"),
-    Text("Second"),
+pl.row(
+    pl.text("First"),
+    pl.text("Second"),
     class_name="content-row",
 )
 ```

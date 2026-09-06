@@ -111,7 +111,7 @@ This implementation follows the UI Kit architecture by composing existing primit
 - Existing component content preservation verified.
 - Public `pylage.UI.recipes.modal` import verified.
 - Full test suite: 897 passed.
-- Manual example: `app/ui_kit_modal_manual.py`.
+- Manual example: `demo/demo_modal.py`.
 
 ## Status
 

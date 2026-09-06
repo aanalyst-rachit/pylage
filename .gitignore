@@ -42,3 +42,6 @@ PROJECT_NOTES.txt
 
 #for ehilr project generated 
 index.html
+
+# Test-generated HTML files
+*.html

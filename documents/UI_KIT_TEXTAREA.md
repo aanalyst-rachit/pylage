@@ -2,7 +2,7 @@
 
 ## Overview
 
-`ps.textarea()` provides a Python-first multi-line text input for the PyLage UI Kit.
+`pl.textarea()` provides a Python-first multi-line text input for the PyLage UI Kit.
 
 It wraps the existing PyLage engine textarea capability without introducing a separate renderer or client-side implementation.
 
@@ -10,7 +10,7 @@ It wraps the existing PyLage engine textarea capability without introducing a se
 
     import pylage as ps
 
-    ps.textarea(
+    pl.textarea(
         value="",
         style=None,
         **props,
@@ -20,7 +20,7 @@ It wraps the existing PyLage engine textarea capability without introducing a se
 
     import pylage as ps
 
-    ps.textarea(
+    pl.textarea(
         placeholder="Enter your message...",
         rows=5,
     )
@@ -30,11 +30,11 @@ It wraps the existing PyLage engine textarea capability without introducing a se
 A `State` can be supplied as the textarea value.
 
     import pylage as ps
-    from pylage.ENGINE import State
 
-    message = State("")
 
-    ps.textarea(
+    message = pl.State("")
+
+    pl.textarea(
         message,
         placeholder="Write something...",
     )
@@ -48,7 +48,7 @@ An explicit `on_input` handler is preserved when supplied.
     def handle_input(payload):
         print(payload)
 
-    ps.textarea(
+    pl.textarea(
         "",
         on_input=handle_input,
     )
@@ -77,13 +77,13 @@ Additional PyLage component properties and styling can be supplied through the n
 
 Textarea accepts the standard PyLage `Style` object.
 
-    from pylage.ENGINE import Style
+
     import pylage as ps
 
-    ps.textarea(
+    pl.textarea(
         placeholder="Notes",
         rows=6,
-        style=Style(
+        style=pl.style(
             width="100%",
             padding="0.75rem",
             border="1px solid #cbd5e1",
@@ -94,7 +94,7 @@ Textarea accepts the standard PyLage `Style` object.
 
 ## Disabled State
 
-    ps.textarea(
+    pl.textarea(
         "This field cannot be edited.",
         disabled=True,
     )
@@ -137,7 +137,7 @@ Browser manual verification: all checks passed
 
 Manual application:
 
-    app/ui_kit_textarea_manual.py
+    demo/demo_textarea.py
 
 ## Status
 

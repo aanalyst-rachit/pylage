@@ -6,6 +6,13 @@ from pylage.ENGINE import Switch as _Switch
 from pylage.ENGINE import Style
 
 
+_BASE_STYLE = Style(
+    width="2.75rem",
+    height="1.5rem",
+    cursor="pointer",
+)
+
+
 def switch(
     *,
     style: Style | None = None,
@@ -13,7 +20,7 @@ def switch(
 ):
     """Create a public PyLage UI switch using the existing engine Switch."""
     return _Switch(
-        style=style,
+        style=_BASE_STYLE.merge(style),
         **props,
     )
 

@@ -139,7 +139,7 @@ No test failures remain.
 Navigation Item manual verification is provided by:
 
 ```text
-app/ui_kit_navigation_item_manual.py
+demo/demo_navigation_item.py
 ```
 
 The manual application verifies that the initially active item is visually selected and that clicking another navigation item updates both the active styling and status text.

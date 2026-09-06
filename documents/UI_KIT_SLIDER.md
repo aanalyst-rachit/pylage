@@ -47,7 +47,7 @@ When a custom `on_input` callback is supplied, PyLage updates the bound State an
 ## Manual Verification
 
 Manual application:
-`app/ui_kit_slider_manual.py`
+`demo/demo_slider.py`
 
 Verified manually in the browser:
 

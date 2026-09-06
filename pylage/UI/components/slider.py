@@ -6,6 +6,12 @@ from pylage.ENGINE import Slider as _Slider
 from pylage.ENGINE import Style
 
 
+_BASE_STYLE = Style(
+    width="100%",
+    cursor="pointer",
+)
+
+
 def slider(
     *,
     style: Style | None = None,
@@ -13,7 +19,7 @@ def slider(
 ):
     """Create a public PyLage UI slider using the existing engine Slider."""
     return _Slider(
-        style=style,
+        style=_BASE_STYLE.merge(style),
         **props,
     )
 

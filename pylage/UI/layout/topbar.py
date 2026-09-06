@@ -2,9 +2,11 @@ from typing import Any
 from pylage.ENGINE.components.basic import Navigation
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.styling.style import Style
+from pylage.ENGINE.styling.responsive import ResponsiveStyle
+from ._common import resolve_style
 
 
-def Topbar(*children: Any, style: Style | None = None, **props: Any) -> Component:
+def Topbar(*children: Any, style: Style | ResponsiveStyle | None = None, **props: Any) -> Component:
     base_style = Style(
         display="flex",
         align_items="center",
@@ -12,7 +14,7 @@ def Topbar(*children: Any, style: Style | None = None, **props: Any) -> Componen
         width="100%",
         padding="0.75rem 1.5rem",
     )
-    return Navigation(*children, style=style or base_style, **props)
+    return Navigation(*children, style=resolve_style(style), **props)
 
 
 __all__ = ["Topbar"]

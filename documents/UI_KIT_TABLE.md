@@ -2,15 +2,15 @@
 
 ## Overview
 
-ps.table() provides a semantic data-table API while reusing the existing PyLage Table component and renderer.
+pl.table() provides a semantic data-table API while reusing the existing PyLage Table component and renderer.
 
 It is designed so application data can be passed directly to the UI Kit without requiring users to manually construct table rows.
 
 Example:
 
-    import pylage_ui as ps
+    import pylage as pl
 
-    ps.table([
+    pl.table([
         {"Name": "Rachit", "Age": 24},
         {"Name": "Rahul", "Age": 25},
     ])
@@ -22,14 +22,14 @@ DataFrame-like objects can be passed directly as the first argument, including p
 Example:
 
     import pandas as pd
-    import pylage_ui as ps
+    import pylage as pl
 
     users = pd.DataFrame({
         "Name": ["Rachit", "Rahul"],
         "Age": [24, 25],
     })
 
-    table = ps.table(users)
+    table = pl.table(users)
 
 Pandas is not a required PyLage dependency. The engine uses DataFrame-like behavior rather than importing pandas itself.
 
@@ -37,27 +37,27 @@ Polars DataFrame/LazyFrame-like objects are also supported when the correspondin
 
 ## Supported Input Forms
 
-ps.table() delegates data normalization to the existing PyLage Table component.
+pl.table() delegates data normalization to the existing PyLage Table component.
 
 Supported forms include:
 
 ### Record dictionaries
 
-    ps.table([
+    pl.table([
         {"Name": "Rachit", "Age": 24},
         {"Name": "Rahul", "Age": 25},
     ])
 
 ### Column mapping
 
-    ps.table({
+    pl.table({
         "Name": ["Rachit", "Rahul"],
         "Age": [24, 25],
     })
 
 ### Rows with explicit headers
 
-    ps.table(
+    pl.table(
         [[1, "Rachit"], [2, "Rahul"]],
         headers=["ID", "Name"],
     )
@@ -66,11 +66,11 @@ Supported forms include:
 
 Objects exposing the expected DataFrame-style columns and conversion/row APIs can be passed directly.
 
-    ps.table(dataframe)
+    pl.table(dataframe)
 
 ## API
 
-    ps.table(data=None, *, headers=None, style=None, **props)
+    pl.table(data=None, *, headers=None, style=None, **props)
 
 ### Parameters
 
@@ -83,7 +83,7 @@ Objects exposing the expected DataFrame-style columns and conversion/row APIs ca
 
 Explicit headers are useful when passing positional row data:
 
-    ps.table(
+    pl.table(
         [[1, "Rachit"], [2, "Rahul"]],
         headers=["ID", "Name"],
     )
@@ -98,7 +98,7 @@ The UI Kit does not introduce a separate table state or data-binding system.
 
 ## Styling
 
-ps.table() provides semantic defaults using existing PyLage design tokens:
+pl.table() provides semantic defaults using existing PyLage design tokens:
 
 - Full-width table layout.
 - Standard border token.
@@ -107,12 +107,12 @@ ps.table() provides semantic defaults using existing PyLage design tokens:
 
 Custom Style values are merged over these defaults:
 
-    from pylage import Style
-    import pylage_ui as ps
 
-    ps.table(
+    import pylage as pl
+
+    pl.table(
         users,
-        style=Style(width="80%"),
+        style=pl.style(width="80%"),
     )
 
 ## HTML Safety
@@ -123,7 +123,7 @@ Table cell values are escaped by the existing PyLage renderer before being inser
 
 Additional properties are forwarded to the existing PyLage Table component:
 
-    ps.table(
+    pl.table(
         users,
         title="Users",
         class_name="users-table",
@@ -133,7 +133,7 @@ Existing engine-level Table usage remains supported. The UI Kit is additive and 
 
 ## Architecture
 
-ps.table() is a WRAP implementation. It does not introduce a second table renderer, state engine, data-normalization engine, CSS engine, or layout engine.
+pl.table() is a WRAP implementation. It does not introduce a second table renderer, state engine, data-normalization engine, CSS engine, or layout engine.
 
 Architecture:
 
@@ -147,8 +147,8 @@ The current Table component provides data ingestion and semantic HTML rendering.
 
 It does not claim full Streamlit st.dataframe() feature parity such as built-in client-side sorting, filtering, pagination, column editing, or virtualization.
 
-Those capabilities can be added later without changing the basic ps.table(data) API.
+Those capabilities can be added later without changing the basic pl.table(data) API.
 
 ## Manual Demo
 
-See app/ui_kit_table_manual.py for the browser/manual smoke example.
+See demo/demo_table_dataframe.py for the browser/manual smoke example.

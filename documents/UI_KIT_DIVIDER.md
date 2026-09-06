@@ -2,14 +2,14 @@
 
 ## Overview
 
-`ps.divider()` provides a semantic horizontal separator using the existing PyLage `Divider` primitive.
+`pl.divider()` provides a semantic horizontal separator using the existing PyLage `Divider` primitive.
 
 ## API
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.divider()
+pl.divider()
 ```
 
 ## Default behavior
@@ -26,10 +26,10 @@ The UI Kit applies sensible defaults:
 A PyLage `Style` can override the defaults:
 
 ```python
-from pylage import Style
 
-ps.divider(
-    style=Style(
+
+pl.divider(
+    style=pl.style(
         border_top="2px solid #111827",
         margin="2rem 0",
     )
@@ -38,6 +38,6 @@ ps.divider(
 
 ## Architecture
 
-The UI Kit does not introduce a new renderer or primitive. `ps.divider()` wraps the existing `pylage.Divider` and adds the semantic UI Kit styling contract.
+The UI Kit does not introduce a new renderer or primitive. `pl.divider()` wraps the existing `pylage.Divider` and adds the semantic UI Kit styling contract.
 
 Engine props and events are forwarded to the underlying component.

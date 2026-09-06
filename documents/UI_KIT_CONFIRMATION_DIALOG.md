@@ -13,11 +13,11 @@ The recipe composes the existing UI Kit Dialog, Button, and Row APIs.
 ## API
 
 ```python
-from pylage.UI import confirmation_dialog
+import pylage as pl
 
-confirmation_dialog(
-    Text("Delete this item?"),
-    title=Text("Delete Item"),
+pl.confirmation_dialog(
+    pl.text("Delete this item?"),
+    title=pl.text("Delete Item"),
     open=dialog_open,
     on_confirm=delete_item,
     on_cancel=cancel_action,
@@ -68,7 +68,7 @@ Focused verification completed with **8 tests passed**.
 
 ## Manual Verification
 
-`app/ui_kit_confirmation_dialog_manual.py` was added to verify the recipe through the normal PyLage application runtime.
+`demo/demo_confirmation_dialog.py` was added to verify the recipe through the normal PyLage application runtime.
 
 Manual browser verification confirmed:
 

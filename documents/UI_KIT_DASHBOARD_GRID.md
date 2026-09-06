@@ -5,11 +5,11 @@
 ## Basic Usage
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.dashboard_grid(
-    ps.card(heading="Sales", body="1,200 units"),
-    ps.card(heading="Traffic", body="45K visitors"),
+pl.dashboard_grid(
+    pl.card(heading="Sales", body="1,200 units"),
+    pl.card(heading="Traffic", body="45K visitors"),
     layout="2-col",
 )
 ```

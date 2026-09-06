@@ -6,7 +6,7 @@ Every issue follows the strict verification lifecycle:
 1. **Bug Identification & Root Cause Analysis**
 2. **Automated Unit & Regression Tests** in `test/`
 3. **Engine Fix** (preserving all existing public API and performance contracts)
-4. **Live Manual Testing Script** in `app/`
+4. **Live Manual Testing Script** in `demo/`
 5. **Verification**: 100% test suite pass (130 unit/integration tests)
 
 ---
@@ -15,21 +15,21 @@ Every issue follows the strict verification lifecycle:
 
 | Bug ID | Component / Module | Severity | Title | Test File | Manual Script | Status |
 |--------|-------------------|----------|-------|-----------|---------------|--------|
-| **BUG-01** | `pylage/components/basic.py` (`Accordion`) | Medium | Accordion value binding and reactive section contract | `test/test_accordion_component.py` | `app/accordion_manual.py` | **FIXED** |
-| **BUG-02** | `pylage/components/basic.py` (`Carousel`) | Medium | Carousel value / slide index reactive binding | `test/test_carousel_component.py` | `app/carousel_manual.py` | **FIXED** |
-| **BUG-03** | `pylage/core/registry.py` (`Dialog`) | Medium | Dialog boolean `open` attribute rendering without `open="False"` string artifact | `test/test_dialog_component.py` | `app/dialog_manual.py` | **FIXED** |
-| **BUG-04** | `pylage/core/registry.py` (`Drawer`) | Medium | Drawer boolean `open` attribute rendering and reactive state binding | `test/test_drawer_component.py` | `app/drawer_manual.py` | **FIXED** |
-| **BUG-05** | `pylage/core/registry.py` (`Tabs`) | Low | Tabs active value synchronization and reactive state binding | `test/test_tabs_component.py` | `app/tabs_manual.py` | **FIXED** |
-| **BUG-06** | `pylage/components/basic.py` (`DatePicker`) | Low | DatePicker value ISO binding and min/max attribute support | `test/test_datepicker_component.py` | `app/datepicker_manual.py` | **FIXED** |
-| **BUG-07** | `pylage/core/registry.py` (`Popover`, `Tooltip`, `Menu`) | Low | Popover and Tooltip prop definitions and children rendering | `test/test_popover_component.py`, `test/test_tooltip_component.py` | `app/popover_tooltip_manual.py` | **FIXED** |
-| **BUG-08** | `pylage/core/registry.py` (`Pagination`) | Low | Pagination navigation container and action buttons | `test/test_pagination_component.py` | `app/pagination_manual.py` | **FIXED** |
-| **BUG-09** | `pylage/core/events.py`, `pylage/core/binding.py`, `pylage/runtime/websocket.py` | Critical | Dynamic Subtree Indexing & JSON-safe State unwrapping after WebSocketServer start | `test/test_tree_dynamic_binding.py` | `app/accordion_manual.py`, `app/nav_interaction_manual.py` | **FIXED** |
-| **BUG-10** | `pylage_layout/layouts/*`, `pylage_layout/tokens/*` | High | Missing layout primitives and design tokens causing import errors in `pylage_layout` | `test/test_01_tokens_audit.py`, `test/test_02_layouts_audit.py`, `test/test_03_layouts_audit.py`, `test/test_08_public_api_audit.py` | `app/layout_primitives_manual.py`, `app/themes_tokens_manual.py` | **FIXED** |
-| **BUG-11** | `pylage/core/component.py` (`component()`) | High | Keyword collision when `type` passed in component props (`TypeError: component() got multiple values for argument 'type'`) | `test/test_component_protocol.py` | `app/table_manual.py`, `app/data_feedback_manual.py` | **FIXED** |
-| **BUG-12** | `pylage/styling/style.py` (`Style`) | Medium | Missing standard CSS properties (`object_fit`, `object_position`, `cursor`, `overflow_x`, `overflow_y`, `aspect_ratio`, `user_select`) in `Style` dataclass | `test/test_style.py` | `app/audio_video_canvas_manual.py` | **FIXED** |
-| **BUG-13** | `pylage_layout/layouts/drawer.py` | Medium | Missing `NavigationDrawer` & `MobileSidebar` responsive factory exports | `test/test_7E_Navigation Responsiveness.py` | `app/drawer_manual.py` | **FIXED** |
-| **BUG-14** | `pylage/core/component.py` (`Component.__eq__`) | High | Reference equality vs deep attribute comparison in dynamic tree mutations (`remove`/`replace`) | `test/test_tree_remove_runtime.py`, `test/test_tree_replace_runtime.py` | `app/table_manual.py` | **FIXED** |
-| **BUG-15** | `app/` | Feature | Missing interactive demo manuals for `pylage` components and `pylage_layout` templates/patterns | All integration test suites | `app/manual_overview.py` + 33 dedicated manual files | **COMPLETED** |
+| **BUG-01** | `pylage/components/basic.py` (`Accordion`) | Medium | Accordion value binding and reactive section contract | `test/test_accordion_component.py` | `demo/demo_accordion.py` | **FIXED** |
+| **BUG-02** | `pylage/components/basic.py` (`Carousel`) | Medium | Carousel value / slide index reactive binding | `test/test_carousel_component.py` | `demo/demo_carousel.py` | **FIXED** |
+| **BUG-03** | `pylage/core/registry.py` (`Dialog`) | Medium | Dialog boolean `open` attribute rendering without `open="False"` string artifact | `test/test_dialog_component.py` | `demo/demo_dialog.py` | **FIXED** |
+| **BUG-04** | `pylage/core/registry.py` (`Drawer`) | Medium | Drawer boolean `open` attribute rendering and reactive state binding | `test/test_drawer_component.py` | `demo/demo_drawer.py` | **FIXED** |
+| **BUG-05** | `pylage/core/registry.py` (`Tabs`) | Low | Tabs active value synchronization and reactive state binding | `test/test_tabs_component.py` | `demo/demo_tabs.py` | **FIXED** |
+| **BUG-06** | `pylage/components/basic.py` (`DatePicker`) | Low | DatePicker value ISO binding and min/max attribute support | `test/test_datepicker_component.py` | `demo/demo_datepicker.py` | **FIXED** |
+| **BUG-07** | `pylage/core/registry.py` (`Popover`, `Tooltip`, `Menu`) | Low | Popover and Tooltip prop definitions and children rendering | `test/test_popover_component.py`, `test/test_tooltip_component.py` | `demo/demo_popover_tooltip.py` | **FIXED** |
+| **BUG-08** | `pylage/core/registry.py` (`Pagination`) | Low | Pagination navigation container and action buttons | `test/test_pagination_component.py` | `demo/demo_pagination.py` | **FIXED** |
+| **BUG-09** | `pylage/core/events.py`, `pylage/core/binding.py`, `pylage/runtime/websocket.py` | Critical | Dynamic Subtree Indexing & JSON-safe State unwrapping after WebSocketServer start | `test/test_tree_dynamic_binding.py` | `demo/demo_accordion.py`, `demo/demo_nav_interaction.py` | **FIXED** |
+| **BUG-10** | `pylage_layout/layouts/*`, `pylage_layout/tokens/*` | High | Missing layout primitives and design tokens causing import errors in `pylage_layout` | `test/test_01_tokens_audit.py`, `test/test_02_layouts_audit.py`, `test/test_03_layouts_audit.py`, `test/test_08_public_api_audit.py` | `demo/demo_layout_primitives.py`, `demo/demo_themes_tokens.py` | **FIXED** |
+| **BUG-11** | `pylage/core/component.py` (`component()`) | High | Keyword collision when `type` passed in component props (`TypeError: component() got multiple values for argument 'type'`) | `test/test_component_protocol.py` | `demo/demo_table.py`, `demo/demo_data_feedback.py` | **FIXED** |
+| **BUG-12** | `pylage/styling/style.py` (`Style`) | Medium | Missing standard CSS properties (`object_fit`, `object_position`, `cursor`, `overflow_x`, `overflow_y`, `aspect_ratio`, `user_select`) in `Style` dataclass | `test/test_style.py` | `demo/demo_audio_video_canvas.py` | **FIXED** |
+| **BUG-13** | `pylage_layout/layouts/drawer.py` | Medium | Missing `NavigationDrawer` & `MobileSidebar` responsive factory exports | `test/test_7E_Navigation Responsiveness.py` | `demo/demo_drawer.py` | **FIXED** |
+| **BUG-14** | `pylage/core/component.py` (`Component.__eq__`) | High | Reference equality vs deep attribute comparison in dynamic tree mutations (`remove`/`replace`) | `test/test_tree_remove_runtime.py`, `test/test_tree_replace_runtime.py` | `demo/demo_table.py` | **FIXED** |
+| **BUG-15** | `demo/` | Feature | Missing interactive demo manuals for `pylage` components and `pylage_layout` templates/patterns | All integration test suites | `demo/demo_overview.py` + 33 dedicated manual files | **COMPLETED** |
 
 ---
 
@@ -61,7 +61,7 @@ Every issue follows the strict verification lifecycle:
 ### BUG-12: Missing CSS Properties in `Style` Dataclass
 - **Issue**: Specifying standard styling properties like `object_fit`, `object_position`, `cursor`, `overflow_x`, `overflow_y`, `aspect_ratio`, `user_select`, and `text_overflow` raised `TypeError: Style.__init__() got an unexpected keyword argument`.
 - **Fix**: Expanded the `Style` dataclass in `pylage/styling/style.py` to support all standard layout and rendering properties.
-- **Verification**: Verified in `test_style.py` and `app/audio_video_canvas_manual.py`.
+- **Verification**: Verified in `test_style.py` and `demo/demo_audio_video_canvas.py`.
 
 ### BUG-13: Missing `NavigationDrawer` & `MobileSidebar` in `pylage_layout.layouts.drawer`
 - **Issue**: `test_7E_Navigation Responsiveness.py` failed with `ImportError: cannot import name 'NavigationDrawer' from 'pylage_layout.layouts.drawer'`.
@@ -83,9 +83,9 @@ Every issue follows the strict verification lifecycle:
 
 ## 🚀 Component & Layout Manual Coverage
 
-The `app/` suite now contains 33 comprehensive manual scripts and an interactive aggregator (`app/manual_overview.py`):
-- **Core Primitives & Inputs**: `button_manual.py`, `modern_button_manual.py`, `input_manual.py`, `slider_radio_checkbox_manual.py`, `switch_manual.py`, `select_manual.py`, `datepicker_manual.py`, `form_manual.py`
-- **Structure & Layout**: `column_manual.py`, `row_manual.py`, `grid_manual.py`, `card_manual.py`, `heading_manual.py`, `text_manual.py`, `avatar_badge_divider_manual.py`, `layout_primitives_manual.py`
-- **Data & Feedback**: `table_manual.py`, `data_feedback_manual.py`, `accordion_manual.py`, `carousel_manual.py`, `tabs_manual.py`, `dialog_manual.py`, `drawer_manual.py`, `popover_tooltip_manual.py`
-- **Navigation & Media**: `menu_breadcrumbs_pagination_manual.py`, `nav_interaction_manual.py`, `media_manual.py`, `audio_video_canvas_manual.py`
-- **Layouts & Templates**: `patterns_manual.py`, `templates_manual.py`, `themes_tokens_manual.py`, `manual_overview.py`
+The `demo/` suite now contains 33 comprehensive manual scripts and an interactive aggregator (`demo/demo_overview.py`):
+- **Core Primitives & Inputs**: `demo_button.py`, `modern_demo_button.py`, `demo_input.py`, `demo_slider_radio_checkbox.py`, `demo_switch.py`, `demo_select.py`, `demo_datepicker.py`, `demo_form.py`
+- **Structure & Layout**: `demo_column.py`, `demo_row.py`, `demo_grid.py`, `demo_card.py`, `demo_heading.py`, `demo_text.py`, `demo_avatar_badge_divider.py`, `demo_layout_primitives.py`
+- **Data & Feedback**: `demo_table.py`, `demo_data_feedback.py`, `demo_accordion.py`, `demo_carousel.py`, `demo_tabs.py`, `demo_dialog.py`, `demo_drawer.py`, `demo_popover_tooltip.py`
+- **Navigation & Media**: `demo_menu_breadcrumbs_pagination.py`, `demo_nav_interaction.py`, `demo_media.py`, `demo_audio_video_canvas.py`
+- **Layouts & Templates**: `demo_patterns.py`, `demo_templates.py`, `demo_themes_tokens.py`, `demo_overview.py`

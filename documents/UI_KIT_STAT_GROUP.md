@@ -5,11 +5,11 @@
 ## Basic Usage
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.stat_group(
-    ps.metric(label="Revenue", value="₹1,20,000", delta="+12%"),
-    ps.metric(label="Subscribers", value="3,450", delta="+4%"),
+pl.stat_group(
+    pl.metric(label="Revenue", value="₹1,20,000", delta="+12%"),
+    pl.metric(label="Subscribers", value="3,450", delta="+4%"),
     columns=2,
 )
 ```
@@ -17,9 +17,9 @@ ps.stat_group(
 ## Mapping and Tuple Syntax
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.stat_group(
+pl.stat_group(
     items=[
         {"label": "Direct Visits", "value": "12.4K", "delta": "+8%"},
         {"label": "Organic Visits", "value": "45.1K", "delta": "+15%"},

@@ -119,7 +119,7 @@ Manual Demo
 
 Manual demonstration:
 
-app/ui_kit_dataframe_manual.py
+demo/demo_dataframe.py
 
 The demo uses the project dataset and demonstrates normal rendering, cell borders, borderless cells, and scrolling.
 Tests

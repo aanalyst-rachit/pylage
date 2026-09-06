@@ -146,7 +146,7 @@ Automated RadioGroup verification includes:
 
 Manual verification is available in:
 
-    app/ui_kit_radio_manual.py
+    demo/demo_radio.py
 
 Manual coverage includes:
 

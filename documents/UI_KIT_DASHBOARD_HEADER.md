@@ -5,22 +5,22 @@
 ## Basic Usage
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.dashboard_header("Overview")
+pl.dashboard_header("Overview")
 ```
 
 ## With Subtitle and Action Controls
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.dashboard_header(
+pl.dashboard_header(
     title="Sales Pipeline",
     description="Track quarterly deal stages and team velocity.",
     actions=[
-        ps.button("Export CSV", variant="outline"),
-        ps.button("Add Deal", variant="primary"),
+        pl.button("Export CSV", variant="outline"),
+        pl.button("Add Deal", variant="primary"),
     ],
 )
 ```

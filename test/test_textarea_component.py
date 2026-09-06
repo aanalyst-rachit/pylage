@@ -66,7 +66,10 @@ def test_textarea_supports_style():
         style=style,
     )
 
-    assert component.props["style"] is style
+    resolved = component.props["style"]
+    assert resolved.color == "red"
+    assert resolved.background_color == "var(--color-background)"
+    assert resolved.border_radius == "var(--radius-md)"
 
 
 def test_textarea_supports_state():

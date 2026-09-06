@@ -5,9 +5,9 @@
 ## Basic Usage
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.dashboard_card(
+pl.dashboard_card(
     title="Real-time Traffic",
     body="14,200 sessions actively streaming.",
     footer="Refreshed 10s ago",
@@ -17,12 +17,12 @@ ps.dashboard_card(
 ## With Contextual Actions and Tags
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.dashboard_card(
-    ps.metric(label="Active Containers", value="94/100", delta="+6"),
+pl.dashboard_card(
+    pl.metric(label="Active Containers", value="94/100", delta="+6"),
     title="Fleet Capacity",
-    action=ps.badge("Healthy", variant="success"),
+    action=pl.badge("Healthy", variant="success"),
     footer="Cluster: us-west-prod",
 )
 ```

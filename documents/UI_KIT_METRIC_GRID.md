@@ -5,11 +5,11 @@
 ## Basic Usage
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.metric_grid(
-    ps.metric(label="MRR", value="$42,000", delta="+12%"),
-    ps.metric(label="Subscribers", value="1,240", delta="+5%"),
+pl.metric_grid(
+    pl.metric(label="MRR", value="$42,000", delta="+12%"),
+    pl.metric(label="Subscribers", value="1,240", delta="+5%"),
     columns=2,
 )
 ```

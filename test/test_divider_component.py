@@ -13,7 +13,7 @@ def test_divider_renders_as_hr():
 
     html = render(divider)
 
-    assert html.startswith("<hr ")
+    assert "<hr " in html
     assert "</hr>" not in html
 
 

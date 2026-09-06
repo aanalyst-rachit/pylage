@@ -2,16 +2,16 @@
 
 ## Overview
 
-`ps.avatar()` provides a semantic UI Kit avatar by composing the existing PyLage `Avatar` primitive.
+`pl.avatar()` provides a semantic UI Kit avatar by composing the existing PyLage `Avatar` primitive.
 
 ## API
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.avatar("RK")
-ps.avatar("Rachit Kumar", size="lg")
-ps.avatar(ps.Image(src="https://example.com/avatar.png", alt="User"))
+pl.avatar("RK")
+pl.avatar("Rachit Kumar", size="lg")
+pl.avatar(pl.Image(src="https://example.com/avatar.png", alt="User"))
 ```
 
 ## Sizes

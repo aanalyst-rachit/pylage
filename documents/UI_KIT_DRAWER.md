@@ -17,11 +17,11 @@ The UI Kit reuses the existing PyLage Drawer implementation instead of creating 
 The recipes wrap:
 
 ```python
-from pylage.UI.layout.drawer import (
-    Drawer as _Drawer,
-    NavigationDrawer as _NavigationDrawer,
-    MobileSidebar as _MobileSidebar,
-)
+import pylage as pl
+
+drawer = pl.drawer
+navigation_drawer = pl.navigation_drawer
+mobile_sidebar = pl.mobile_sidebar
 ```
 
 Architecture:
@@ -107,25 +107,25 @@ The implementation keeps Drawer behavior in the renderer/layout architecture and
 ### Drawer
 
 ```python
-from pylage.UI.recipes import drawer
+import pylage as pl
 
-drawer(...)
+pl.drawer(...)
 ```
 
 ### Navigation Drawer
 
 ```python
-from pylage.UI.recipes import navigation_drawer
+import pylage as pl
 
-navigation_drawer(...)
+pl.navigation_drawer(...)
 ```
 
 ### Mobile Sidebar
 
 ```python
-from pylage.UI.recipes import mobile_sidebar
+import pylage as pl
 
-mobile_sidebar(...)
+pl.mobile_sidebar(...)
 ```
 
 ## Regression Coverage

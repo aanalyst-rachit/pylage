@@ -32,6 +32,8 @@ def test_themes_public_api_exists():
         "get_theme",
         "light",
         "dark",
+        "set_theme",
+        "get_current_theme",
     }
 
     for name in expected:
@@ -50,6 +52,8 @@ def test_themes_all_matches_public_api():
         "get_theme",
         "light",
         "dark",
+        "set_theme",
+        "get_current_theme",
     }
 
     assert set(themes.__all__) == expected

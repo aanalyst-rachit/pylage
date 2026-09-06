@@ -5,9 +5,9 @@
 ## Basic Usage
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.data_list({
+pl.data_list({
     "Full Name": "Alice Henderson",
     "Department": "Product Design",
     "Location": "San Francisco, CA",
@@ -17,12 +17,12 @@ ps.data_list({
 ## Using Tuples or Lists
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.data_list([
+pl.data_list([
     ("Host", "db-primary.internal"),
     ("Port", "5432"),
-    ("Status", ps.badge("Online", variant="success")),
+    ("Status", pl.badge("Online", variant="success")),
 ])
 ```
 
@@ -39,9 +39,9 @@ ps.data_list([
 ## Vertical Layout
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.data_list({
+pl.data_list({
     "API Key": "pk_live_51M0...92b",
     "Webhook Secret": "whsec_08f...c89",
 }, orientation="vertical")

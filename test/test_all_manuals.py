@@ -6,14 +6,14 @@ from playwright.sync_api import sync_playwright
 from pylage.ENGINE.runtime import Runtime
 
 
-APP_DIR = Path("app")
+APP_DIR = Path("demo")
 OUTPUT_DIR = Path("test_output/all_manuals")
 
 
 def discover_manuals():
     return sorted(
         path.stem
-        for path in APP_DIR.glob("*_manual.py")
+        for path in APP_DIR.glob("demo_*.py")
         if path.name != "__init__.py"
     )
 
@@ -21,7 +21,7 @@ def discover_manuals():
 def test_all_manuals_smoke():
     manuals = discover_manuals()
 
-    assert manuals, "No *_manual.py files found."
+    assert manuals, "No demo_*.py files found."
 
     results = []
 
@@ -41,7 +41,7 @@ def test_all_manuals_smoke():
             runtime = None
 
             try:
-                module = importlib.import_module(f"app.{manual_name}")
+                module = importlib.import_module(f"demo.{manual_name}")
 
                 get_app = getattr(module, "get_app", None)
 

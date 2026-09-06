@@ -2,28 +2,28 @@
 
 ## Overview
 
-`checkbox()` is the public PyLage UI Kit wrapper for the existing engine `Checkbox` component.
+`pl.checkbox()` is the public PyLage UI Kit wrapper for the existing engine `Checkbox` component.
 It reuses the existing renderer, registry, event system, and State reactivity without duplicating engine behavior.
 
 ## API
 
 ```python
-from pylage.UI.components import checkbox
+import pylage as pl
 ```
 
 ### Basic usage
 
 ```python
-checkbox(checked=True)
+pl.checkbox(checked=True)
 ```
 
 ### State binding
 
 ```python
-from pylage.ENGINE import State
+import pylage as pl
 
-checked = State(False)
-checkbox(checked=checked)
+checked = pl.State(False)
+pl.checkbox(checked=checked)
 ```
 
 The existing Checkbox engine supports State-backed `checked` values and propagates Python-side State changes to the browser DOM.
@@ -77,7 +77,7 @@ Project-wide manual runner completed successfully:
 1 passed in 56.38s
 ```
 
-Dedicated manual application: `app/ui_kit_checkbox_manual.py`
+Dedicated manual application: `demo/demo_checkbox.py`
 
 Manual coverage includes basic, State-bound, custom event, pre-checked, disabled, and styled checkbox cases.
 

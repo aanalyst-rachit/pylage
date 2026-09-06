@@ -25,7 +25,8 @@ def Section(*children: Any, style: Style | ResponsiveStyle | None = None, **prop
 
 
 def Split(*children: Any, style: Style | ResponsiveStyle | None = None, **props: Any) -> Component:
-    return Row(*children, style=resolve_style(style), **props)
+    resolved_style = base_style.merge(style) if isinstance(style, Style) else resolve_style(style)
+    return Row(*children, style=resolved_style, **props)
 
 
 def TwoColumn(*children: Any, style: Style | ResponsiveStyle | None = None, **props: Any) -> Component:
@@ -47,12 +48,14 @@ def SidebarLayout(sidebar: Any = None, content: Any = None, style: Style | Respo
 
 def Header(*children: Any, style: Style | ResponsiveStyle | None = None, **props: Any) -> Component:
     base_style = Style(width="100%", padding="1rem 1.5rem", display="flex", align_items="center", justify_content="space-between")
-    return Row(*children, style=style or base_style, **props)
+    resolved_style = base_style.merge(style) if isinstance(style, Style) else resolve_style(style)
+    return Row(*children, style=resolved_style, **props)
 
 
 def Footer(*children: Any, style: Style | ResponsiveStyle | None = None, **props: Any) -> Component:
     base_style = Style(width="100%", padding="2rem 1.5rem", display="flex", justify_content="center", align_items="center")
-    return Column(*children, style=style or base_style, **props)
+    resolved_style = base_style.merge(style) if isinstance(style, Style) else resolve_style(style)
+    return Column(*children, style=resolved_style, **props)
 
 
 def Navigation(*children: Any, **props: Any) -> Component:

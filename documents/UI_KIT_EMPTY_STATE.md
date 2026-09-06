@@ -5,9 +5,9 @@
 ## Basic Usage
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.empty_state(
+pl.empty_state(
     title="No projects found",
     description="You have not created any projects yet.",
 )
@@ -16,13 +16,13 @@ ps.empty_state(
 ## With Icon and Action Button
 
 ```python
-import pylage_ui as ps
+import pylage as pl
 
-ps.empty_state(
+pl.empty_state(
     title="No items in cart",
     description="Explore our catalog and add items to your cart.",
     icon="🛒",
-    action=ps.button("Browse Products", variant="primary"),
+    action=pl.button("Browse Products", variant="primary"),
 )
 ```
 
@@ -40,11 +40,11 @@ ps.empty_state(
 ## Custom Styling
 
 ```python
-from pylage import Style
-import pylage_ui as ps
 
-ps.empty_state(
+import pylage as pl
+
+pl.empty_state(
     title="No records",
-    style=Style(padding="4rem", background_color="#fafafa"),
+    style=pl.style(padding="4rem", background_color="#fafafa"),
 )
 ```
