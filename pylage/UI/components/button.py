@@ -56,6 +56,17 @@ _BASE_STYLE = Style(
 )
 
 
+_COMBINED_STYLES: dict[str, dict[str, Style]] = {
+    variant: {
+        size: _BASE_STYLE.merge(_VARIANT_STYLES[variant]).merge(
+            _SIZE_STYLES[size]
+        )
+        for size in _SIZE_STYLES
+    }
+    for variant in _VARIANT_STYLES
+}
+
+
 def button(
     text: Any,
     *,
@@ -80,8 +91,7 @@ def button(
             f"Expected one of: {valid}."
         )
 
-    default_style = _BASE_STYLE.merge(_VARIANT_STYLES[variant])
-    default_style = default_style.merge(_SIZE_STYLES[size])
+    default_style = _COMBINED_STYLES[variant][size]
     # ``bg`` is a public convenience API.  It accepts a Style
     # preset such as ``style.black`` and merges it before the
     # explicit ``style=`` override.
