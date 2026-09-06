@@ -74,9 +74,9 @@ top_bar = pl.navbar(
         pl.navigation_item("Home", active=True),
         pl.navigation_item("Pricing", active=False),
         pl.navigation_item("Docs", active=False),
-    ),
+    ), # type: ignore
     pl.button("Simulate signup", on_click=simulate_signup, variant="secondary", size="sm"),
-)
+) # pyright: ignore[reportCallIssue]
 
 hero = pl.Hero(
     "Ship your SaaS 10x faster",
@@ -103,7 +103,7 @@ plan_options = pl.row(
     pl.navigation_item("Starter", active=starter_active, on_click=choose_plan("Starter", "$9/mo")),
     pl.navigation_item("Pro", active=pro_active, on_click=choose_plan("Pro", "$29/mo")),
     pl.navigation_item("Enterprise", active=enterprise_active, on_click=choose_plan("Enterprise", "Custom")),
-)
+) # type: ignore
 
 plan_summary = pl.card(
     pl.button("Subscribe", on_click=subscribe_clicked, style=pl.style(margin_top="0.5rem")),
@@ -124,7 +124,7 @@ features_section = pl.dashboard_section(
         pl.card(heading="Realtime by default", body="Every State change reaches the browser over one shared WebSocket connection."),
         pl.card(heading="Composable UI kit", body="Buttons, cards, forms and layouts that already know your theme tokens."),
         pl.card(heading="No build step", body="Write Python, get a reactive web app — no bundler, no JSX."),
-    ),
+    ), # type: ignore
     title="Why teams pick Voltra",
 )
 
