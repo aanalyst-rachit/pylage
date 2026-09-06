@@ -10,6 +10,10 @@ def Text(text: Any, **props: Any) -> Component:
     return component("Text", text=text, **props)
 
 
+def Label(text: Any, **props: Any) -> Component:
+    return component("Label", text=text, **props)
+
+
 def Column(*children, **props: Any) -> Component:
     return component("Column", *children, **props)
 

@@ -205,6 +205,22 @@ registry.register(
     },
 )
 
+registry.register(
+    "Label",
+    "label",
+    props={
+        "text": PropDefinition(
+            "text",
+            kind="text",
+        ),
+        "for": PropDefinition(
+            "for",
+            kind="attribute",
+            html_name="for",
+        ),
+    },
+)
+
 #
 registry.register(
     "Card",

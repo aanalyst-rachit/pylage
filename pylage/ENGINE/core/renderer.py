@@ -907,13 +907,17 @@ class HTMLRenderer:
 
     def _render_text(self, component: Component) -> str:
         common = self._render_common_attributes(component)
+        props = self._render_prop_attributes(
+            component,
+            excluded={"text", "children"},
+        )
 
         text = self._value(
             component.props.get("text", "")
         )
 
         return (
-            f"<div {common}>"
+            f"<div {common}{props}>"
             f"{escape(str(text))}"
             f"</div>"
         )

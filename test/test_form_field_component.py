@@ -10,8 +10,9 @@ def test_form_field_wraps_existing_control():
 
     assert field.type == "Column"
     assert len(field.children) == 2
-    assert field.children[0].type == "Text"
+    assert field.children[0].type == "Label"
     assert field.children[1].type == "Input"
+    assert field.children[0].props["for"] == field.children[1].props["id"]
 
 
 def test_form_field_renders_label_and_control():
@@ -38,6 +39,8 @@ def test_form_field_supports_help_text():
 
     assert "Message" in html
     assert "Keep it concise." in html
+    assert 'aria-describedby="pylage-field-help-' in html
+    assert 'id="pylage-field-help-' in html
 
 
 def test_form_field_supports_error():
@@ -50,6 +53,9 @@ def test_form_field_supports_error():
     html = render(field)
 
     assert "Invalid email address." in html
+    assert 'aria-describedby="pylage-field-error-' in html
+    assert 'aria-invalid' in html
+    assert 'id="pylage-field-error-' in html
 
 
 def test_form_field_required_marks_label():
@@ -100,5 +106,6 @@ def test_form_field_accepts_select_control():
     )
 
     assert field.type == "Column"
-    assert field.children[0].type == "Text"
+    assert field.children[0].type == "Label"
     assert field.children[1].type == "Select"
+    assert field.children[0].props["for"] == field.children[1].props["id"]

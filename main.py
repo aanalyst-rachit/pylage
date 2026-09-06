@@ -21,25 +21,25 @@ from pylage.ENGINE import Button, Card, Column, Heading, Row, State, Text
 from pylage.ENGINE.styling.style import Style
 
 
-APP_DIR = BASE_DIR / "app"
+DEMO_DIR = BASE_DIR / "demo"
 
 MANUALS: dict[str, object] = {}
 MANUAL_APPS: dict[str, object] = {}
 
 
 def display_name_from_path(path: Path) -> str:
-    name = path.stem.removesuffix("_manual")
+    name = path.stem.removeprefix("demo_")
     return name.replace("_", " ").strip().title()
 
 
 def discover_manuals() -> dict[str, object]:
     manuals: dict[str, object] = {}
 
-    if not APP_DIR.exists():
+    if not DEMO_DIR.exists():
         return manuals
 
-    for path in sorted(APP_DIR.glob("*_manual.py")):
-        module_name = f"app.{path.stem}"
+    for path in sorted(DEMO_DIR.glob("demo_*.py")):
+        module_name = f"demo.{path.stem}"
 
         try:
             if module_name in sys.modules:
@@ -167,8 +167,9 @@ def build_manual_browser() -> Column: # type: ignore
         return Column(
             Text("No usable manuals found."),
             style=Style(
-                width="100%",
+                width="100vw",
                 height="100vh",
+                box_sizing="border-box",
             ),
         )
 
@@ -257,17 +258,7 @@ def build_manual_browser() -> Column: # type: ignore
             border_right="1px solid #e2e8f0",
             overflow="auto",
             flex_shrink="0",
-        ),
-    )
-
-    body = Row(
-        sidebar,
-        content_area,
-        style=Style(
-            width="100%",
-            flex="1",
-            min_height="0",
-            overflow="hidden",
+            box_sizing="border-box",
         ),
     )
 
@@ -300,11 +291,27 @@ def build_manual_browser() -> Column: # type: ignore
         style=Style(
             width="100%",
             height="50px",
+            min_height="50px",
+            max_height="50px",
             padding="0 1rem",
             align_items="center",
             justify_content="space-between",
             border_bottom="1px solid #e2e8f0",
             flex_shrink="0",
+            box_sizing="border-box",
+        ),
+    )
+
+    body = Row(
+        sidebar,
+        content_area,
+        style=Style(
+            width="100%",
+            height="calc(100vh - 50px)",
+            flex="1",
+            min_height="0",
+            overflow="hidden",
+            box_sizing="border-box",
         ),
     )
 
@@ -312,9 +319,17 @@ def build_manual_browser() -> Column: # type: ignore
         header,
         body,
         style=Style(
-            width="100%",
+            position="fixed",
+            top="0",
+            left="0",
+            right="0",
+            bottom="0",
+            width="100vw",
             height="100vh",
+            margin="0",
+            padding="0",
             overflow="hidden",
+            box_sizing="border-box",
         ),
     )
 
@@ -354,5 +369,4 @@ if __name__ == "__main__":
         height=800,
     )
 
-    # debug=False se Web Inspector band ho jaayega
     webview.start(gui="qt", debug=False)
