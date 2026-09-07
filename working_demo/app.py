@@ -154,14 +154,14 @@ def forms_page():
             pl.form(
                 pl.form_field(
                     pl.input(
-                        value="Racit", name="name", placeholder="Your name"
+                        value="Rachit", name="name", placeholder="Your name"
                     ),
                     label="Name",
                     required=True,
                 ),
                 pl.form_field(
                     pl.input(
-                        value="racit@example.com",
+                        value="rachit@example.com",
                         name="email",
                         input_type="email",
                         placeholder="Email",
@@ -210,7 +210,7 @@ def tables_page():
             ),
             pl.row(
                 pl.text("Current page:"),
-                pl.badge(current_page, variant="secondary"),
+                pl.badge(str(current_page.value), variant="secondary"),
                 align_items="center",
                 gap="0.5rem",
             ),
@@ -381,7 +381,7 @@ def get_app():
 
         return handler
 
-    # Sidebar layout with vertical gap for navigation items
+    # Fixed: Removed hardcoded background_color and border to allow theme dynamic rendering
     sidebar = pl.column(
         pl.column(
             pl.heading("PyLage", level=2),
@@ -392,7 +392,7 @@ def get_app():
             *[
                 pl.navigation_item(
                     name,
-                    active=active_page,
+                    active=(active_page.value == name),  # Dynamic boolean check
                     on_click=select_page(name),
                     style=pl.style(margin_bottom="0.375rem"),
                 )
@@ -404,8 +404,6 @@ def get_app():
             width="240px",
             min_width="240px",
             padding="1.5rem",
-            background_color="#ffffff",
-            border_right="1px solid #e2e8f0",
             box_sizing="border-box",
         ),
     )

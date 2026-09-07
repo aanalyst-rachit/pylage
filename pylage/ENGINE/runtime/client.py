@@ -684,6 +684,23 @@ CLIENT_RUNTIME = r"""
             return;
         }
 
+        if (message.type === "theme_update") {
+            if (typeof message.css !== "string") {
+                return;
+            }
+
+            const themeStyle = document.querySelector(
+                'style[data-pylage-theme="true"]'
+            );
+
+            if (themeStyle === null) {
+                return;
+            }
+
+            themeStyle.textContent = ':root{' + message.css + '}';
+            return;
+        }
+
         if (message.type !== "update") {
             return;
         }

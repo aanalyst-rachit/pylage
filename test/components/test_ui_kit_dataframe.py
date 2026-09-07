@@ -121,8 +121,8 @@ def test_ui_kit_dataframe_cell_borders_are_on_by_default():
 
     assert 'class="pylage-dataframe"' in html
     assert ".pylage-dataframe__grid th" in html
-    assert "border-right: 1px solid #e2e8f0" in html
-    assert "border-bottom: 1px solid #e2e8f0" in html
+    assert "border-right: 1px solid var(--color-border)" in html
+    assert "border-bottom: 1px solid var(--color-border)" in html
 
 
 def test_ui_kit_dataframe_can_disable_cell_borders():

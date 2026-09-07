@@ -29,7 +29,7 @@ def test_foundation_does_not_remove_theme_tokens():
     assert "box-sizing: border-box" in html
 
     foundation_index = html.find("*, *::before, *::after")
-    theme_index = html.find("<style>:root{")
+    theme_index = html.find('<style data-pylage-theme="true">:root{')
 
     assert foundation_index >= 0
     assert theme_index >= 0

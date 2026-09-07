@@ -9,7 +9,7 @@ from pylage.ENGINE import Style
 _DEFAULT_STYLE = Style(
     width="100%",
     border="0",
-    border_top="1px solid #e2e8f0",
+    border_top="1px solid var(--color-border)",
     margin="1rem 0",
 )
 

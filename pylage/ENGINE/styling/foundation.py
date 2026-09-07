@@ -35,6 +35,14 @@ td {
     border-bottom: 1px solid var(--color-border);
 }
 
+td {
+    background-color: var(--color-background);
+}
+
+th {
+    background-color: var(--color-surface-variant);
+}
+
 tbody tr:last-child td {
     border-bottom: none;
 }

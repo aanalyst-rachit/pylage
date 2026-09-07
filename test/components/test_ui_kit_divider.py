@@ -19,7 +19,7 @@ def test_divider_default_contract():
 
     assert style.width == "100%"
     assert style.border == "0"
-    assert style.border_top == "1px solid #e2e8f0"
+    assert style.border_top == "1px solid var(--color-border)"
     assert style.margin == "1rem 0"
 
 

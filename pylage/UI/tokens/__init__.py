@@ -19,6 +19,8 @@ COLORS: dict[str, str] = {
     "success": "#22c55e",
     "warning": "#f59e0b",
     "danger": "#ef4444",
+    "danger_bg": "#fef2f2",
+    "danger_border": "#fecaca",
     "info": "#06b6d4",
 }
 
@@ -54,9 +56,14 @@ SPACING: dict[str, str] = {
 def validate_tokens() -> bool:
     """Validate all token registries for required keys and formats."""
     required_colors = {
-        "background", "surface", "text", "text_muted",
-        "border", "primary", "secondary", "success",
-        "warning", "danger", "info",
+        "background", "surface", "surface_variant",
+        "text", "text_muted",
+        "border", "border_muted",
+        "primary", "primary_hover", "primary_contrast",
+        "secondary", "secondary_hover", "secondary_contrast",
+        "success", "warning",
+        "danger", "danger_bg", "danger_border",
+        "info",
     }
     if not required_colors.issubset(COLORS.keys()):
         return False

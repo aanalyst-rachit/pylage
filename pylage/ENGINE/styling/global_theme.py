@@ -18,4 +18,13 @@ def get_global_theme() -> Any:
     return _global_theme.value
 
 
-__all__ = ["get_global_theme", "set_global_theme"]
+def subscribe_global_theme(callback):
+    """Subscribe to process-wide theme changes and return an unsubscribe callback."""
+    return _global_theme.subscribe(callback)
+
+
+__all__ = [
+    "get_global_theme",
+    "set_global_theme",
+    "subscribe_global_theme",
+]

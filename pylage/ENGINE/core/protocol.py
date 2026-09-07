@@ -228,6 +228,58 @@ class UpdateMessage:
         return cls.from_dict(decoded)
 
 @dataclass(frozen=True)
+class ThemeUpdateMessage:
+    """Server-to-client global theme update message."""
+
+    css: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.css, str):
+            raise TypeError("Theme update message css must be a string.")
+
+    @property
+    def type(self) -> str:
+        return "theme_update"
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "type": self.type,
+            "css": self.css,
+        }
+
+    def to_json(self) -> str:
+        return json.dumps(
+            self.to_dict(),
+            separators=(",", ":"),
+        )
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "ThemeUpdateMessage":
+        if not isinstance(data, dict):
+            raise TypeError("Theme update message must be a dictionary.")
+
+        if data.get("type") != "theme_update":
+            raise ValueError("Invalid theme update message type.")
+
+        css = data.get("css")
+        if not isinstance(css, str):
+            raise ValueError("Theme update message requires css.")
+
+        return cls(css=css)
+
+    @classmethod
+    def from_json(cls, data: str) -> "ThemeUpdateMessage":
+        try:
+            decoded = json.loads(data)
+        except json.JSONDecodeError as exc:
+            raise ValueError(
+                "Invalid JSON theme update message."
+            ) from exc
+
+        return cls.from_dict(decoded)
+
+
+@dataclass(frozen=True)
 class TreeAddMessage:
     """Server-to-client message describing newly added components."""
 

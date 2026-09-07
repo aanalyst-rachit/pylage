@@ -52,7 +52,7 @@ def test_phase18_working_demo_navigation_and_interactions():
 
             page.get_by_text("Forms", exact=True).first.click()
             expect(page.get_by_text("Manage workspace and account information.", exact=True)).to_be_visible()
-            expect(page.locator("input[name=\"email\"]")).to_have_value("racit@example.com")
+            expect(page.locator("input[name=\"email\"]")).to_have_value("rachit@example.com")
 
             page.get_by_text("Save Changes", exact=True).click()
             expect(page.get_by_text("Latest submission:", exact=True)).to_be_visible()

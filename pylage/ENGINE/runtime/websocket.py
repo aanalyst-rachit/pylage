@@ -21,10 +21,12 @@ from pylage.ENGINE.core.scheduler import Scheduler
 from pylage.ENGINE.core.state import State
 from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
+from pylage.ENGINE.styling.global_theme import subscribe_global_theme
 from pylage.ENGINE.core.protocol import (
     EventMessage,
     EventMessageResponse,
     UpdateMessage,
+    ThemeUpdateMessage,
     TreeAddMessage,
     TreeRemoveMessage,
     TreeMoveMessage,
@@ -66,6 +68,8 @@ class WebSocketServer:
 
         self._connections: set[ServerConnection] = set()
         self._connections_lock = threading.Lock()
+
+        self._theme_unsubscribe = None
 
         self._ready = threading.Event()
         self._startup_error: Optional[BaseException] = None
@@ -663,6 +667,36 @@ class WebSocketServer:
 
         return registry.get(component.type)
 
+    def _subscribe_theme(self) -> None:
+        if self._theme_unsubscribe is not None:
+            return
+
+        self._theme_unsubscribe = subscribe_global_theme(
+            self._on_theme_change
+        )
+
+    def _unsubscribe_theme(self) -> None:
+        if self._theme_unsubscribe is None:
+            return
+
+        self._theme_unsubscribe()
+        self._theme_unsubscribe = None
+
+    def _on_theme_change(self, old_theme: Any, new_theme: Any) -> None:
+        if new_theme is None:
+            return
+
+        css = new_theme.to_css()
+        message = ThemeUpdateMessage(css=css)
+
+        if self._loop is None or self._server is None:
+            return
+
+        asyncio.run_coroutine_threadsafe(
+            self._broadcast(message.to_json()),
+            self._loop,
+        )
+
     async def _broadcast(self, raw_message: str) -> None:
         """Send a state update to every connected browser."""
 
@@ -760,6 +794,7 @@ class WebSocketServer:
 
         self._startup_error = None
         self._ready.clear()
+        self._subscribe_theme()
 
         self._thread = threading.Thread(
             target=self._thread_main,
@@ -771,6 +806,7 @@ class WebSocketServer:
 
         if self._startup_error is not None:
             error = self._startup_error
+            self._unsubscribe_theme()
             self._thread = None
             raise RuntimeError(
                 "Failed to start WebSocket server."
@@ -783,6 +819,7 @@ class WebSocketServer:
             return
 
         self._binding.stop()
+        self._unsubscribe_theme()
 
         if self._loop is not None and self._server is not None:
             self._loop.call_soon_threadsafe(

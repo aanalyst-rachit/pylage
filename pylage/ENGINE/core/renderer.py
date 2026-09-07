@@ -115,7 +115,9 @@ class HTMLRenderer:
             theme_css = theme.to_css()
 
             if theme_css:
-                styles.append(f"<style>:root{{{theme_css}}}</style>")
+                styles.append(
+                    f'<style data-pylage-theme="true">:root{{{theme_css}}}</style>'
+                )
 
         if self._responsive_css:
             styles.append(
@@ -523,9 +525,9 @@ class HTMLRenderer:
     padding: 8px 12px;
     min-width: 100px;
     max-width: 320px;
-    border-right: 1px solid #e2e8f0;
-    border-bottom: 1px solid #e2e8f0;
-    background: #ffffff;
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-background);
     vertical-align: middle;
     white-space: nowrap;
     overflow: hidden;
@@ -533,14 +535,14 @@ class HTMLRenderer:
 }
 
 .pylage-dataframe__grid tr > :first-child {
-    border-left: 1px solid #e2e8f0;
+    border-left: 1px solid var(--color-border);
 }
 
 .pylage-dataframe__grid thead th {
     position: sticky;
     top: 0;
     z-index: 3;
-    background: #f8fafc;
+    background: var(--color-surface-variant);
     font-weight: 600;
     text-align: left;
 }
@@ -553,7 +555,7 @@ class HTMLRenderer:
     min-width: 48px !important;
     max-width: 48px !important;
     padding: 8px !important;
-    background: #f8fafc !important;
+    background: var(--color-surface-variant) !important;
 }
 
 .pylage-dataframe__row-number {
@@ -564,8 +566,8 @@ class HTMLRenderer:
     min-width: 48px !important;
     max-width: 48px !important;
     padding: 8px !important;
-    background: #f8fafc !important;
-    color: #64748b;
+    background: var(--color-surface-variant) !important;
+    color: var(--color-text-muted);
     font-weight: 500;
     text-align: center;
 }
@@ -577,7 +579,7 @@ class HTMLRenderer:
 
 .pylage-dataframe__grid tbody tr:hover td,
 .pylage-dataframe__grid tbody tr:hover th {
-    background: #f8fafc;
+    background: var(--color-surface-variant);
 }
 
 .pylage-dataframe--no-cell-border .pylage-dataframe__grid th,
@@ -593,7 +595,7 @@ class HTMLRenderer:
 .pylage-dataframe__empty {
     padding: 16px;
     text-align: center;
-    color: #64748b;
+    color: var(--color-text-muted);
 }
 """
 
