@@ -6,13 +6,13 @@ Build an opinionated, modern, Python-first UI kit on top of the existing PyLage 
 
 Target API:
 
-```python
+
 import pylage as pl
 
 pl.card("Revenue", value="₹42,000")
 pl.button("Save")
 pl.metric("Users", 12450)
-````
+
 
 The UI Kit must NOT duplicate the existing PyLage renderer, reactive engine,
 WebSocket system, CSS engine, layout system, or existing components.
@@ -21,7 +21,7 @@ WebSocket system, CSS engine, layout system, or existing components.
 
 # Architecture
 
-```text
+
 User Application
        │
        ▼
@@ -135,22 +135,6 @@ Reuse the existing PyLage design infrastructure.
 * [x] Density
 * [x] Component sizing
 
-### Phase 16 — Final Test Organization & Regression Summary
-
-Phase 16 finalized the production test suite organization and automatic regression reporting.
-
-- Production tests reorganized into semantic categories: foundation, components, reactive, browser, websocket, integration, performance, and regression.
-- Phase-number-based production test filenames were replaced with behavior/capability-based names.
-- Pytest configuration was updated for the organized test tree while preserving existing exclusions.
-- Category-isolated test execution was verified successfully.
-- Automatic regression reporting was implemented under test/reports/ with commit, branch, overall result, category totals, durations, slowest tests, and performance highlights.
-- Final full regression: **1013 passed, 0 failed, 0 skipped**.
-- Final regression report: test/reports/regression_20260907_090125.md.
-- Final Phase 16 commit: e3adf26 (test: finalize phase 16 regression infrastructure).
-- Changes were pushed successfully to origin/main.
-- Final working tree was verified clean.
-
-**Phase 16 status: COMPLETE.**
 
 ### Principle
 
@@ -629,7 +613,22 @@ work flow - reuse/create/------>manual create-------> manual verify---->document
 rules - PYTHON TERMINAL RULE + MD FILE RULE
 
 High-level API → efficient existing PyLage primitives.
+### Phase 16 — Final Test Organization & Regression Summary
 
+Phase 16 finalized the production test suite organization and automatic regression reporting.
+
+- Production tests reorganized into semantic categories: foundation, components, reactive, browser, websocket, integration, performance, and regression.
+- Phase-number-based production test filenames were replaced with behavior/capability-based names.
+- Pytest configuration was updated for the organized test tree while preserving existing exclusions.
+- Category-isolated test execution was verified successfully.
+- Automatic regression reporting was implemented under test/reports/ with commit, branch, overall result, category totals, durations, slowest tests, and performance highlights.
+- Final full regression: **1013 passed, 0 failed, 0 skipped**.
+- Final regression report: test/reports/regression_20260907_090125.md.
+- Final Phase 16 commit: e3adf26 (test: finalize phase 16 regression infrastructure).
+- Changes were pushed successfully to origin/main.
+- Final working tree was verified clean.
+
+**Phase 16 status: COMPLETE.**
 ---
 
 # PHASE 17 — Test Matrix
@@ -654,13 +653,13 @@ RESPONSIVE
 MANUAL
 ```
 
-* [ ] API tests
-* [ ] Rendering tests
-* [ ] State tests
-* [ ] Interaction tests
-* [ ] Regression tests
-* [ ] Responsive tests
-* [ ] Manual examples
+* [x] API tests
+* [x] Rendering tests
+* [x] State tests
+* [x] Interaction tests
+* [x] Regression tests
+* [x] Responsive tests
+* [x] Manual examples
 
 ---
 
@@ -777,9 +776,9 @@ PHASE 11  Layout API                [x]
 PHASE 12  High-Level Recipes        [x]
 PHASE 13  Responsive Intelligence   [x]
 PHASE 14  Customization             [x]
-PHASE 15  Accessibility             [ ]
+PHASE 15  Accessibility             [x]
 PHASE 16  Performance               [x]
-PHASE 17  Test Matrix               [ ]
+PHASE 17  Test Matrix               [x]
 PHASE 18  Example Application       [ ]
 PHASE 19  Documentation             [ ]
 PHASE 20  API Stabilization         [ ]
