@@ -40,6 +40,33 @@ def test_badge_supports_reactive_content():
     assert "Online" in render(badge)
 
 
+def test_badge_renders_text_child_as_inline_span():
+    html = render(ui.badge("Active"))
+
+    assert html.count("<span") >= 2
+    assert "<div" not in html
+
+
+def test_badge_reactive_state_preserves_child_identity():
+    value = State(3)
+    badge = ui.badge(value, variant="secondary")
+    child = badge.children[0]
+    child_id = child.id
+
+    initial_html = render(badge)
+    assert child.props["text"] is value
+    assert f'data-pylage-id="{child_id}"' in initial_html
+    assert ">3</span></span>" in initial_html
+
+    value.set(4)
+
+    updated_html = render(badge)
+    assert child.props["text"].value == 4
+    assert f'data-pylage-id="{child_id}"' in updated_html
+    assert ">4</span></span>" in updated_html
+    assert ">3</span></span>" not in updated_html
+
+
 def test_badge_variants():
     expected = {
         "primary": ("var(--color-primary)", "var(--color-primary-contrast)"),

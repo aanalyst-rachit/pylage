@@ -55,6 +55,9 @@ class HTMLRenderer:
             "Card": lambda renderer, component:
                 renderer._render_card(component),
 
+            "Badge": lambda renderer, component:
+                renderer._render_badge(component),
+
             "Text": lambda renderer, component:
                 renderer._render_text(component),
 
@@ -924,6 +927,41 @@ class HTMLRenderer:
         return (
             f'<{tag} {common}{props}>'
             f'{children}</{tag}>'
+        )
+
+
+    def _render_badge(self, component: Component) -> str:
+        common = self._render_common_attributes(component)
+        props = self._render_prop_attributes(
+            component,
+            excluded={"children"},
+        )
+
+        children: list[str] = []
+
+        for child in component.children:
+            if not isinstance(child, Component):
+                continue
+
+            if child.type == "Text":
+                child_common = self._render_common_attributes(child)
+                child_props = self._render_prop_attributes(
+                    child,
+                    excluded={"text", "children"},
+                )
+                text = self._value(child.props.get("text", ""))
+                children.append(
+                    f"<span {child_common}{child_props}>"
+                    f"{escape(str(text))}"
+                    f"</span>"
+                )
+            else:
+                children.append(self._render_component(child))
+
+        return (
+            f"<span {common}{props}>"
+            f"{''.join(children)}"
+            f"</span>"
         )
 
 
