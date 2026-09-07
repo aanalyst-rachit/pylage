@@ -8,6 +8,8 @@ CSS_FOUNDATION = """
 html, body {
     margin: 0;
     padding: 0;
+    background-color: var(--color-background);
+    color: var(--color-text);
 }
 
 body {
