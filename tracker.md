@@ -143,11 +143,11 @@ Phase 16 finalized the production test suite organization and automatic regressi
 - Phase-number-based production test filenames were replaced with behavior/capability-based names.
 - Pytest configuration was updated for the organized test tree while preserving existing exclusions.
 - Category-isolated test execution was verified successfully.
-- Automatic regression reporting was implemented under  with commit, branch, overall result, category totals, durations, slowest tests, and performance highlights.
+- Automatic regression reporting was implemented under test/reports/ with commit, branch, overall result, category totals, durations, slowest tests, and performance highlights.
 - Final full regression: **1013 passed, 0 failed, 0 skipped**.
-- Final regression report: .
-- Final Phase 16 commit:  ().
-- Changes were pushed successfully to .
+- Final regression report: test/reports/regression_20260907_090125.md.
+- Final Phase 16 commit: e3adf26 (test: finalize phase 16 regression infrastructure).
+- Changes were pushed successfully to origin/main.
 - Final working tree was verified clean.
 
 **Phase 16 status: COMPLETE.**
