@@ -26,7 +26,7 @@ from pathlib import Path
 import importlib
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 PYLAGE = ROOT / "pylage"
 UI = PYLAGE / "UI"
 ENGINE = PYLAGE / "ENGINE"
