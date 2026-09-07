@@ -692,7 +692,247 @@ The majority of application code should use high-level `pl.*` APIs.
 
 ---
 
-# PHASE 19 — Documentation
+# PHASE 19 — CSS Foundation
+
+Status: COMPLETE
+
+Purpose: Define the complete CSS foundation expected from a production-ready Python UI framework, compare it with the current PyLage implementation, then fix missing or partial foundation capabilities systematically.
+
+Rules: Audit -> REUSE / WRAP / COMPOSE / BUILD -> focused test -> browser verification where required -> full regression -> tracker update -> git checkpoint.
+
+Do not fix framework CSS problems inside working_demo/app.py. app.py is an integration consumer and reproduction surface.
+
+## 1. CSS FOUNDATION AUDIT
+
+- [x] Global box-sizing/reset
+- [x] html/body margin and padding reset
+- [x] Document background theme propagation
+- [x] Document default text color
+- [x] Base typography
+- [x] Form font inheritance
+- [x] Table normalization
+- [x] Focus-visible foundation
+- [x] Disabled control foundation
+- [x] Readonly control foundation
+- [x] Checkbox checked semantic color
+- [x] Theme CSS variables
+- [x] Semantic color tokens
+- [x] Spacing tokens
+- [x] Radius tokens
+- [x] Flex layout foundation
+- [x] Grid layout foundation
+- [x] Responsive breakpoint foundation
+- [x] CSS user override precedence
+- [x] Dynamic theme propagation
+- [x] Table spacing and semantic colors
+- [x] Shadow foundation audit
+- [x] Width/height constraint audit
+- [x] Overflow and wrapping foundation audit
+- [X] Positioning and z-index foundation audit
+- [x] Active-state foundation audit
+- [x] Selected/checked state audit
+- [x] Transition foundation audit
+- [x] Global hover foundation
+- [x] Generic pseudo-class support
+- [x] Pseudo-element support
+- [x] Component-scoped selector generation
+- [x] Responsive + pseudo selector support
+- [x] Form-control visual foundation audit
+- [x] Accessibility contrast foundation audit
+- [x] Reduced-motion foundation
+- [x] Print CSS foundation
+- [x] Animation/keyframe foundation
+
+## 2. CSS INTERACTION ROADMAP
+
+### 2.1 Hover
+
+Current status: COMPLETE.
+
+Generic framework-level pseudo-class support is now implemented and verified. Button primary and secondary hover behavior is browser-verified. Representative interactive component hover coverage is browser-verified; native form controls retain browser-native hover behavior.
+
+Required:
+
+- Generic framework-level hover selector support.
+- Semantic hover tokens must be consumed by interactive components.
+- Hover behavior must work consistently across the web UI, not only Navigation Item.
+- Browser verification required.
+
+### 2.2 Focus
+
+Current status: PRESENT.
+
+Required:
+
+- Verify all interactive components use the foundation consistently.
+- Preserve user overrides.
+- Verify keyboard accessibility in browser tests.
+
+### 2.3 Active / Selected
+
+Current status: PRESENT for reactive active-state behavior; selected/checked semantics remain under audit.
+
+Required:
+
+- Static active state.
+- Reactive active state.
+- Dynamic state propagation.
+- Selected/checked semantics where applicable.
+
+### 2.4 Disabled / Readonly
+
+Current status: PRESENT.
+
+Required:
+
+- Verify Button/Input/Select/Textarea and other controls consistently inherit foundation behavior.
+
+### 2.5 Transitions
+
+Current status: COMPLETE.
+
+Required:
+
+- Establish consistent interaction transition strategy.
+- Ensure hover/focus/active transitions do not conflict with user styles.
+
+## 3. LAYOUT FOUNDATION ROADMAP
+
+- [x] Flex row/column primitives
+- [x] Gap support
+- [x] Responsive layout support
+- [x] Grid support
+- [x] Container sizing contract
+- [x] Min/max width contract
+- [x] Height/min-height contract
+- [x] Overflow contract
+- [x] Text wrapping contract
+- [x] Positioning contract
+- [x] z-index/layering contract
+- [x] Mobile layout verification
+
+## 4. COMPONENT CSS CONTRACT ROADMAP
+
+Each semantic component must have:
+
+- sensible default layout
+- semantic theme colors
+- spacing defaults
+- border/radius defaults where appropriate
+- interaction states where interactive
+- focus behavior where interactive
+- disabled behavior where applicable
+- responsive behavior where applicable
+- user style override precedence
+
+Components to audit:
+
+- Button
+- Navigation Item
+- Input
+- Select
+- Textarea
+- Checkbox
+- RadioGroup
+- Switch
+- Slider
+- Tabs
+- Menu
+- Card
+- Table
+- Dialog
+- Drawer
+- Alert
+- Toast
+- Spinner
+- ProgressBar
+- Skeleton
+- Pagination
+- Breadcrumbs
+
+## 5. CURRENT VERIFIED FOUNDATION
+
+- CSS foundation file exists at pylage/ENGINE/styling/foundation.py.
+- Global box sizing/reset is implemented.
+- html/body theme background and text color are implemented.
+- Theme variables are emitted through the global theme style marker.
+- Light/dark theme switching propagates to the browser.
+- Table foundation uses semantic theme variables.
+- ResponsiveStyle is emitted as real CSS rather than invalid inline CSS.
+- Navigation Item static active styling is correct.
+- Navigation Item direct reactive State support exists.
+- Card default styling is healthy and does not require a padding patch based on current audit.
+- Metric default styling is healthy and does not require a padding patch based on current audit.
+
+## 6. REMAINING BUGS
+
+### BUG 01 — Global Hover Coverage
+
+Status: complete
+
+Root investigation:
+
+- Navigation active-state propagation is fixed through the reusable public pl.derived() reactive API.
+- Browser verification proves sidebar active selection switches correctly between Dashboard and Analytics.
+- Generic pseudo-class support is now implemented at the Style and renderer layers.
+- Button primary and secondary semantic hover states are browser-verified.
+- Pseudo-state declarations require higher cascade priority than inline base declarations, so pseudo CSS declarations are emitted with !important.
+- Broader interactive component hover coverage has been audited and no additional framework-level hover patch is required.
+
+Required fix direction:
+
+- Audit interactive components for semantic hover tokens and pseudo-state definitions.
+- Reuse the generic pseudo-class mechanism rather than creating component-specific hover infrastructure.
+- Browser verification is required for representative interactive components.
+- Do not patch hover with app.py styles.
+
+### BUG 02 — Dashboard Header / Component Spacing
+
+Status: complete
+
+Root investigation:
+
+- dashboard_header currently has bottom padding and a bottom border.
+- dashboard_header does not currently define bottom margin.
+- Parent layout helpers already use gap in several places.
+- Need browser/DOM/computed-style verification before deciding whether margin, parent gap, or rendering/layout behavior is the actual root cause.
+
+Required fix direction:
+
+- Verify actual DOM layout and computed spacing.
+- Fix the responsible framework layer only.
+- Do not add a spacing workaround to working_demo/app.py.
+
+## 7. DEFINITION OF DONE
+
+CSS Foundation is complete when:
+
+- Global browser defaults are normalized.
+- Theme colors propagate consistently to document root and components.
+- Layout primitives have predictable spacing and sizing behavior.
+- Responsive CSS is valid and predictable.
+- Interactive components have hover/focus/active/disabled behavior where applicable.
+- Generic pseudo-class support exists at the styling/rendering architecture level.
+- Component defaults use semantic theme tokens.
+- User-provided styles override framework defaults predictably.
+- Accessibility visual states are covered.
+- Browser tests prove theme, interaction, and layout behavior.
+- Full regression remains green.
+
+## 8. WORKFLOW
+
+Audit
+-> Root cause
+-> Small architectural change
+-> Focused test
+-> Browser verification
+-> Full regression
+-> Update tracker.md
+-> Git checkpoint
+
+---
+
+# PHASE 20 — Documentation
 work flow - reuse/create/------>manual create-------> manual verify---->documentation----->tracker update---git checkpoint
 rules - PYTHON TERMINAL RULE + MD FILE RULE
 
@@ -713,7 +953,9 @@ rules - PYTHON TERMINAL RULE + MD FILE RULE
 
 ---
 
-# PHASE 20 — API Stabilization
+---
+
+# PHASE 21 — API Stabilization
 work flow - reuse/create/------>manual create-------> manual verify---->documentation----->tracker update---git checkpoint
 rules - PYTHON TERMINAL RULE + MD FILE RULE
 
@@ -733,7 +975,9 @@ Small API surface + powerful composition.
 
 ---
 
-# PHASE 21 — Release
+---
+
+# PHASE 22 — Release
 work flow - reuse/create/------>manual create-------> manual verify---->documentation----->tracker update---git checkpoint
 rules - PYTHON TERMINAL RULE + MD FILE RULE
 
@@ -780,9 +1024,10 @@ PHASE 15  Accessibility             [x]
 PHASE 16  Performance               [x]
 PHASE 17  Test Matrix               [x]
 PHASE 18  Example Application       [ ]
-PHASE 19  Documentation             [ ]
-PHASE 20  API Stabilization         [ ]
-PHASE 21  Release                   [ ]
+PHASE 19  CSS Foundation            [x]
+PHASE 20  Documentation             [ ]
+PHASE 21  API Stabilization         [ ]
+PHASE 22  Release                   [ ]
 ```
 
 ---
