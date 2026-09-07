@@ -16,27 +16,11 @@ from .states import EmptyState, ErrorState, Loading
 from .stats import Metric, MetricCard, StatsSection
 from .testimonial import Testimonial
 
-__all__ = [
-    "Hero",
-    "BreadcrumbTrail",
-    "ContactSection",
-    "ContentSection",
-    "CTA",
-    "FAQ",
-    "FeatureSection",
-    "List",
-    "NewsletterSection",
-    "PricingSection",
-    "SearchBar",
-    "EmptyState",
-    "ErrorState",
-    "Loading",
-    "Metric",
-    "MetricCard",
-    "StatsSection",
-    "Testimonial",
-    "breadcrumb_trail",
-]
-
-# Lowercase public UI API alias.
 breadcrumb_trail = BreadcrumbTrail
+
+__all__ = [
+    "Hero", "BreadcrumbTrail", "ContactSection", "ContentSection", "CTA", "FAQ",
+    "FeatureSection", "List", "NewsletterSection", "PricingSection", "SearchBar",
+    "EmptyState", "ErrorState", "Loading", "Metric", "MetricCard", "StatsSection",
+    "Testimonial", "breadcrumb_trail",
+]

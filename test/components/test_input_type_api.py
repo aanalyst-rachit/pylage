@@ -27,7 +27,8 @@ def test_input_defaults_without_input_type():
     html = render(Input())
 
     assert "<input" in html
-    assert 'type="' not in html
+    input_tag = html[html.find("<input"):].split(">", 1)[0]
+    assert 'type="' not in input_tag
 
 
 def test_input_type_does_not_collide_with_component_type():

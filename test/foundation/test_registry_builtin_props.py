@@ -68,7 +68,8 @@ html = render(button)
 
 print(html)
 
-assert "disabled" not in html
+button_tag = html.split(">", 1)[0]
+assert "disabled" not in button_tag
 
 print("Boolean false contract: PASS")
 

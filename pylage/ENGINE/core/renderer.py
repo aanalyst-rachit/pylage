@@ -7,6 +7,7 @@ from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.state import State
 from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.styling import Style
+from pylage.ENGINE.styling.foundation import CSS_FOUNDATION
 from pylage.ENGINE.styling.global_theme import get_global_theme
 
 
@@ -94,10 +95,11 @@ class HTMLRenderer:
 
     def render(self, component: Component) -> str:
         html = self._render_component(component)
+        styles = []
 
         built_in_css = self._built_in_css()
         if built_in_css:
-            html = html + f"<style>{built_in_css}</style>"
+            styles.append(f"<style>{built_in_css}</style>")
 
         theme = self._theme
         if theme is None:
@@ -107,16 +109,13 @@ class HTMLRenderer:
             theme_css = theme.to_css()
 
             if theme_css:
-                html = (
-                    f"<style>:root{{{theme_css}}}</style>"
-                    + html
-                )
+                styles.append(f"<style>:root{{{theme_css}}}</style>")
 
-        return html
+        return "".join(styles) + html
 
     def _built_in_css(self) -> str:
         """Return framework-level CSS for native HTML semantics."""
-        return "[hidden] { display: none " + chr(33) + "important; }"
+        return CSS_FOUNDATION
 
     def _event_attributes(self, component: Component) -> str:
         if not component.events:
