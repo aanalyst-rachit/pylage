@@ -64,3 +64,46 @@ class State:
 
     def __repr__(self) -> str:
         return f"State({self._value!r})"
+
+
+class DerivedState(State):
+    """Read-only reactive state derived from one or more source States."""
+
+    def __init__(self, *sources: State, compute: Callable[..., Any]):
+        if not sources:
+            raise ValueError("DerivedState requires at least one source State")
+        if not callable(compute):
+            raise TypeError("compute must be callable")
+        if any(not isinstance(source, State) for source in sources):
+            raise TypeError("all DerivedState sources must be State instances")
+
+        self._sources = tuple(sources)
+        self._compute = compute
+        self._source_unsubscribers: list[Callable[[], None]] = []
+        self._disposed = False
+
+        initial = self._compute(*(source.value for source in self._sources))
+        super().__init__(initial)
+
+        for source in self._sources:
+            self._source_unsubscribers.append(
+                source.subscribe(self._source_changed)
+            )
+
+    def _source_changed(self, _old: Any, _new: Any) -> None:
+        if self._disposed:
+            return
+        value = self._compute(*(source.value for source in self._sources))
+        super().set(value)
+
+    def set(self, value: Any) -> None:
+        raise TypeError("DerivedState is read-only; change its source State instead")
+
+    def dispose(self) -> None:
+        if self._disposed:
+            return
+        for unsubscribe in self._source_unsubscribers:
+            unsubscribe()
+        self._source_unsubscribers.clear()
+        self._disposed = True
+

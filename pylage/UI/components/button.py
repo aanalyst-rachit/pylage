@@ -11,11 +11,13 @@ _VARIANT_STYLES: dict[str, Style] = {
         background_color="var(--color-primary)",
         color="var(--color-primary-contrast)",
         border='1px solid var(--color-primary)',
+        pseudo={"hover": Style(background_color="var(--color-primary-hover)")},
     ),
     "secondary": Style(
         background_color="var(--color-secondary)",
         color="var(--color-secondary-contrast)",
         border='1px solid var(--color-secondary)',
+        pseudo={"hover": Style(background_color="var(--color-secondary-hover)")},
     ),
     "outline": Style(
         background_color="var(--color-background)",

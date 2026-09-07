@@ -577,6 +577,7 @@ registry.register(
 registry.register(
     "Switch",
     "input",
+    void=True,
     props={
         "class_name": PropDefinition(
             "class_name",
@@ -779,6 +780,7 @@ registry.register(
 registry.register(
     "Checkbox",
     "input",
+    void=True,
     props={
         "class_name": PropDefinition(
             "class_name",

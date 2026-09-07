@@ -1,4 +1,6 @@
-from pylage.ENGINE.core.state import State
+import pytest
+
+from pylage.ENGINE.core.state import DerivedState, State
 
 
 def test_same_value_does_not_notify():
@@ -143,3 +145,87 @@ def test_subscriber_iteration_is_stable():
         ("first", 1, 2),
         ("late", 1, 2),
     ]
+
+
+
+def test_derived_state_initial_value():
+    source = State(10)
+    derived = DerivedState(source, compute=lambda value: value * 2)
+
+    assert derived.value == 20
+
+
+def test_derived_state_recomputes_when_source_changes():
+    source = State(10)
+    derived = DerivedState(source, compute=lambda value: value * 2)
+
+    source.set(15)
+
+    assert derived.value == 30
+
+
+def test_derived_state_notifies_only_when_derived_value_changes():
+    source = State(1)
+    derived = DerivedState(source, compute=lambda value: value % 2)
+    changes = []
+
+    derived.subscribe(lambda old, new: changes.append((old, new)))
+
+    source.set(3)
+    source.set(4)
+
+    assert changes == [(1, 0)]
+
+
+def test_derived_state_is_read_only():
+    source = State(1)
+    derived = DerivedState(source, compute=lambda value: value)
+
+    with pytest.raises(TypeError, match="read-only"):
+        derived.set(2)
+
+
+def test_derived_state_dispose_stops_source_updates():
+    source = State(1)
+    derived = DerivedState(source, compute=lambda value: value * 2)
+
+    derived.dispose()
+    source.set(5)
+
+    assert derived.value == 2
+
+
+def test_derived_state_dispose_is_idempotent():
+    source = State(1)
+    derived = DerivedState(source, compute=lambda value: value * 2)
+
+    derived.dispose()
+    derived.dispose()
+
+    assert derived.value == 2
+
+def test_public_derived_api():
+    import pylage as pl
+
+    source = pl.State("Dashboard")
+    active = pl.derived(source, compute=lambda page: page == "Dashboard")
+
+    assert active.value is True
+    source.set("Projects")
+    assert active.value is False
+
+
+def test_public_derived_api_supports_multiple_sources():
+    import pylage as pl
+
+    page = pl.State("Dashboard")
+    enabled = pl.State(True)
+    active = pl.derived(page, enabled, compute=lambda current_page, is_enabled: current_page == "Dashboard" and is_enabled)
+
+    assert active.value is True
+    enabled.set(False)
+    assert active.value is False
+    page.set("Projects")
+    enabled.set(True)
+    assert active.value is False
+

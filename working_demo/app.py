@@ -392,7 +392,7 @@ def get_app():
             *[
                 pl.navigation_item(
                     name,
-                    active=(active_page.value == name),  # Dynamic boolean check
+                    active=pl.derived(active_page, compute=lambda page, name=name: page == name),  # Dynamic boolean check
                     on_click=select_page(name),
                     style=pl.style(margin_bottom="0.375rem"),
                 )

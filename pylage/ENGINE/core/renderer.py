@@ -22,6 +22,7 @@ class HTMLRenderer:
         self._registry = registry_instance or registry
         self._theme = theme
         self._responsive_css: list[str] = []
+        self._pseudo_css: list[str] = []
         self._register_builtin_renderers()
 
     @property
@@ -99,6 +100,7 @@ class HTMLRenderer:
 
     def render(self, component: Component) -> str:
         self._responsive_css = []
+        self._pseudo_css = []
 
         html = self._render_component(component)
         styles = []
@@ -119,11 +121,15 @@ class HTMLRenderer:
                     f'<style data-pylage-theme="true">:root{{{theme_css}}}</style>'
                 )
 
+        if self._pseudo_css:
+            styles.append(
+                f"<style>{''.join(self._pseudo_css)}</style>"
+            )
+
         if self._responsive_css:
             styles.append(
                 f"<style>{''.join(self._responsive_css)}</style>"
             )
-
         return "".join(styles) + html
 
     def _built_in_css(self) -> str:
@@ -179,6 +185,12 @@ class HTMLRenderer:
                     f' style="{escape(css, quote=True)}"'
                 )
 
+            pseudo_css = style.to_base_pseudo_css(
+                f'[data-pylage-id="{component_id}"]'
+            )
+            if pseudo_css:
+                self._pseudo_css.append(pseudo_css)
+
             responsive_css = style.to_responsive_css(
                 f'[data-pylage-id="{component_id}"]'
             )
@@ -196,6 +208,13 @@ class HTMLRenderer:
                     attributes += (
                         f' style="{escape(css, quote=True)}"'
                     )
+
+        if isinstance(style, Style):
+            pseudo_css = style.to_pseudo_css(
+                f'[data-pylage-id="{component_id}"]'
+            )
+            if pseudo_css:
+                self._pseudo_css.append(pseudo_css)
 
         return attributes
 
@@ -1031,9 +1050,6 @@ class HTMLRenderer:
             excluded={"children"},
         )
 
-        if component.type == "Slider":
-            attributes += ' type="range"'
-
         return (
             f"<input {common}{attributes}>"
         )
@@ -1083,10 +1099,6 @@ class HTMLRenderer:
             component,
             excluded={"text", "children"},
         )
-
-        # Slider is rendered as an HTML range input.
-        if component.type == "Slider":
-            generic_attributes += ' type="range"'
 
         if definition is not None and definition.void:
             return (

@@ -13,6 +13,7 @@ not exported from the root public API.
 
 from pylage.ENGINE.app import run
 from pylage.ENGINE.core.state import State
+from pylage.UI.state import derived
 from pylage.UI import (
     IMPORT_NAME, PACKAGE_NAME, __version__, colors, alert, avatar, badge, button, card,
     dashboard, dialog, dashboard_card, dashboard_grid, dashboard_header, dashboard_section,
@@ -53,7 +54,7 @@ __all__ = [
     "MetricCard", "StatsSection", "Testimonial", "breadcrumb_trail", "LandingPage",
     "Dashboard", "AdminPanel", "Authentication", "ProfilePage", "drawer",
     "navigation_drawer", "mobile_sidebar", "tooltip", "popover", "confirmation_dialog",
-    "style", "modal", "theme", "set_theme", "get_current_theme", "Accordion", "Audio",
+    "style", "modal", "theme", "derived", "set_theme", "get_current_theme", "Accordion", "Audio",
     "Canvas", "Carousel", "Grid", "Icon", "Image", "Option", "ProgressBar", "Skeleton",
     "Spinner", "Video",
 ]

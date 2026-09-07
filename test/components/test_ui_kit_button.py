@@ -85,6 +85,22 @@ def test_button_variant_size_and_local_style_precedence():
 
 
 
+def test_button_primary_and_secondary_have_semantic_hover_styles():
+    primary = ps.button("Primary", variant="primary")
+    secondary = ps.button("Secondary", variant="secondary")
+
+    assert primary.props["style"].pseudo["hover"].background_color == "var(--color-primary-hover)"
+    assert secondary.props["style"].pseudo["hover"].background_color == "var(--color-secondary-hover)"
+
+    primary_html = render(primary)
+    secondary_html = render(secondary)
+
+    assert ":hover{" in primary_html
+    assert "background-color:var(--color-primary-hover)" in primary_html
+    assert ":hover{" in secondary_html
+    assert "background-color:var(--color-secondary-hover)" in secondary_html
+
+
 def test_button_disabled_is_forwarded():
     button = ps.button("Save", disabled=True)
 

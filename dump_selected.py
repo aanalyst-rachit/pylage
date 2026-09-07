@@ -9,7 +9,7 @@ from pathlib import Path
 #   TARGET_FOLDER = "src/components" # Subfolder ka dump
 #   TARGET_FOLDER = "."            # Entire project ka dump (Default)
 # ==============================================================================
-TARGET_FOLDER = "pylage"
+TARGET_FOLDER = "pylage"  # Change this to your target folder
 
 # Unwanted folders/files ko ignore karne ke liye list
 IGNORE_DIRS = {
@@ -18,12 +18,12 @@ IGNORE_DIRS = {
     ".pytest_cache", ".mypy_cache", ".ruff_cache", ".cache", ".eggs", ".tox",
     ".coverage", "htmlcov", "docs/_build", "site-packages"
 }
-IGNORE_FILES = {"dump.txt", "dump_selected.txt", "generate_dump.py", ".DS_Store"}
+IGNORE_FILES = {"dump_test.txt", "dump_selected.txt", "generate_dump.py", ".DS_Store"}
 
 # Text/code extensions list
 ALLOWED_EXTENSIONS = {".py", ".html", ".css", ".js", ".json"}
 
-OUTPUT_FILE = "dump_selected.txt"
+OUTPUT_FILE = "dump_selected_codebase.txt"
 
 def build_tree(start_path: Path, prefix: str = "") -> list[str]:
     """Folder tree structure textual representation banata hai."""

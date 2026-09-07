@@ -233,6 +233,74 @@ def test_none_custom_css_values_are_ignored():
     )
 
 
+def test_style_supports_pseudo_class_rules():
+    from pylage.ENGINE import Style
+
+    style = Style(
+        background_color="white",
+        pseudo={
+            "hover": Style(background_color="blue", color="white"),
+        },
+    )
+
+    assert style.to_css() == "background-color:white"
+    assert style.to_pseudo_css("[data-pylage-id=\"abc\"]") == (
+        "[data-pylage-id=\"abc\"]:hover{color:white !important;background-color:blue !important}"
+    )
+
+
+def test_style_pseudo_rules_mark_declarations_important():
+    from pylage.ENGINE import Style
+
+    style = Style(
+        pseudo={
+            "hover": Style(background_color="blue", color="white"),
+        },
+    )
+
+    css = style.to_pseudo_css('[data-pylage-id="abc"]')
+
+    assert css == '[data-pylage-id="abc"]:hover{color:white !important;background-color:blue !important}'
+
+
+def test_style_pseudo_rules_merge_with_user_override():
+    from pylage.ENGINE import Style
+
+    default = Style(
+        pseudo={
+            "hover": Style(background_color="blue", color="white"),
+        },
+    )
+    override = Style(
+        pseudo={
+            "hover": Style(background_color="red"),
+        },
+    )
+
+    merged = default.merge(override)
+
+    assert merged.pseudo["hover"].background_color == "red"
+    assert merged.pseudo["hover"].color == "white"
+
+def test_style_supports_pseudo_element_rules():
+    from pylage.ENGINE import Style
+
+    style = Style(
+        content="none",
+        pseudo={
+            "before": Style(content='"X"', color="red"),
+            "after": Style(content='"Y"', color="blue"),
+        },
+    )
+
+    assert style.to_css() == "content:none"
+    assert style.to_pseudo_css('[data-pylage-id="abc"]') == (
+        '[data-pylage-id="abc"]::before{color:red !important;content:"X" !important}'
+        '[data-pylage-id="abc"]::after{color:blue !important;content:"Y" !important}'
+    )
+
+
+
 def test_style_custom_properties_render_to_html():
     from pylage.ENGINE import Text, Style
     from pylage.ENGINE.core.renderer import render

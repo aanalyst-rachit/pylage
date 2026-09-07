@@ -12,12 +12,13 @@ from .recipes import (LandingPage, Dashboard, AdminPanel, Authentication, Profil
 from . import themes
 from . import tokens
 from .colors import colors
+from .state import derived
 
 __version__ = "0.1.0"
 
 __all__ = [
     "IMPORT_NAME", "PACKAGE_NAME", "__version__", "colors",
-    "alert", "avatar", "badge", "button", "card", "dashboard", "dialog",
+    "derived", "alert", "avatar", "badge", "button", "card", "dashboard", "dialog",
     "dashboard_card", "dashboard_grid", "dashboard_header", "dashboard_section",
     "dataframe", "data_list", "divider", "empty_state", "error_state", "heading",
     "loading_state", "loading_overlay", "metric", "metric_grid", "stat_group",

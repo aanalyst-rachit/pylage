@@ -17,6 +17,7 @@ class Style:
     font_family: Any = None
     line_height: Any = None
     text_align: Any = None
+    content: Any = None
 
     margin: Any = None
     margin_top: Any = None
@@ -82,6 +83,9 @@ class Style:
     aspect_ratio: Any = None
     user_select: Any = None
     text_overflow: Any = None
+    word_break: Any = None
+    overflow_wrap: Any = None
+    hyphens: Any = None
 
     z_index: Any = None
     transform: Any = None
@@ -100,6 +104,7 @@ class Style:
     border_left: Any = None
 
     custom: dict[str, Any] | None = None
+    pseudo: dict[str, "Style"] | None = None
 
     def merge(self, override: "Style | None") -> "Style":
         """Return a new Style with override values taking precedence."""
@@ -113,7 +118,7 @@ class Style:
         values = {}
 
         for field_name in self.__dataclass_fields__:
-            if field_name == "custom":
+            if field_name in {"custom", "pseudo"}:
                 continue
 
             value = getattr(override, field_name)
@@ -127,6 +132,16 @@ class Style:
         custom.update(override.custom or {})
         values["custom"] = custom or None
 
+        pseudo = dict(self.pseudo or {})
+        for selector, override_style in (override.pseudo or {}).items():
+            base_style = pseudo.get(selector)
+            pseudo[selector] = (
+                override_style
+                if base_style is None
+                else base_style.merge(override_style)
+            )
+        values["pseudo"] = pseudo or None
+
         return Style(**values)
 
     def to_css(self) -> str:
@@ -138,7 +153,7 @@ class Style:
         declarations: list[str] = []
 
         for field_name, value in self.__dict__.items():
-            if field_name == "custom":
+            if field_name in {"custom", "pseudo"}:
                 continue
 
             if isinstance(value, State):
@@ -169,6 +184,35 @@ class Style:
             )
 
         return ";".join(declarations)
+
+    def to_pseudo_css(self, selector: str) -> str:
+        """Convert pseudo-class and pseudo-element styles into scoped CSS rules."""
+        if not isinstance(selector, str) or not selector:
+            raise ValueError("selector must be a non-empty string")
+
+        rules: list[str] = []
+        pseudo_elements = {"before", "after"}
+
+        for pseudo_name, style in (self.pseudo or {}).items():
+            if not isinstance(pseudo_name, str) or not pseudo_name:
+                raise ValueError("pseudo selectors must be non-empty strings")
+
+            if not isinstance(style, Style):
+                raise TypeError("pseudo values must be Style instances")
+
+            css = style.to_css()
+            if not css:
+                continue
+
+            css = ";".join(
+                f"{declaration} {chr(33)}important"
+                for declaration in css.split(";")
+                if declaration
+            )
+            separator = "::" if pseudo_name in pseudo_elements else ":"
+            rules.append(f"{selector}{separator}{pseudo_name}{{{css}}}")
+
+        return "".join(rules)
 
 
 def _css_name(name: str) -> str:

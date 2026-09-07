@@ -73,6 +73,41 @@ textarea[readonly] {
 input[type="checkbox"]:checked {
     accent-color: var(--color-primary);
 }
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media print {
+    html,
+    body {
+        background: #ffffff;
+        color: #000000;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    nav,
+    aside,
+    button,
+    [data-pylage-print="hide"] {
+        display: none !important;
+    }
+
+    *,
+    *::before,
+    *::after {
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+}
 """
 
 __all__ = ["CSS_FOUNDATION"]

@@ -7,6 +7,7 @@ from pylage.ENGINE.styling.responsive import ResponsiveStyle
 def default_responsive_style() -> ResponsiveStyle:
     return ResponsiveStyle(
         base=Style(
+            display="flex",
             width="100%",
             flex_direction="column",
             gap="var(--spacing-md)",
