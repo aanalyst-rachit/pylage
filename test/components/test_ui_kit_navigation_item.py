@@ -16,9 +16,13 @@ def test_navigation_item_default_contract():
     item = pl.navigation_item("Home")
     style = item.props["style"]
 
+    assert style.display == "flex"
+    assert style.align_items == "center"
+    assert style.width == "100%"
+    assert style.text_align == "left"
     assert style.background_color == "transparent"
     assert style.color == "var(--color-text)"
-    assert style.border == "1px solid transparent"
+    assert style.border == "none"
     assert style.border_radius == "0.375rem"
     assert style.padding == "0.5rem 0.75rem"
     assert style.cursor == "pointer"
@@ -28,9 +32,12 @@ def test_navigation_item_active_style():
     item = pl.navigation_item("Home", active=True)
     style = item.props["style"]
 
+    assert style.display == "flex"
+    assert style.width == "100%"
+    assert style.text_align == "left"
     assert style.background_color == "var(--color-primary)"
     assert style.color == "var(--color-primary-contrast)"
-    assert style.border == "1px solid var(--color-primary)"
+    assert style.border == "none"
 
 
 def test_navigation_item_custom_style_overrides_defaults():
@@ -76,7 +83,7 @@ def test_navigation_item_reactive_active_state():
 
     assert item.props["style"].background_color.value == "var(--color-primary)"
     assert item.props["style"].color.value == "var(--color-primary-contrast)"
-    assert item.props["style"].border.value == "1px solid var(--color-primary)"
+    assert item.props["style"].border == "none"
 
     active.set(False)
 

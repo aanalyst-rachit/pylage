@@ -9,6 +9,7 @@ def default_responsive_style() -> ResponsiveStyle:
         base=Style(
             width="100%",
             flex_direction="column",
+            gap="var(--spacing-md)",
         ),
         md=Style(
             flex_direction="row",

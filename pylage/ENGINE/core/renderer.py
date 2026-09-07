@@ -6,7 +6,7 @@ from typing import Any
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.state import State
 from pylage.ENGINE.core.registry import registry
-from pylage.ENGINE.styling import Style
+from pylage.ENGINE.styling import ResponsiveStyle, Style
 from pylage.ENGINE.styling.foundation import CSS_FOUNDATION
 from pylage.ENGINE.styling.global_theme import get_global_theme
 
@@ -21,6 +21,7 @@ class HTMLRenderer:
     ) -> None:
         self._registry = registry_instance or registry
         self._theme = theme
+        self._responsive_css: list[str] = []
         self._register_builtin_renderers()
 
     @property
@@ -94,6 +95,8 @@ class HTMLRenderer:
         return value
 
     def render(self, component: Component) -> str:
+        self._responsive_css = []
+
         html = self._render_component(component)
         styles = []
 
@@ -110,6 +113,11 @@ class HTMLRenderer:
 
             if theme_css:
                 styles.append(f"<style>:root{{{theme_css}}}</style>")
+
+        if self._responsive_css:
+            styles.append(
+                f"<style>{''.join(self._responsive_css)}</style>"
+            )
 
         return "".join(styles) + html
 
@@ -158,7 +166,22 @@ class HTMLRenderer:
             elif isinstance(style, Style):
                 style = default_style.merge(style)
 
-        if style is not None:
+        if isinstance(style, ResponsiveStyle):
+            css = style.to_base_css()
+
+            if css:
+                attributes += (
+                    f' style="{escape(css, quote=True)}"'
+                )
+
+            responsive_css = style.to_responsive_css(
+                f'[data-pylage-id="{component_id}"]'
+            )
+
+            if responsive_css:
+                self._responsive_css.append(responsive_css)
+
+        elif style is not None:
             to_css = getattr(style, "to_css", None)
 
             if callable(to_css):
@@ -1003,9 +1026,6 @@ class HTMLRenderer:
         else:
             tag = definition.tag
 
-        common = self._render_common_attributes(component)
-        children = self._render_children(component)
-
         # ---------------------------------------------------------
         # Custom registered renderer
         # ---------------------------------------------------------
@@ -1017,6 +1037,8 @@ class HTMLRenderer:
         # ---------------------------------------------------------
         # Unknown components still render instead of disappearing.
         # Their children and normal props remain available.
+        common = self._render_common_attributes(component)
+        children = self._render_children(component)
         generic_attributes = self._render_prop_attributes(
             component,
             excluded={"text", "children"},

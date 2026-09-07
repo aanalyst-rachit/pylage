@@ -56,3 +56,17 @@ def test_ui_kit_table_passes_props_through():
     ))
     assert 'title="Users"' in html
     assert 'class="users-table"' in html
+
+
+def test_ui_kit_table_has_default_cell_spacing_and_alignment():
+    html = render(table([[1, "Rachit"]], headers=["ID", "Name"]))
+    css = "".join(html.split())
+    assert "th,td" in css
+    assert "padding:0.75rem1rem" in css
+    assert "text-align:left" in css
+
+
+def test_ui_kit_table_has_default_row_dividers():
+    html = render(table([[1, "Rachit"], [2, "Rahul"]], headers=["ID", "Name"]))
+    css = "".join(html.split())
+    assert "border-bottom:1pxsolidvar(--color-border)" in css

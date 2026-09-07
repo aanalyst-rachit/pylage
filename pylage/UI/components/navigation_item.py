@@ -8,9 +8,13 @@ from pylage.ENGINE import Style
 
 
 _BASE_STYLE = Style(
+    display="flex",
+    align_items="center",
+    width="100%",
+    text_align="left",
     background_color="transparent",
     color="var(--color-text)",
-    border="1px solid transparent",
+    border="none",
     border_radius="0.375rem",
     padding="0.5rem 0.75rem",
     cursor="pointer",
@@ -20,7 +24,7 @@ _BASE_STYLE = Style(
 _ACTIVE_STYLE = Style(
     background_color="var(--color-primary)",
     color="var(--color-primary-contrast)",
-    border="1px solid var(--color-primary)",
+    border="none",
 )
 
 
@@ -41,16 +45,14 @@ def _resolve_reactive_style(
     color = State(
         "var(--color-primary-contrast)" if bool(active.value) else "var(--color-text)"
     )
-    border = State(
-        "1px solid var(--color-primary)"
-        if bool(active.value)
-        else "1px solid transparent"
-    )
-
     default_style = Style(
+        display="flex",
+        align_items="center",
+        width="100%",
+        text_align="left",
         background_color=background,
         color=color,
-        border=border,
+        border="none",
         border_radius="0.375rem",
         padding="0.5rem 0.75rem",
         cursor="pointer",
@@ -67,13 +69,6 @@ def _resolve_reactive_style(
             color.set(
                 "var(--color-primary-contrast)" if bool(new) else "var(--color-text)"
             )
-        if custom.border is None:
-            border.set(
-                "1px solid var(--color-primary)"
-                if bool(new)
-                else "1px solid transparent"
-            )
-
     return final_style, update_active
 
 

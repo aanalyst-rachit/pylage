@@ -81,3 +81,23 @@ def test_responsive_style_can_use_theme_variables_in_renderer():
     assert "var(--color-primary)" in html
     assert "var(--color-background)" in html
     assert "@media" in html
+
+
+def test_responsive_style_keeps_media_queries_out_of_inline_style():
+    responsive = ResponsiveStyle(
+        base=Style(display="flex", gap="1rem"),
+        md=Style(flex_direction="row"),
+    )
+
+    renderer = HTMLRenderer()
+    html = renderer.render(
+        Text(
+            "Hello",
+            style=responsive,
+        )
+    )
+
+    assert 'style="display:flex;gap:1rem"' in html
+    assert '@media (min-width:768px)' in html
+    assert 'style="display:flex;gap:1rem@media' not in html
+    assert '@media (min-width:768px){[data-pylage-id="' in html

@@ -32,6 +32,17 @@ def test_ui_kit_column_resolves_default_style():
     assert component.props["style"] is not None
 
 
+def test_ui_kit_column_has_default_gap():
+    html = render(column(Text("Default")))
+    assert "gap:var(--spacing-md)" in html
+
+
+def test_ui_kit_column_gap_override_wins():
+    html = render(column(Text("Override"), style=Style(gap="12px")))
+    assert "gap:12px" in html
+    assert "gap:var(--spacing-md)" not in html
+
+
 def test_ui_kit_column_supports_reactive_style_values():
     gap = State("12px")
     html = render(column(Text("Reactive"), style=Style(gap=gap)))

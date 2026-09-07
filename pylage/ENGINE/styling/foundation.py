@@ -24,6 +24,21 @@ button, input, textarea, select {
     display: none !important;
 }
 
+table {
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
