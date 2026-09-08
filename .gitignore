@@ -1,24 +1,47 @@
+# Virtual environments
 .venv/
+venv/
+env/
+ENV/
+.env
+
+# Python cache
 __pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest
 .pytest_cache/
-*.pyc
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
 
-*.before_*
-
-test_output/
-browser_event_output/
-browser_reactive_counter/
-browser_reactive_props/
-browser_state_output/
-compat_output/
-live_state_debug/
-live_state_output/
-runtime_api_output/
-runtime_output/
-serve_output/
-ws_diag/
-
-index.html
-
+# Build / packaging
+build/
 dist/
 *.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test generated output
+test_output/
+
+#project notes
+PROJECT_NOTES.txt
+
+#for ehilr project generated 
+index.html
+
+# Test-generated HTML files
+*.html
