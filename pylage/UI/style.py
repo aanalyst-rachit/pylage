@@ -22,7 +22,7 @@ class _StyleFacade:
         box_shadow="0 10px 15px -3px rgba(0,0,0,0.1)",
     )
 
-    topheader = Style(
+    top_header = Style(
         display="flex",
         align_items="center",
         justify_content="space-between",
@@ -41,7 +41,7 @@ style = _StyleFacade()
 black = style.black
 white = style.white
 elevated_card = style.elevated_card
-topheader = style.topheader
+top_header = style.top_header
 
 
 __all__ = [
@@ -49,5 +49,5 @@ __all__ = [
     "black",
     "white",
     "elevated_card",
-    "topheader",
+    "top_header",
 ]

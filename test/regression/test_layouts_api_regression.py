@@ -51,7 +51,7 @@ REQUIRED_EXPORTS = [
     "row",
     "column",
     "Topbar",
-    "topheader",
+    "top_header",
     "navbar",
     "navigation",
     "sidebar_layout",

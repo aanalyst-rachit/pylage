@@ -25,7 +25,7 @@ from .topbar import Topbar
 from .navigation_controls import navigation_controls, NavigationControls
 
 # Public semantic alias for the top navigation/header.
-topheader = Topbar
+top_header = Topbar
 
 # Lowercase names are the canonical public UI API.
 __all__ = [
@@ -42,7 +42,7 @@ __all__ = [
     "row",
     "column",
     "Topbar",
-    "topheader",
+    "top_header",
     "navbar",
     "navigation",
     "sidebar_layout",

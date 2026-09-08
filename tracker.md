@@ -988,7 +988,7 @@ work flow - reuse/create/------>manual create-------> manual verify---->document
 rules - PYTHON TERMINAL RULE + MD FILE RULE
 
 * [x] Remove unnecessary APIs
-* [ ] Fix inconsistent naming
+* [x] Fix inconsistent naming
 * [ ] Reduce configuration surface
 * [ ] Verify imports
 * [ ] Verify documentation

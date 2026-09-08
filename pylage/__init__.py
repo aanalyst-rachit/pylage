@@ -9,9 +9,9 @@ from pylage.UI.style import style
 from pylage.UI import themes as theme
 from pylage.UI.themes import get_current_theme, set_theme
 from pylage.UI.components import alert, avatar, badge, button, card, dashboard, dialog, dashboard_card, dashboard_grid, dashboard_header, dashboard_section, dataframe, data_list, divider, empty_state, error_state, heading, loading_state, loading_overlay, metric, metric_grid, stat_group, table, text, trend, toast, navigation_item, input, select, checkbox, radio_group, switch, slider, datepicker, form, form_field, textarea
-from pylage.UI.layout.factories import AppShell as appshell, Center as center, Container as container, Footer as footer, Header as header, Section as section, Split as split, Stack as stack, TwoColumn as twocolumn, ThreeColumn as threecolumn
+from pylage.UI.layout.factories import AppShell as app_shell, Center as center, Container as container, Footer as footer, Header as header, Section as section, Split as split, Stack as stack, TwoColumn as two_column, ThreeColumn as three_column
 from pylage.UI.layout.topbar import Topbar as topbar
-from pylage.UI.layout import topheader, navbar, navigation, sidebar_layout, tabs, pagination, menu, navigation_controls, row, column
+from pylage.UI.layout import top_header, navbar, navigation, sidebar_layout, tabs, pagination, menu, navigation_controls, row, column
 from pylage.UI.patterns.hero import Hero as hero
 from pylage.UI.patterns.breadcrumbs import BreadcrumbTrail as breadcrumb_trail
 from pylage.UI.patterns.contact import ContactSection as contact_section
@@ -46,8 +46,8 @@ __all__ = [
     "divider", "empty_state", "error_state", "heading", "loading_state", "loading_overlay",
     "metric", "metric_grid", "stat_group", "table", "text", "trend", "toast", "navigation_item",
     "input", "select", "checkbox", "radio_group", "switch", "slider", "datepicker", "form",
-    "form_field", "textarea", "appshell", "center", "container", "footer", "header", "section",
-    "split", "stack", "twocolumn", "threecolumn", "row", "column", "topbar", "topheader",
+    "form_field", "textarea", "app_shell", "center", "container", "footer", "header", "section",
+    "split", "stack", "two_column", "three_column", "row", "column", "topbar", "top_header",
     "navbar", "navigation", "sidebar_layout", "tabs", "pagination", "menu", "navigation_controls",
     "hero", "breadcrumb_trail", "contact_section", "content_section", "cta", "faq", "feature_section",
     "list", "newsletter_section", "pricing_section", "search_bar", "empty_state", "error_state",

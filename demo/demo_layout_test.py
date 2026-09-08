@@ -473,7 +473,7 @@ dashboard_content = pl.column(
 # 12. Main two-column layout
 # ============================================================
 
-columns = pl.twocolumn(
+columns = pl.two_column(
     sidebar,
 
     pl.container(
@@ -503,7 +503,7 @@ columns = pl.twocolumn(
 # 13. Application shell
 # ============================================================
 
-app = pl.appshell(
+app = pl.app_shell(
     header=header,
     content=columns,
     style=page_style,

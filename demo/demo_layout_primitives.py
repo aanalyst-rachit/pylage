@@ -14,7 +14,7 @@ def get_app() -> pl.column:
     shell_demo = pl.card(
         pl.heading("1. AppShell Layout Structure", level=3),
         pl.text("Composed Header, Sidebar, and Content with responsive flow:"),
-        pl.appshell(
+        pl.app_shell(
             header=pl.navbar(pl.heading("App Header", level=4), pl.button("Logout")),
             sidebar=pl.column(pl.text("📁 Nav Item 1"), pl.text("⚙️ Nav Item 2"), style=pl.style(width="200px", padding="1rem", background="#f1f5f9")),
             content=pl.column(pl.heading("Main View Content", level=3), pl.text("Fluid responsive content zone."), style=pl.style(padding="1rem")),
@@ -28,12 +28,12 @@ def get_app() -> pl.column:
     multi_col_demo = pl.card(
         pl.heading("2. Multi-pl.column Grid Primitives", level=3),
         pl.text("TwoColumn and ThreeColumn responsive containers:"),
-        pl.twocolumn(
+        pl.two_column(
             pl.card(pl.heading("Left pl.column", level=4), pl.text("50% split on desktop, stacked on mobile.")),
             pl.card(pl.heading("Right pl.column", level=4), pl.text("50% split on desktop, stacked on mobile.")),
             style=pl.style(margin_top="0.75rem", margin_bottom="1rem"),
         ),
-        pl.threecolumn(
+        pl.three_column(
             pl.card(pl.heading("pl.column A", level=4), pl.text("1/3 width")),
             pl.card(pl.heading("pl.column B", level=4), pl.text("1/3 width")),
             pl.card(pl.heading("pl.column C", level=4), pl.text("1/3 width")),

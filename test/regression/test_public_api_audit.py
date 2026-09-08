@@ -24,7 +24,7 @@ def test_root_components_are_public():
 
 def test_root_layouts_are_public():
     assert not hasattr(pl, "AppShell")
-    assert callable(pl.appshell)
+    assert callable(pl.app_shell)
 
 
 def test_root_patterns_are_public():
@@ -37,7 +37,7 @@ def test_root_style_namespace_is_public():
     assert pl.style.black is not None
     assert pl.style.white is not None
     assert pl.style.elevated_card is not None
-    assert pl.style.topheader is not None
+    assert pl.style.top_header is not None
 
 
 def test_root_theme_namespace_is_public():
@@ -62,7 +62,7 @@ def test_public_style_presets_are_style_instances():
     assert isinstance(pl.style.black, Style)
     assert isinstance(pl.style.white, Style)
     assert isinstance(pl.style.elevated_card, Style)
-    assert isinstance(pl.style.topheader, Style)
+    assert isinstance(pl.style.top_header, Style)
 
 
 def test_public_style_merge_preserves_and_overrides_values():
@@ -84,7 +84,7 @@ def test_app_shell_composes_header_sidebar_content():
     sidebar = pl.text("Sidebar")
     content = pl.text("Content")
 
-    app = pl.appshell(
+    app = pl.app_shell(
         header=header,
         sidebar=sidebar,
         content=content,
