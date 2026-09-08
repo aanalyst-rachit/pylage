@@ -1,7 +1,7 @@
 import pylage as pl
 """Manual demo for PyLage Design Tokens & Theme Engine (Tokens, Light, Dark, Factory)."""
 
-from pylage.ENGINE import Theme
+from pylage.ENGINE.styling.theme import Theme
 from pylage.UI.tokens import COLORS, FONTS, RADIUS, SPACING, validate_tokens
 from pylage.UI.themes.light import LIGHT_THEME
 from pylage.UI.themes.dark import DARK_THEME

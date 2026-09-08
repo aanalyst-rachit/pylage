@@ -493,7 +493,7 @@ rules - PYTHON TERMINAL RULE + MD FILE RULE
 - Final code-block audit: **0 legacy hits**.
 
 #### 14.15 — Public API Verification
-- Verified `pl.State`, `pl.Option`, `pl.style`, `pl.text`, and required UI APIs.
+- Verified `pl.state`, `pl.option`, `pl.style`, `pl.text`, and required UI APIs.
 - Verified `pl.modal` public API and signature.
 - Special documentation public API audit passed.
 
@@ -991,8 +991,8 @@ rules - PYTHON TERMINAL RULE + MD FILE RULE
 * [x] Fix inconsistent naming
 * [x] Reduce configuration surface
 * [x] Verify imports
-* [ ] Verify documentation
-* [ ] Verify examples
+* [x] Verify documentation
+* [x] Verify examples
 * [ ] Verify compatibility
 * [ ] Verify performance
 * [ ] Verify tests
@@ -1012,7 +1012,7 @@ rules - PYTHON TERMINAL RULE + MD FILE RULE
 Target:
 
 ```text
-pylage-ui-kit 0.x
+pylage 1.0.1
 ```
 
 Release checklist:
