@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pylage.ENGINE import Style
-from pylage.ENGINE import Table as _Table
+from pylage.ENGINE.styling.style import Style
+from pylage.ENGINE.components.basic import Table as _Table
 
 
 _DEFAULT_STYLE = Style(

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pylage.ENGINE import Form as _Form
-from pylage.ENGINE import Style
+from pylage.ENGINE.components.basic import Form as _Form
+from pylage.ENGINE.styling.style import Style
 
 
 _BASE_STYLE = Style(

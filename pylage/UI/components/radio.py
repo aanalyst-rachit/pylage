@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pylage.ENGINE import RadioGroup as _RadioGroup
-from pylage.ENGINE import Style
+from pylage.ENGINE.components.basic import RadioGroup as _RadioGroup
+from pylage.ENGINE.styling.style import Style
 
 
 _BASE_STYLE = Style(

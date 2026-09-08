@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pylage.ENGINE import Dialog as _Dialog
-from pylage.ENGINE import Style
+from pylage.ENGINE.components.basic import Dialog as _Dialog
+from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.core.component import Component
 
 

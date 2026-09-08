@@ -1,6 +1,6 @@
 """Theme construction helpers for PyLage Layout."""
 
-from pylage.ENGINE import Theme
+from pylage.ENGINE.styling.theme import Theme
 
 from ..tokens import COLORS, FONTS, RADIUS, SPACING
 

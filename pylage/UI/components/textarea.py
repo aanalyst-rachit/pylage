@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pylage.ENGINE import State, Style
+from pylage.ENGINE.core.state import State
+from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.core.component import component
 from pylage.ENGINE.core.registry import PropDefinition, registry
 

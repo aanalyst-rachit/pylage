@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from pylage.ENGINE import Column as _Column
-from pylage.ENGINE import Heading as _Heading
-from pylage.ENGINE import Row as _Row
+from pylage.ENGINE.components.basic import Column as _Column
+from pylage.ENGINE.components.basic import Heading as _Heading
+from pylage.ENGINE.components.basic import Row as _Row
 
 from pylage.UI.layout import Container, Stack
 from .stat_group import stat_group

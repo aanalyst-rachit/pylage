@@ -990,7 +990,7 @@ rules - PYTHON TERMINAL RULE + MD FILE RULE
 * [x] Remove unnecessary APIs
 * [x] Fix inconsistent naming
 * [x] Reduce configuration surface
-* [ ] Verify imports
+* [x] Verify imports
 * [ ] Verify documentation
 * [ ] Verify examples
 * [ ] Verify compatibility

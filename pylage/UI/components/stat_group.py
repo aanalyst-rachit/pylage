@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from typing import Any, Mapping
-from pylage.ENGINE import Grid as _Grid
-from pylage.ENGINE import Style
+from pylage.ENGINE.components.basic import Grid as _Grid
+from pylage.ENGINE.styling.style import Style
 from .metric import metric as _metric
 
 _DEFAULT_GRID_STYLE = Style(

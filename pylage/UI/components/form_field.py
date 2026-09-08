@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pylage.ENGINE import Label, Style
+from pylage.ENGINE.components.basic import Label
+from pylage.ENGINE.styling.style import Style
 from pylage.UI.components.text import text
 from pylage.UI.layout.factories import Stack
 

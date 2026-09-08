@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from pylage.ENGINE import Avatar as _Avatar
-from pylage.ENGINE import Style
-from pylage.ENGINE import Text as _Text
+from pylage.ENGINE.components.basic import Avatar as _Avatar
+from pylage.ENGINE.styling.style import Style
+from pylage.ENGINE.components.basic import Text as _Text
 from pylage.ENGINE.core.component import Component
 
 _SIZE_STYLES: dict[str, Style] = {

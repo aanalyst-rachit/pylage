@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from typing import Any
-from pylage.ENGINE import Column as _Column
-from pylage.ENGINE import Spinner as _Spinner
-from pylage.ENGINE import Style
-from pylage.ENGINE import Text as _Text
+from pylage.ENGINE.components.basic import Column as _Column
+from pylage.ENGINE.components.basic import Spinner as _Spinner
+from pylage.ENGINE.styling.style import Style
+from pylage.ENGINE.components.basic import Text as _Text
 
 _DEFAULT_CONTAINER_STYLE = Style(
     display="flex",
