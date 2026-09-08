@@ -1,7 +1,7 @@
 """Public theme API for PyLage Layout."""
 
-from pylage.ENGINE import Theme
 from pylage.ENGINE.styling.global_theme import get_global_theme, set_global_theme
+from pylage.ENGINE.styling.theme import Theme
 
 from .dark import DARK_THEME
 from .light import LIGHT_THEME
