@@ -10,8 +10,8 @@ import pylage as ps
 
 def get_app():
     # pl.State Management
-    user_status = pl.State("Online")
-    notif_count = pl.State(3)
+    user_status = pl.state("Online")
+    notif_count = pl.state(3)
 
     def toggle_status(e=None):
         if user_status.value == "Online":
@@ -94,7 +94,7 @@ def get_app():
         ),
         pl.divider(style=pl.style(margin="1.5rem 0", border_top="1px solid #e2e8f0")),
         pl.heading("Canvas Element Integration", level=3),
-        pl.Canvas(width=400, height=150, style=pl.style(border="1px dashed #94a3b8", border_radius="8px")),
+        pl.canvas(width=400, height=150, style=pl.style(border="1px dashed #94a3b8", border_radius="8px")),
         style=pl.style(padding="2rem", gap="1.5rem", font_family="system-ui, sans-serif")
     )
 

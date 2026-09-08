@@ -24,9 +24,9 @@ def get_app():
     # -------------------------------------------------------------
     # REACTIVE STATES
     # -------------------------------------------------------------
-    selected_theme = pl.State("Dark Mode")
-    switch_active = pl.State(True)
-    selected_framework = pl.State("PyLage")
+    selected_theme = pl.state("Dark Mode")
+    switch_active = pl.state(True)
+    selected_framework = pl.state("PyLage")
 
     # -------------------------------------------------------------
     # EVENT HANDLERS

@@ -7,12 +7,12 @@ def get_nav_interaction_app():
     # -------------------------------------------------------------
     # REACTIVE STATES
     # -------------------------------------------------------------
-    active_tab = pl.State("tab1")
-    current_page = pl.State(1)
-    drawer_open = pl.State(False)
-    dialog_open = pl.State(False)
-    popover_open = pl.State(False)
-    menu_selected = pl.State("Home")
+    active_tab = pl.state("tab1")
+    current_page = pl.state(1)
+    drawer_open = pl.state(False)
+    dialog_open = pl.state(False)
+    popover_open = pl.state(False)
+    menu_selected = pl.state("Home")
 
     # -------------------------------------------------------------
     # EVENT HANDLERS

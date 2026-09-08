@@ -28,7 +28,7 @@ def test_navbar_user_style_preserves_base_defaults():
 
 
 def test_header_user_style_preserves_base_defaults():
-    component = pl.Header("Header", style=Style(color="red"))
+    component = pl.header("Header", style=Style(color="red"))
     style = component.props["style"]
     assert style.color == "red"
     assert style.display == "flex"
@@ -36,7 +36,7 @@ def test_header_user_style_preserves_base_defaults():
 
 
 def test_footer_user_style_preserves_base_defaults():
-    component = pl.Footer("Footer", style=Style(color="red"))
+    component = pl.footer("Footer", style=Style(color="red"))
     style = component.props["style"]
     assert style.color == "red"
     assert style.display == "flex"

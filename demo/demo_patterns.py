@@ -4,7 +4,7 @@ import pylage as pl
 
 
 def get_app() -> pl.column:
-    search_query = pl.State("")
+    search_query = pl.state("")
 
     title = pl.heading("🧩 PyLage Layout Patterns Manual", level=1)
     desc = pl.text(
@@ -13,7 +13,7 @@ def get_app() -> pl.column:
     )
 
     # 1. Hero Pattern
-    hero_pattern = pl.Hero(
+    hero_pattern = pl.hero(
         title="Modern Python-First Web Applications",
         description="Build reactive, full-stack enterprise web UIs with declarative Python syntax without writing JavaScript.",
         actions=[
@@ -23,7 +23,7 @@ def get_app() -> pl.column:
     )
 
     # 2. Stats & Metric Cards
-    stats_pattern = pl.StatsSection(
+    stats_pattern = pl.stats_section(
         metrics=[
             {"label": "Active Nodes", "value": "1,420", "change": "+12.4%"},
             {"label": "Requests / Sec", "value": "89.2k", "change": "+8.1%"},
@@ -32,7 +32,7 @@ def get_app() -> pl.column:
     )
 
     # 3. Feature Section
-    features_pattern = pl.FeatureSection(
+    features_pattern = pl.feature_section(
         title="Why Choose PyLage?",
         features=[
             {"title": "Zero Build Steps", "description": "Native real-time WebSocket diffing engine delivers instant UI synchronization."},
@@ -44,7 +44,7 @@ def get_app() -> pl.column:
     # 4. Search & Empty pl.State
     search_box = pl.card(
         pl.heading("Interactive Search & pl.State Pattern", level=3),
-        pl.SearchBar(
+        pl.search_bar(
             placeholder="Search documentation...",
             on_search=lambda q: search_query.set(q),
         ),
@@ -56,7 +56,7 @@ def get_app() -> pl.column:
     )
 
     # 5. Call To Action (CTA)
-    cta_pattern = pl.CTA(
+    cta_pattern = pl.cta(
         title="Ready to transform your Python workflow?",
         description="Deploy your first reactive PyLage application in under five minutes.",
         actions=[pl.button("Deploy to Cloud")],

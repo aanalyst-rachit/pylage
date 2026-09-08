@@ -10,8 +10,8 @@ import pylage as ps
 
 
 def get_app():
-    loading = pl.State(False)
-    status = pl.State("Overlay is hidden.")
+    loading = pl.state(False)
+    status = pl.state("Overlay is hidden.")
 
     def toggle_loading(e=None):
         print("CLICK RECEIVED:", e)

@@ -9,7 +9,7 @@ import pylage as ps
 
 def get_app():
     # Dynamic pl.State for Grid Interactivity Demo
-    selected_card = pl.State("None")
+    selected_card = pl.state("None")
 
     def select_card_1():
         selected_card.set("Card 1 Selected")

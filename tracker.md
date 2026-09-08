@@ -987,7 +987,7 @@ Status: 20.1–20.20 COMPLETE; Phase 20 COMPLETE.
 work flow - reuse/create/------>manual create-------> manual verify---->documentation----->tracker update---git checkpoint
 rules - PYTHON TERMINAL RULE + MD FILE RULE
 
-* [ ] Remove unnecessary APIs
+* [x] Remove unnecessary APIs
 * [ ] Fix inconsistent naming
 * [ ] Reduce configuration surface
 * [ ] Verify imports

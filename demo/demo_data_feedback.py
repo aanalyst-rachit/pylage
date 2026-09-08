@@ -3,8 +3,8 @@ import pylage as pl
 
 def get_app():
     # --- Reactive States ---
-    toast_visible = pl.State(True)
-    progress_val = pl.State(45)
+    toast_visible = pl.state(True)
+    progress_val = pl.state(45)
 
     def close_toast():
         toast_visible.set(False)
@@ -73,9 +73,9 @@ def get_app():
         pl.card(
             pl.heading("4. Spinner Component", level=3),
             pl.row(
-                pl.Spinner(size="sm"),
-                pl.Spinner(size="md"),
-                pl.Spinner(size="lg"),
+                pl.spinner(size="sm"),
+                pl.spinner(size="md"),
+                pl.spinner(size="lg"),
                 style=pl.style(gap="16px", align_items="center", margin_top="12px")
             )
         )
@@ -86,7 +86,7 @@ def get_app():
         pl.card(
             pl.heading("5. ProgressBar Component", level=3),
             pl.column(
-                pl.ProgressBar(value=progress_val, max=100),
+                pl.progress_bar(value=progress_val, max=100),
                 pl.button("Boost Progress pl.State (+15%)", on_click=boost_progress, style=pl.style(margin_top="8px"))
             )
         )
@@ -97,9 +97,9 @@ def get_app():
         pl.card(
             pl.heading("6. Skeleton Component", level=3),
             pl.column(
-                pl.Skeleton(height="20px", width="60%"),
-                pl.Skeleton(height="14px", width="100%"),
-                pl.Skeleton(height="14px", width="85%"),
+                pl.skeleton(height="20px", width="60%"),
+                pl.skeleton(height="14px", width="100%"),
+                pl.skeleton(height="14px", width="85%"),
                 style=pl.style(gap="8px", margin_top="12px")
             )
         )
@@ -123,7 +123,7 @@ def get_app():
     app.add(
         pl.card(
             pl.heading("8. Accordion Component", level=3),
-            pl.Accordion(
+            pl.accordion(
                 items=[
                     {"title": "Section 1: Architecture Overview", "content": "PyLage utilizes WebSocket reactive tree patching."},
                     {"title": "Section 2: pl.State Management", "content": "pl.State binding maps dependencies directly to DOM attributes."},
@@ -137,7 +137,7 @@ def get_app():
     app.add(
         pl.card(
             pl.heading("9. Carousel Component", level=3),
-            pl.Carousel(
+            pl.carousel(
                 items=[
                     pl.card(pl.text("Slide 1: Real-time UI Engine")),
                     pl.card(pl.text("Slide 2: Reactive WebSockets")),

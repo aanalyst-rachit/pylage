@@ -9,7 +9,7 @@ import pylage as ps
 
 def get_app():
     # pl.State tracking for interactive canvas/media status
-    media_status = pl.State("Status: Media components ready")
+    media_status = pl.state("Status: Media components ready")
 
     def handle_media_click():
         media_status.set("⚡ Media component clicked!")
@@ -19,7 +19,7 @@ def get_app():
     # ============================================================
     image_section = pl.column(
         pl.text("1. Image Component", style=pl.style(font_weight="700", font_size="1.1rem", margin_bottom="0.5rem")),
-        pl.Image(
+        pl.image(
             src="https://picsum.photos/600/200",
             alt="Sample Placeholder Image",
             style=pl.style(
@@ -36,7 +36,7 @@ def get_app():
     # ============================================================
     video_section = pl.column(
         pl.text("2. Video Component", style=pl.style(font_weight="700", font_size="1.1rem", margin_bottom="0.5rem")),
-        pl.Video(
+        pl.video(
             src="https://www.w3schools.com/html/mov_bbb.mp4",
             controls=True,
             style=pl.style(
@@ -53,7 +53,7 @@ def get_app():
     # ============================================================
     audio_section = pl.column(
         pl.text("3. Audio Component", style=pl.style(font_weight="700", font_size="1.1rem", margin_bottom="0.5rem")),
-        pl.Audio(
+        pl.audio(
             src="https://www.w3schools.com/html/horse.mp3",
             controls=True,
             style=pl.style(width="100%"),
@@ -70,9 +70,9 @@ def get_app():
             pl.column(
                 pl.text("Icons", style=pl.style(font_weight="600", font_size="0.9rem", margin_bottom="0.25rem")),
                 pl.row(
-                    pl.Icon(name="check", style=pl.style(color="#166534", font_size="1.5rem")),
-                    pl.Icon(name="star", style=pl.style(color="#d97706", font_size="1.5rem")),
-                    pl.Icon(name="user", style=pl.style(color="#2563eb", font_size="1.5rem")),
+                    pl.icon(name="check", style=pl.style(color="#166534", font_size="1.5rem")),
+                    pl.icon(name="star", style=pl.style(color="#d97706", font_size="1.5rem")),
+                    pl.icon(name="user", style=pl.style(color="#2563eb", font_size="1.5rem")),
                     style=pl.style(gap="0.75rem", align_items="center"),
                 ),
             ),
@@ -108,7 +108,7 @@ def get_app():
     # ============================================================
     canvas_section = pl.column(
         pl.text("5. Canvas Component (Interactive Render)", style=pl.style(font_weight="700", font_size="1.1rem", margin_bottom="0.5rem")),
-        pl.Canvas(
+        pl.canvas(
             width=500,
             height=120,
             on_click=handle_media_click,

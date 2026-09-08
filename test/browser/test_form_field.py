@@ -17,7 +17,7 @@ def test_form_field_browser_render_and_interaction():
         rows=3,
     )
 
-    app = pl.Stack(
+    app = pl.stack(
         pl.form_field(
             email,
             label="Email",
@@ -91,7 +91,7 @@ def test_form_field_accessibility_semantics_in_browser():
         required=True,
     )
 
-    app = pl.Stack(field)
+    app = pl.stack(field)
 
     runtime = Runtime(
         app,

@@ -9,8 +9,8 @@ import pylage as ps
 
 
 def get_app():
-    name_state = pl.State("Aapka Naam Here")
-    submitted_state = pl.State("Form abhi submit nahi hua hai.")
+    name_state = pl.state("Aapka Naam Here")
+    submitted_state = pl.state("Form abhi submit nahi hua hai.")
 
     def handle_name_input(payload):
         if isinstance(payload, dict):

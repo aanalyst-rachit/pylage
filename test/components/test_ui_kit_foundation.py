@@ -1,12 +1,13 @@
 import pylage as ps
+from pylage.UI._meta import IMPORT_NAME, PACKAGE_NAME
 
 
 def test_ui_kit_import():
-    assert ps.IMPORT_NAME == "pylage"
+    assert IMPORT_NAME == "pylage"
 
 
 def test_ui_kit_package_name():
-    assert ps.PACKAGE_NAME == "pylage-ui-kit"
+    assert PACKAGE_NAME == "pylage-ui-kit"
 
 
 def test_ui_kit_version():

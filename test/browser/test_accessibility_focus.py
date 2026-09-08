@@ -13,7 +13,7 @@ def test_native_controls_preserve_focus_behavior():
     )
     button_control = pl.button("Continue")
 
-    app = pl.Stack(
+    app = pl.stack(
         input_control,
         button_control,
     )
@@ -69,7 +69,7 @@ def test_form_field_label_is_associated_with_control():
         help_text="Enter your email address.",
     )
 
-    app = pl.Stack(field)
+    app = pl.stack(field)
 
     runtime = Runtime(
         app,
@@ -110,13 +110,13 @@ def test_form_field_label_is_associated_with_control():
 
 
 def test_interactive_states_render_and_update():
-    from pylage import State
+    from pylage.ENGINE.core.state import State
 
     active = State(False)
     navigation = pl.navigation_item("Dashboard", active=active)
     button = pl.button("Save")
 
-    app = pl.Stack(
+    app = pl.stack(
         navigation,
         button,
     )
@@ -165,7 +165,7 @@ def test_interactive_states_render_and_update():
 
 
 def test_dialog_open_state_is_reflected_in_browser():
-    from pylage import State
+    from pylage.ENGINE.core.state import State
 
     open_state = State(False)
     component = pl.dialog(
@@ -173,7 +173,7 @@ def test_dialog_open_state_is_reflected_in_browser():
         open=open_state,
     )
 
-    app = pl.Stack(component)
+    app = pl.stack(component)
 
     runtime = Runtime(
         app,
@@ -216,13 +216,13 @@ def test_dialog_open_state_is_reflected_in_browser():
 
 
 def test_navigation_behavior_is_semantic_and_reactive():
-    from pylage import State
+    from pylage.ENGINE.core.state import State
 
     active = State(False)
     item = pl.navigation_item("Dashboard", active=active)
     navigation = pl.navigation(item)
 
-    app = pl.Stack(navigation)
+    app = pl.stack(navigation)
 
     runtime = Runtime(
         app,

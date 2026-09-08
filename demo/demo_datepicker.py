@@ -10,8 +10,8 @@ import pylage as ps
 
 def get_app():
     # pl.State Management
-    selected_date = pl.State("2026-09-01")
-    date_display = pl.State("2026-09-01")
+    selected_date = pl.state("2026-09-01")
+    date_display = pl.state("2026-09-01")
 
     def handle_date_change(val=None):
         if isinstance(val, dict):

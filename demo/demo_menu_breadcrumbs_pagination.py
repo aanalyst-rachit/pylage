@@ -4,8 +4,8 @@ import pylage as pl
 
 
 def get_app() -> pl.column:
-    current_page = pl.State(1)
-    active_nav_tab = pl.State("Overview")
+    current_page = pl.state(1)
+    active_nav_tab = pl.state("Overview")
 
     title = pl.heading("🧭 pl.navigation & Wayfinding Manual", level=1)
     desc = pl.text(

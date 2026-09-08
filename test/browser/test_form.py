@@ -7,7 +7,7 @@ from pylage.ENGINE.runtime import Runtime
 
 
 def test_form_browser_render_and_submit():
-    submitted = pl.State("Not submitted")
+    submitted = pl.state("Not submitted")
 
     def handle_submit(payload):
         if isinstance(payload, dict):

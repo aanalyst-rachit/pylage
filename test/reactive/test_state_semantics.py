@@ -207,7 +207,7 @@ def test_derived_state_dispose_is_idempotent():
 def test_public_derived_api():
     import pylage as pl
 
-    source = pl.State("Dashboard")
+    source = pl.state("Dashboard")
     active = pl.derived(source, compute=lambda page: page == "Dashboard")
 
     assert active.value is True
@@ -218,8 +218,8 @@ def test_public_derived_api():
 def test_public_derived_api_supports_multiple_sources():
     import pylage as pl
 
-    page = pl.State("Dashboard")
-    enabled = pl.State(True)
+    page = pl.state("Dashboard")
+    enabled = pl.state(True)
     active = pl.derived(page, enabled, compute=lambda current_page, is_enabled: current_page == "Dashboard" and is_enabled)
 
     assert active.value is True

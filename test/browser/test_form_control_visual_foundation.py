@@ -7,8 +7,8 @@ def test_form_control_visual_foundation_contract():
         "input": pl.input(placeholder="Input"),
         "textarea": pl.textarea(placeholder="Textarea"),
         "select": pl.select(
-            pl.Option("One", value="one"),
-            pl.Option("Two", value="two"),
+            pl.option("One", value="one"),
+            pl.option("Two", value="two"),
         ),
         "datepicker": pl.datepicker(),
         "checkbox": pl.checkbox(),

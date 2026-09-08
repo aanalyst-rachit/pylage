@@ -4,7 +4,7 @@ import pylage as pl
 
 
 def get_app():
-    visible = pl.State(True)
+    visible = pl.state(True)
 
     def toggle_toast(payload=None):
         print("[TOGGLE TOAST] CLICK")

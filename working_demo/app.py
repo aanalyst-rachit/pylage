@@ -142,7 +142,7 @@ def analytics_page():
 
 
 def forms_page():
-    submitted = pl.State("No submission yet.")
+    submitted = pl.state("No submission yet.")
 
     def handle_submit(payload=None):
         values = payload.get("values", {}) if isinstance(payload, dict) else {}
@@ -190,7 +190,7 @@ def forms_page():
 
 
 def tables_page():
-    current_page = pl.State(1)
+    current_page = pl.state(1)
 
     def change_page(payload=None):
         if isinstance(payload, dict):
@@ -244,9 +244,9 @@ def navigation_page():
 
 
 def overlays_page():
-    drawer_open = pl.State(False)
-    modal_open = pl.State(False)
-    toast_visible = pl.State(False)
+    drawer_open = pl.state(False)
+    modal_open = pl.state(False)
+    toast_visible = pl.state(False)
 
     drawer = pl.drawer(
         pl.column(
@@ -373,7 +373,7 @@ PAGES = {
 
 
 def get_app():
-    active_page = pl.State("Dashboard")
+    active_page = pl.state("Dashboard")
     content = pl.column(dashboard_page())
 
     def select_page(name):

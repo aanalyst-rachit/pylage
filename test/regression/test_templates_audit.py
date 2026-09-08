@@ -36,6 +36,7 @@ PUBLIC_RECIPES = [
     "tooltip",
     "popover",
     "confirmation_dialog",
+    "modal",
 ]
 
 
@@ -86,6 +87,8 @@ def test_recipes_return_pylage_components():
         recipe = getattr(recipes, name)
         if name == "confirmation_dialog":
             component = recipe("Confirm action")
+        elif name == "modal":
+            component = recipe("Modal content")
         else:
             component = recipe()
 

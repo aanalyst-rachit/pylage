@@ -31,7 +31,7 @@ def get_app():
 
         # Image Avatar with Shadow & Ring Accent
         ps.avatar(
-            pl.Image(src="https://i.pravatar.cc/100?img=33", alt="User"),
+            pl.image(src="https://i.pravatar.cc/100?img=33", alt="User"),
             style=pl.style(
                 box_shadow="0 10px 15px -3px rgba(59, 130, 246, 0.3)", # Subtle colored glow
                 border="2px solid #3b82f6"

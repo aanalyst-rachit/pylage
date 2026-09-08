@@ -10,8 +10,8 @@ import pylage as ps
 
 def get_app():
     # pl.State Management
-    active_section = pl.State("Section 1")
-    expand_count = pl.State(0)
+    active_section = pl.state("Section 1")
+    expand_count = pl.state(0)
 
     def select_sec1(e=None):
         active_section.set("Section 1: Engine Architecture")
@@ -42,7 +42,7 @@ def get_app():
             pl.button("Toggle / View", on_click=select_sec2, variant="secondary"),
             style=pl.style(display="flex", justify_content="space-between", align_items="center")
         ),
-        pl.text("pl.State(val) tracks all bound components and triggers minimal microtask-coalesced diff patches."),
+        pl.text("pl.state(val) tracks all bound components and triggers minimal microtask-coalesced diff patches."),
         style=pl.style(padding="1rem", margin_bottom="0.5rem", border="1px solid #e2e8f0", border_radius="8px")
     )
 
@@ -56,7 +56,7 @@ def get_app():
         style=pl.style(padding="1rem", margin_bottom="0.5rem", border="1px solid #e2e8f0", border_radius="8px")
     )
 
-    accordion_container = pl.Accordion(
+    accordion_container = pl.accordion(
         accordion_item_1,
         accordion_item_2,
         accordion_item_3,

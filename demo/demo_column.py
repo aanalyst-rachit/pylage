@@ -9,7 +9,7 @@ import pylage as ps
 
 def get_app():
     # Dynamic pl.State for pl.column Interactivity Demo
-    item_count = pl.State(2)
+    item_count = pl.state(2)
 
     def add_item():
         item_count.set(item_count.value + 1)

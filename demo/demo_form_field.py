@@ -4,9 +4,9 @@ import pylage as pl
 
 
 def get_app():
-    email = pl.State("student@example.com")
-    message = pl.State("Hello PyLage")
-    country = pl.State("India")
+    email = pl.state("student@example.com")
+    message = pl.state("Hello PyLage")
+    country = pl.state("India")
 
     def update_email(payload):
         if isinstance(payload, dict) and "value" in payload:
@@ -20,7 +20,7 @@ def get_app():
         if isinstance(payload, dict) and "value" in payload:
             country.set(payload["value"])
 
-    return pl.Stack(
+    return pl.stack(
         pl.heading("UI Kit FormField — Manual Verification"),
         pl.text(
             "FormField composition around existing PyLage controls."
@@ -96,10 +96,10 @@ def get_app():
         pl.heading("7. State-Bound Select"),
         pl.form_field(
             pl.select(
-                pl.Option("India", value="India"),
-                pl.Option("United States", value="United States"),
-                pl.Option("United Kingdom", value="United Kingdom"),
-                pl.Option("Canada", value="Canada"),
+                pl.option("India", value="India"),
+                pl.option("United States", value="United States"),
+                pl.option("United Kingdom", value="United Kingdom"),
+                pl.option("Canada", value="Canada"),
                 value=country,
                 on_change=update_country,
             ),

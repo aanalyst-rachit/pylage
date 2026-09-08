@@ -128,7 +128,7 @@ def on_view_documentation():
     print("VIEW DOCUMENTATION CLICKED")
 
 
-hero = pl.Hero(
+hero = pl.hero(
     title="Build dashboards without fighting layout",
 
     description=(
@@ -179,7 +179,7 @@ hero = pl.Hero(
 # 5. Statistics
 # ============================================================
 
-stats = pl.StatsSection(
+stats = pl.stats_section(
     title="Overview",
 
     description="Current application metrics",
@@ -223,7 +223,7 @@ stats = pl.StatsSection(
 # 6. Feature section
 # ============================================================
 
-features = pl.FeatureSection(
+features = pl.feature_section(
     {
         "title": "Design Tokens",
         "description": (
@@ -274,7 +274,7 @@ features = pl.FeatureSection(
 # 7. Analytics
 # ============================================================
 
-analytics = pl.ContentSection(
+analytics = pl.content_section(
     title="Analytics",
 
     content=(
@@ -323,7 +323,7 @@ analytics = pl.ContentSection(
 # 8. Pricing
 # ============================================================
 
-pricing = pl.PricingSection(
+pricing = pl.pricing_section(
     title="Plans",
 
     description="Choose the plan that fits your team.",
@@ -383,7 +383,7 @@ pricing = pl.PricingSection(
 # 9. CTA
 # ============================================================
 
-cta = pl.CTA(
+cta = pl.cta(
     title="Ready to ship faster?",
 
     description=(
@@ -422,7 +422,7 @@ cta = pl.CTA(
 # 10. Footer
 # ============================================================
 
-footer = pl.Footer(
+footer = pl.footer(
     pl.text(
         "PyLage Layout • Responsive UI composition for Python",
         style=pl.style(
@@ -473,10 +473,10 @@ dashboard_content = pl.column(
 # 12. Main two-column layout
 # ============================================================
 
-columns = pl.TwoColumn(
+columns = pl.twocolumn(
     sidebar,
 
-    pl.Container(
+    pl.container(
         dashboard_content,
 
         style=pl.style(
@@ -503,7 +503,7 @@ columns = pl.TwoColumn(
 # 13. Application shell
 # ============================================================
 
-app = pl.AppShell(
+app = pl.appshell(
     header=header,
     content=columns,
     style=page_style,

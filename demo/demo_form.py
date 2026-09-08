@@ -4,8 +4,8 @@ import pylage as pl
 
 
 def get_app():
-    submitted = pl.State("Form submit nahi hua abhi.")
-    submit_count = pl.State(0)
+    submitted = pl.state("Form submit nahi hua abhi.")
+    submit_count = pl.state(0)
 
     def handle_submit(payload=None):
         submit_count.set(submit_count.value + 1)
@@ -80,7 +80,7 @@ def get_app():
         box_sizing="border-box",
     )
 
-    return pl.Stack(
+    return pl.stack(
         pl.text(
             "Form Component Test Suite",
             style=title_style,

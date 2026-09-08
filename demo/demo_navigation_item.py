@@ -2,12 +2,12 @@ import pylage as pl
 
 
 def get_app():
-    status = pl.State("Selected: Home")
+    status = pl.state("Selected: Home")
 
-    home_active = pl.State(True)
-    products_active = pl.State(False)
-    settings_active = pl.State(False)
-    profile_active = pl.State(False)
+    home_active = pl.state(True)
+    products_active = pl.state(False)
+    settings_active = pl.state(False)
+    profile_active = pl.state(False)
 
     def select_item(name, selected_state, other_states):
         def handler(e=None):

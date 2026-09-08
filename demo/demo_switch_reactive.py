@@ -1,8 +1,8 @@
 import pylage as pl
 
 
-enabled = pl.State(False)
-events = pl.State("No event yet")
+enabled = pl.state(False)
+events = pl.state("No event yet")
 
 
 def handle_change(payload):
@@ -10,7 +10,7 @@ def handle_change(payload):
 
 
 def get_app():
-    return pl.Stack(
+    return pl.stack(
         pl.heading("UI Kit Switch — Manual Verification"),
 
         pl.heading("1. Basic Switch"),

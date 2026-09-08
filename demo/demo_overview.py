@@ -70,7 +70,7 @@ MANUAL_REGISTRY = {
 
 
 def get_app() -> pl.column:
-    active_section = pl.State("Overview")
+    active_section = pl.state("Overview")
 
     header = pl.row(
         pl.heading("⚡ PyLage UI Engine — Interactive Component Manual", level=2, style=pl.style(margin=0)),

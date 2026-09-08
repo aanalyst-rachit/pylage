@@ -1,8 +1,8 @@
 import pylage as pl
 
 
-selected_date = pl.State("2026-09-03")
-last_event = pl.State("No input event yet")
+selected_date = pl.state("2026-09-03")
+last_event = pl.state("No input event yet")
 
 
 def handle_date_input(payload):
@@ -18,7 +18,7 @@ def set_next_week():
 
 
 def get_app():
-    return pl.Stack(
+    return pl.stack(
         pl.heading("UI Kit DatePicker — Manual Verification"),
 
         pl.heading("1. Basic DatePicker"),

@@ -10,9 +10,9 @@ import pylage as ps
 
 def get_app():
     # pl.State Management
-    current_page = pl.State(1)
+    current_page = pl.state(1)
     total_pages = 5
-    page_data_msg = pl.State("Showing Records 1 - 10 of 50")
+    page_data_msg = pl.state("Showing Records 1 - 10 of 50")
 
     def go_prev(e=None):
         if current_page.value > 1:

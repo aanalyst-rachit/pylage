@@ -10,8 +10,8 @@ import pylage as ps
 
 def get_app():
     # pl.State Management
-    active_tab = pl.State("tab_analytics")
-    tab_title = pl.State("Analytics & Metrics")
+    active_tab = pl.state("tab_analytics")
+    tab_title = pl.state("Analytics & Metrics")
 
     def switch_to_analytics(e=None):
         active_tab.set("tab_analytics")

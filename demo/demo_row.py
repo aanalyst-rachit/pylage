@@ -9,7 +9,7 @@ import pylage as ps
 
 def get_app():
     # Dynamic pl.State for pl.row Interactivity Demo
-    active_tab = pl.State("Home")
+    active_tab = pl.state("Home")
 
     def select_home():
         active_tab.set("Home")

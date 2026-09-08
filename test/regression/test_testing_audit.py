@@ -283,11 +283,16 @@ def test_public_package_does_not_require_legacy_packages():
     assert importlib.util.find_spec("pylage_ui") is None
     assert importlib.util.find_spec("pylage_layout") is None
 
-    assert hasattr(pylage.UI, "layout")
-    assert hasattr(pylage.UI, "patterns")
-    assert hasattr(pylage.UI, "themes")
-    assert hasattr(pylage.UI, "tokens")
-    assert hasattr(pylage.UI, "recipes")
+    import importlib
+
+    for module_name in (
+        "pylage.UI.layout",
+        "pylage.UI.patterns",
+        "pylage.UI.themes",
+        "pylage.UI.tokens",
+        "pylage.UI.recipes",
+    ):
+        assert importlib.import_module(module_name) is not None
 
 
 def test_token_validation_remains_available():

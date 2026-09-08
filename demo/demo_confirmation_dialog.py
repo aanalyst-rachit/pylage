@@ -9,8 +9,8 @@ import pylage as ps
 
 
 def get_app():
-    dialog_open = pl.State(False)
-    action_log = pl.State("No confirmation action taken yet.")
+    dialog_open = pl.state(False)
+    action_log = pl.state("No confirmation action taken yet.")
 
     def open_dialog(e=None):
         dialog_open.set(True)

@@ -3,9 +3,9 @@ import pylage as ps
 
 
 def get_app():
-    selected_language = pl.State("python")
-    selected_country = pl.State("india")
-    custom_status = pl.State("Custom handler not triggered yet.")
+    selected_language = pl.state("python")
+    selected_country = pl.state("india")
+    custom_status = pl.state("Custom handler not triggered yet.")
 
     def handle_country_change(payload):
         if isinstance(payload, dict):
@@ -16,9 +16,9 @@ def get_app():
         custom_status.set(f"Selected country: {value}")
 
     basic_select = ps.select(
-        pl.Option("Python", value="python"),
-        pl.Option("JavaScript", value="javascript"),
-        pl.Option("Rust", value="rust"),
+        pl.option("Python", value="python"),
+        pl.option("JavaScript", value="javascript"),
+        pl.option("Rust", value="rust"),
         value="python",
         name="language",
         style=pl.style(
@@ -31,9 +31,9 @@ def get_app():
     )
 
     state_select = ps.select(
-        pl.Option("Python", value="python"),
-        pl.Option("JavaScript", value="javascript"),
-        pl.Option("Rust", value="rust"),
+        pl.option("Python", value="python"),
+        pl.option("JavaScript", value="javascript"),
+        pl.option("Rust", value="rust"),
         value=selected_language,
         name="state-language",
         on_change=lambda payload: selected_language.set(
@@ -49,9 +49,9 @@ def get_app():
     )
 
     custom_select = ps.select(
-        pl.Option("India", value="india"),
-        pl.Option("Japan", value="japan"),
-        pl.Option("Nepal", value="nepal"),
+        pl.option("India", value="india"),
+        pl.option("Japan", value="japan"),
+        pl.option("Nepal", value="nepal"),
         value=selected_country,
         name="country",
         on_change=handle_country_change,
@@ -65,7 +65,7 @@ def get_app():
     )
 
     disabled_select = ps.select(
-        pl.Option("Locked option", value="locked"),
+        pl.option("Locked option", value="locked"),
         value="locked",
         disabled=True,
         name="disabled-select",
@@ -79,10 +79,10 @@ def get_app():
     )
 
     multiple_select = ps.select(
-        pl.Option("Python", value="python"),
-        pl.Option("JavaScript", value="javascript"),
-        pl.Option("Rust", value="rust"),
-        pl.Option("Go", value="go"),
+        pl.option("Python", value="python"),
+        pl.option("JavaScript", value="javascript"),
+        pl.option("Rust", value="rust"),
+        pl.option("Go", value="go"),
         multiple=True,
         size=4,
         name="multiple-languages",

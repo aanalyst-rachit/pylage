@@ -15,7 +15,7 @@ DARK_COLORS = {
     "primary_hover": "#3b82f6",
     "primary_contrast": "#0f172a",
     "secondary": "#94a3b8",
-    "secondary_hover": "#94a3b8",
+    "secondary_hover": "#64748b",
     "secondary_contrast": "#0f172a",
     "success": "#4ade80",
     "warning": "#fbbf24",

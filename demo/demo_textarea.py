@@ -10,9 +10,9 @@ import pylage as ps
 
 def get_app():
     # Reactive state used to verify real browser input binding.
-    message = pl.State("")
-    input_count = pl.State(0)
-    custom_value = pl.State("")
+    message = pl.state("")
+    input_count = pl.state(0)
+    custom_value = pl.state("")
 
     def handle_custom_input(payload=None):
         if isinstance(payload, dict) and "value" in payload:

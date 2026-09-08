@@ -1,15 +1,16 @@
 import pylage as pl
 import pylage as ps
+from pylage.ENGINE.core.state import State
 
 
 
 def get_app():
 
-    drawer_open = ps.State(False)
-    navigation_open = ps.State(False)
-    mobile_open = ps.State(False)
+    drawer_open = State(False)
+    navigation_open = State(False)
+    mobile_open = State(False)
 
-    status = ps.State("Select a Drawer API to test.")
+    status = State("Select a Drawer API to test.")
 
     def open_drawer(state, name):
 

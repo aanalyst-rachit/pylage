@@ -10,9 +10,9 @@ import pylage as ps
 
 
 def get_app():
-    gap = pl.State("1rem")
-    column_color = pl.State("#dbeafe")
-    status = pl.State("Column wrapper is working.")
+    gap = pl.state("1rem")
+    column_color = pl.state("#dbeafe")
+    status = pl.state("Column wrapper is working.")
 
     def toggle_gap(e=None):
         print("CLICK RECEIVED", e)

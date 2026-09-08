@@ -5,7 +5,7 @@ from pylage.ENGINE.runtime import Runtime
 
 
 def test_browser_datepicker_state_binding():
-    value = pl.State("2026-09-03")
+    value = pl.state("2026-09-03")
 
     datepicker = pl.datepicker(
         value=value,
@@ -13,7 +13,7 @@ def test_browser_datepicker_state_binding():
         max="2026-12-31",
     )
 
-    app = pl.Stack(datepicker)
+    app = pl.stack(datepicker)
 
     runtime = Runtime(
         app,
@@ -51,7 +51,7 @@ def test_browser_datepicker_state_binding():
 
 
 def test_browser_datepicker_state_binding_preserves_custom_on_input():
-    value = pl.State("2026-09-03")
+    value = pl.state("2026-09-03")
     received = []
 
     def handle_input(payload):
@@ -62,7 +62,7 @@ def test_browser_datepicker_state_binding_preserves_custom_on_input():
         on_input=handle_input,
     )
 
-    app = pl.Stack(datepicker)
+    app = pl.stack(datepicker)
 
     runtime = Runtime(
         app,

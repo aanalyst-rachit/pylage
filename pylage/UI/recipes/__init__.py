@@ -20,5 +20,5 @@ Profile = ProfilePage
 __all__ = [
     "LandingPage", "Dashboard", "AdminPanel", "Authentication", "ProfilePage",
     "drawer", "navigation_drawer", "mobile_sidebar", "tooltip", "popover",
-    "confirmation_dialog",
+    "confirmation_dialog", "modal",
 ]

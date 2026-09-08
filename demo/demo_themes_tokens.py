@@ -8,7 +8,7 @@ from pylage.UI.themes.dark import DARK_THEME
 
 
 def get_app() -> pl.column:
-    is_dark = pl.State(False)
+    is_dark = pl.state(False)
 
     title = pl.heading("🎨 Design Tokens & Theme System Manual", level=1)
     desc = pl.text(

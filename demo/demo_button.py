@@ -9,7 +9,7 @@ import pylage as ps
 
 def get_app():
     # 1. Exact Working Pattern: Reactive pl.State
-    count = pl.State(0)
+    count = pl.state(0)
 
     # 2. Exact Working Pattern: Callback function
     def handle_click():

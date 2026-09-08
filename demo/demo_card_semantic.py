@@ -3,7 +3,7 @@ import pylage as ps
 import pylage as ui
 
 def get_app():
-    click_count = pl.State(0)
+    click_count = pl.state(0)
 
     def mark_clicked():
         click_count.set(click_count.value + 1)

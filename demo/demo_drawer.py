@@ -10,8 +10,8 @@ import pylage as ps
 
 def get_app():
     # pl.State Management
-    drawer_open = pl.State(False)
-    status_msg = pl.State("pl.drawer is currently closed.")
+    drawer_open = pl.state(False)
+    status_msg = pl.state("pl.drawer is currently closed.")
 
     def open_drawer(e=None):
         drawer_open.set(True)

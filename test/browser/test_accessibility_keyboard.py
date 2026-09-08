@@ -18,7 +18,7 @@ def test_keyboard_tab_focus_and_button_activation():
     first = pl.button("First", on_click=handle_first)
     second = pl.button("Second", on_click=handle_second)
 
-    app = pl.Stack(
+    app = pl.stack(
         pl.input(
             placeholder="Name",
             name="name",
@@ -96,7 +96,7 @@ def test_disabled_input_is_skipped_by_keyboard_focus():
         name="enabled",
     )
 
-    app = pl.Stack(
+    app = pl.stack(
         disabled,
         enabled,
     )
@@ -141,7 +141,7 @@ def test_disabled_button_is_skipped_by_keyboard_focus():
     enabled = pl.button("Enabled")
     disabled = pl.button("Disabled", disabled=True)
 
-    app = pl.Stack(
+    app = pl.stack(
         pl.input(
             placeholder="Name",
             name="name",

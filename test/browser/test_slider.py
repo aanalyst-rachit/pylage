@@ -5,7 +5,7 @@ from pylage.ENGINE.runtime import Runtime
 
 
 def test_browser_slider_state_binding():
-    value = pl.State(25)
+    value = pl.state(25)
     slider = pl.slider(
         value=value,
         min=0,
@@ -13,7 +13,7 @@ def test_browser_slider_state_binding():
         step=5,
     )
 
-    app = pl.Stack(slider)
+    app = pl.stack(slider)
 
     runtime = Runtime(
         app,
@@ -51,7 +51,7 @@ def test_browser_slider_state_binding():
 
 
 def test_browser_slider_state_binding_preserves_custom_on_input():
-    value = pl.State(25)
+    value = pl.state(25)
     received = []
 
     def handle_input(payload):
@@ -65,7 +65,7 @@ def test_browser_slider_state_binding_preserves_custom_on_input():
         on_input=handle_input,
     )
 
-    app = pl.Stack(slider)
+    app = pl.stack(slider)
 
     runtime = Runtime(
         app,

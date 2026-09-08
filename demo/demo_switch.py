@@ -12,8 +12,8 @@ def get_app():
     # -------------------------------------------------------------------------
     # pl.State Management
     # -------------------------------------------------------------------------
-    dark_mode = pl.State(False)
-    notifications_enabled = pl.State(False)
+    dark_mode = pl.state(False)
+    notifications_enabled = pl.state(False)
 
     # pl.State Inverter Handlers
     def toggle_dark_mode(val=None):

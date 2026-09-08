@@ -1,8 +1,8 @@
 import pylage as pl
 
 
-selected = pl.State("python")
-events = pl.State("No event yet")
+selected = pl.state("python")
+events = pl.state("No event yet")
 
 
 def handle_change(payload):
@@ -10,7 +10,7 @@ def handle_change(payload):
 
 
 def get_app():
-    return pl.Stack(
+    return pl.stack(
         pl.heading("UI Kit Radio — Manual Verification"),
 
         pl.heading("1. Basic Radio Group"),

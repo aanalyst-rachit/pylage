@@ -10,8 +10,8 @@ import pylage as ps
 
 def get_app():
     # pl.State Management
-    dialog_open = pl.State(False)
-    action_log = pl.State("No dialog action taken yet.")
+    dialog_open = pl.state(False)
+    action_log = pl.state("No dialog action taken yet.")
 
     def open_dialog(e=None):
         dialog_open.set(True)

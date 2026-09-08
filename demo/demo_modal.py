@@ -4,8 +4,8 @@ import pylage as ps
 
 
 def get_app():
-    modal_open = pl.State(False)
-    action_log = pl.State("No modal action taken yet.")
+    modal_open = pl.state(False)
+    action_log = pl.state("No modal action taken yet.")
 
     def open_modal(e=None):
         modal_open.set(True)

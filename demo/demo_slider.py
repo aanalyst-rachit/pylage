@@ -1,8 +1,8 @@
 import pylage as pl
 
 
-slider_value = pl.State(45)
-event_value = pl.State("No event yet")
+slider_value = pl.state(45)
+event_value = pl.state("No event yet")
 
 
 def handle_slider_input(payload):
@@ -10,7 +10,7 @@ def handle_slider_input(payload):
 
 
 def get_app():
-    return pl.Stack(
+    return pl.stack(
         pl.heading("UI Kit Slider — Manual Verification"),
 
         pl.heading("1. Basic Slider"),

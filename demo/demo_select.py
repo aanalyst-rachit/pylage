@@ -12,8 +12,8 @@ def get_app():
     # -------------------------------------------------------------------------
     # pl.State Management
     # -------------------------------------------------------------------------
-    selected_language = pl.State("Python")
-    selected_database = pl.State("postgresql")
+    selected_language = pl.state("Python")
+    selected_database = pl.state("postgresql")
 
     # pl.State Handlers
     def handle_language_change(val):
@@ -35,7 +35,7 @@ def get_app():
                 for opt in options_list:
                     val = opt.get("value") if isinstance(opt, dict) else opt
                     lbl = opt.get("label") if isinstance(opt, dict) else opt
-                    option_children.append(pl.Option(lbl, value=val))
+                    option_children.append(pl.option(lbl, value=val))
 
                 return pl.select(
                     *option_children,           # ✅ actual <option> children
@@ -56,7 +56,7 @@ def get_app():
                 pass
         # 2. Native Component Builder with raw HTML props
 
-        select_node = pl.select(*[pl.Option(opt.get("label") if isinstance(opt, dict) else opt, value=opt.get("value") if isinstance(opt, dict) else opt) for opt in options_list], value=current_state, on_change=on_change_fn)
+        select_node = pl.select(*[pl.option(opt.get("label") if isinstance(opt, dict) else opt, value=opt.get("value") if isinstance(opt, dict) else opt) for opt in options_list], value=current_state, on_change=on_change_fn)
         return select_node
 
 

@@ -7,10 +7,10 @@ from pylage.ENGINE.runtime import Runtime
 
 
 def test_reduced_motion_preference_disables_spinner_animation():
-    spinner = pl.Spinner()
+    spinner = pl.spinner()
 
     runtime = Runtime(
-        pl.Stack(spinner),
+        pl.stack(spinner),
         title="PyLage Reduced Motion Browser Test",
         output="test_output/reduced_motion_browser/index.html",
     )

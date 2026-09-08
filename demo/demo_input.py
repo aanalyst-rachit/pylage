@@ -7,8 +7,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import pylage as ps
 
 def get_app():
-    name_state = pl.State("Aapka Naam Here")
-    submitted_state = pl.State("Form abhi submit nahi hua hai.")
+    name_state = pl.state("Aapka Naam Here")
+    submitted_state = pl.state("Form abhi submit nahi hua hai.")
 
     # Fixed: Extract string value if payload is a dict
     def on_name_change(val):

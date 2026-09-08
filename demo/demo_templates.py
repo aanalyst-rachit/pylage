@@ -4,7 +4,7 @@ import pylage as pl
 
 
 def get_app() -> pl.column:
-    selected_template = pl.State("dashboard")
+    selected_template = pl.state("dashboard")
 
     title = pl.heading("📄 PyLage Application Templates Manual", level=1)
     desc = pl.text(

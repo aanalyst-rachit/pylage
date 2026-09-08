@@ -23,13 +23,13 @@ def test_root_components_are_public():
 
 
 def test_root_layouts_are_public():
-    assert hasattr(pl, "AppShell")
-    assert callable(pl.AppShell)
+    assert not hasattr(pl, "AppShell")
+    assert callable(pl.appshell)
 
 
 def test_root_patterns_are_public():
-    assert hasattr(pl, "Hero")
-    assert callable(pl.Hero)
+    assert not hasattr(pl, "Hero")
+    assert callable(pl.hero)
 
 
 def test_root_style_namespace_is_public():
@@ -84,7 +84,7 @@ def test_app_shell_composes_header_sidebar_content():
     sidebar = pl.text("Sidebar")
     content = pl.text("Content")
 
-    app = pl.AppShell(
+    app = pl.appshell(
         header=header,
         sidebar=sidebar,
         content=content,
@@ -96,7 +96,7 @@ def test_app_shell_composes_header_sidebar_content():
 
 
 def test_hero_supports_target_usage():
-    hero = pl.Hero(
+    hero = pl.hero(
         title="Build with Python",
         description="Build reusable layouts with Python.",
         actions=[
@@ -111,7 +111,7 @@ def test_hero_supports_target_usage():
 
 
 def test_hero_accepts_string_actions():
-    hero = pl.Hero(
+    hero = pl.hero(
         title="Build with Python",
         actions=["Get Started", "Learn More"],
     )
@@ -123,8 +123,8 @@ def test_hero_accepts_string_actions():
 def test_root_public_api_contract_is_canonical():
     assert "style" in pl.__all__
     assert "theme" in pl.__all__
-    assert "AppShell" in pl.__all__
-    assert "Hero" in pl.__all__
+    assert "AppShell" not in pl.__all__
+    assert "Hero" not in pl.__all__
     assert "button" in pl.__all__
     assert "card" in pl.__all__
 

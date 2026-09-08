@@ -40,6 +40,10 @@ def test_tokens_all_matches_public_api():
         "RADIUS",
         "SPACING",
         "validate_tokens",
+        "contrast_ratio",
+        "meets_wcag_contrast",
+        "theme_contrast_results",
+        "validate_wcag_contrast",
     }
 
     assert set(tokens.__all__) == expected

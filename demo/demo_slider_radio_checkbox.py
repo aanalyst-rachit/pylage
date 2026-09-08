@@ -4,11 +4,11 @@ import pylage as pl
 
 
 def get_app() -> pl.column:
-    slider_val = pl.State(45)
-    selected_plan = pl.State("pro")
-    agree_terms = pl.State(True)
-    enable_notifications = pl.State(True)
-    selected_date = pl.State("2026-09-01")
+    slider_val = pl.state(45)
+    selected_plan = pl.state("pro")
+    agree_terms = pl.state(True)
+    enable_notifications = pl.state(True)
+    selected_date = pl.state("2026-09-01")
 
     title = pl.heading("🎛️ Form & Interactive Controls Manual", level=1)
     desc = pl.text(

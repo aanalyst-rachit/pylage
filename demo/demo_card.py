@@ -9,8 +9,8 @@ import pylage as ps
 
 def get_app():
     # Dynamic States for Interactivity
-    click_count = pl.State(0)
-    card_status = pl.State("Status: Idle")
+    click_count = pl.state(0)
+    card_status = pl.state("Status: Idle")
 
     def handle_card_click():
         new_count = click_count.value + 1

@@ -4,10 +4,10 @@ import pylage as ps
 
 
 def get_app():
-    terms = pl.State(False)
-    notifications = pl.State(True)
-    custom_checked = pl.State(False)
-    status = pl.State("Not changed yet")
+    terms = pl.state(False)
+    notifications = pl.state(True)
+    custom_checked = pl.state(False)
+    status = pl.state("Not changed yet")
 
     def handle_custom_change(payload):
         checked = payload.get("checked", False) if isinstance(payload, dict) else bool(payload)

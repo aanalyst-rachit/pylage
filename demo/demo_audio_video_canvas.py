@@ -4,8 +4,8 @@ import pylage as pl
 
 
 def get_app() -> pl.column:
-    is_playing_audio = pl.State(False)
-    canvas_clicks = pl.State(0)
+    is_playing_audio = pl.state(False)
+    canvas_clicks = pl.state(0)
 
     title = pl.heading("🎨 Media & Graphic Components Manual", level=1)
     desc = pl.text(
@@ -17,7 +17,7 @@ def get_app() -> pl.column:
     img_card = pl.card(
         pl.heading("1. Image Component", level=3),
         pl.text("Responsive image with alt text and rounded border styling:"),
-        pl.Image(
+        pl.image(
             src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=600&auto=format&fit=crop&q=80",
             alt="Gradient abstract artwork",
             width="100%",
@@ -34,7 +34,7 @@ def get_app() -> pl.column:
         pl.row(
             pl.column(
                 pl.heading("Audio Player", level=4),
-                pl.Audio(
+                pl.audio(
                     src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
                     controls=True,
                     style=pl.style(width="100%", margin_top="0.5rem"),
@@ -43,7 +43,7 @@ def get_app() -> pl.column:
             ),
             pl.column(
                 pl.heading("Video Player", level=4),
-                pl.Video(
+                pl.video(
                     src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
                     controls=True,
                     width="100%",
@@ -65,12 +65,12 @@ def get_app() -> pl.column:
         pl.heading("3. Canvas & Icon Visuals", level=3),
         pl.text("Interactive Canvas element with reactive click tracking:"),
         pl.row(
-            pl.Icon(name="activity", size="24", color="#3b82f6"),
+            pl.icon(name="activity", size="24", color="#3b82f6"),
             pl.text("Canvas Click Count: "),
             pl.text(canvas_clicks, style=pl.style(font_weight="bold", color="#3b82f6")),
             style=pl.style(align_items="center", gap="0.5rem", margin_bottom="0.75rem"),
         ),
-        pl.Canvas(
+        pl.canvas(
             width="400",
             height="100",
             on_click=handle_canvas_click,

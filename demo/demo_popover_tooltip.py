@@ -10,8 +10,8 @@ import pylage as ps
 
 def get_app():
     # pl.State Management
-    menu_selection = pl.State("None")
-    tooltip_hits = pl.State(0)
+    menu_selection = pl.state("None")
+    tooltip_hits = pl.state(0)
 
     def select_item(name):
         def handler(e=None):

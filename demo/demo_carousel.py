@@ -10,8 +10,8 @@ import pylage as ps
 
 def get_app():
     # pl.State Management
-    current_slide = pl.State(0)
-    slide_title = pl.State("Slide 1: Lightning Fast Diff")
+    current_slide = pl.state(0)
+    slide_title = pl.state("Slide 1: Lightning Fast Diff")
 
     slides_info = [
         "Slide 1: Lightning Fast Diff Engine",
@@ -48,7 +48,7 @@ def get_app():
         style=pl.style(padding="2rem", background="#faf5ff", border="1px solid #e9d5ff", border_radius="12px")
     )
 
-    carousel_node = pl.Carousel(
+    carousel_node = pl.carousel(
         slide_1,
         slide_2,
         slide_3,
