@@ -14,7 +14,7 @@ from . import tokens
 from .colors import colors
 from .state import derived
 
-__version__ = "0.1.0"
+__version__ = "1.0.1"
 
 __all__ = [
     "IMPORT_NAME", "PACKAGE_NAME", "__version__", "colors",

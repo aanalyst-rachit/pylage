@@ -39,7 +39,7 @@ def get_app():
             headers=["Cluster", "Region", "SLA", "Status"],
         ),
         footer=ui.card(
-            body="PyLage Operations Console — Version 0.1.0 Production",
+            body="PyLage Operations Console — Version 1.0.1 Production",
             variant="outlined",
         ),
     )

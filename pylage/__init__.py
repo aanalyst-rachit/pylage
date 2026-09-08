@@ -37,7 +37,7 @@ from pylage.UI.recipes.popover import popover
 from pylage.UI.recipes.confirmation_dialog import confirmation_dialog
 from pylage.UI.recipes.modal import modal
 
-__version__ = "0.1.0"
+__version__ = "1.0.1"
 
 __all__ = [
     "run", "__version__", "colors", "style", "theme", "derived", "set_theme", "get_current_theme",

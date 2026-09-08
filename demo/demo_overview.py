@@ -74,7 +74,7 @@ def get_app() -> pl.column:
 
     header = pl.row(
         pl.heading("⚡ PyLage UI Engine — Interactive Component Manual", level=2, style=pl.style(margin=0)),
-        pl.badge("v1.0.0 Stable", variant="success"),
+        pl.badge("v1.0.1 Stable", variant="success"),
         style=pl.style(display="flex", justify_content="space-between", align_items="center", margin_bottom="1.5rem"),
     )
 
