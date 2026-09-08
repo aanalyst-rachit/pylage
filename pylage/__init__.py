@@ -35,6 +35,9 @@ from pylage.UI import themes as theme
 from pylage.UI.themes import get_current_theme, set_theme
 from pylage.ENGINE.components.basic import Accordion, Audio, Canvas, Carousel, Grid, Icon, Image, Option, ProgressBar, Skeleton, Spinner, Video
 
+state = State
+image = Image
+option = Option
 grid = Grid
 
 __all__ = [
@@ -56,5 +59,5 @@ __all__ = [
     "navigation_drawer", "mobile_sidebar", "tooltip", "popover", "confirmation_dialog",
     "style", "modal", "theme", "derived", "set_theme", "get_current_theme", "Accordion", "Audio",
     "Canvas", "Carousel", "Grid", "Icon", "Image", "Option", "ProgressBar", "Skeleton",
-    "Spinner", "Video",
+    "Spinner", "Video", "state", "image", "option",
 ]

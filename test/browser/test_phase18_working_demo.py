@@ -50,14 +50,14 @@ def test_phase18_working_demo_navigation_and_interactions():
             dashboard_nav = page.get_by_role("button", name="Dashboard", exact=True).first
             analytics_nav = page.get_by_role("button", name="Analytics", exact=True).first
 
-            assert dashboard_nav.evaluate("el => getComputedStyle(el).backgroundColor") == "rgb(59, 130, 246)"
+            assert dashboard_nav.evaluate("el => getComputedStyle(el).backgroundColor") == "rgb(37, 99, 235)"
             assert analytics_nav.evaluate("el => getComputedStyle(el).backgroundColor") == "rgba(0, 0, 0, 0)"
 
             analytics_nav.click()
             page.wait_for_timeout(200)
 
             assert dashboard_nav.evaluate("el => getComputedStyle(el).backgroundColor") == "rgba(0, 0, 0, 0)"
-            assert analytics_nav.evaluate("el => getComputedStyle(el).backgroundColor") == "rgb(59, 130, 246)"
+            assert analytics_nav.evaluate("el => getComputedStyle(el).backgroundColor") == "rgb(37, 99, 235)"
 
             page.get_by_text("Analytics", exact=True).first.click()
             expect(page.get_by_text("Platform performance, growth and operational trends.", exact=True)).to_be_visible()

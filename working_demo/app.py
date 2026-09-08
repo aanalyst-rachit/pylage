@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pylage as pl
 
 
@@ -425,6 +427,7 @@ if __name__ == "__main__":
     pl.run(
         get_app(),
         title="PyLage UI Kit — Example Application",
+        output="first_app.html",
         serve=True,
         host="0.0.0.0",
         port=3000,
