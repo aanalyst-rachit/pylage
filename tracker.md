@@ -993,9 +993,9 @@ rules - PYTHON TERMINAL RULE + MD FILE RULE
 * [x] Verify imports
 * [x] Verify documentation
 * [x] Verify examples
-* [ ] Verify compatibility
-* [ ] Verify performance
-* [ ] Verify tests
+* [x] Verify compatibility
+* [x] Verify performance
+* [x] Verify tests
 
 ### Principle
 

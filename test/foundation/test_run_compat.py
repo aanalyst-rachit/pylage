@@ -1,36 +1,26 @@
 from pathlib import Path
 
-import pylage as ps
-from pylage.ENGINE import Button, Column, Heading
+import pylage as pl
 
 
-print("=== PYLAGE RUN COMPATIBILITY TEST ===")
+def test_run_public_api_compatibility(tmp_path):
+    app = pl.column(
+        pl.heading("Compatibility Test"),
+        pl.button("Click me"),
+    )
 
-app = Column(
-    Heading("Compatibility Test"),
-    Button("Click me"),
-)
+    output = pl.run(
+        app,
+        title="Compatibility Test",
+        output=tmp_path / "compat_output" / "index.html",
+        open_browser=False,
+    )
 
-output = ps.run(
-    app,
-    title="Compatibility Test",
-    output="test_output/compat_output/index.html",
-)
+    assert isinstance(output, Path)
+    assert output.exists()
 
-print("Return type:", type(output).__name__)
-print("Output:", output)
-print("Exists:", output.exists())
+    html = output.read_text(encoding="utf-8")
 
-html = Path(output).read_text(encoding="utf-8")
-
-print("Title:", "<title>Compatibility Test</title>" in html)
-print("Heading:", "Compatibility Test" in html)
-print("Button:", "Click me" in html)
-
-assert isinstance(output, Path)
-assert output.exists()
-assert "<title>Compatibility Test</title>" in html
-assert "Compatibility Test" in html
-assert "Click me" in html
-
-print("=== RUN COMPATIBILITY PASS ===")
+    assert "<title>Compatibility Test</title>" in html
+    assert "Compatibility Test" in html
+    assert "Click me" in html
