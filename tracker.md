@@ -1025,8 +1025,8 @@ Release checklist:
 * [x] Tests
 * [x] Changelog
 * [x] Version
-* [ ] Git tag
-* [ ] Release notes
+* [x] Git tag
+* [x] Release notes
 * [x] Clean-environment installation test
 
 ---
@@ -1056,7 +1056,7 @@ PHASE 18  Example Application       [x]
 PHASE 19  CSS Foundation            [x]
 PHASE 20  Documentation             [x]
 PHASE 21  API Stabilization         [x]
-PHASE 22  Release                   [ ]
+PHASE 22  Release                   [x]
 ```
 
 ---
