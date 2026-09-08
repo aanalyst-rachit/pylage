@@ -11,7 +11,7 @@ def test_ui_kit_package_name():
 
 
 def test_ui_kit_version():
-    assert ps.__version__ == "1.0.1"
+    assert ps.__version__ == "1.0.2"
 
 
 def test_ui_kit_public_api():

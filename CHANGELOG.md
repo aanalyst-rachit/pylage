@@ -1,6 +1,10 @@
 # Changelog
 
-All notable changes to PyLage are documented here.
+
+## 1.0.2 — 2026-09-08
+
+- Corrected the published package metadata so the PyPI project description is generated from the current README.md.
+
 
 ## 1.0.1 — 2026-09-08
 
