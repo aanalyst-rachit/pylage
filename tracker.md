@@ -1013,7 +1013,7 @@ rules - PYTHON TERMINAL RULE + MD FILE RULE
 Target:
 
 ```text
-pylage 1.0.1
+pylage 1.0.2
 ```
 
 Release checklist:
@@ -1028,6 +1028,15 @@ Release checklist:
 * [x] Git tag
 * [x] Release notes
 * [x] Clean-environment installation test
+
+Corrective release 1.0.2:
+- [x] Corrected PyPI project description to use the canonical README.md.
+- [x] Built and verified wheel and sdist metadata.
+- [x] Created GitHub release v1.0.2.
+- [x] Published wheel and sdist to PyPI.
+- [x] Verified PyPI 1.0.2 description exactly matches local README.md.
+- [x] Verified PyPI wheel and sdist are present.
+- [x] Verified Python requirement is >=3.10.
 
 ---
 
