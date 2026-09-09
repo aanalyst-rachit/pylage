@@ -1,0 +1,33 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /home/racit/Desktop/PYLAGE_PROJECTS/pylage/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/racit/Desktop/PYLAGE_PROJECTS/pylage
+configfile: pytest.ini
+plugins: playwright-0.9.0, asyncio-1.4.0, base-url-2.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 22 items
+
+test/performance/test_batching_benchmark.py::test_batching_reduces_processing_cycles PASSED [  4%]
+test/performance/test_batching_benchmark.py::test_batching_benchmark_report PASSED [  9%]
+test/performance/test_benchmarks.py::test_phase6_state_update_latency PASSED [ 13%]
+test/performance/test_benchmarks.py::test_phase6_scheduler_latency PASSED [ 18%]
+test/performance/test_benchmarks.py::test_phase6_diff_latency PASSED     [ 22%]
+test/performance/test_benchmarks.py::test_phase6_patch_latency PASSED    [ 27%]
+test/performance/test_client_bundle.py::test_phase16_client_bundle_impact PASSED [ 31%]
+test/performance/test_component_creation.py::test_phase16_component_creation_overhead PASSED [ 36%]
+test/performance/test_dependency_scaling.py::test_phase6_dependency_graph_scaling PASSED [ 40%]
+test/performance/test_dependency_scaling.py::test_phase6_dependency_graph_registration_scaling PASSED [ 45%]
+test/performance/test_large_dashboard.py::test_phase16_large_dashboard_behavior PASSED [ 50%]
+test/performance/test_large_table.py::test_phase16_large_table_behavior PASSED [ 54%]
+test/performance/test_render_overhead.py::test_phase16_render_overhead PASSED [ 59%]
+test/performance/test_repeated_creation.py::test_phase16_repeated_component_creation PASSED [ 63%]
+test/performance/test_scaling.py::test_phase6_component_scaling PASSED   [ 68%]
+test/performance/test_state_update.py::test_phase16_state_update_overhead PASSED [ 72%]
+test/performance/test_tree_changes.py::test_phase16_ui_kit_unnecessary_tree_changes PASSED [ 77%]
+test/performance/test_tree_changes.py::test_phase16_ui_kit_repeated_state_changes_are_coalesced PASSED [ 81%]
+test/performance/test_websocket_benchmarks.py::test_phase6_websocket_state_update_latency PASSED [ 86%]
+test/performance/test_websocket_benchmarks.py::test_phase6_websocket_tree_patch_latency PASSED [ 90%]
+test/performance/test_websocket_benchmarks.py::test_phase6_websocket_multi_client_broadcast PASSED [ 95%]
+test/performance/test_websocket_benchmarks.py::test_phase6_websocket_client_scaling PASSED [100%]
+
+============================== 22 passed in 6.73s ==============================

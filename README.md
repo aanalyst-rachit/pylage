@@ -1,4 +1,10 @@
 # PyLage
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?logo=apache&logoColor=white)](https://opensource.org/licenses/Apache-2.0)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Build](https://img.shields.io/badge/Build-Passing-success?logo=github-actions&logoColor=white)](#)
+[![Stars](https://img.shields.io/github/stars/aanalyst-rachit/pylage?style=social)](https://github.com/aanalyst-rachit/pylage)
+
+---
 
 PyLage is a reactive, server-driven differential UI framework for Python.
 
@@ -468,5 +474,3 @@ PyLage is distributed under the license included in the repository `LICENSE` fil
 * **Issues:** [https://github.com/aanalyst-rachit/pylage/issues](https://github.com/aanalyst-rachit/pylage/issues)
 
 ---
-
-Aap chaho toh README audit start kar sakte hain. Aapka system validation execution ke liye ready hai!

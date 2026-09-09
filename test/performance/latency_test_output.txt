@@ -1,0 +1,37 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /home/racit/Desktop/PYLAGE_PROJECTS/pylage/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/racit/Desktop/PYLAGE_PROJECTS/pylage
+configfile: pytest.ini
+plugins: playwright-0.9.0, asyncio-1.4.0, base-url-2.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 4 items
+
+test/performance/test_benchmarks.py::test_phase6_state_update_latency
+===== PHASE 6 — STATE UPDATE LATENCY =====
+iterations        : 1000
+total             : 0.003496482s
+per update        : 0.000003496s
+PASSED
+test/performance/test_benchmarks.py::test_phase6_scheduler_latency
+===== PHASE 6 — SCHEDULER FLUSH =====
+dirty updates     : 1000
+processing cycles : 1
+elapsed           : 0.000028959s
+PASSED
+test/performance/test_benchmarks.py::test_phase6_diff_latency
+===== PHASE 6 — DIFF LATENCY =====
+iterations        : 1000
+operations        : 1
+total             : 0.004644999s
+per diff          : 0.000004645s
+PASSED
+test/performance/test_benchmarks.py::test_phase6_patch_latency
+===== PHASE 6 — PATCH LATENCY =====
+iterations        : 1000
+messages          : 1
+total             : 0.006795251s
+per conversion    : 0.000006795s
+PASSED
+
+============================== 4 passed in 0.25s ===============================
