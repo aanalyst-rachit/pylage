@@ -39,6 +39,7 @@ nav:
       - Roadmap: https://github.com/aanalyst-rachit/pylage/blob/main/tracker.md
   - Releases:
       - V1.0.2 Tracker: releases/tracker_v1.0.2.md
+  - Playground: https://aanalyst-rachit.github.io/pylage/playground/
 
 markdown_extensions:
   - admonition
