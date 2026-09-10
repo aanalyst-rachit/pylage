@@ -31,11 +31,33 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Install MkDocs Material
-        run: pip install mkdocs-material
+      - name: Install project and build tools
+        run: pip install . build mkdocs-material
+
+      - name: Build PyLage wheel
+        run: python -m build --wheel --outdir dist
 
       - name: Build documentation
         run: mkdocs build --strict
+
+      - name: Build deployed Playground
+        run: |
+          wheel_name="$(find dist -maxdepth 1 -type f -name 'pylage-*.whl' -printf '%f\n' | head -n 1)"
+          test -n "$wheel_name"
+          mkdir -p site/playground site/dist
+          python -c "from pathlib import Path; from playground.app import get_app; from playground.runtime import build_playground_document; wheel=Path('dist') / '$wheel_name'; document=build_playground_document(get_app(), wheel_url=f'../dist/{wheel.name}'); Path('site/playground/index.html').write_text(document, encoding='utf-8')"
+          cp "dist/$wheel_name" "site/dist/$wheel_name"
+
+      - name: Verify Pages artifact
+        run: |
+          test -f site/index.html
+          test -f site/playground/index.html
+          wheel_name="$(find site/dist -maxdepth 1 -type f -name 'pylage-*.whl' -printf '%f\n' | head -n 1)"
+          test -n "$wheel_name"
+          grep -F "../dist/$wheel_name" site/playground/index.html
+          grep -F "https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.js" site/playground/index.html
+          printf '%s\n' '--- PAGES ARTIFACT ---'
+          find site -maxdepth 2 -type f | sort
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

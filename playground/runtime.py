@@ -8,8 +8,9 @@ PYODIDE_VERSION = "0.29.3"
 PYLAGE_WHEEL = "pylage-1.0.2-py3-none-any.whl"
 
 
-def inject_playground_bridge(document: str) -> str:
-    wheel_url = f"/dist/{PYLAGE_WHEEL}"
+def inject_playground_bridge(document: str, wheel_url: str | None = None) -> str:
+    if wheel_url is None:
+        wheel_url = f"/dist/{PYLAGE_WHEEL}"
 
     bridge = f"""
 <script src="https://cdn.jsdelivr.net/pyodide/v{PYODIDE_VERSION}/full/pyodide.js"></script>
@@ -146,6 +147,33 @@ render(_result)
 
     window.addEventListener("DOMContentLoaded", () => {{
         const button = document.getElementById(runId);
+        const docs = document.getElementById("pylage-playground-docs");
+        const github = document.getElementById("pylage-playground-github");
+        const install = document.getElementById("pylage-playground-install");
+
+        if (docs) {{
+            docs.addEventListener("click", () => {{
+                window.location.href = "https://aanalyst-rachit.github.io/pylage/";
+            }});
+        }}
+
+        if (github) {{
+            github.addEventListener("click", () => {{
+                window.location.href = "https://github.com/aanalyst-rachit/pylage";
+            }});
+        }}
+
+        if (install) {{
+            install.addEventListener("click", async () => {{
+                try {{
+                    await navigator.clipboard.writeText("pip install pylage");
+                    status("Install command copied");
+                }} catch (error) {{
+                    status("Copy failed: pip install pylage");
+                    console.error(error);
+                }}
+            }});
+        }}
 
         if (button) {{
             button.addEventListener("click", run);
@@ -166,6 +194,7 @@ render(_result)
 def build_playground_document(
     component: Component,
     title: str = "PyLage Playground",
+    wheel_url: str | None = None,
 ) -> str:
     document = render_document(component, title=title)
-    return inject_playground_bridge(document)
+    return inject_playground_bridge(document, wheel_url=wheel_url)
