@@ -89,6 +89,25 @@ pl.run(app)
 
 When the state changes, PyLage tracks the affected component properties and updates the browser without requiring the application to rebuild the complete page manually.
 
+## Playground
+
+PyLage includes a live Python-to-UI playground for exploring the framework directly in the browser.
+
+The V1 Playground provides:
+
+* a modern landing page with PyLage product positioning
+* a two-pane Python editor and live UI preview
+* browser-side Python execution through Pyodide
+* installation and execution of the current PyLage wheel in the browser
+* examples built from the current V1 `import pylage as pl` API
+* reactive component demonstrations
+* loading and execution error states
+* responsive desktop and mobile behavior
+* direct integration with the existing MkDocs documentation
+* GitHub Pages deployment for the public Playground
+
+The Playground is a V1 capability and does not require the V2 runtime architecture. It is part of the frozen V1 baseline before V2 development begins.
+
 The reactive pipeline is conceptually:
 
 ```text

@@ -27,7 +27,20 @@ Goal: V2 development start hone se pehle V1 ko frozen baseline banana.
 - rendering behavior
 - public API compatibility
 
-Exit Gate: V1 stable → Baseline recorded → V2 architecture frozen → PHASE 1.
+0.4 Playground V1 completion:
+- modern PyLage landing page
+- live Python-to-UI playground
+- two-pane editor and live preview
+- browser-side Pyodide runtime
+- current V1 PyLage API execution
+- demo components and reactive examples
+- loading and error handling
+- responsive desktop/mobile layout
+- MkDocs integration
+- GitHub Pages deployment verified
+- deployment and focused Playground tests verified
+
+Exit Gate: V1 stable → Baseline recorded → Playground V1 complete → V2 architecture frozen → PHASE 1.
 
 ## PHASE 1 — Foundation & Runtime Migration 🔴 CRITICAL
 Goal: PyLage proper multi-user production runtime.
