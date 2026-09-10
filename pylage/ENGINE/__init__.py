@@ -4,7 +4,10 @@ This package contains the framework runtime and implementation primitives.
 It is intentionally not re-exported from the public ``pylage`` namespace.
 """
 
-from pylage.ENGINE.app import run
+def run(*args, **kwargs):
+    """Run a PyLage application using the server/browser runtime."""
+    from pylage.ENGINE.app import run as _run
+    return _run(*args, **kwargs)
 from pylage.ENGINE.components import (
     Canvas,
     Icon,

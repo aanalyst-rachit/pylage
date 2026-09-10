@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 def _load_test_csv():
-    csv_path = Path(__file__).resolve().parents[1] / "test.csv"
+    csv_path = Path(__file__).resolve().parents[1] / "data" / "test.csv"
 
     with csv_path.open("r", encoding="utf-8", newline="") as file:
         return list(csv.DictReader(file))

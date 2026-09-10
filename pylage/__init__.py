@@ -1,6 +1,9 @@
 """PyLage public API facade."""
 
-from pylage.ENGINE.app import run
+def run(*args, **kwargs):
+    """Run a PyLage application using the server/browser runtime."""
+    from pylage.ENGINE.app import run as _run
+    return _run(*args, **kwargs)
 from pylage.ENGINE.core.state import State as state
 from pylage.ENGINE.components.basic import Accordion as accordion, Audio as audio, Canvas as canvas, Carousel as carousel, Grid as grid, Icon as icon, Image as image, Option as option, ProgressBar as progress_bar, Skeleton as skeleton, Spinner as spinner, Video as video
 from pylage.UI.state import derived

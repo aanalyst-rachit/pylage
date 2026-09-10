@@ -61,6 +61,7 @@ pl.column(
             pl.button("Get Started"),
             style=pl.style(width="100%", gap="0.75rem"),
         ),
+        id="pylage-playground-preview",
         style=pl.style(
             width="50%",
             min_height="360px",
@@ -96,6 +97,8 @@ pl.column(
             ),
         )
 
+        pl.text("Ready", id="pylage-playground-status", style=pl.style(color="#64748b")),
+
     playground_panel = pl.card(
         pl.heading("Python → UI", level=3),
         pl.text(
@@ -105,8 +108,8 @@ pl.column(
         pl.row(
             pl.column(
                 pl.text("Python", style=pl.style(font_weight="600")),
-                pl.textarea(editor_code),
-                pl.button("Run", on_click=run_preview),
+                pl.textarea(editor_code, id="pylage-playground-editor"),
+                pl.button("Run", id="pylage-playground-run", on_click=run_preview),
                 style=pl.style(width="50%", gap="0.75rem"),
             ),
             preview_area,
