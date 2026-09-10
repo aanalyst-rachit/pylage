@@ -8,11 +8,7 @@ PYODIDE_VERSION = "0.29.3"
 PYLAGE_WHEEL = "pylage-1.0.2-py3-none-any.whl"
 
 
-def build_playground_document(
-    component: Component,
-    title: str = "PyLage Playground",
-) -> str:
-    document = render_document(component, title=title)
+def inject_playground_bridge(document: str) -> str:
     wheel_url = f"/dist/{PYLAGE_WHEEL}"
 
     bridge = f"""
@@ -165,3 +161,11 @@ render(_result)
 """
 
     return document.replace("</body>", bridge + "</body>")
+
+
+def build_playground_document(
+    component: Component,
+    title: str = "PyLage Playground",
+) -> str:
+    document = render_document(component, title=title)
+    return inject_playground_bridge(document)

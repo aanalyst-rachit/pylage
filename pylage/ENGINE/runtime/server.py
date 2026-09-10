@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import mimetypes
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
 from typing import Optional
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 
 class _RequestHandler(BaseHTTPRequestHandler):
@@ -12,32 +13,43 @@ class _RequestHandler(BaseHTTPRequestHandler):
     filename: str = "index.html"
 
     def do_GET(self) -> None:
-        path = urlparse(self.path).path
+        request_path = unquote(urlparse(self.path).path)
 
-        if path not in ("/", f"/{self.filename}"):
+        if request_path in ("/", f"/{self.filename}"):
+            relative_path = Path(self.filename)
+        elif request_path.startswith("/"):
+            relative_path = Path(request_path.lstrip("/"))
+        else:
             self.send_error(404, "Not Found")
             return
 
         try:
-            content = self.directory.joinpath(
-                self.filename
-            ).read_bytes()
-        except FileNotFoundError:
-            self.send_error(
-                404,
-                f"{self.filename} not found",
-            )
+            target = (self.directory / relative_path).resolve()
+            root = self.directory.resolve()
+
+            target.relative_to(root)
+        except (ValueError, OSError):
+            self.send_error(404, "Not Found")
             return
 
+        if not target.is_file():
+            self.send_error(404, "Not Found")
+            return
+
+        try:
+            content = target.read_bytes()
+        except OSError:
+            self.send_error(404, "Not Found")
+            return
+
+        content_type = (
+            mimetypes.guess_type(target.name)[0]
+            or "application/octet-stream"
+        )
+
         self.send_response(200)
-        self.send_header(
-            "Content-Type",
-            "text/html; charset=utf-8",
-        )
-        self.send_header(
-            "Content-Length",
-            str(len(content)),
-        )
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(content)))
         self.end_headers()
         self.wfile.write(content)
 

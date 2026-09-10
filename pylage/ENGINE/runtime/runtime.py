@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Callable
 
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.renderers.html import render_document
@@ -20,6 +21,7 @@ class Runtime:
         output: str | Path = "index.html",
         host: str = "127.0.0.1",
         port: int = 0,
+        document_transform: Callable[[str], str] | None = None,
     ) -> None:
         if not isinstance(app, Component):
             raise TypeError(
@@ -31,6 +33,7 @@ class Runtime:
         self.output = Path(output)
         self.host = host
         self.port = port
+        self.document_transform = document_transform
 
         self._server: LocalServer | None = None
         self._websocket: WebSocketServer | None = None
@@ -46,9 +49,7 @@ class Runtime:
     def running(self) -> bool:
         return self._server is not None
 
-    def render(self) -> Path:
-        """Render the current app into an HTML document."""
-
+    def _render_document(self) -> str:
         websocket_url = None
         if self._websocket is not None:
             websocket_url = self._websocket.url
@@ -58,7 +59,14 @@ class Runtime:
             title=self.title,
             websocket_url=websocket_url,
         )
+        if self.document_transform is not None:
+            document = self.document_transform(document)
+        return document
 
+    def render(self) -> Path:
+        """Render the current app into an HTML document."""
+
+        document = self._render_document()
         self.output.parent.mkdir(parents=True, exist_ok=True)
         self.output.write_text(
             document,
@@ -82,11 +90,7 @@ class Runtime:
         try:
             websocket_url = self._websocket.start()
 
-            document = render_document(
-                self.app,
-                title=self.title,
-                websocket_url=websocket_url,
-            )
+            document = self._render_document()
 
             output_path = self.output
             output_path.parent.mkdir(parents=True, exist_ok=True)
