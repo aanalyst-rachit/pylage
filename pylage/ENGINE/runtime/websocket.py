@@ -45,6 +45,7 @@ class WebSocketServer:
         *,
         host: str = "127.0.0.1",
         port: int = 0,
+        heartbeat_interval: float = 20.0,
     ) -> None:
         if not isinstance(root, Component):
             raise TypeError(
@@ -54,6 +55,10 @@ class WebSocketServer:
         self.root = root
         self.host = host
         self.port = port
+
+        if heartbeat_interval <= 0:
+            raise ValueError("heartbeat_interval must be greater than 0.")
+        self.heartbeat_interval = float(heartbeat_interval)
 
         # Dynamic tree mutations must use the same renderer contract
         # as the initial static HTML render.  Keep one renderer instance
@@ -720,6 +725,60 @@ class WebSocketServer:
             self._loop,
         )
 
+    async def _heartbeat(self) -> None:
+        """Ping connected native WebSocket clients and remove dead peers."""
+        try:
+            while True:
+                await asyncio.sleep(self.heartbeat_interval)
+
+                with self._connections_lock:
+                    connections = tuple(self._connections)
+
+                if not connections:
+                    continue
+
+                async def ping(connection: Any) -> tuple[Any, BaseException | None]:
+                    try:
+                        waiter = connection.ping()
+                        await asyncio.wait_for(waiter, timeout=self.heartbeat_interval)
+                    except BaseException as exc:
+                        return connection, exc
+                    return connection, None
+
+                results = await asyncio.gather(
+                    *(ping(connection) for connection in connections),
+                    return_exceptions=False,
+                )
+
+                dead = {
+                    connection
+                    for connection, error in results
+                    if error is not None
+                }
+
+                if dead:
+                    with self._connections_lock:
+                        self._connections.difference_update(dead)
+
+                    await asyncio.gather(
+                        *(self._close_connection(connection) for connection in dead),
+                        return_exceptions=True,
+                    )
+        except asyncio.CancelledError:
+            raise
+
+    async def _close_connection(self, connection: Any) -> None:
+        """Best-effort close for a dead heartbeat connection."""
+        close = getattr(connection, "close", None)
+        if close is None:
+            return
+        try:
+            result = close()
+            if asyncio.iscoroutine(result):
+                await result
+        except Exception:
+            pass
+
     async def _broadcast(self, raw_message: str) -> None:
         """Send a state update to every connected browser."""
 
@@ -795,7 +854,14 @@ class WebSocketServer:
         if self._server is None:
             return
 
-        await self._server.wait_closed()
+        self._heartbeat_task = asyncio.create_task(self._heartbeat())
+        try:
+            await self._server.wait_closed()
+        finally:
+            if self._heartbeat_task is not None:
+                self._heartbeat_task.cancel()
+                await asyncio.gather(self._heartbeat_task, return_exceptions=True)
+                self._heartbeat_task = None
 
     def _thread_main(self) -> None:
         self._loop = asyncio.new_event_loop()
@@ -856,6 +922,7 @@ class WebSocketServer:
         self._thread.join(timeout=2.0)
 
         self._server = None
+        self._heartbeat_task = None
         self._thread = None
         self._loop = None
 

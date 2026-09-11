@@ -73,12 +73,12 @@ Browser → session token → disconnect → reconnect → same session restored
 - ASGI shutdown clears the session store
 - Redis later only when horizontal scaling requires it
 
-1.5 WebSocket Heartbeat:
-- server ping
-- client pong
+1.5 WebSocket Heartbeat — IMPLEMENTED:
+- configurable heartbeat interval
+- server ping / client pong verification
 - dead connection detection
-- cleanup
-- configurable interval
+- dead connection cleanup
+- WebSocket regression: 28 passed
 
 1.6 Migration Test Gate:
 - existing 1090+ suite
