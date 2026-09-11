@@ -45,11 +45,13 @@ Exit Gate: V1 stable → Baseline recorded → Playground V1 complete → V2 arc
 ## PHASE 1 — Foundation & Runtime Migration 🔴 CRITICAL
 Goal: PyLage proper multi-user production runtime.
 
-1.1 ASGI Adapter:
-- replace current HTTP server
-- replace raw WebSocket server
-- unified ASGI app
-- Granian runs ASGI app
+1.1 ASGI Adapter — IMPLEMENTED (Option B):
+- ASGI adapter provides unified HTTP + WebSocket transport
+- WebSocketServer reactive/event machinery is reused behind the ASGI boundary
+- Granian runs the importable ASGI application factory
+- Real Granian HTTP, WebSocket handshake, and event round-trip smoke verified
+- Existing Runtime + LocalServer remain as the compatibility/local path during staged migration
+- Full regression gate: 1109 passed, 1 skipped
 
 1.2 Per-Session State Isolation:
 Connection → Session → State → DependencyGraph → Scheduler → Component Tree

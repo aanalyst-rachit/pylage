@@ -66,7 +66,7 @@ class WebSocketServer:
         self._server: Optional[Server] = None
         self._thread: Optional[threading.Thread] = None
 
-        self._connections: set[ServerConnection] = set()
+        self._connections: set[Any] = set()
         self._connections_lock = threading.Lock()
 
         self._theme_unsubscribe = None
@@ -96,6 +96,29 @@ class WebSocketServer:
             root,
             self._on_tree_mutation,
         )
+
+    def attach_external_loop(self, loop: asyncio.AbstractEventLoop) -> None:
+        """Attach an externally owned event loop, such as an ASGI loop."""
+        if not isinstance(loop, asyncio.AbstractEventLoop):
+            raise TypeError("loop must be an asyncio event loop.")
+
+        if self._thread is not None:
+            raise RuntimeError("Cannot attach an external loop while the WebSocket server is running.")
+
+        if self._loop is not None and self._loop is not loop:
+            raise RuntimeError("WebSocket server is already attached to another event loop.")
+
+        self._loop = loop
+        self._subscribe_theme()
+
+    def detach_external_loop(self) -> None:
+        """Release an externally owned event loop and runtime subscriptions."""
+        if self._thread is not None:
+            raise RuntimeError("Cannot detach an external loop while the WebSocket server is running.")
+
+        self._binding.stop()
+        self._unsubscribe_theme()
+        self._loop = None
 
     @property
     def running(self) -> bool:
@@ -306,7 +329,7 @@ class WebSocketServer:
             prop_meta=prop_meta,
         )
 
-        if self._loop is None or self._server is None:
+        if self._loop is None:
             return
 
         asyncio.run_coroutine_threadsafe(
@@ -689,7 +712,7 @@ class WebSocketServer:
         css = new_theme.to_css()
         message = ThemeUpdateMessage(css=css)
 
-        if self._loop is None or self._server is None:
+        if self._loop is None:
             return
 
         asyncio.run_coroutine_threadsafe(
@@ -747,6 +770,10 @@ class WebSocketServer:
         finally:
             with self._connections_lock:
                 self._connections.discard(connection)
+
+    async def handle_external(self, connection: Any) -> None:
+        """Handle a connection owned by an external ASGI transport."""
+        await self._handle(connection)
 
     async def _serve(self) -> None:
         try:

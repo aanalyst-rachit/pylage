@@ -1,0 +1,171 @@
+"""ASGI transport adapter for PyLage runtime.
+
+The ASGI boundary owns HTTP and WebSocket transport while reusing the
+existing PyLage rendering and reactive runtime machinery.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import mimetypes
+from pathlib import Path
+from urllib.parse import unquote, urlparse
+from typing import Any
+
+from pylage.ENGINE.core.component import Component
+from pylage.ENGINE.runtime.websocket import WebSocketServer
+
+
+class _ASGIConnection:
+    """Adapter exposing an ASGI WebSocket as the existing connection API."""
+
+    def __init__(self, receive: Any, send: Any) -> None:
+        self._receive = receive
+        self._send = send
+        self._closed = False
+
+    def __aiter__(self) -> "_ASGIConnection":
+        return self
+
+    async def __anext__(self) -> str:
+        while True:
+            message = await self._receive()
+            message_type = message.get("type")
+
+            if message_type == "websocket.receive":
+                text = message.get("text")
+                if text is not None:
+                    return text
+                data = message.get("bytes")
+                if data is not None:
+                    return data.decode("utf-8")
+                continue
+
+            if message_type == "websocket.disconnect":
+                self._closed = True
+                raise StopAsyncIteration
+
+            if message_type == "websocket.connect":
+                continue
+
+    async def send(self, data: str) -> None:
+        if self._closed:
+            return
+        await self._send({"type": "websocket.send", "text": data})
+
+
+class ASGIApp:
+    """Minimal ASGI application for a PyLage component tree."""
+
+    def __init__(
+        self,
+        root: Component,
+        *,
+        directory: str | Path | None = None,
+        filename: str = "index.html",
+        document: str | None = None,
+    ) -> None:
+        if not isinstance(root, Component):
+            raise TypeError("ASGIApp expects a Component root.")
+
+        self.root = root
+        self.directory = Path(directory).resolve() if directory is not None else None
+        self.filename = Path(filename).name
+        self.document = document
+        self.websocket = WebSocketServer(root)
+        self._loop: Any = None
+
+    async def __call__(self, scope: dict[str, Any], receive: Any, send: Any) -> None:
+        scope_type = scope.get("type")
+
+        if scope_type == "lifespan":
+            await self._lifespan(receive, send)
+            return
+
+        if scope_type == "http":
+            await self._http(scope, send)
+            return
+
+        if scope_type == "websocket":
+            await self._websocket(scope, receive, send)
+            return
+
+        await send({
+            "type": "http.response.start",
+            "status": 500,
+            "headers": [(b"content-type", b"text/plain; charset=utf-8")],
+        })
+        await send({
+            "type": "http.response.body",
+            "body": b"Unsupported ASGI scope.",
+        })
+
+    async def _lifespan(self, receive: Any, send: Any) -> None:
+        while True:
+            message = await receive()
+            message_type = message.get("type")
+
+            if message_type == "lifespan.startup":
+                self._loop = asyncio.get_running_loop()
+                self.websocket.attach_external_loop(self._loop)
+                await send({"type": "lifespan.startup.complete"})
+            elif message_type == "lifespan.shutdown":
+                self.websocket.detach_external_loop()
+                self._loop = None
+                await send({"type": "lifespan.shutdown.complete"})
+                return
+
+    async def _http(self, scope: dict[str, Any], send: Any) -> None:
+        path = unquote(urlparse(scope.get("path", "/")).path)
+
+        if self.document is not None and path in ("/", f"/{self.filename}"):
+            await self._response(200, self.document.encode("utf-8"), "text/html; charset=utf-8", send)
+            return
+
+        if self.directory is None:
+            await self._response(404, b"Not Found", "text/plain; charset=utf-8", send)
+            return
+
+        relative = Path(self.filename) if path in ("/", f"/{self.filename}") else Path(path.lstrip("/"))
+
+        try:
+            target = (self.directory / relative).resolve()
+            target.relative_to(self.directory)
+        except (ValueError, OSError):
+            await self._response(404, b"Not Found", "text/plain; charset=utf-8", send)
+            return
+
+        if not target.is_file():
+            await self._response(404, b"Not Found", "text/plain; charset=utf-8", send)
+            return
+
+        try:
+            content = target.read_bytes()
+        except OSError:
+            await self._response(404, b"Not Found", "text/plain; charset=utf-8", send)
+            return
+
+        content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+        await self._response(200, content, content_type, send)
+
+    async def _response(
+        self,
+        status: int,
+        body: bytes,
+        content_type: str,
+        send: Any,
+    ) -> None:
+        await send({
+            "type": "http.response.start",
+            "status": status,
+            "headers": [
+                (b"content-type", content_type.encode("latin-1")),
+                (b"content-length", str(len(body)).encode("ascii")),
+            ],
+        })
+        await send({"type": "http.response.body", "body": body})
+
+    async def _websocket(self, scope: dict[str, Any], receive: Any, send: Any) -> None:
+        await send({"type": "websocket.accept"})
+        connection = _ASGIConnection(receive, send)
+        await self.websocket.handle_external(connection)
