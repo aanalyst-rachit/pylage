@@ -5,6 +5,7 @@ from pathlib import Path
 import pylage as pl
 from pylage.ENGINE.core.state import State
 from pylage.ENGINE.runtime.asgi import ASGIApp
+from pylage.ENGINE.runtime.session_store import InMemorySessionStore
 
 
 def run(coro):
@@ -287,7 +288,6 @@ def test_asgi_factory_creates_isolated_sessions():
         await asyncio.gather(task_a, task_b)
 
         assert len(asgi._sessions) == 2
-        assert len(asgi._session_tokens) == 2
 
         count_a = len(messages_a)
         count_b = len(messages_b)
@@ -310,7 +310,7 @@ def test_asgi_factory_creates_isolated_sessions():
         await asgi._lifespan(shutdown_receive, shutdown_send)
 
         assert not asgi._sessions
-        assert not asgi._session_tokens
+        assert not asgi.session_store.clear()
 
 
 def test_asgi_factory_resumes_session_after_disconnect():
@@ -370,9 +370,10 @@ def test_asgi_factory_resumes_session_after_disconnect():
         assert handshake["type"] == "session"
         token = handshake["token"]
         assert token
-        assert asgi._session_tokens[token] in asgi._sessions
+        assert asgi.session_store.get(token) in asgi._sessions
 
-        first_session = asgi._session_tokens[token]
+        first_session = asgi.session_store.get(token)
+        assert first_session is not None
         first_state = created[0][0]
         first_root = created[0][1]
 
@@ -380,8 +381,7 @@ def test_asgi_factory_resumes_session_after_disconnect():
         await first_task
 
         assert len(created) == 1
-        assert token in asgi._session_tokens
-        assert asgi._session_tokens[token] is first_session
+        assert asgi.session_store.get(token) is first_session
         assert len(asgi._sessions) == 1
 
         resumed_task = asyncio.create_task(
@@ -400,7 +400,7 @@ def test_asgi_factory_resumes_session_after_disconnect():
         await asyncio.sleep(0)
 
         assert len(created) == 1
-        assert asgi._session_tokens[token] is first_session
+        assert asgi.session_store.get(token) is first_session
         assert created[0][0] is first_state
         assert created[0][1] is first_root
 
@@ -425,7 +425,7 @@ def test_asgi_factory_resumes_session_after_disconnect():
         await resumed_task
 
         assert len(created) == 1
-        assert asgi._session_tokens[token] is first_session
+        assert asgi.session_store.get(token) is first_session
         assert len(asgi._sessions) == 1
 
         shutdown_events = asyncio.Queue()
@@ -440,7 +440,7 @@ def test_asgi_factory_resumes_session_after_disconnect():
         await asgi._lifespan(shutdown_receive, shutdown_send)
 
         assert not asgi._sessions
-        assert not asgi._session_tokens
+        assert not asgi.session_store.clear()
 
     run(scenario())
 
@@ -476,7 +476,7 @@ def test_asgi_factory_unknown_session_token_creates_new_session():
         )
 
         assert len(created) == 1
-        assert len(asgi._session_tokens) == 1
+        assert len(asgi._sessions) == 1
 
         handshake_messages = [
             json.loads(message["text"])
@@ -499,7 +499,7 @@ def test_asgi_factory_unknown_session_token_creates_new_session():
         await asgi._lifespan(shutdown_receive, shutdown_send)
 
         assert not asgi._sessions
-        assert not asgi._session_tokens
+        assert not asgi.session_store.clear()
 
     run(scenario())
 
@@ -524,3 +524,124 @@ def test_asgi_factory_requires_component_result():
 
     run(scenario())
     assert messages[0] == {"type": "websocket.accept"}
+
+def test_asgi_accepts_injected_session_store():
+    session_store = InMemorySessionStore()
+    asgi = ASGIApp(
+        app_factory=lambda: pl.column(pl.button("Test")),
+        session_store=session_store,
+    )
+    messages = []
+
+    async def receive():
+        return {"type": "websocket.disconnect"}
+
+    async def send(message):
+        messages.append(message)
+
+    async def scenario():
+        try:
+            await asgi._websocket(
+                {"type": "websocket", "path": "/", "headers": []},
+                receive,
+                send,
+            )
+
+            assert asgi.session_store is session_store
+            session_messages = [
+                message
+                for message in messages
+                if message.get("type") == "websocket.send"
+            ]
+            assert session_messages
+            handshake = json.loads(session_messages[0]["text"])
+            token = handshake["token"]
+            session = session_store.get(token)
+            assert session is not None
+            assert session in asgi._sessions
+        finally:
+            for session in tuple(asgi._sessions):
+                session.detach_external_loop()
+                asgi._sessions.discard(session)
+            session_store.clear()
+
+    run(scenario())
+
+
+def test_asgi_shutdown_clears_injected_session_store():
+    session_store = InMemorySessionStore()
+    asgi = ASGIApp(
+        app_factory=lambda: pl.column(pl.button("Test")),
+        session_store=session_store,
+    )
+    messages = []
+
+    async def websocket_receive():
+        return {"type": "websocket.disconnect"}
+
+    async def websocket_send(message):
+        messages.append(message)
+
+    async def scenario():
+        await asgi._websocket(
+            {"type": "websocket", "path": "/", "headers": []},
+            websocket_receive,
+            websocket_send,
+        )
+
+        session_messages = [
+            message
+            for message in messages
+            if message.get("type") == "websocket.send"
+        ]
+        assert session_messages
+        token = json.loads(session_messages[0]["text"])["token"]
+        assert session_store.get(token) is not None
+
+        events = asyncio.Queue()
+
+        async def lifespan_receive():
+            return await events.get()
+
+        async def lifespan_send(message):
+            messages.append(message)
+
+        await events.put({"type": "lifespan.startup"})
+        task = asyncio.create_task(asgi._lifespan(lifespan_receive, lifespan_send))
+        await asyncio.sleep(0)
+        await events.put({"type": "lifespan.shutdown"})
+        await task
+
+        assert session_store.get(token) is None
+        assert not asgi._sessions
+
+    run(scenario())
+
+
+def test_asgi_expired_session_is_detached_and_removed():
+    now = [100.0]
+
+    def clock():
+        return now[0]
+
+    session_store = InMemorySessionStore(ttl=10, clock=clock)
+    app = pl.column(pl.button("Test"))
+    asgi = ASGIApp(app, session_store=session_store)
+
+    async def scenario():
+        asgi.websocket.attach_external_loop(asyncio.get_running_loop())
+        try:
+            session_store.put("expired", asgi.websocket)
+            asgi._sessions.add(asgi.websocket)
+
+            now[0] = 110.0
+            asgi._evict_expired_sessions()
+
+            assert session_store.get("expired") is None
+            assert asgi.websocket not in asgi._sessions
+            assert asgi.websocket._loop is None
+        finally:
+            if asgi.websocket._loop is not None:
+                asgi.websocket.detach_external_loop()
+
+    run(scenario())

@@ -15,6 +15,7 @@ from urllib.parse import parse_qs, unquote, urlparse
 from typing import Any, Callable
 
 from pylage.ENGINE.core.component import Component
+from pylage.ENGINE.runtime.session_store import InMemorySessionStore, SessionStore
 from pylage.ENGINE.runtime.websocket import WebSocketServer
 
 
@@ -67,6 +68,7 @@ class ASGIApp:
         directory: str | Path | None = None,
         filename: str = "index.html",
         document: str | None = None,
+        session_store: SessionStore | None = None,
     ) -> None:
         if root is None and app_factory is None:
             raise TypeError("ASGIApp expects a Component root or app_factory.")
@@ -87,7 +89,7 @@ class ASGIApp:
         self.document = document
         self.websocket = WebSocketServer(root) if root is not None else None
         self._sessions: set[WebSocketServer] = set()
-        self._session_tokens: dict[str, WebSocketServer] = {}
+        self.session_store = session_store or InMemorySessionStore()
         self._loop: Any = None
 
     async def __call__(self, scope: dict[str, Any], receive: Any, send: Any) -> None:
@@ -131,7 +133,7 @@ class ASGIApp:
                 for session in tuple(self._sessions):
                     session.detach_external_loop()
                     self._sessions.discard(session)
-                self._session_tokens.clear()
+                self.session_store.clear()
                 self._loop = None
                 await send({"type": "lifespan.shutdown.complete"})
                 return
@@ -169,6 +171,12 @@ class ASGIApp:
         content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
         await self._response(200, content, content_type, send)
 
+    def _evict_expired_sessions(self) -> None:
+        for _token, session in self.session_store.evict_expired():
+            if session in self._sessions:
+                session.detach_external_loop()
+                self._sessions.discard(session)
+
     async def _response(
         self,
         status: int,
@@ -200,7 +208,7 @@ class ASGIApp:
         query = parse_qs(query_string.decode("utf-8"), keep_blank_values=False)
         token_values = query.get("session", [])
         token = token_values[0] if token_values else None
-        session = self._session_tokens.get(token) if token else None
+        session = self.session_store.get(token) if token else None
 
         if session is None:
             root = self.app_factory()
@@ -209,11 +217,13 @@ class ASGIApp:
 
             session = WebSocketServer(root)
             token = secrets.token_urlsafe(32)
-            while token in self._session_tokens:
+            while self.session_store.get(token) is not None:
                 token = secrets.token_urlsafe(32)
-            self._session_tokens[token] = session
+            self.session_store.put(token, session)
             self._sessions.add(session)
             session.attach_external_loop(asyncio.get_running_loop())
 
         await connection.send(json.dumps({"type": "session", "token": token}))
         await session.handle_external(connection)
+        self.session_store.put(token, session)
+        self._evict_expired_sessions()

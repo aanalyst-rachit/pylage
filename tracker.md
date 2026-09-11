@@ -64,12 +64,13 @@ Browser → session token → disconnect → reconnect → same session restored
 - Reconnect resumes the same WebSocketServer/session
 - Unknown or stale token creates a fresh session
 - Retained sessions are cleaned up during ASGI lifespan shutdown
-- Full regression: 1116 passed, 1 skipped
+- Full regression: 1126 passed, 1 skipped
 
-1.4 SessionStore:
-- in-memory SessionStore
-- TTL eviction
-- swappable interface
+1.4 SessionStore — IMPLEMENTED:
+- in-memory SessionStore is the default runtime store
+- TTL eviction with expired-session cleanup
+- swappable SessionStore interface with ASGI injection
+- ASGI shutdown clears the session store
 - Redis later only when horizontal scaling requires it
 
 1.5 WebSocket Heartbeat:
