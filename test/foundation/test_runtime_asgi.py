@@ -217,3 +217,103 @@ def test_asgi_http_rejects_path_traversal(tmp_path: Path):
     run(asgi({"type": "http", "path": "/../asgi_secret.txt", "method": "GET", "headers": []}, receive, send))
 
     assert messages[0]["status"] == 404
+
+
+def test_asgi_factory_creates_isolated_sessions():
+    created = []
+
+    def factory():
+        state = State(f"before-{len(created) + 1}")
+        root = pl.text(state)
+        created.append((state, root))
+        return root
+
+    asgi = ASGIApp(app_factory=factory)
+    messages_a = []
+    messages_b = []
+    disconnect_a = asyncio.Event()
+    disconnect_b = asyncio.Event()
+
+    async def receive_a():
+        await disconnect_a.wait()
+        return {"type": "websocket.disconnect"}
+
+    async def receive_b():
+        await disconnect_b.wait()
+        return {"type": "websocket.disconnect"}
+
+    async def send_a(message):
+        messages_a.append(message)
+
+    async def send_b(message):
+        messages_b.append(message)
+
+    async def scenario():
+        task_a = asyncio.create_task(asgi._websocket({"type": "websocket", "path": "/", "headers": []}, receive_a, send_a))
+        task_b = asyncio.create_task(asgi._websocket({"type": "websocket", "path": "/", "headers": []}, receive_b, send_b))
+
+        for _ in range(100):
+            if len(created) == 2:
+                break
+            await asyncio.sleep(0)
+
+        assert len(created) == 2
+        state_a = created[0][0]
+        state_b = created[1][0]
+        root_a = created[0][1]
+        root_b = created[1][1]
+
+        assert state_a is not state_b
+        assert root_a is not root_b
+        assert len(asgi._sessions) == 2
+
+        state_a.set("after-a")
+        await asyncio.sleep(0.05)
+
+        assert any(
+            message.get("type") == "websocket.send"
+            and "after-a" in message.get("text", "")
+            for message in messages_a
+        )
+        assert not any(
+            message.get("type") == "websocket.send"
+            and "after-a" in message.get("text", "")
+            for message in messages_b
+        )
+
+        disconnect_a.set()
+        disconnect_b.set()
+        await asyncio.gather(task_a, task_b)
+
+        assert not asgi._sessions
+
+        count_a = len(messages_a)
+        count_b = len(messages_b)
+        state_a.set("after-disconnect")
+        state_b.set("after-disconnect")
+        await asyncio.sleep(0.05)
+
+        assert len(messages_a) == count_a
+        assert len(messages_b) == count_b
+
+
+def test_asgi_factory_requires_component_result():
+    asgi = ASGIApp(app_factory=lambda: "not-a-component")
+    messages = []
+
+    async def receive():
+        return {"type": "websocket.disconnect"}
+
+    async def send(message):
+        messages.append(message)
+
+    async def scenario():
+        try:
+            await asgi._websocket({"type": "websocket", "path": "/", "headers": []}, receive, send)
+        except TypeError as exc:
+            assert str(exc) == "ASGIApp app_factory must return a Component."
+        else:
+            raise AssertionError("Expected app_factory result validation to fail.")
+
+    run(scenario())
+    assert messages[0] == {"type": "websocket.accept"}

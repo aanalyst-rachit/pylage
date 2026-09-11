@@ -10,7 +10,7 @@ import asyncio
 import mimetypes
 from pathlib import Path
 from urllib.parse import unquote, urlparse
-from typing import Any
+from typing import Any, Callable
 
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.runtime.websocket import WebSocketServer
@@ -55,24 +55,36 @@ class _ASGIConnection:
 
 
 class ASGIApp:
-    """Minimal ASGI application for a PyLage component tree."""
+    """Minimal ASGI application for a PyLage component tree or factory."""
 
     def __init__(
         self,
-        root: Component,
+        root: Component | None = None,
         *,
+        app_factory: Callable[[], Component] | None = None,
         directory: str | Path | None = None,
         filename: str = "index.html",
         document: str | None = None,
     ) -> None:
-        if not isinstance(root, Component):
+        if root is None and app_factory is None:
+            raise TypeError("ASGIApp expects a Component root or app_factory.")
+
+        if root is not None and app_factory is not None:
+            raise TypeError("ASGIApp accepts either root or app_factory, not both.")
+
+        if root is not None and not isinstance(root, Component):
             raise TypeError("ASGIApp expects a Component root.")
 
+        if app_factory is not None and not callable(app_factory):
+            raise TypeError("ASGIApp app_factory must be callable.")
+
         self.root = root
+        self.app_factory = app_factory
         self.directory = Path(directory).resolve() if directory is not None else None
         self.filename = Path(filename).name
         self.document = document
-        self.websocket = WebSocketServer(root)
+        self.websocket = WebSocketServer(root) if root is not None else None
+        self._sessions: set[WebSocketServer] = set()
         self._loop: Any = None
 
     async def __call__(self, scope: dict[str, Any], receive: Any, send: Any) -> None:
@@ -107,10 +119,15 @@ class ASGIApp:
 
             if message_type == "lifespan.startup":
                 self._loop = asyncio.get_running_loop()
-                self.websocket.attach_external_loop(self._loop)
+                if self.websocket is not None:
+                    self.websocket.attach_external_loop(self._loop)
                 await send({"type": "lifespan.startup.complete"})
             elif message_type == "lifespan.shutdown":
-                self.websocket.detach_external_loop()
+                if self.websocket is not None:
+                    self.websocket.detach_external_loop()
+                for session in tuple(self._sessions):
+                    session.detach_external_loop()
+                    self._sessions.discard(session)
                 self._loop = None
                 await send({"type": "lifespan.shutdown.complete"})
                 return
@@ -168,4 +185,23 @@ class ASGIApp:
     async def _websocket(self, scope: dict[str, Any], receive: Any, send: Any) -> None:
         await send({"type": "websocket.accept"})
         connection = _ASGIConnection(receive, send)
-        await self.websocket.handle_external(connection)
+
+        if self.app_factory is None:
+            if self.websocket is None:
+                raise RuntimeError("ASGIApp has no WebSocket server.")
+            await self.websocket.handle_external(connection)
+            return
+
+        root = self.app_factory()
+        if not isinstance(root, Component):
+            raise TypeError("ASGIApp app_factory must return a Component.")
+
+        session = WebSocketServer(root)
+        self._sessions.add(session)
+        session.attach_external_loop(asyncio.get_running_loop())
+
+        try:
+            await session.handle_external(connection)
+        finally:
+            session.detach_external_loop()
+            self._sessions.discard(session)
