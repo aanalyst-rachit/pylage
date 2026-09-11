@@ -22,6 +22,32 @@ print("Event message generation: PASS")
 
 print("=== CLIENT RUNTIME PASS ===")
 
+def test_runtime_contains_session_resume_url_support():
+    runtime = get_client_runtime()
+
+    assert "function sessionWebSocketUrl(baseUrl)" in runtime
+    assert "window.PyLage.sessionToken" in runtime
+    assert 'baseUrl.indexOf("?") === -1 ? "?" : "&"' in runtime
+    assert 'session=" + encodeURIComponent(token)' in runtime
+
+
+def test_runtime_stores_session_token_from_server_message():
+    runtime = get_client_runtime()
+
+    assert 'message.type === "session"' in runtime
+    assert "message.token" in runtime
+    assert "window.PyLage.sessionToken = message.token" in runtime
+
+
+def test_runtime_reconnect_uses_session_aware_websocket_url():
+    runtime = get_client_runtime()
+
+    assert "const reconnectUrl = sessionWebSocketUrl(baseUrl)" in runtime
+    assert "connectWebSocket(baseUrl)" in runtime
+    assert "const url = sessionWebSocketUrl(baseUrl)" in runtime
+    assert "socket = new WebSocket(url)" in runtime
+
+
 def test_runtime_contains_tree_add_patch_handler():
     runtime = get_client_runtime()
 

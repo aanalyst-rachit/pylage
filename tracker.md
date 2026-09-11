@@ -57,8 +57,14 @@ Goal: PyLage proper multi-user production runtime.
 Connection → Session → State → DependencyGraph → Scheduler → Component Tree
 No global user state.
 
-1.3 Session Resumption:
+1.3 Session Resumption — IMPLEMENTED:
 Browser → session token → disconnect → reconnect → same session restored.
+- Secure session token handshake
+- Client stores session token
+- Reconnect resumes the same WebSocketServer/session
+- Unknown or stale token creates a fresh session
+- Retained sessions are cleaned up during ASGI lifespan shutdown
+- Full regression: 1116 passed, 1 skipped
 
 1.4 SessionStore:
 - in-memory SessionStore

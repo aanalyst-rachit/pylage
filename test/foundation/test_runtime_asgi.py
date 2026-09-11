@@ -1,4 +1,5 @@
 import asyncio
+import json
 from pathlib import Path
 
 import pylage as pl
@@ -285,7 +286,8 @@ def test_asgi_factory_creates_isolated_sessions():
         disconnect_b.set()
         await asyncio.gather(task_a, task_b)
 
-        assert not asgi._sessions
+        assert len(asgi._sessions) == 2
+        assert len(asgi._session_tokens) == 2
 
         count_a = len(messages_a)
         count_b = len(messages_b)
@@ -295,6 +297,211 @@ def test_asgi_factory_creates_isolated_sessions():
 
         assert len(messages_a) == count_a
         assert len(messages_b) == count_b
+
+        shutdown_events = asyncio.Queue()
+
+        async def shutdown_receive():
+            return await shutdown_events.get()
+
+        async def shutdown_send(message):
+            pass
+
+        await shutdown_events.put({"type": "lifespan.shutdown"})
+        await asgi._lifespan(shutdown_receive, shutdown_send)
+
+        assert not asgi._sessions
+        assert not asgi._session_tokens
+
+
+def test_asgi_factory_resumes_session_after_disconnect():
+    created = []
+
+    def factory():
+        state = State(f"before-{len(created) + 1}")
+        root = pl.text(state)
+        created.append((state, root))
+        return root
+
+    asgi = ASGIApp(app_factory=factory)
+    first_messages = []
+    resumed_messages = []
+    first_disconnect = asyncio.Event()
+    resumed_disconnect = asyncio.Event()
+
+    async def first_receive():
+        await first_disconnect.wait()
+        return {"type": "websocket.disconnect"}
+
+    async def resumed_receive():
+        await resumed_disconnect.wait()
+        return {"type": "websocket.disconnect"}
+
+    async def send_first(message):
+        first_messages.append(message)
+
+    async def send_resumed(message):
+        resumed_messages.append(message)
+
+    async def scenario():
+        first_task = asyncio.create_task(
+            asgi._websocket(
+                {"type": "websocket", "path": "/", "headers": []},
+                first_receive,
+                send_first,
+            )
+        )
+
+        for _ in range(100):
+            if created:
+                break
+            await asyncio.sleep(0)
+
+        assert len(created) == 1
+        assert first_messages[0] == {"type": "websocket.accept"}
+
+        session_messages = [
+            message
+            for message in first_messages
+            if message.get("type") == "websocket.send"
+        ]
+        assert session_messages
+
+        handshake = json.loads(session_messages[0]["text"])
+        assert handshake["type"] == "session"
+        token = handshake["token"]
+        assert token
+        assert asgi._session_tokens[token] in asgi._sessions
+
+        first_session = asgi._session_tokens[token]
+        first_state = created[0][0]
+        first_root = created[0][1]
+
+        first_disconnect.set()
+        await first_task
+
+        assert len(created) == 1
+        assert token in asgi._session_tokens
+        assert asgi._session_tokens[token] is first_session
+        assert len(asgi._sessions) == 1
+
+        resumed_task = asyncio.create_task(
+            asgi._websocket(
+                {
+                    "type": "websocket",
+                    "path": "/",
+                    "query_string": f"session={token}".encode(),
+                    "headers": [],
+                },
+                resumed_receive,
+                send_resumed,
+            )
+        )
+
+        await asyncio.sleep(0)
+
+        assert len(created) == 1
+        assert asgi._session_tokens[token] is first_session
+        assert created[0][0] is first_state
+        assert created[0][1] is first_root
+
+        resumed_handshakes = [
+            json.loads(message["text"])
+            for message in resumed_messages
+            if message.get("type") == "websocket.send"
+        ]
+        assert resumed_handshakes
+        assert resumed_handshakes[0] == {"type": "session", "token": token}
+
+        first_state.set("after-resume")
+        await asyncio.sleep(0.05)
+
+        assert any(
+            message.get("type") == "websocket.send"
+            and "after-resume" in message.get("text", "")
+            for message in resumed_messages
+        )
+
+        resumed_disconnect.set()
+        await resumed_task
+
+        assert len(created) == 1
+        assert asgi._session_tokens[token] is first_session
+        assert len(asgi._sessions) == 1
+
+        shutdown_events = asyncio.Queue()
+
+        async def shutdown_receive():
+            return await shutdown_events.get()
+
+        async def shutdown_send(message):
+            pass
+
+        await shutdown_events.put({"type": "lifespan.shutdown"})
+        await asgi._lifespan(shutdown_receive, shutdown_send)
+
+        assert not asgi._sessions
+        assert not asgi._session_tokens
+
+    run(scenario())
+
+
+def test_asgi_factory_unknown_session_token_creates_new_session():
+    created = []
+    messages = []
+
+    def factory():
+        state = State(f"before-{len(created) + 1}")
+        root = pl.text(state)
+        created.append((state, root))
+        return root
+
+    asgi = ASGIApp(app_factory=factory)
+
+    async def receive():
+        return {"type": "websocket.disconnect"}
+
+    async def send(message):
+        messages.append(message)
+
+    async def scenario():
+        await asgi._websocket(
+            {
+                "type": "websocket",
+                "path": "/",
+                "query_string": b"session=stale-token",
+                "headers": [],
+            },
+            receive,
+            send,
+        )
+
+        assert len(created) == 1
+        assert len(asgi._session_tokens) == 1
+
+        handshake_messages = [
+            json.loads(message["text"])
+            for message in messages
+            if message.get("type") == "websocket.send"
+        ]
+        assert len(handshake_messages) == 1
+        assert handshake_messages[0]["type"] == "session"
+        assert handshake_messages[0]["token"] != "stale-token"
+
+        shutdown_events = asyncio.Queue()
+
+        async def shutdown_receive():
+            return await shutdown_events.get()
+
+        async def shutdown_send(message):
+            pass
+
+        await shutdown_events.put({"type": "lifespan.shutdown"})
+        await asgi._lifespan(shutdown_receive, shutdown_send)
+
+        assert not asgi._sessions
+        assert not asgi._session_tokens
+
+    run(scenario())
 
 
 def test_asgi_factory_requires_component_result():

@@ -36,22 +36,38 @@ CLIENT_RUNTIME = r"""
         }
     }
 
-    function scheduleReconnect(url) {
-        if (!url) {
+    function sessionWebSocketUrl(baseUrl) {
+        if (!baseUrl) {
+            return baseUrl;
+        }
+
+        const token = window.PyLage && window.PyLage.sessionToken;
+        if (!token) {
+            return baseUrl;
+        }
+
+        const separator = baseUrl.indexOf("?") === -1 ? "?" : "&";
+        return baseUrl + separator + "session=" + encodeURIComponent(token);
+    }
+
+    function scheduleReconnect(baseUrl) {
+        if (!baseUrl) {
             return;
         }
         setTimeout(function () {
-            console.log("[PyLage] Attempting reconnect to:", url);
-            connectWebSocket(url);
+            const reconnectUrl = sessionWebSocketUrl(baseUrl);
+            console.log("[PyLage] Attempting reconnect to:", reconnectUrl);
+            connectWebSocket(baseUrl);
             reconnectDelay = Math.min(reconnectDelay * 1.5, maxReconnectDelay);
         }, reconnectDelay);
     }
 
-    function connectWebSocket(url) {
-        if (!url) {
+    function connectWebSocket(baseUrl) {
+        if (!baseUrl) {
             return null;
         }
 
+        const url = sessionWebSocketUrl(baseUrl);
         console.log("[PyLage] Connecting:", url);
 
         let socket;
@@ -60,7 +76,7 @@ CLIENT_RUNTIME = r"""
             socket = new WebSocket(url);
         } catch (error) {
             console.error("[PyLage] WebSocket creation failed", error);
-            scheduleReconnect(url);
+            scheduleReconnect(baseUrl);
             return null;
         }
 
@@ -78,7 +94,7 @@ CLIENT_RUNTIME = r"""
             if (typeof window.PyLage.onConnectionChange === "function") {
                 window.PyLage.onConnectionChange(false);
             }
-            scheduleReconnect(url);
+            scheduleReconnect(baseUrl);
         });
 
         socket.addEventListener("error", function (error) {
@@ -88,6 +104,15 @@ CLIENT_RUNTIME = r"""
         socket.addEventListener("message", function (event) {
             try {
                 const message = JSON.parse(event.data);
+
+                if (
+                    message &&
+                    message.type === "session" &&
+                    message.token &&
+                    window.PyLage
+                ) {
+                    window.PyLage.sessionToken = message.token;
+                }
 
                 if (
                     window.PyLage &&

@@ -7,9 +7,11 @@ existing PyLage rendering and reactive runtime machinery.
 from __future__ import annotations
 
 import asyncio
+import json
 import mimetypes
+import secrets
 from pathlib import Path
-from urllib.parse import unquote, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 from typing import Any, Callable
 
 from pylage.ENGINE.core.component import Component
@@ -85,6 +87,7 @@ class ASGIApp:
         self.document = document
         self.websocket = WebSocketServer(root) if root is not None else None
         self._sessions: set[WebSocketServer] = set()
+        self._session_tokens: dict[str, WebSocketServer] = {}
         self._loop: Any = None
 
     async def __call__(self, scope: dict[str, Any], receive: Any, send: Any) -> None:
@@ -128,6 +131,7 @@ class ASGIApp:
                 for session in tuple(self._sessions):
                     session.detach_external_loop()
                     self._sessions.discard(session)
+                self._session_tokens.clear()
                 self._loop = None
                 await send({"type": "lifespan.shutdown.complete"})
                 return
@@ -192,16 +196,24 @@ class ASGIApp:
             await self.websocket.handle_external(connection)
             return
 
-        root = self.app_factory()
-        if not isinstance(root, Component):
-            raise TypeError("ASGIApp app_factory must return a Component.")
+        query_string = scope.get("query_string", b"")
+        query = parse_qs(query_string.decode("utf-8"), keep_blank_values=False)
+        token_values = query.get("session", [])
+        token = token_values[0] if token_values else None
+        session = self._session_tokens.get(token) if token else None
 
-        session = WebSocketServer(root)
-        self._sessions.add(session)
-        session.attach_external_loop(asyncio.get_running_loop())
+        if session is None:
+            root = self.app_factory()
+            if not isinstance(root, Component):
+                raise TypeError("ASGIApp app_factory must return a Component.")
 
-        try:
-            await session.handle_external(connection)
-        finally:
-            session.detach_external_loop()
-            self._sessions.discard(session)
+            session = WebSocketServer(root)
+            token = secrets.token_urlsafe(32)
+            while token in self._session_tokens:
+                token = secrets.token_urlsafe(32)
+            self._session_tokens[token] = session
+            self._sessions.add(session)
+            session.attach_external_loop(asyncio.get_running_loop())
+
+        await connection.send(json.dumps({"type": "session", "token": token}))
+        await session.handle_external(connection)
