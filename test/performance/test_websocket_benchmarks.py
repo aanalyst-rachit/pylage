@@ -1,9 +1,9 @@
 import asyncio
-import json
 import time
 
 import pylage as ps
 from pylage.ENGINE import Column, Heading, State
+from pylage.ENGINE.core.protocol_codec import decode_message
 from pylage.ENGINE.runtime.websocket import WebSocketServer
 
 
@@ -33,7 +33,7 @@ def test_phase6_websocket_state_update_latency():
                         timeout=2,
                     )
 
-                    message = json.loads(raw)
+                    message = decode_message(raw).to_dict()
 
                     assert message["type"] == "update"
                     assert message["id"] == heading.id
@@ -76,7 +76,7 @@ def test_phase6_websocket_tree_patch_latency():
                         timeout=2,
                     )
 
-                    message = json.loads(raw)
+                    message = decode_message(raw).to_dict()
 
                     assert message["type"] == "tree_add"
                     assert message["parent_id"] == root.id
@@ -132,7 +132,7 @@ def test_phase6_websocket_multi_client_broadcast():
                 elapsed = time.perf_counter() - start
 
                 for raw in messages:
-                    message = json.loads(raw)
+                    message = decode_message(raw).to_dict()
 
                     assert message["type"] == "update"
                     assert message["id"] == heading.id
@@ -193,7 +193,7 @@ def test_phase6_websocket_client_scaling():
                     assert len(messages) == client_count
 
                     for raw in messages:
-                        message = json.loads(raw)
+                        message = decode_message(raw).to_dict()
                         assert message["type"] == "update"
                         assert message["id"] == heading.id
                         assert message["props"]["text"] == 1

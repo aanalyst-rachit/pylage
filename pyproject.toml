@@ -26,7 +26,8 @@ classifiers = [
 ]
 dependencies = [
     "websockets>=10.0",
-    "granian>=2.7.4"
+    "granian>=2.7.4",
+    "msgpack>=1.0.7"
 ]
 
 [project.urls]

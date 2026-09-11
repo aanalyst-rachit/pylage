@@ -1,6 +1,8 @@
 import asyncio
 import json
 
+from pylage.ENGINE.core.protocol_codec import decode_message
+
 import pylage as ps
 from pylage.ENGINE import Column, Heading, State
 
@@ -36,7 +38,11 @@ async def main():
 
             print("Received:", raw)
 
-            message = json.loads(raw)
+            message = (
+                decode_message(raw).to_dict()
+                if isinstance(raw, (bytes, bytearray, memoryview))
+                else json.loads(raw)
+            )
 
             assert message["type"] == "update"
             assert message["id"] == app.children[0].id

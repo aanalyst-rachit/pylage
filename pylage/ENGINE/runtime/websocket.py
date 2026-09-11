@@ -22,6 +22,7 @@ from pylage.ENGINE.core.state import State
 from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
 from pylage.ENGINE.styling.global_theme import subscribe_global_theme
+from pylage.ENGINE.core.protocol_codec import decode_message, encode_message
 from pylage.ENGINE.core.protocol import (
     EventMessage,
     EventMessageResponse,
@@ -72,6 +73,7 @@ class WebSocketServer:
         self._thread: Optional[threading.Thread] = None
 
         self._connections: set[Any] = set()
+        self._connection_prop_meta: dict[Any, set[tuple[str, str]]] = {}
         self._connections_lock = threading.Lock()
 
         self._theme_unsubscribe = None
@@ -338,7 +340,11 @@ class WebSocketServer:
             return
 
         asyncio.run_coroutine_threadsafe(
-            self._broadcast(message.to_json()),
+            self._broadcast(
+                encode_message(message),
+                prop_meta=prop_meta,
+                component_id=component.id,
+            ),
             self._loop,
         )
 
@@ -368,7 +374,7 @@ class WebSocketServer:
                 new_parent_id=new_parent.id,
             )
 
-            raw_message = message.to_json()
+            raw_message = encode_message(message)
 
             if self._loop is None:
                 return
@@ -416,7 +422,7 @@ class WebSocketServer:
                 return
 
             asyncio.run_coroutine_threadsafe(
-                self._broadcast(message.to_json()),
+                self._broadcast(encode_message(message)),
                 self._loop,
             )
 
@@ -449,7 +455,7 @@ class WebSocketServer:
                 return
 
             asyncio.run_coroutine_threadsafe(
-                self._broadcast(message.to_json()),
+                self._broadcast(encode_message(message)),
                 self._loop,
             )
 
@@ -482,7 +488,7 @@ class WebSocketServer:
                 return
 
             asyncio.run_coroutine_threadsafe(
-                self._broadcast(message.to_json()),
+                self._broadcast(encode_message(message)),
                 self._loop,
             )
 
@@ -514,7 +520,7 @@ class WebSocketServer:
                 component_ids=component_ids,
             )
 
-            raw_message = message.to_json()
+            raw_message = encode_message(message)
 
             if self._loop is None:
                 return
@@ -554,7 +560,7 @@ class WebSocketServer:
             index=event.get("index"),
         )
 
-        raw_message = message.to_json()
+        raw_message = encode_message(message)
 
         if self._loop is None:
             return
@@ -721,7 +727,7 @@ class WebSocketServer:
             return
 
         asyncio.run_coroutine_threadsafe(
-            self._broadcast(message.to_json()),
+            self._broadcast(encode_message(message)),
             self._loop,
         )
 
@@ -779,38 +785,86 @@ class WebSocketServer:
         except Exception:
             pass
 
-    async def _broadcast(self, raw_message: str) -> None:
-        """Send a state update to every connected browser."""
-
+    async def _broadcast(
+        self,
+        raw_message: str | bytes,
+        *,
+        prop_meta: dict[str, dict[str, Any]] | None = None,
+        component_id: str | None = None,
+    ) -> None:
+        """Send a message to connected browsers with per-client metadata caching."""
         with self._connections_lock:
             connections = tuple(self._connections)
 
         if not connections:
             return
 
+        async def send(connection: Any) -> tuple[Any, BaseException | None]:
+            payload = raw_message
+            sent_meta: set[tuple[str, str]] = set()
+
+            if prop_meta and component_id is not None and isinstance(raw_message, (bytes, bytearray, memoryview)):
+                with self._connections_lock:
+                    cached = self._connection_prop_meta.setdefault(connection, set())
+
+                uncached = {
+                    name: meta
+                    for name, meta in prop_meta.items()
+                    if (component_id, name) not in cached
+                }
+
+                if len(uncached) != len(prop_meta):
+                    message = decode_message(raw_message)
+                    if isinstance(message, UpdateMessage):
+                        message = UpdateMessage(
+                            component_id=message.component_id,
+                            props=message.props,
+                            remove_props=message.remove_props,
+                            prop_meta=uncached or None,
+                        )
+                        payload = encode_message(message)
+
+                sent_meta = {(component_id, name) for name in uncached}
+
+            try:
+                await connection.send(payload)
+            except BaseException as exc:
+                return connection, exc
+
+            if sent_meta:
+                with self._connections_lock:
+                    self._connection_prop_meta.setdefault(connection, set()).update(sent_meta)
+
+            return connection, None
+
         results = await asyncio.gather(
-            *(connection.send(raw_message) for connection in connections),
-            return_exceptions=True,
+            *(send(connection) for connection in connections),
+            return_exceptions=False,
         )
 
-        dead = {
-            connection
-            for connection, result in zip(connections, results)
-            if isinstance(result, Exception)
-        }
-
+        dead = {connection for connection, error in results if error is not None}
         if dead:
             with self._connections_lock:
                 self._connections.difference_update(dead)
+                for connection in dead:
+                    self._connection_prop_meta.pop(connection, None)
 
     async def _handle(self, connection: ServerConnection) -> None:
         with self._connections_lock:
             self._connections.add(connection)
+            self._connection_prop_meta[connection] = set()
 
         try:
             async for raw_message in connection:
+                is_binary = isinstance(raw_message, (bytes, bytearray, memoryview))
                 try:
-                    message = EventMessage.from_json(raw_message)
+                    if is_binary:
+                        message = decode_message(raw_message)
+                    else:
+                        message = EventMessage.from_json(raw_message)
+
+                    if not isinstance(message, EventMessage):
+                        raise TypeError("Expected an event message.")
 
                     result = self._dispatcher.dispatch(
                         message.component_id,
@@ -818,17 +872,20 @@ class WebSocketServer:
                         message.payload,
                     )
 
+                    response = EventMessageResponse.success(result)
                     await connection.send(
-                        EventMessageResponse.success(result).to_json()
+                        encode_message(response) if is_binary else response.to_json()
                     )
 
                 except Exception as exc:
+                    response = EventMessageResponse.failure(str(exc))
                     await connection.send(
-                        EventMessageResponse.failure(str(exc)).to_json()
+                        encode_message(response) if is_binary else response.to_json()
                     )
         finally:
             with self._connections_lock:
                 self._connections.discard(connection)
+                self._connection_prop_meta.pop(connection, None)
 
     async def handle_external(self, connection: Any) -> None:
         """Handle a connection owned by an external ASGI transport."""
@@ -928,3 +985,4 @@ class WebSocketServer:
 
         with self._connections_lock:
             self._connections.clear()
+            self._connection_prop_meta.clear()

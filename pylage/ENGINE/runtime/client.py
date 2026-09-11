@@ -6,10 +6,149 @@ CLIENT_RUNTIME = r"""
     "use strict";
 
     window.PyLage = window.PyLage || {};
+    window.PyLage._propMetaCache = Object.create(null);
 
     const boundEventTypes = new Set(["click", "input", "change", "submit"]);
     let reconnectDelay = 1000;
     const maxReconnectDelay = 16000;
+
+    function encodeMessagePack(value) {
+        const chunks = [];
+
+        function pushByte(value) { chunks.push(value & 255); }
+        function pushBytes(bytes) { for (const byte of bytes) chunks.push(byte); }
+        function pushU16(value) { pushByte(value >>> 8); pushByte(value); }
+        function pushU32(value) { pushByte(value >>> 24); pushByte(value >>> 16); pushByte(value >>> 8); pushByte(value); }
+        function pushF64(value) {
+            const buffer = new ArrayBuffer(8);
+            new DataView(buffer).setFloat64(0, value, false);
+            pushBytes(new Uint8Array(buffer));
+        }
+
+        const textEncoder = new TextEncoder();
+
+        function encode(value) {
+            if (value === null || value === undefined) {
+                pushByte(192);
+                return;
+            }
+            if (typeof value === "boolean") {
+                pushByte(value ? 195 : 194);
+                return;
+            }
+            if (typeof value === "number") {
+                if (Number.isInteger(value) && Number.isSafeInteger(value)) {
+                    if (value >= 0 && value <= 127) { pushByte(value); return; }
+                    if (value >= -32 && value < 0) { pushByte(256 + value); return; }
+                    if (value >= 0 && value <= 255) { pushByte(204); pushByte(value); return; }
+                    if (value >= 0 && value <= 65535) { pushByte(205); pushU16(value); return; }
+                    if (value >= 0 && value <= 4294967295) { pushByte(206); pushU32(value); return; }
+                    if (value >= -128 && value <= 127) { pushByte(208); pushByte(value); return; }
+                    if (value >= -32768 && value <= 32767) { pushByte(209); pushU16(value); return; }
+                    if (value >= -2147483648 && value <= 2147483647) { pushByte(210); pushU32(value); return; }
+                }
+                pushByte(203);
+                pushF64(value);
+                return;
+            }
+            if (typeof value === "string") {
+                const bytes = textEncoder.encode(value);
+                const length = bytes.length;
+                if (length < 32) { pushByte(160 | length); }
+                else if (length <= 255) { pushByte(217); pushByte(length); }
+                else if (length <= 65535) { pushByte(218); pushU16(length); }
+                else { pushByte(219); pushU32(length); }
+                pushBytes(bytes);
+                return;
+            }
+            if (Array.isArray(value)) {
+                const length = value.length;
+                if (length < 16) { pushByte(144 | length); }
+                else if (length <= 65535) { pushByte(220); pushU16(length); }
+                else { pushByte(221); pushU32(length); }
+                for (const item of value) encode(item);
+                return;
+            }
+            if (typeof value === "object") {
+                const keys = Object.keys(value);
+                const length = keys.length;
+                if (length < 16) { pushByte(128 | length); }
+                else if (length <= 65535) { pushByte(222); pushU16(length); }
+                else { pushByte(223); pushU32(length); }
+                for (const key of keys) { encode(key); encode(value[key]); }
+                return;
+            }
+            throw new TypeError("[PyLage] Unsupported MessagePack value.");
+        }
+
+        encode(value);
+        return new Uint8Array(chunks).buffer;
+    }
+
+    function decodeMessagePack(data) {
+        const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
+        const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        const decoder = new TextDecoder();
+        let offset = 0;
+
+        function u8() { return view.getUint8(offset++); }
+        function u16() { const v = view.getUint16(offset, false); offset += 2; return v; }
+        function u32() { const v = view.getUint32(offset, false); offset += 4; return v; }
+        function i8() { return view.getInt8(offset++); }
+        function i16() { const v = view.getInt16(offset, false); offset += 2; return v; }
+        function i32() { const v = view.getInt32(offset, false); offset += 4; return v; }
+        function f32() { const v = view.getFloat32(offset, false); offset += 4; return v; }
+        function f64() { const v = view.getFloat64(offset, false); offset += 8; return v; }
+        function bytesRead(length) { const v = bytes.subarray(offset, offset + length); offset += length; return v; }
+        function text(length) { return decoder.decode(bytesRead(length)); }
+        function u64() { return u32() * 4294967296 + u32(); }
+        function i64() { return i32() * 4294967296 + u32(); }
+
+        function value() {
+            const p = u8();
+            if (p <= 127) return p;
+            if (p >= 224) return p - 256;
+            if (p >= 160 && p <= 191) return text(p & 31);
+            if (p >= 144 && p <= 159) {
+                const a = [];
+                for (let i = 0; i < (p & 15); i++) a.push(value());
+                return a;
+            }
+            if (p >= 128 && p <= 143) {
+                const o = {};
+                for (let i = 0; i < (p & 15); i++) o[value()] = value();
+                return o;
+            }
+            switch (p) {
+                case 192: return null;
+                case 194: return false;
+                case 195: return true;
+                case 202: return f32();
+                case 203: return f64();
+                case 204: return u8();
+                case 205: return u16();
+                case 206: return u32();
+                case 207: return u64();
+                case 208: return i8();
+                case 209: return i16();
+                case 210: return i32();
+                case 211: return i64();
+                case 196: return bytesRead(u8());
+                case 197: return bytesRead(u16());
+                case 198: return bytesRead(u32());
+                case 217: return text(u8());
+                case 218: return text(u16());
+                case 219: return text(u32());
+                case 220: { const a=[]; const n=u16(); for(let i=0;i<n;i++) a.push(value()); return a; }
+                case 221: { const a=[]; const n=u32(); for(let i=0;i<n;i++) a.push(value()); return a; }
+                case 222: { const o={}; const n=u16(); for(let i=0;i<n;i++) o[value()]=value(); return o; }
+                case 223: { const o={}; const n=u32(); for(let i=0;i<n;i++) o[value()]=value(); return o; }
+                default: throw new Error("[PyLage] Unsupported MessagePack type: " + p);
+            }
+        }
+
+        return value();
+    }
 
     function ensureEventTypeBound(eventType) {
         if (!eventType || boundEventTypes.has(eventType)) {
@@ -74,6 +213,7 @@ CLIENT_RUNTIME = r"""
 
         try {
             socket = new WebSocket(url);
+            socket.binaryType = "arraybuffer";
         } catch (error) {
             console.error("[PyLage] WebSocket creation failed", error);
             scheduleReconnect(baseUrl);
@@ -103,7 +243,7 @@ CLIENT_RUNTIME = r"""
 
         socket.addEventListener("message", function (event) {
             try {
-                const message = JSON.parse(event.data);
+                const message = typeof event.data === "string" ? JSON.parse(event.data) : decodeMessagePack(event.data);
 
                 if (
                     message &&
@@ -146,7 +286,7 @@ CLIENT_RUNTIME = r"""
             socket.readyState === WebSocket.OPEN
         ) {
             console.log("[PyLage] Sending event:", message);
-            socket.send(JSON.stringify(message));
+            socket.send(encodeMessagePack(message));
             return;
         }
 
@@ -738,9 +878,16 @@ CLIENT_RUNTIME = r"""
             return;
         }
 
-          const propMeta = message.prop_meta || {};
-          console.log('[PyLage Client] propMeta received:', propMeta);
-          console.log('[PyLage Client] Full message:', message);
+        const incomingPropMeta = message.prop_meta || {};
+        const componentPropMeta =
+            window.PyLage._propMetaCache[message.id] || Object.create(null);
+
+        Object.keys(incomingPropMeta).forEach(function (propName) {
+            componentPropMeta[propName] = incomingPropMeta[propName];
+        });
+
+        window.PyLage._propMetaCache[message.id] = componentPropMeta;
+        const propMeta = componentPropMeta;
 
           // Remove props that disappeared from the component snapshot.
           const removeProps = Array.isArray(message.remove_props)
@@ -749,7 +896,6 @@ CLIENT_RUNTIME = r"""
 
           removeProps.forEach(function (propName) {
               const meta = propMeta[propName] || {};
-              console.log('[PyLage Debug] prop:', propName, 'value:', value, 'meta:', meta);
               const htmlName = meta.html_name || propName;
 
               component.removeAttribute(htmlName);
@@ -783,7 +929,6 @@ CLIENT_RUNTIME = r"""
           Object.keys(message.props).forEach(function (propName) {
               const value = message.props[propName];
               const meta = propMeta[propName] || {};
-              console.log('[PyLage Debug] prop:', propName, 'value:', value, 'meta:', meta);
               const kind = meta.kind || "attribute";
               const htmlName = meta.html_name || propName;
 
