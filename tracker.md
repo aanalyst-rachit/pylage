@@ -80,15 +80,17 @@ Browser → session token → disconnect → reconnect → same session restored
 - dead connection cleanup
 - WebSocket regression: 28 passed
 
-1.6 Migration Test Gate:
-- existing 1090+ suite
+1.6 Migration Test Gate — IMPLEMENTED:
 - transport tests
 - session isolation
-- two-tab test
+- two-tab/session coverage
 - reconnect/resumption test
 - no cross-user state leakage
+- TTL/expiration coverage
+- focused migration gate: 42 passed
+- full regression: 1129 passed, 1 skipped
 
-Exit: ASGI + Session Isolation + Session Resume + TTL + Heartbeat + Regression.
+Exit: ASGI + Session Isolation + Session Resume + TTL + Heartbeat + Regression — PASS.
 
 ## PHASE 2 — Protocol & Performance 🔴 CRITICAL
 Goal: existing fast reactive engine also fast at network level.
