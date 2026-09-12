@@ -127,8 +127,16 @@ StyleCollector → unique CSS → shared stylesheet
 - Focused event-loop regression: 33 passed.
 - Full regression: 1175 passed, 1 skipped.
 
-2.5 Native Hot Path — OPTIONAL:
-Profile first; possible Rust/PyO3, maturin, Cython; not V2 blocker if Python meets performance target.
+2.5 Native Hot Path — OPTIONAL — COMPLETED:
+Profile-first optimization was completed before considering native code.
+- cProfile identified redundant per-render static/dynamic template compilation as the dominant renderer hot path.
+- Removed the unused renderer-side compile_static_dynamic_template call and related state.
+- Preserved the Phase 2.3 IR compiler implementation in pylage/ENGINE/core/ir.py.
+- Post-optimization cProfile render workload dropped from 22.64s to 3.75s; remaining costs are genuine renderer/style/theme work.
+- Focused performance regression: 6 passed.
+- Full regression: 1175 passed, 1 skipped.
+- git diff --check: clean.
+- Rust/PyO3/Cython was not introduced because profiling did not justify a native extension; Python remains sufficient for the current V2 performance target.
 
 Exit: Binary protocol + CSS dedup + Static/dynamic IR + event-loop optimization + performance regression suite.
 

@@ -2171,7 +2171,7 @@ def test_build_static_dynamic_template_records_multiple_nested_state_paths():
         },
     ]
 
-def test_html_renderer_compiles_static_dynamic_template_without_changing_html():
+def test_html_renderer_renders_state_without_changing_html():
     from pylage.ENGINE.core.component import Component
     from pylage.ENGINE.core.renderer import HTMLRenderer
     from pylage.ENGINE.core.state import State
@@ -2186,19 +2186,10 @@ def test_html_renderer_compiles_static_dynamic_template_without_changing_html():
         },
     )
 
-    renderer = HTMLRenderer()
-    html = renderer.render(component)
+    html = HTMLRenderer().render(component)
 
     assert 'data-pylage-id="root"' in html
     assert "Hello" in html
-    assert renderer._static_dynamic_template["node_id"] == "root"
-    assert renderer._static_dynamic_template["static_props"] == {"title": "Static"}
-    assert renderer._static_dynamic_template["dynamic_bindings"] == [
-        {
-            "node_id": "root",
-            "prop_name": "text",
-        }
-    ]
 
 def test_html_renderer_preserves_custom_registered_renderer():
     from pylage.ENGINE.core.component import Component
@@ -2223,4 +2214,3 @@ def test_html_renderer_preserves_custom_registered_renderer():
     html = renderer.render(component)
 
     assert '<custom-rendered data-pylage-id="custom-root">OK</custom-rendered>' in html
-    assert renderer._static_dynamic_template["node_id"] == "custom-root"
