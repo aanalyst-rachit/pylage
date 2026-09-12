@@ -37,12 +37,13 @@ def load_factory(path: str) -> Callable[[], Any]:
 class GranianRuntime:
     """Manage a PyLage ASGI application through Granian."""
 
-    def __init__(self, factory_path: str, *, host: str = "127.0.0.1", port: int = 0) -> None:
+    def __init__(self, factory_path: str, *, host: str = "127.0.0.1", port: int = 0, loop: str | None = None) -> None:
         if not isinstance(factory_path, str) or not factory_path:
             raise ValueError("factory_path must be a non-empty string.")
         self.factory_path = factory_path
         self.host = host
         self.port = port
+        self.loop = loop
         self._process: Any = None
         self._url: str | None = None
 
@@ -82,6 +83,8 @@ class GranianRuntime:
             "--port",
             str(port),
         ]
+        if self.loop is not None:
+            command.extend(["--loop", self.loop])
 
         process = subprocess.Popen(
             command,

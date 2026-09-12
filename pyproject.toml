@@ -30,6 +30,11 @@ dependencies = [
     "msgpack>=1.0.7"
 ]
 
+[project.optional-dependencies]
+performance = [
+    "uvloop>=0.22.1; sys_platform != 'win32'"
+]
+
 [project.urls]
 "Homepage" = "https://github.com/aanalyst-rachit/pylage"
 "Bug Tracker" = "https://github.com/aanalyst-rachit/pylage/issues"

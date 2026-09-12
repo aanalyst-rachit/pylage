@@ -115,10 +115,17 @@ StyleCollector → unique CSS → shared stylesheet
 - IR + renderer regression coverage added.
 - Full regression: 1172 passed, 1 skipped.
 
-2.4 Event Loop Optimization:
-- uvloop
-- Granian ASGI
-- benchmark before/after
+2.4 Event Loop Optimization ⭐ — IMPLEMENTED:
+- Granian ASGI runtime supports explicit event-loop selection.
+- uvloop is available through the optional performance dependency.
+- asyncio compatibility is preserved.
+- 5-run benchmark completed with 500 sequential HTTP requests per run.
+- uvloop mean throughput: 765.803 req/s vs asyncio 724.777 req/s.
+- Mean throughput gain: 5.66%.
+- Mean latency reduction: 5.48%.
+- Benchmark evidence saved to test/performance/granian_event_loop_benchmark_output.txt.
+- Focused event-loop regression: 33 passed.
+- Full regression: 1175 passed, 1 skipped.
 
 2.5 Native Hot Path — OPTIONAL:
 Profile first; possible Rust/PyO3, maturin, Cython; not V2 blocker if Python meets performance target.

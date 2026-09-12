@@ -1,0 +1,39 @@
+===== PY LAGE V2 PHASE 2.4 — GRANIAN EVENT LOOP BENCHMARK =====
+
+Environment:
+Python            : 3.12.3
+Granian           : 2.8.2
+uvloop            : 0.22.1
+Warmup requests   : 50
+Measured requests : 500 per run
+Runs              : 5 per event loop
+
+Method:
+Granian serves the PyLage ASGI factory over HTTP.
+The same sequential HTTP workload is executed against asyncio and uvloop.
+
+ASYNCIO runs:
+713.554 req/s  | 1.401436 ms/request
+781.793 req/s  | 1.279112 ms/request
+747.482 req/s  | 1.337826 ms/request
+631.368 req/s  | 1.583864 ms/request
+749.691 req/s  | 1.333884 ms/request
+
+UVLOOP runs:
+675.246 req/s  | 1.480941 ms/request
+783.347 req/s  | 1.276574 ms/request
+809.299 req/s  | 1.235637 ms/request
+791.077 req/s  | 1.264100 ms/request
+770.047 req/s  | 1.298622 ms/request
+
+Summary:
+Asyncio mean throughput : 724.777 req/s
+uvloop mean throughput  : 765.803 req/s
+Asyncio median          : 747.482 req/s
+uvloop median           : 783.347 req/s
+Mean throughput gain    : 5.66%
+Mean latency reduction  : 5.48%
+
+Conclusion:
+uvloop produced a modest positive improvement in this environment.
+Results are environment-dependent and should not be treated as fixed performance guarantees.
