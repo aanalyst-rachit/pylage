@@ -310,6 +310,62 @@ CLIENT_RUNTIME = r"""
         }
     }
 
+
+    function normalizePath(path) {
+        if (!path) {
+            return "/";
+        }
+        var normalized = String(path);
+        if (normalized.charAt(0) !== "/") {
+            normalized = "/" + normalized;
+        }
+        if (normalized.length > 1 && normalized.charAt(normalized.length - 1) === "/") {
+            normalized = normalized.slice(0, -1);
+        }
+        return normalized;
+    }
+    function sendNavigate(path) {
+        var message = {
+            type: "navigate",
+            path: normalizePath(path)
+        };
+        var socket = window.PyLage.socket;
+        if (
+            socket &&
+            socket.readyState === WebSocket.OPEN
+        ) {
+            console.log("[PyLage] Sending navigate:", message);
+            socket.send(encodeMessagePack(message));
+            return;
+        }
+        console.warn(
+            "[PyLage] WebSocket not ready; navigate not sent:",
+            message
+        );
+        if (
+            window.PyLage &&
+            typeof window.PyLage.onEvent === "function"
+        ) {
+            window.PyLage.onEvent(message);
+        }
+    }
+    function navigate(path, options) {
+        var normalized = normalizePath(path);
+        var opts = options || {};
+        var replace = !!opts.replace;
+        if (replace) {
+            window.history.replaceState({ pylage: true, path: normalized }, "", normalized);
+        } else {
+            window.history.pushState({ pylage: true, path: normalized }, "", normalized);
+        }
+        sendNavigate(normalized);
+    }
+    window.PyLage.navigate = navigate;
+    window.addEventListener("popstate", function (event) {
+        var path = (event.state && event.state.path) || window.location.pathname || "/";
+        sendNavigate(path);
+    });
+
     function handleEvent(event) {
         let target = event.target;
 

@@ -4,7 +4,7 @@ import asyncio
 import ssl
 import threading
 import time
-from typing import Any, Optional, Sequence
+from typing import Any, Callable, Optional, Sequence
 
 try:
     from websockets.asyncio.server import Server, ServerConnection, serve
@@ -24,9 +24,10 @@ from pylage.ENGINE.core.state import State
 from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
 from pylage.ENGINE.styling.global_theme import subscribe_global_theme
-from pylage.ENGINE.core.protocol_codec import decode_message, encode_message
+from pylage.ENGINE.core.protocol_codec import decode_json_message, decode_message, encode_message
 from pylage.ENGINE.core.protocol import (
     EventMessage,
+    NavigateMessage,
     EventMessageResponse,
     UpdateMessage,
     ThemeUpdateMessage,
@@ -88,6 +89,7 @@ class WebSocketServer:
         message_rate_limit: float = 20.0,
         message_rate_burst: int = 40,
         ssl_context: ssl.SSLContext | None = None,
+        navigation_handler: Callable[[str], Any] | None = None,
     ) -> None:
         if not isinstance(root, Component):
             raise TypeError(
@@ -111,6 +113,9 @@ class WebSocketServer:
         self._validate_message_rate_limit(message_rate_limit, message_rate_burst)
         self.message_rate_limit = float(message_rate_limit)
         self.message_rate_burst = message_rate_burst
+        if navigation_handler is not None and not callable(navigation_handler):
+            raise TypeError("navigation_handler must be callable or None.")
+        self.navigation_handler = navigation_handler
 
         if heartbeat_interval <= 0:
             raise ValueError("heartbeat_interval must be greater than 0.")
@@ -930,16 +935,21 @@ class WebSocketServer:
                     if is_binary:
                         message = decode_message(raw_message)
                     else:
-                        message = EventMessage.from_json(raw_message)
+                        message = decode_json_message(raw_message)
 
-                    if not isinstance(message, EventMessage):
-                        raise TypeError("Expected an event message.")
+                    if not isinstance(message, (EventMessage, NavigateMessage)):
+                        raise TypeError("Expected an event or navigation message.")
 
-                    result = self._dispatcher.dispatch(
-                        message.component_id,
-                        message.event,
-                        message.payload,
-                    )
+                    if isinstance(message, NavigateMessage):
+                        if self.navigation_handler is None:
+                            raise RuntimeError("Navigation is not configured.")
+                        result = self.navigation_handler(message.path)
+                    else:
+                        result = self._dispatcher.dispatch(
+                            message.component_id,
+                            message.event,
+                            message.payload,
+                        )
 
                     response = EventMessageResponse.success(result)
                     await connection.send(

@@ -22,6 +22,7 @@ class Runtime:
         host: str = "127.0.0.1",
         port: int = 0,
         document_transform: Callable[[str], str] | None = None,
+        navigation_handler: Callable[[str], object] | None = None,
     ) -> None:
         if not isinstance(app, Component):
             raise TypeError(
@@ -33,7 +34,13 @@ class Runtime:
         self.output = Path(output)
         self.host = host
         self.port = port
+        if navigation_handler is not None and not callable(navigation_handler):
+            raise TypeError(
+                "navigation_handler must be callable or None."
+            )
+
         self.document_transform = document_transform
+        self.navigation_handler = navigation_handler
 
         self._server: LocalServer | None = None
         self._websocket: WebSocketServer | None = None
@@ -85,6 +92,7 @@ class Runtime:
             self.app,
             host=self.host,
             port=0,
+            navigation_handler=self.navigation_handler,
         )
 
         try:

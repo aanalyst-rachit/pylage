@@ -72,6 +72,44 @@ class EventMessage:
 
 
 @dataclass(frozen=True)
+class NavigateMessage:
+    """Client-to-server browser route navigation message."""
+
+    path: str
+
+    @property
+    def type(self) -> str:
+        return "navigate"
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"type": self.type, "path": self.path}
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), separators=(",", ":"))
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "NavigateMessage":
+        if not isinstance(data, dict):
+            raise TypeError("Navigation message must be a dictionary.")
+        if data.get("type") != "navigate":
+            raise ValueError("Invalid navigation message type.")
+        path = data.get("path")
+        if not isinstance(path, str) or not path:
+            raise ValueError("Navigation message requires a valid path.")
+        if not path.startswith("/"):
+            path = "/" + path
+        return cls(path=path)
+
+    @classmethod
+    def from_json(cls, data: str) -> "NavigateMessage":
+        try:
+            decoded = json.loads(data)
+        except json.JSONDecodeError as exc:
+            raise ValueError("Invalid JSON navigation message.") from exc
+        return cls.from_dict(decoded)
+
+
+@dataclass(frozen=True)
 class EventMessageResponse:
     """Server-to-client response to an EventMessage."""
 

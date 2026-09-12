@@ -6,6 +6,7 @@ import msgpack
 
 from pylage.ENGINE.core.protocol import (
     EventMessage,
+    NavigateMessage,
     EventMessageResponse,
     ThemeUpdateMessage,
     TreeAddMessage,
@@ -19,6 +20,7 @@ from pylage.ENGINE.core.protocol import (
 
 _MESSAGE_TYPES = {
     'event': EventMessage,
+    'navigate': NavigateMessage,
     'response': EventMessageResponse,
     'update': UpdateMessage,
     'theme_update': ThemeUpdateMessage,
@@ -51,6 +53,20 @@ def decode_message(data: bytes | bytearray | memoryview) -> Any:
     if message_class is None:
         raise ValueError(f'Unknown protocol message type: {message_type!r}.')
 
+    return message_class.from_dict(decoded)
+
+
+def decode_json_message(data: str) -> Any:
+    if not isinstance(data, str):
+        raise TypeError('JSON protocol data must be a string.')
+    import json
+    decoded = json.loads(data)
+    if not isinstance(decoded, dict):
+        raise ValueError('JSON protocol message must decode to a dictionary.')
+    message_type = decoded.get('type')
+    message_class = _MESSAGE_TYPES.get(message_type)
+    if message_class is None:
+        raise ValueError(f'Unknown protocol message type: {message_type!r}.')
     return message_class.from_dict(decoded)
 
 

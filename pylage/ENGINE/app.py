@@ -5,12 +5,15 @@ import time
 import webbrowser
 
 from pylage.ENGINE.core.component import Component
+from pylage.UI.layout.column import column
+from pylage.ENGINE.routing import Router, RoutingRuntime
 from pylage.ENGINE.runtime import Runtime
 
 
 def run(
-    app: Component,
+    app: Component | None = None,
     *,
+    pages_dir: str | Path | None = None,
     title: str = "PyLage App",
     output: str | Path = "index.html",
     serve: bool = False,
@@ -27,9 +30,22 @@ def run(
     remains alive until interrupted with Ctrl+C.
     """
 
-    if not isinstance(app, Component):
+    if app is not None and pages_dir is not None:
         raise TypeError(
-            "pylage.run() expects a Component as the root app."
+            "pylage.run() accepts either app or pages_dir, not both."
+        )
+
+    routing_runtime: RoutingRuntime | None = None
+
+    if pages_dir is not None:
+        router = Router(pages_dir)
+        root = column()
+        routing_runtime = RoutingRuntime(router, root)
+        routing_runtime.navigate("/")
+        app = root
+    elif not isinstance(app, Component):
+        raise TypeError(
+            "pylage.run() expects a Component root or pages_dir."
         )
 
     if not serve:
@@ -49,12 +65,18 @@ def run(
 
         return output_path
 
+    navigation_handler = None
+    if routing_runtime is not None:
+        def navigation_handler(path: str) -> None:
+            routing_runtime.navigate(path)
+
     runtime = Runtime(
         app,
         title=title,
         output=output,
         host=host,
         port=port,
+        navigation_handler=navigation_handler,
     )
 
     output_path = runtime.render()
