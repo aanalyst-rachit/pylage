@@ -5,6 +5,7 @@ def run(*args, **kwargs):
     from pylage.ENGINE.app import run as _run
     return _run(*args, **kwargs)
 from pylage.ENGINE.core.state import State as state
+from pylage.ENGINE.core.reactive_list import ReactiveList as reactive_list
 from pylage.ENGINE.components.basic import Accordion as accordion, Audio as audio, Canvas as canvas, Carousel as carousel, Grid as grid, Icon as icon, Image as image, Option as option, ProgressBar as progress_bar, Skeleton as skeleton, Spinner as spinner, Video as video
 from pylage.UI.state import derived
 from pylage.UI.colors import colors
@@ -43,7 +44,7 @@ from pylage.UI.recipes.modal import modal
 __version__ = "1.0.2"
 
 __all__ = [
-    "run", "__version__", "colors", "style", "theme", "derived", "set_theme", "get_current_theme",
+    "run", "__version__", "state", "reactive_list", "colors", "style", "theme", "derived", "set_theme", "get_current_theme",
     "alert", "avatar", "badge", "button", "card", "dashboard", "dialog", "dashboard_card",
     "dashboard_grid", "dashboard_header", "dashboard_section", "dataframe", "data_list",
     "divider", "empty_state", "error_state", "heading", "loading_state", "loading_overlay",
