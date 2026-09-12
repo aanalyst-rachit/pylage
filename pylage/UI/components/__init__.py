@@ -40,6 +40,7 @@ from .datepicker import datepicker
 from .form import form
 from .form_field import form_field
 from .textarea import textarea
+from .cond import Cond, cond
 
 __all__ = [
     "alert", "avatar", "badge", "button", "card", "dashboard", "dialog",
@@ -48,5 +49,5 @@ __all__ = [
     "loading_state", "loading_overlay", "metric", "metric_grid", "stat_group",
     "table", "text", "trend", "toast", "navigation_item", "input", "select",
     "checkbox", "radio_group", "switch", "slider", "datepicker", "form",
-    "form_field", "textarea",
+    "form_field", "textarea", "Cond", "cond",
 ]
