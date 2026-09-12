@@ -50,6 +50,10 @@ class State:
         finally:
             self._notifying = False
 
+    def bind(self, callback: Subscriber) -> Callable[[], None]:
+        """Bind a callback to State changes and return an unsubscribe function."""
+        return self.subscribe(callback)
+
     def subscribe(self, callback: Subscriber) -> Callable[[], None]:
         if not callable(callback):
             raise TypeError("subscriber must be callable")

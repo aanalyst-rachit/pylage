@@ -392,7 +392,22 @@ def Tabs(*children, **props: Any) -> Component:
 
 
 def Checkbox(**props: Any) -> Component:
-    return component("Checkbox", **props)
+    checked = props.get("checked")
+    user_on_change = props.get("on_change")
+
+    checkbox = component("Checkbox", **props)
+
+    if isinstance(checked, State):
+        def update_state(payload: Any) -> None:
+            if isinstance(payload, dict) and "checked" in payload:
+                checked.set(bool(payload["checked"]))
+
+            if user_on_change is not None:
+                user_on_change(payload)
+
+        checkbox.events["change"] = update_state
+
+    return checkbox
 
 
 def RadioGroup(*children, **props: Any) -> Component:
@@ -482,7 +497,22 @@ def Switch(**props: Any) -> Component:
 
 
 def Select(*children, **props: Any) -> Component:
-    return component("Select", *children, **props)
+    value = props.get("value")
+    user_on_change = props.get("on_change")
+
+    select = component("Select", *children, **props)
+
+    if isinstance(value, State):
+        def update_state(payload: Any) -> None:
+            if isinstance(payload, dict) and "value" in payload:
+                value.set(payload["value"])
+
+            if user_on_change is not None:
+                user_on_change(payload)
+
+        select.events["change"] = update_state
+
+    return select
 
 
 def Option(text: Any, value: Any = None, **props: Any) -> Component:
