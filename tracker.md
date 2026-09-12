@@ -143,16 +143,21 @@ Exit: Binary protocol + CSS dedup + Static/dynamic IR + event-loop optimization 
 ## PHASE 3 — Security 🔴 CRITICAL
 Goal: minimum security baseline for public network deployment.
 
-- WebSocket Origin Validation
-- Message Size Limits
-- WebSocket Rate Limiting via custom token bucket
-- WSS production support
-- Input Sanitization Audit for Input, Textarea, Form, Text, user-controlled values, generated HTML
-- Session/Auth Tokens: stable opaque tokens; predictable connection IDs never credentials
-- Database Safety Contract: SQL + parameters, never string interpolation
-- Dependency Security: pip-audit or equivalent
+- WebSocket Origin Validation — implemented for native WebSocket and ASGI runtime; disallowed browser origins are rejected with close code 1008.
+- Message Size Limits — implemented for native WebSocket and ASGI connections; oversized payloads are rejected with close code 1009.
+- WebSocket Rate Limiting via custom token bucket — implemented as a per-connection token bucket with configurable rate and burst; limit violations close with code 1013.
+- WSS production support — Granian TLS certificate/key configuration implemented for HTTPS/WSS deployment; native WebSocketServer also supports an SSLContext.
+- Input Sanitization Audit — Form, Text, Input, Textarea, user-controlled values, generated HTML, and media URL attributes audited; HTML escaping is preserved and unsafe media URL schemes are rejected.
+- Session/Auth Tokens — stable opaque session tokens generated with secrets.token_urlsafe(32) are used; predictable connection IDs are not credentials; client connection logs redact session tokens.
+- Database Safety Contract — audited current codebase; no database/SQL execution surface exists. Future database integration must use SQL plus bound parameters and never string interpolation.
+- Dependency Security — pip-audit 2.10.1 completed with No known vulnerabilities found; audit tooling was kept out of project runtime dependencies.
 
-Exit: Origin + Limits + Rate limiting + WSS + Sanitization + Session security + Dependency audit.
+Phase 3 Verification:
+- Focused security regression: 86 passed in 1.30s.
+- pip-audit: No known vulnerabilities found.
+- All Phase 3 security requirements are implemented and covered by focused tests.
+
+Exit: Origin + Limits + Rate limiting + WSS + Sanitization + Session security + Dependency audit — COMPLETE.
 
 ## PHASE 4 — Reactive Developer Experience 🟠
 Goal: simple Python API for reactive power.

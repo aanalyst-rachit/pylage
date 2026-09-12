@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from html import escape
+import re
 from typing import Any
 
 from pylage.ENGINE.core.component import Component
@@ -10,6 +11,16 @@ from pylage.ENGINE.styling import ResponsiveStyle, Style
 from pylage.ENGINE.styling.collector import StyleCollector
 from pylage.ENGINE.styling.foundation import CSS_FOUNDATION
 from pylage.ENGINE.styling.global_theme import get_global_theme
+
+
+def _validate_url_attribute(value: Any) -> str:
+    """Validate URL-valued HTML attributes before escaping them."""
+    text = str(value)
+    probe = re.sub(r"[\x00-\x20]+", "", text)
+    match = re.match(r"^([A-Za-z][A-Za-z0-9+.-]*):", probe)
+    if match and match.group(1).lower() not in {"http", "https"}:
+        raise ValueError("unsafe URL scheme")
+    return text
 
 
 class HTMLRenderer:
@@ -321,6 +332,12 @@ class HTMLRenderer:
                     escape(html_name, quote=True)
                 )
                 continue
+
+            if (
+                component.type in {"Image", "Video", "Audio"}
+                and name == "src"
+            ):
+                value = _validate_url_attribute(value)
 
             attributes.append(
                 f'{escape(html_name, quote=True)}='

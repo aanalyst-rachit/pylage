@@ -189,13 +189,20 @@ CLIENT_RUNTIME = r"""
         return baseUrl + separator + "session=" + encodeURIComponent(token);
     }
 
+    function redactSessionToken(url) {
+        if (!url) {
+            return url;
+        }
+        return url.replace(/([?&]session=)[^&#]*/i, "$1[redacted]");
+    }
+
     function scheduleReconnect(baseUrl) {
         if (!baseUrl) {
             return;
         }
         setTimeout(function () {
             const reconnectUrl = sessionWebSocketUrl(baseUrl);
-            console.log("[PyLage] Attempting reconnect to:", reconnectUrl);
+            console.log("[PyLage] Attempting reconnect to:", redactSessionToken(reconnectUrl));
             connectWebSocket(baseUrl);
             reconnectDelay = Math.min(reconnectDelay * 1.5, maxReconnectDelay);
         }, reconnectDelay);
@@ -207,7 +214,7 @@ CLIENT_RUNTIME = r"""
         }
 
         const url = sessionWebSocketUrl(baseUrl);
-        console.log("[PyLage] Connecting:", url);
+        console.log("[PyLage] Connecting:", redactSessionToken(url));
 
         let socket;
 

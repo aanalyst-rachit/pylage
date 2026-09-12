@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+import ssl
 import threading
-from typing import Any, Optional
+import time
+from typing import Any, Optional, Sequence
 
 try:
     from websockets.asyncio.server import Server, ServerConnection, serve
@@ -37,6 +39,40 @@ from pylage.ENGINE.core.protocol import (
 )
 
 
+class _TokenBucket:
+    """Small per-connection token bucket for WebSocket message limiting."""
+
+    def __init__(self, rate: float, capacity: int) -> None:
+        if isinstance(rate, bool) or not isinstance(rate, (int, float)):
+            raise TypeError("message_rate_limit must be a positive number.")
+        if rate <= 0:
+            raise ValueError("message_rate_limit must be greater than 0.")
+        if isinstance(capacity, bool) or not isinstance(capacity, int):
+            raise TypeError("message_rate_burst must be a positive integer.")
+        if capacity <= 0:
+            raise ValueError("message_rate_burst must be greater than 0.")
+
+        self.rate = float(rate)
+        self.capacity = capacity
+        self.tokens = float(capacity)
+        self.updated_at = time.monotonic()
+
+    def consume(self) -> bool:
+        now = time.monotonic()
+        elapsed = max(0.0, now - self.updated_at)
+        self.updated_at = now
+        self.tokens = min(
+            float(self.capacity),
+            self.tokens + elapsed * self.rate,
+        )
+
+        if self.tokens < 1.0:
+            return False
+
+        self.tokens -= 1.0
+        return True
+
+
 class WebSocketServer:
     """WebSocket transport for PyLage events and state updates."""
 
@@ -47,6 +83,11 @@ class WebSocketServer:
         host: str = "127.0.0.1",
         port: int = 0,
         heartbeat_interval: float = 20.0,
+        allowed_origins: Sequence[str] | None = None,
+        max_message_size: int = 1024 * 1024,
+        message_rate_limit: float = 20.0,
+        message_rate_burst: int = 40,
+        ssl_context: ssl.SSLContext | None = None,
     ) -> None:
         if not isinstance(root, Component):
             raise TypeError(
@@ -56,6 +97,20 @@ class WebSocketServer:
         self.root = root
         self.host = host
         self.port = port
+
+        if isinstance(max_message_size, bool) or not isinstance(max_message_size, int):
+            raise TypeError("max_message_size must be a positive integer.")
+        if max_message_size <= 0:
+            raise ValueError("max_message_size must be greater than 0.")
+        self.max_message_size = max_message_size
+        self.allowed_origins = tuple(allowed_origins) if allowed_origins is not None else None
+        if ssl_context is not None and not isinstance(ssl_context, ssl.SSLContext):
+            raise TypeError("ssl_context must be an ssl.SSLContext or None.")
+        self.ssl_context = ssl_context
+
+        self._validate_message_rate_limit(message_rate_limit, message_rate_burst)
+        self.message_rate_limit = float(message_rate_limit)
+        self.message_rate_burst = message_rate_burst
 
         if heartbeat_interval <= 0:
             raise ValueError("heartbeat_interval must be greater than 0.")
@@ -104,6 +159,10 @@ class WebSocketServer:
             self._on_tree_mutation,
         )
 
+    @staticmethod
+    def _validate_message_rate_limit(rate: float, burst: int) -> None:
+        _TokenBucket(rate, burst)
+
     def attach_external_loop(self, loop: asyncio.AbstractEventLoop) -> None:
         """Attach an externally owned event loop, such as an ASGI loop."""
         if not isinstance(loop, asyncio.AbstractEventLoop):
@@ -145,7 +204,8 @@ class WebSocketServer:
         elif host == "::":
             host = "[::1]"
 
-        return f"ws://{host}:{self.port}/"
+        scheme = "wss" if self.ssl_context is not None else "ws"
+        return f"{scheme}://{host}:{self.port}/"
 
     def _schedule_scheduler_flush(self) -> None:
         """Schedule one coalesced scheduler flush on the WebSocket loop."""
@@ -854,8 +914,17 @@ class WebSocketServer:
             self._connections.add(connection)
             self._connection_prop_meta[connection] = set()
 
+        rate_limiter = _TokenBucket(
+            self.message_rate_limit,
+            self.message_rate_burst,
+        )
+
         try:
             async for raw_message in connection:
+                if not rate_limiter.consume():
+                    await connection.close(code=1013, reason="message rate limit exceeded")
+                    break
+
                 is_binary = isinstance(raw_message, (bytes, bytearray, memoryview))
                 try:
                     if is_binary:
@@ -897,6 +966,9 @@ class WebSocketServer:
                 self._handle,
                 self.host,
                 self.port,
+                origins=(tuple(self.allowed_origins) + (None,)) if self.allowed_origins is not None else None,
+                max_size=self.max_message_size,
+                ssl=self.ssl_context,
             )
 
             socket = next(iter(self._server.sockets))

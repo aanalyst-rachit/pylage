@@ -36,3 +36,17 @@ def test_video_supports_props():
     assert 'class="hero-video"' in html
     assert 'title="Demo"' in html
     assert "controls" in html
+import pytest
+
+def test_video_rejects_dangerous_src_scheme():
+    with pytest.raises(ValueError, match="unsafe URL scheme"):
+        render(Video(src="javascript:alert(1)"))
+
+def test_video_rejects_dangerous_src_with_leading_control_whitespace():
+    with pytest.raises(ValueError, match="unsafe URL scheme"):
+        render(Video(src=chr(9) + chr(10) + "javascript:alert(1)"))
+
+def test_video_allows_safe_src_urls():
+    for src in ("movie.mp4", "/assets/movie.mp4", "//cdn.example/movie.mp4", "https://example.com/movie.mp4"):
+        html = render(Video(src=src))
+        assert ("src=\"" + src + "\"") in html

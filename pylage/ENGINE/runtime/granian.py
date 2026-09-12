@@ -37,13 +37,24 @@ def load_factory(path: str) -> Callable[[], Any]:
 class GranianRuntime:
     """Manage a PyLage ASGI application through Granian."""
 
-    def __init__(self, factory_path: str, *, host: str = "127.0.0.1", port: int = 0, loop: str | None = None) -> None:
+    def __init__(self, factory_path: str, *, host: str = "127.0.0.1", port: int = 0, loop: str | None = None, ssl_certificate: str | None = None, ssl_keyfile: str | None = None, ssl_keyfile_password: str | None = None) -> None:
         if not isinstance(factory_path, str) or not factory_path:
             raise ValueError("factory_path must be a non-empty string.")
         self.factory_path = factory_path
         self.host = host
         self.port = port
         self.loop = loop
+        if (ssl_certificate is None) != (ssl_keyfile is None):
+            raise ValueError("ssl_certificate and ssl_keyfile must be provided together.")
+        if ssl_certificate is not None and not isinstance(ssl_certificate, str):
+            raise TypeError("ssl_certificate must be a string path or None.")
+        if ssl_keyfile is not None and not isinstance(ssl_keyfile, str):
+            raise TypeError("ssl_keyfile must be a string path or None.")
+        if ssl_keyfile_password is not None and not isinstance(ssl_keyfile_password, str):
+            raise TypeError("ssl_keyfile_password must be a string or None.")
+        self.ssl_certificate = ssl_certificate
+        self.ssl_keyfile = ssl_keyfile
+        self.ssl_keyfile_password = ssl_keyfile_password
         self._process: Any = None
         self._url: str | None = None
 
@@ -85,6 +96,11 @@ class GranianRuntime:
         ]
         if self.loop is not None:
             command.extend(["--loop", self.loop])
+        if self.ssl_certificate is not None:
+            command.extend(["--ssl-certificate", self.ssl_certificate])
+            command.extend(["--ssl-keyfile", self.ssl_keyfile])
+            if self.ssl_keyfile_password is not None:
+                command.extend(["--ssl-keyfile-password", self.ssl_keyfile_password])
 
         process = subprocess.Popen(
             command,
@@ -93,7 +109,8 @@ class GranianRuntime:
             stderr=subprocess.DEVNULL,
         )
 
-        url = f"http://{self.host}:{port}/"
+        scheme = "https" if self.ssl_certificate is not None else "http"
+        url = f"{scheme}://{self.host}:{port}/"
         deadline = time.monotonic() + 10.0
 
         try:

@@ -22,9 +22,21 @@ from pylage.ENGINE.runtime.websocket import WebSocketServer
 class _ASGIConnection:
     """Adapter exposing an ASGI WebSocket as the existing connection API."""
 
-    def __init__(self, receive: Any, send: Any) -> None:
+    def __init__(
+        self,
+        receive: Any,
+        send: Any,
+        *,
+        max_message_size: int = 1024 * 1024,
+    ) -> None:
+        if isinstance(max_message_size, bool) or not isinstance(max_message_size, int):
+            raise TypeError("max_message_size must be a positive integer.")
+        if max_message_size <= 0:
+            raise ValueError("max_message_size must be greater than 0.")
+
         self._receive = receive
         self._send = send
+        self._max_message_size = max_message_size
         self._closed = False
 
     def __aiter__(self) -> "_ASGIConnection":
@@ -38,9 +50,18 @@ class _ASGIConnection:
             if message_type == "websocket.receive":
                 text = message.get("text")
                 if text is not None:
+                    if len(text.encode("utf-8")) > self._max_message_size:
+                        self._closed = True
+                        await self._send({"type": "websocket.close", "code": 1009})
+                        raise StopAsyncIteration
                     return text
+
                 data = message.get("bytes")
                 if data is not None:
+                    if len(data) > self._max_message_size:
+                        self._closed = True
+                        await self._send({"type": "websocket.close", "code": 1009})
+                        raise StopAsyncIteration
                     return data
                 continue
 
@@ -72,6 +93,10 @@ class ASGIApp:
         filename: str = "index.html",
         document: str | None = None,
         session_store: SessionStore | None = None,
+        allowed_origins: Sequence[str] | None = None,
+        max_message_size: int = 1024 * 1024,
+        message_rate_limit: float = 20.0,
+        message_rate_burst: int = 40,
     ) -> None:
         if root is None and app_factory is None:
             raise TypeError("ASGIApp expects a Component root or app_factory.")
@@ -85,12 +110,36 @@ class ASGIApp:
         if app_factory is not None and not callable(app_factory):
             raise TypeError("ASGIApp app_factory must be callable.")
 
+        if isinstance(max_message_size, bool) or not isinstance(max_message_size, int):
+            raise TypeError("max_message_size must be a positive integer.")
+        if max_message_size <= 0:
+            raise ValueError("max_message_size must be greater than 0.")
+
+        self.message_rate_limit = message_rate_limit
+        self.message_rate_burst = message_rate_burst
+        WebSocketServer._validate_message_rate_limit(
+            message_rate_limit,
+            message_rate_burst,
+        )
+
         self.root = root
         self.app_factory = app_factory
         self.directory = Path(directory).resolve() if directory is not None else None
         self.filename = Path(filename).name
         self.document = document
-        self.websocket = WebSocketServer(root) if root is not None else None
+        self.allowed_origins = tuple(allowed_origins) if allowed_origins is not None else None
+        self.max_message_size = max_message_size
+        self.websocket = (
+            WebSocketServer(
+                root,
+                allowed_origins=self.allowed_origins,
+                max_message_size=max_message_size,
+                message_rate_limit=message_rate_limit,
+                message_rate_burst=message_rate_burst,
+            )
+            if root is not None
+            else None
+        )
         self._sessions: set[WebSocketServer] = set()
         self.session_store = session_store or InMemorySessionStore()
         self._loop: Any = None
@@ -198,8 +247,23 @@ class ASGIApp:
         await send({"type": "http.response.body", "body": body})
 
     async def _websocket(self, scope: dict[str, Any], receive: Any, send: Any) -> None:
+        if self.allowed_origins is not None:
+            origin = None
+            for name, value in scope.get("headers", []):
+                if name.lower() == b"origin":
+                    origin = value.decode("latin-1")
+                    break
+
+            if origin is not None and origin not in self.allowed_origins:
+                await send({"type": "websocket.close", "code": 1008})
+                return
+
         await send({"type": "websocket.accept"})
-        connection = _ASGIConnection(receive, send)
+        connection = _ASGIConnection(
+            receive,
+            send,
+            max_message_size=self.max_message_size,
+        )
 
         if self.app_factory is None:
             if self.websocket is None:
@@ -218,7 +282,13 @@ class ASGIApp:
             if not isinstance(root, Component):
                 raise TypeError("ASGIApp app_factory must return a Component.")
 
-            session = WebSocketServer(root)
+            session = WebSocketServer(
+                root,
+                allowed_origins=self.allowed_origins,
+                max_message_size=self.max_message_size,
+                message_rate_limit=self.message_rate_limit,
+                message_rate_burst=self.message_rate_burst,
+            )
             token = secrets.token_urlsafe(32)
             while self.session_store.get(token) is not None:
                 token = secrets.token_urlsafe(32)

@@ -31,6 +31,17 @@ def test_runtime_contains_session_resume_url_support():
     assert 'session=" + encodeURIComponent(token)' in runtime
 
 
+def test_runtime_redacts_session_token_from_connection_logs():
+    runtime = get_client_runtime()
+
+    assert "function redactSessionToken(url)" in runtime
+    assert 'return url.replace(/([?&]session=)[^&#]*/i, "$1[redacted]")' in runtime
+    assert 'console.log("[PyLage] Attempting reconnect to:", redactSessionToken(reconnectUrl));' in runtime
+    assert 'console.log("[PyLage] Connecting:", redactSessionToken(url));' in runtime
+    assert 'console.log("[PyLage] Attempting reconnect to:", reconnectUrl);' not in runtime
+    assert 'console.log("[PyLage] Connecting:", url);' not in runtime
+
+
 def test_runtime_stores_session_token_from_server_message():
     runtime = get_client_runtime()
 

@@ -1,4 +1,6 @@
 import inspect
+
+import pytest
 from unittest.mock import patch
 
 from pylage.ENGINE.runtime import GranianRuntime
@@ -76,3 +78,80 @@ def test_granian_runtime_lifecycle_contract():
     assert hasattr(GranianRuntime, "stop")
     assert hasattr(GranianRuntime, "url")
     assert hasattr(GranianRuntime, "running")
+
+
+def test_granian_runtime_tls_constructor_contract():
+    runtime = GranianRuntime(
+        "test.foundation.granian_factory_smoke:create_test_app",
+        ssl_certificate="server.crt",
+        ssl_keyfile="server.key",
+        ssl_keyfile_password="secret",
+    )
+
+    assert runtime.ssl_certificate == "server.crt"
+    assert runtime.ssl_keyfile == "server.key"
+    assert runtime.ssl_keyfile_password == "secret"
+
+
+def test_granian_runtime_tls_requires_certificate_and_key():
+    factory = "test.foundation.granian_factory_smoke:create_test_app"
+
+    with pytest.raises(ValueError, match="must be provided together"):
+        GranianRuntime(factory, ssl_certificate="server.crt")
+
+    with pytest.raises(ValueError, match="must be provided together"):
+        GranianRuntime(factory, ssl_keyfile="server.key")
+
+
+def test_granian_runtime_tls_command_contract():
+    class FakeProcess:
+        returncode = None
+
+        def poll(self):
+            return None
+
+        def terminate(self):
+            pass
+
+        def wait(self, timeout=None):
+            pass
+
+    class FakeResponse:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc_value, traceback):
+            return False
+
+    captured = {}
+
+    def fake_popen(command, **kwargs):
+        captured["command"] = command
+        return FakeProcess()
+
+    runtime = GranianRuntime(
+        "test.foundation.granian_factory_smoke:create_test_app",
+        ssl_certificate="server.crt",
+        ssl_keyfile="server.key",
+        ssl_keyfile_password="secret",
+    )
+
+    with patch("pylage.ENGINE.runtime.granian.subprocess.Popen", side_effect=fake_popen), patch(
+        "pylage.ENGINE.runtime.granian.urlopen",
+        return_value=FakeResponse(),
+    ):
+        assert runtime.start() == "https://127.0.0.1:0/" or runtime.url.startswith("https://127.0.0.1:")
+
+    command = captured["command"]
+    assert command[-6:] == [
+        "--ssl-certificate",
+        "server.crt",
+        "--ssl-keyfile",
+        "server.key",
+        "--ssl-keyfile-password",
+        "secret",
+    ]
+    assert runtime.url.startswith("https://127.0.0.1:")
+    runtime.stop()

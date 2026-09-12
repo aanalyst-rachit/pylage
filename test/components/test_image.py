@@ -35,3 +35,17 @@ def test_image_supports_props():
     assert 'alt="Avatar"' in html
     assert 'class="profile-image"' in html
     assert 'title="Profile"' in html
+import pytest
+
+def test_image_rejects_dangerous_src_scheme():
+    with pytest.raises(ValueError, match="unsafe URL scheme"):
+        render(Image(src="javascript:alert(1)"))
+
+def test_image_rejects_dangerous_src_with_leading_control_whitespace():
+    with pytest.raises(ValueError, match="unsafe URL scheme"):
+        render(Image(src=chr(9) + chr(10) + "javascript:alert(1)"))
+
+def test_image_allows_safe_src_urls():
+    for src in ("photo.jpg", "/assets/photo.jpg", "//cdn.example/photo.jpg", "https://example.com/photo.jpg"):
+        html = render(Image(src=src))
+        assert ('src="' + src + '"') in html

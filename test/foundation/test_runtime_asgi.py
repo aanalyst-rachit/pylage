@@ -648,3 +648,242 @@ def test_asgi_expired_session_is_detached_and_removed():
                 asgi.websocket.detach_external_loop()
 
     run(scenario())
+
+
+
+def test_asgi_websocket_allows_configured_origin():
+    app = ASGIApp(
+        pl.column(pl.button('Test')),
+        allowed_origins=('https://example.com',),
+    )
+    messages = []
+
+    async def receive():
+        return {'type': 'websocket.disconnect'}
+
+    async def send(message):
+        messages.append(message)
+
+    run(
+        app._websocket(
+            {
+                'type': 'websocket',
+                'path': '/',
+                'headers': [(b'origin', b'https://example.com')],
+            },
+            receive,
+            send,
+        )
+    )
+
+    assert messages[0] == {'type': 'websocket.accept'}
+
+
+def test_asgi_websocket_rejects_disallowed_origin_before_accept():
+    app = ASGIApp(
+        pl.column(pl.button('Test')),
+        allowed_origins=('https://example.com',),
+    )
+    messages = []
+
+    async def receive():
+        return {'type': 'websocket.disconnect'}
+
+    async def send(message):
+        messages.append(message)
+
+    run(
+        app._websocket(
+            {
+                'type': 'websocket',
+                'path': '/',
+                'headers': [(b'origin', b'https://evil.example')],
+            },
+            receive,
+            send,
+        )
+    )
+
+    assert messages
+    assert messages[0]['type'] == 'websocket.close'
+    assert messages[0]['code'] == 1008
+    assert not any(message.get('type') == 'websocket.accept' for message in messages)
+
+
+def test_asgi_websocket_allows_missing_origin_for_non_browser_clients():
+    app = ASGIApp(
+        pl.column(pl.button('Test')),
+        allowed_origins=('https://example.com',),
+    )
+    messages = []
+
+    async def receive():
+        return {'type': 'websocket.disconnect'}
+
+    async def send(message):
+        messages.append(message)
+
+    run(
+        app._websocket(
+            {'type': 'websocket', 'path': '/', 'headers': []},
+            receive,
+            send,
+        )
+    )
+
+    assert messages[0] == {'type': 'websocket.accept'}
+
+
+def test_asgi_websocket_enforces_message_size_limit():
+    app = ASGIApp(
+        pl.column(pl.button('Test')),
+        max_message_size=8,
+    )
+    messages = []
+    received = False
+
+    async def receive():
+        nonlocal received
+        if not received:
+            received = True
+            return {'type': 'websocket.receive', 'text': '123456789'}
+        return {'type': 'websocket.disconnect'}
+
+    async def send(message):
+        messages.append(message)
+
+    run(
+        app._websocket(
+            {'type': 'websocket', 'path': '/', 'headers': []},
+            receive,
+            send,
+        )
+    )
+
+    assert messages[0] == {'type': 'websocket.accept'}
+    assert any(
+        message.get('type') == 'websocket.close'
+        and message.get('code') == 1009
+        for message in messages
+    )
+
+
+def test_asgi_websocket_accepts_message_at_size_limit():
+    app = ASGIApp(
+        pl.column(pl.button('Test')),
+        max_message_size=8,
+    )
+    messages = []
+
+    async def receive():
+        return {'type': 'websocket.disconnect'}
+
+    async def send(message):
+        messages.append(message)
+
+    connection = app._websocket
+
+    async def scenario():
+        await connection(
+            {'type': 'websocket', 'path': '/', 'headers': []},
+            receive,
+            send,
+        )
+
+    run(scenario())
+
+    assert messages[0] == {'type': 'websocket.accept'}
+
+
+def test_asgi_connection_rejects_oversized_binary_message():
+    from pylage.ENGINE.runtime.asgi import _ASGIConnection
+
+    messages = []
+
+    async def receive():
+        return {'type': 'websocket.receive', 'bytes': b'123456789'}
+
+    async def send(message):
+        messages.append(message)
+
+    connection = _ASGIConnection(receive, send, max_message_size=8)
+
+    async def scenario():
+        await connection.__anext__()
+
+    import pytest
+
+    with pytest.raises(StopAsyncIteration):
+        run(scenario())
+
+    assert messages == [
+        {'type': 'websocket.close', 'code': 1009},
+    ]
+
+def test_asgi_websocket_rate_limit_configuration():
+    app = ASGIApp(
+        pl.column(pl.button('Test')),
+        message_rate_limit=7.5,
+        message_rate_burst=9,
+    )
+
+    assert app.message_rate_limit == 7.5
+    assert app.message_rate_burst == 9
+    assert app.websocket.message_rate_limit == 7.5
+    assert app.websocket.message_rate_burst == 9
+
+
+def test_asgi_websocket_rate_limit_configuration_reaches_factory_session():
+    def factory():
+        return pl.column(pl.button('Test'))
+
+    app = ASGIApp(
+        app_factory=factory,
+        message_rate_limit=6.0,
+        message_rate_burst=8,
+    )
+    messages = []
+
+    async def receive():
+        return {'type': 'websocket.disconnect'}
+
+    async def send(message):
+        messages.append(message)
+
+    run(
+        app._websocket(
+            {
+                'type': 'websocket',
+                'path': '/',
+                'headers': [],
+                'query_string': b'',
+            },
+            receive,
+            send,
+        )
+    )
+
+    assert messages[0] == {'type': 'websocket.accept'}
+    assert len(app._sessions) == 1
+
+    session = next(iter(app._sessions))
+    assert session.message_rate_limit == 6.0
+    assert session.message_rate_burst == 8
+
+
+def test_asgi_websocket_rate_limit_configuration_validation():
+    import pytest
+
+    app = pl.column(pl.button('Test'))
+
+    with pytest.raises(ValueError):
+        ASGIApp(app, message_rate_limit=0)
+
+    with pytest.raises(ValueError):
+        ASGIApp(app, message_rate_burst=0)
+
+    with pytest.raises(TypeError):
+        ASGIApp(app, message_rate_limit=True)
+
+    with pytest.raises(TypeError):
+        ASGIApp(app, message_rate_burst=True)
