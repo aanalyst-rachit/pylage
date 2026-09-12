@@ -4,6 +4,7 @@ from html import escape
 from typing import Any
 
 from pylage.ENGINE.core.component import Component
+from pylage.ENGINE.core.ir import compile_static_dynamic_template
 from pylage.ENGINE.core.state import State
 from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.styling import ResponsiveStyle, Style
@@ -25,6 +26,7 @@ class HTMLRenderer:
         self._styles = StyleCollector()
         self._responsive_css: list[str] = []
         self._pseudo_css: list[str] = []
+        self._static_dynamic_template: dict[str, Any] | None = None
         self._register_builtin_renderers()
 
     @property
@@ -121,6 +123,7 @@ class HTMLRenderer:
                     ' data-pylage-theme="true"',
                 )
 
+        self._static_dynamic_template = compile_static_dynamic_template(component)
         html = self._render_component(component)
 
         if self._pseudo_css:

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 from typing import Any
+from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.core.state import State
 
@@ -133,6 +134,39 @@ class IRNode:
             f"children={self.children!r}"
             ")"
         )
+
+
+def component_to_ir(component: Component) -> IRNode:
+    """Convert a live Component tree into compiler-layer IR.
+
+    Runtime State objects are preserved so static/dynamic analysis can
+    identify reactive bindings without going through JSON snapshots.
+    """
+
+    if not isinstance(component, Component):
+        raise TypeError("component_to_ir expects a Component.")
+
+    return IRNode(
+        node_id=component.id,
+        node_type="component",
+        component_id=component.type,
+        props=component.props,
+        children=[
+            component_to_ir(child)
+            for child in component.children
+            if isinstance(child, Component)
+        ],
+    )
+
+
+def compile_static_dynamic_template(component: Component) -> dict[str, Any]:
+    """Compile a live Component tree into a static/dynamic template."""
+
+    if not isinstance(component, Component):
+        raise TypeError("compile_static_dynamic_template expects a Component.")
+
+    ir = component_to_ir(component)
+    return build_static_dynamic_template(ir)
 
 
 def snapshot_to_ir(snapshot: dict[str, Any]) -> IRNode:
@@ -374,6 +408,151 @@ def analyze_ir_dependencies(node: IRNode) -> dict[str, Any]:
         "node_ids": node_ids,
         "dependencies": dependencies,
     }
+
+def _state_paths(value: Any, path: list[Any] | None = None) -> list[list[Any]]:
+    """Return paths to every runtime State object contained in a value."""
+
+    current_path = [] if path is None else path
+
+    if isinstance(value, State):
+        return [current_path]
+
+    if isinstance(value, dict):
+        paths: list[list[Any]] = []
+        for key, item in value.items():
+            paths.extend(
+                _state_paths(item, current_path + [key])
+            )
+        return paths
+
+    if isinstance(value, (list, tuple)):
+        paths = []
+        for index, item in enumerate(value):
+            paths.extend(
+                _state_paths(item, current_path + [index])
+            )
+        return paths
+
+    if isinstance(value, set):
+        paths = []
+        for item in value:
+            paths.extend(
+                _state_paths(item, current_path)
+            )
+        return paths
+
+    return []
+
+
+def _contains_state(value: Any) -> bool:
+    """Return whether a value contains a runtime State object."""
+
+    return bool(_state_paths(value))
+
+
+def analyze_static_dynamic(node: IRNode) -> dict[str, Any]:
+    """Classify IR props as static or dynamic without mutating the tree."""
+
+    if not isinstance(node, IRNode):
+        raise TypeError("node must be an IRNode")
+
+    static_props: list[str] = []
+    dynamic_props: list[str] = []
+    dynamic_bindings: list[dict[str, Any]] = []
+
+    def visit(current: IRNode) -> None:
+        definition = registry.get(current.component_id)
+
+        for prop_name, value in current.props.items():
+            if definition is None or definition.props is None:
+                reactive = True
+            else:
+                prop_definition = definition.props.get(prop_name)
+                reactive = (
+                    True
+                    if prop_definition is None
+                    else prop_definition.reactive
+                )
+
+            state_paths = _state_paths(value) if reactive else []
+
+            if state_paths:
+                dynamic_props.append(prop_name)
+                for path in state_paths:
+                    binding = {
+                        "node_id": current.node_id,
+                        "prop_name": prop_name,
+                    }
+                    if path:
+                        binding["path"] = path
+                    dynamic_bindings.append(binding)
+            else:
+                static_props.append(prop_name)
+
+        for child in current.children:
+            visit(child)
+
+    visit(node)
+
+    return {
+        "static_props": static_props,
+        "dynamic_props": dynamic_props,
+        "dynamic_bindings": dynamic_bindings,
+    }
+
+
+def build_static_dynamic_template(node: IRNode) -> dict[str, Any]:
+    """Build a static structure with explicit dynamic bindings."""
+
+    if not isinstance(node, IRNode):
+        raise TypeError("node must be an IRNode")
+
+    definition = registry.get(node.component_id)
+
+    static_props: dict[str, Any] = {}
+    dynamic_bindings: list[dict[str, Any]] = []
+
+    for prop_name, value in node.props.items():
+        if definition is None or definition.props is None:
+            reactive = True
+        else:
+            prop_definition = definition.props.get(prop_name)
+            reactive = (
+                True
+                if prop_definition is None
+                else prop_definition.reactive
+            )
+
+        state_paths = _state_paths(value) if reactive else []
+
+        if state_paths:
+            for path in state_paths:
+                binding = {
+                    "node_id": node.node_id,
+                    "prop_name": prop_name,
+                }
+                if path:
+                    binding["path"] = path
+                dynamic_bindings.append(binding)
+            continue
+
+        if isinstance(value, State):
+            static_props[prop_name] = _copy_ir_value(value.value)
+        else:
+            static_props[prop_name] = _copy_ir_value(value)
+
+    return {
+        "node_id": node.node_id,
+        "node_type": node.node_type,
+        "component_id": node.component_id,
+        "static_props": static_props,
+        "dynamic_bindings": dynamic_bindings,
+        "children": [
+            build_static_dynamic_template(child)
+            for child in node.children
+        ],
+    }
+
 
 def plan_patches(
     previous: dict[str, Any],

@@ -1564,3 +1564,663 @@ def test_constant_fold_preserves_state_in_nested_expression():
     assert result[0] == "mul"
     assert result[1] == 5
     assert result[2] is state
+
+
+
+def test_component_to_ir_preserves_component_structure():
+    from pylage.ENGINE.core.component import Component
+    from pylage.ENGINE.core.ir import component_to_ir
+
+    child = Component(
+        type="Button",
+        id="child",
+        props={"text": "Hello"},
+    )
+    root = Component(
+        type="Column",
+        id="root",
+        props={"class_name": "dashboard"},
+        children=[child],
+    )
+
+    node = component_to_ir(root)
+
+    assert node.node_id == "root"
+    assert node.component_id == "Column"
+    assert node.props == {"class_name": "dashboard"}
+    assert node.children[0].node_id == "child"
+    assert node.children[0].component_id == "Button"
+
+
+def test_component_to_ir_preserves_state_identity():
+    from pylage.ENGINE.core.component import Component
+    from pylage.ENGINE.core.ir import component_to_ir
+    from pylage.ENGINE.core.state import State
+
+    state = State("Hello")
+    component = Component(
+        type="Button",
+        id="root",
+        props={"text": state},
+    )
+
+    node = component_to_ir(component)
+
+    assert node.props["text"] is state
+
+
+def test_component_to_ir_ignores_non_component_children():
+    from pylage.ENGINE.core.component import Component
+    from pylage.ENGINE.core.ir import component_to_ir
+
+    component = Component(
+        type="Column",
+        id="root",
+        children=["text", None, Component(type="Button", id="child")],
+    )
+
+    node = component_to_ir(component)
+
+    assert [child.node_id for child in node.children] == ["child"]
+
+
+def test_component_to_ir_rejects_non_component():
+    from pylage.ENGINE.core.ir import component_to_ir
+
+    with pytest.raises(TypeError):
+        component_to_ir("invalid")
+
+
+def test_compile_static_dynamic_template_compiles_live_component_tree():
+    from pylage.ENGINE.core.component import Component
+    from pylage.ENGINE.core.ir import compile_static_dynamic_template
+    from pylage.ENGINE.core.state import State
+
+    state = State("Hello")
+    root = Component(
+        type="Column",
+        id="root",
+        props={"class_name": "dashboard"},
+        children=[
+            Component(
+                type="Button",
+                id="button",
+                props={"text": state, "title": "Static"},
+            )
+        ],
+    )
+
+    template = compile_static_dynamic_template(root)
+
+    assert template["node_id"] == "root"
+    assert template["component_id"] == "Column"
+    assert template["static_props"] == {"class_name": "dashboard"}
+    assert template["children"][0]["static_props"] == {"title": "Static"}
+    assert template["children"][0]["dynamic_bindings"] == [
+        {
+            "node_id": "button",
+            "prop_name": "text",
+        }
+    ]
+
+
+def test_compile_static_dynamic_template_rejects_non_component():
+    from pylage.ENGINE.core.ir import compile_static_dynamic_template
+
+    with pytest.raises(TypeError):
+        compile_static_dynamic_template("invalid")
+
+
+def test_compile_static_dynamic_template_matches_current_component_identity():
+    from pylage.ENGINE.core.component import Component
+    from pylage.ENGINE.core.ir import compile_static_dynamic_template
+    from pylage.ENGINE.core.renderer import HTMLRenderer
+    from pylage.ENGINE.core.state import State
+
+    state = State("Hello")
+    component = Component(
+        type="Button",
+        id="root",
+        props={
+            "text": state,
+            "title": "Static title",
+        },
+    )
+
+    html = HTMLRenderer().render(component)
+    template = compile_static_dynamic_template(component)
+
+    assert 'data-pylage-id="root"' in html
+    assert "Hello" in html
+    assert template["node_id"] == "root"
+    assert template["component_id"] == "Button"
+    assert template["static_props"] == {"title": "Static title"}
+    assert template["dynamic_bindings"] == [
+        {
+            "node_id": "root",
+            "prop_name": "text",
+        }
+    ]
+
+
+def test_compile_static_dynamic_template_preserves_nested_component_identity():
+    from pylage.ENGINE.core.component import Component
+    from pylage.ENGINE.core.ir import compile_static_dynamic_template
+    from pylage.ENGINE.core.renderer import HTMLRenderer
+    from pylage.ENGINE.core.state import State
+
+    child = Component(
+        type="Button",
+        id="child",
+        props={"text": State("Child")},
+    )
+    root = Component(
+        type="Column",
+        id="root",
+        children=[child],
+    )
+
+    html = HTMLRenderer().render(root)
+    template = compile_static_dynamic_template(root)
+
+    assert 'data-pylage-id="root"' in html
+    assert 'data-pylage-id="child"' in html
+    assert template["node_id"] == "root"
+    assert template["children"][0]["node_id"] == "child"
+    assert template["children"][0]["dynamic_bindings"] == [
+        {
+            "node_id": "child",
+            "prop_name": "text",
+        }
+    ]
+
+def test_analyze_static_dynamic_marks_constant_props_static():
+    from pylage.ENGINE.core.ir import IRNode, analyze_static_dynamic
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "text": "Hello",
+            "title": "Static title",
+        },
+    )
+
+    result = analyze_static_dynamic(node)
+
+    assert result["static_props"] == ["text", "title"]
+    assert result["dynamic_props"] == []
+    assert result["dynamic_bindings"] == []
+
+
+def test_analyze_static_dynamic_marks_state_props_dynamic():
+    from pylage.ENGINE.core.ir import IRNode, analyze_static_dynamic
+    from pylage.ENGINE.core.state import State
+
+    state = State("Hello")
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "text": state,
+            "title": "Static title",
+        },
+    )
+
+    result = analyze_static_dynamic(node)
+
+    assert result["static_props"] == ["title"]
+    assert result["dynamic_props"] == ["text"]
+    assert result["dynamic_bindings"] == [
+        {
+            "node_id": "root",
+            "prop_name": "text",
+        }
+    ]
+
+
+def test_analyze_static_dynamic_respects_non_reactive_contract():
+    from pylage.ENGINE.core.ir import IRNode, analyze_static_dynamic
+    from pylage.ENGINE.core.registry import PropDefinition, registry
+    from pylage.ENGINE.core.state import State
+
+    registry.register(
+        "StaticButton",
+        "button",
+        props={
+            "text": PropDefinition("text", reactive=False),
+        },
+    )
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="StaticButton",
+        props={
+            "text": State("Hello"),
+        },
+    )
+
+    result = analyze_static_dynamic(node)
+
+    assert result["static_props"] == ["text"]
+    assert result["dynamic_props"] == []
+    assert result["dynamic_bindings"] == []
+
+
+def test_analyze_static_dynamic_handles_nested_nodes():
+    from pylage.ENGINE.core.ir import IRNode, analyze_static_dynamic
+    from pylage.ENGINE.core.state import State
+
+    state = State("World")
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        props={
+            "class_name": "dashboard",
+        },
+        children=[
+            IRNode(
+                node_id="child",
+                node_type="component",
+                component_id="Button",
+                props={
+                    "text": state,
+                },
+            )
+        ],
+    )
+
+    result = analyze_static_dynamic(node)
+
+    assert result["static_props"] == ["class_name"]
+    assert result["dynamic_props"] == ["text"]
+    assert result["dynamic_bindings"] == [
+        {
+            "node_id": "child",
+            "prop_name": "text",
+        }
+    ]
+
+
+def test_analyze_static_dynamic_rejects_non_ir_node():
+    from pylage.ENGINE.core.ir import analyze_static_dynamic
+
+    with pytest.raises(TypeError):
+        analyze_static_dynamic("invalid")
+
+
+def test_analyze_static_dynamic_does_not_mutate_ir():
+    from pylage.ENGINE.core.ir import IRNode, analyze_static_dynamic
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "text": "Hello",
+        },
+    )
+
+    before = dict(node.props)
+
+    analyze_static_dynamic(node)
+
+    assert node.props == before
+
+
+def test_build_static_dynamic_template_separates_structure_and_bindings():
+    from pylage.ENGINE.core.ir import (
+        IRNode,
+        build_static_dynamic_template,
+    )
+    from pylage.ENGINE.core.state import State
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "text": State("Hello"),
+            "title": "Static title",
+        },
+    )
+
+    template = build_static_dynamic_template(node)
+
+    assert template["node_id"] == "root"
+    assert template["component_id"] == "Button"
+    assert template["static_props"] == {
+        "title": "Static title",
+    }
+    assert template["dynamic_bindings"] == [
+        {
+            "node_id": "root",
+            "prop_name": "text",
+        }
+    ]
+
+
+def test_build_static_dynamic_template_preserves_nested_structure():
+    from pylage.ENGINE.core.ir import (
+        IRNode,
+        build_static_dynamic_template,
+    )
+    from pylage.ENGINE.core.state import State
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Column",
+        props={
+            "class_name": "dashboard",
+        },
+        children=[
+            IRNode(
+                node_id="child",
+                node_type="component",
+                component_id="Button",
+                props={
+                    "text": State("Hello"),
+                },
+            )
+        ],
+    )
+
+    template = build_static_dynamic_template(node)
+
+    assert template["node_id"] == "root"
+    assert template["children"][0]["node_id"] == "child"
+    assert template["children"][0]["component_id"] == "Button"
+    assert template["children"][0]["dynamic_bindings"] == [
+        {
+            "node_id": "child",
+            "prop_name": "text",
+        }
+    ]
+
+
+def test_build_static_dynamic_template_does_not_expose_state_objects():
+    from pylage.ENGINE.core.ir import (
+        IRNode,
+        build_static_dynamic_template,
+    )
+    from pylage.ENGINE.core.state import State
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "text": State("Hello"),
+        },
+    )
+
+    template = build_static_dynamic_template(node)
+
+    assert "props" not in template
+    assert "text" not in template.get("static_props", {})
+    assert all(
+        not isinstance(value, State)
+        for value in template.values()
+        if not isinstance(value, (dict, list))
+    )
+
+
+def test_analyze_static_dynamic_detects_nested_state_values():
+    from pylage.ENGINE.core.ir import (
+        IRNode,
+        analyze_static_dynamic,
+    )
+    from pylage.ENGINE.core.state import State
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "data": {
+                "label": State("Hello"),
+            },
+        },
+    )
+
+    result = analyze_static_dynamic(node)
+
+    assert result["dynamic_props"] == ["data"]
+    assert result["dynamic_bindings"] == [
+        {
+            "node_id": "root",
+            "prop_name": "data",
+            "path": ["label"],
+        }
+    ]
+
+
+def test_build_static_dynamic_template_detects_nested_state_values():
+    from pylage.ENGINE.core.ir import (
+        IRNode,
+        build_static_dynamic_template,
+    )
+    from pylage.ENGINE.core.state import State
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "data": {
+                "label": State("Hello"),
+            },
+        },
+    )
+
+    template = build_static_dynamic_template(node)
+
+    assert template["static_props"] == {}
+    assert template["dynamic_bindings"] == [
+        {
+            "node_id": "root",
+            "prop_name": "data",
+            "path": ["label"],
+        }
+    ]
+
+
+def test_analyze_static_dynamic_records_nested_state_path():
+    from pylage.ENGINE.core.ir import (
+        IRNode,
+        analyze_static_dynamic,
+    )
+    from pylage.ENGINE.core.state import State
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "data": {
+                "label": State("Hello"),
+            },
+        },
+    )
+
+    result = analyze_static_dynamic(node)
+
+    assert result["dynamic_bindings"] == [
+        {
+            "node_id": "root",
+            "prop_name": "data",
+            "path": ["label"],
+        }
+    ]
+
+
+def test_analyze_static_dynamic_records_deep_nested_state_path():
+    from pylage.ENGINE.core.ir import (
+        IRNode,
+        analyze_static_dynamic,
+    )
+    from pylage.ENGINE.core.state import State
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "data": {
+                "items": [
+                    {
+                        "label": State("Hello"),
+                    }
+                ],
+            },
+        },
+    )
+
+    result = analyze_static_dynamic(node)
+
+    assert result["dynamic_bindings"] == [
+        {
+            "node_id": "root",
+            "prop_name": "data",
+            "path": ["items", 0, "label"],
+        }
+    ]
+
+
+def test_analyze_static_dynamic_records_multiple_nested_state_paths():
+    from pylage.ENGINE.core.ir import (
+        IRNode,
+        analyze_static_dynamic,
+    )
+    from pylage.ENGINE.core.state import State
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "data": {
+                "title": State("Hello"),
+                "items": [
+                    {
+                        "label": State("World"),
+                    }
+                ],
+            },
+        },
+    )
+
+    result = analyze_static_dynamic(node)
+
+    assert result["dynamic_bindings"] == [
+        {
+            "node_id": "root",
+            "prop_name": "data",
+            "path": ["title"],
+        },
+        {
+            "node_id": "root",
+            "prop_name": "data",
+            "path": ["items", 0, "label"],
+        },
+    ]
+
+
+def test_build_static_dynamic_template_records_multiple_nested_state_paths():
+    from pylage.ENGINE.core.ir import (
+        IRNode,
+        build_static_dynamic_template,
+    )
+    from pylage.ENGINE.core.state import State
+
+    node = IRNode(
+        node_id="root",
+        node_type="component",
+        component_id="Button",
+        props={
+            "data": {
+                "title": State("Hello"),
+                "items": [
+                    {
+                        "label": State("World"),
+                    }
+                ],
+            },
+        },
+    )
+
+    result = build_static_dynamic_template(node)
+
+    assert result["dynamic_bindings"] == [
+        {
+            "node_id": "root",
+            "prop_name": "data",
+            "path": ["title"],
+        },
+        {
+            "node_id": "root",
+            "prop_name": "data",
+            "path": ["items", 0, "label"],
+        },
+    ]
+
+def test_html_renderer_compiles_static_dynamic_template_without_changing_html():
+    from pylage.ENGINE.core.component import Component
+    from pylage.ENGINE.core.renderer import HTMLRenderer
+    from pylage.ENGINE.core.state import State
+
+    state = State("Hello")
+    component = Component(
+        type="Button",
+        id="root",
+        props={
+            "text": state,
+            "title": "Static",
+        },
+    )
+
+    renderer = HTMLRenderer()
+    html = renderer.render(component)
+
+    assert 'data-pylage-id="root"' in html
+    assert "Hello" in html
+    assert renderer._static_dynamic_template["node_id"] == "root"
+    assert renderer._static_dynamic_template["static_props"] == {"title": "Static"}
+    assert renderer._static_dynamic_template["dynamic_bindings"] == [
+        {
+            "node_id": "root",
+            "prop_name": "text",
+        }
+    ]
+
+def test_html_renderer_preserves_custom_registered_renderer():
+    from pylage.ENGINE.core.component import Component
+    from pylage.ENGINE.core.registry import ComponentRegistry
+    from pylage.ENGINE.core.renderer import HTMLRenderer
+
+    registry = ComponentRegistry()
+    registry.register("CustomButton", "button")
+
+    def custom_renderer(renderer, component):
+        return f'<custom-rendered data-pylage-id="{component.id}">OK</custom-rendered>'
+
+    registry.set_renderer("CustomButton", custom_renderer)
+
+    component = Component(
+        type="CustomButton",
+        id="custom-root",
+        props={"text": "Ignored"},
+    )
+
+    renderer = HTMLRenderer(registry_instance=registry)
+    html = renderer.render(component)
+
+    assert '<custom-rendered data-pylage-id="custom-root">OK</custom-rendered>' in html
+    assert renderer._static_dynamic_template["node_id"] == "custom-root"

@@ -105,8 +105,15 @@ Goal: existing fast reactive engine also fast at network level.
 2.2 CSS Deduplication:
 StyleCollector → unique CSS → shared stylesheet
 
-2.3 Static/Dynamic Template Split ⭐:
-Component → IR → Static Template + Dynamic Slots → state change → changed slots only.
+2.3 Static/Dynamic Template Split ⭐ — IMPLEMENTED:
+- Component → IR → Static Template + Dynamic Slots → state change → changed slots only.
+- Component trees compile into compiler-layer IR.
+- Static props and reactive dynamic bindings are separated.
+- Renderer compiles the template without changing existing HTML output.
+- Existing changed-prop/differential update machinery remains intact.
+- Custom registered renderers remain compatible.
+- IR + renderer regression coverage added.
+- Full regression: 1172 passed, 1 skipped.
 
 2.4 Event Loop Optimization:
 - uvloop
