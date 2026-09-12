@@ -1,6 +1,8 @@
 import asyncio
 import json
 
+from pylage.ENGINE.core.protocol_codec import decode_message
+
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.runtime.websocket import WebSocketServer
 
@@ -39,7 +41,7 @@ def test_tree_replace_is_broadcast_when_component_is_replaced():
 
     assert len(messages) == 1
 
-    message = json.loads(messages[0])
+    message = decode_message(messages[0]).to_dict()
 
     assert message["type"] == "tree_replace"
     assert message["parent_id"] == root.id
@@ -92,7 +94,7 @@ def test_tree_replace_broadcast_contains_nested_children():
 
     assert len(messages) == 1
 
-    message = json.loads(messages[0])
+    message = decode_message(messages[0]).to_dict()
 
     assert message["type"] == "tree_replace"
     assert message["old_component_id"] == old_child.id
@@ -149,7 +151,7 @@ def test_tree_replace_broadcast_serializes_deep_nested_tree():
 
     assert len(messages) == 1
 
-    message = json.loads(messages[0])
+    message = decode_message(messages[0]).to_dict()
 
     tree = message["new_component"]
 

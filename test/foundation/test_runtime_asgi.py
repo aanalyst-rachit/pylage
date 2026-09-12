@@ -1,5 +1,6 @@
 import asyncio
 import json
+from pylage.ENGINE.core.protocol_codec import decode_message
 from pathlib import Path
 
 import pylage as pl
@@ -135,7 +136,8 @@ def test_asgi_websocket_reactive_state_update():
     assert messages[0] == {"type": "websocket.accept"}
     assert any(
         message.get("type") == "websocket.send"
-        and "after" in message.get("text", "")
+        and isinstance(message.get("bytes"), (bytes, bytearray))
+        and "after" in decode_message(message["bytes"]).to_dict().get("props", {}).get("text", "")
         for message in messages
     )
 
@@ -417,7 +419,8 @@ def test_asgi_factory_resumes_session_after_disconnect():
 
         assert any(
             message.get("type") == "websocket.send"
-            and "after-resume" in message.get("text", "")
+            and isinstance(message.get("bytes"), (bytes, bytearray))
+            and "after-resume" in decode_message(message["bytes"]).to_dict().get("props", {}).get("text", "")
             for message in resumed_messages
         )
 

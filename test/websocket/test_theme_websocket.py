@@ -1,5 +1,6 @@
 import asyncio
 import json
+from pylage.ENGINE.core.protocol_codec import decode_message
 
 from pylage.ENGINE import Column, Heading
 from pylage.ENGINE.runtime.websocket import WebSocketServer
@@ -37,7 +38,7 @@ async def run_theme_websocket_test():
 
             print('Received:', raw)
 
-            message = json.loads(raw)
+            message = decode_message(raw).to_dict()
 
             assert message['type'] == 'theme_update'
             assert message['css'] == DARK_THEME.to_css()

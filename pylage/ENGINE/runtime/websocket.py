@@ -116,6 +116,7 @@ class WebSocketServer:
             raise RuntimeError("WebSocket server is already attached to another event loop.")
 
         self._loop = loop
+        self._binding.bind_tree(self.root)
         self._subscribe_theme()
 
     def detach_external_loop(self) -> None:
@@ -123,7 +124,6 @@ class WebSocketServer:
         if self._thread is not None:
             raise RuntimeError("Cannot detach an external loop while the WebSocket server is running.")
 
-        self._binding.stop()
         self._unsubscribe_theme()
         self._loop = None
 

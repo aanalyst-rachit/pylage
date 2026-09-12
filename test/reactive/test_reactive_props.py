@@ -2,6 +2,8 @@ import asyncio
 import json
 
 import pylage as ps
+from pylage.ENGINE.core.protocol_codec import decode_message
+
 from pylage.ENGINE import Column, State
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.runtime.websocket import WebSocketServer
@@ -45,9 +47,9 @@ async def _test_props():
 
         text.set("World")
 
-        message = json.loads(
+        message = decode_message(
             await asyncio.wait_for(ws.recv(), timeout=2)
-        )
+        ).to_dict()
 
         print("Received:", message)
 
@@ -59,9 +61,9 @@ async def _test_props():
 
         value.set("200")
 
-        message = json.loads(
+        message = decode_message(
             await asyncio.wait_for(ws.recv(), timeout=2)
-        )
+        ).to_dict()
 
         assert message["props"]["value"] == "200"
 
@@ -69,9 +71,9 @@ async def _test_props():
 
         disabled.set(True)
 
-        message = json.loads(
+        message = decode_message(
             await asyncio.wait_for(ws.recv(), timeout=2)
-        )
+        ).to_dict()
 
         assert message["props"]["disabled"] is True
 
@@ -79,9 +81,9 @@ async def _test_props():
 
         title.set("Updated title")
 
-        message = json.loads(
+        message = decode_message(
             await asyncio.wait_for(ws.recv(), timeout=2)
-        )
+        ).to_dict()
 
         assert message["props"]["title"] == "Updated title"
 

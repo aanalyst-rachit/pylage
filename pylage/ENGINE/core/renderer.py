@@ -7,6 +7,7 @@ from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.state import State
 from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.styling import ResponsiveStyle, Style
+from pylage.ENGINE.styling.collector import StyleCollector
 from pylage.ENGINE.styling.foundation import CSS_FOUNDATION
 from pylage.ENGINE.styling.global_theme import get_global_theme
 
@@ -21,6 +22,7 @@ class HTMLRenderer:
     ) -> None:
         self._registry = registry_instance or registry
         self._theme = theme
+        self._styles = StyleCollector()
         self._responsive_css: list[str] = []
         self._pseudo_css: list[str] = []
         self._register_builtin_renderers()
@@ -99,15 +101,13 @@ class HTMLRenderer:
         return value
 
     def render(self, component: Component) -> str:
+        self._styles.clear()
         self._responsive_css = []
         self._pseudo_css = []
 
-        html = self._render_component(component)
-        styles = []
-
         built_in_css = self._built_in_css()
         if built_in_css:
-            styles.append(f"<style>{built_in_css}</style>")
+            self._styles.add(built_in_css)
 
         theme = self._theme
         if theme is None:
@@ -115,22 +115,21 @@ class HTMLRenderer:
 
         if theme is not None:
             theme_css = theme.to_css()
-
             if theme_css:
-                styles.append(
-                    f'<style data-pylage-theme="true">:root{{{theme_css}}}</style>'
+                self._styles.add(
+                    f":root{{{theme_css}}}",
+                    ' data-pylage-theme="true"',
                 )
 
+        html = self._render_component(component)
+
         if self._pseudo_css:
-            styles.append(
-                f"<style>{''.join(self._pseudo_css)}</style>"
-            )
+            self._styles.add("".join(self._pseudo_css))
 
         if self._responsive_css:
-            styles.append(
-                f"<style>{''.join(self._responsive_css)}</style>"
-            )
-        return "".join(styles) + html
+            self._styles.add("".join(self._responsive_css))
+
+        return self._styles.render() + html
 
     def _built_in_css(self) -> str:
         """Return framework-level CSS for native HTML semantics."""
@@ -189,14 +188,14 @@ class HTMLRenderer:
                 f'[data-pylage-id="{component_id}"]'
             )
             if pseudo_css:
-                self._pseudo_css.append(pseudo_css)
+                self._styles.add(pseudo_css)
 
             responsive_css = style.to_responsive_css(
                 f'[data-pylage-id="{component_id}"]'
             )
 
             if responsive_css:
-                self._responsive_css.append(responsive_css)
+                self._styles.add(responsive_css)
 
         elif style is not None:
             to_css = getattr(style, "to_css", None)
@@ -214,7 +213,7 @@ class HTMLRenderer:
                 f'[data-pylage-id="{component_id}"]'
             )
             if pseudo_css:
-                self._pseudo_css.append(pseudo_css)
+                self._styles.add(pseudo_css)
 
         return attributes
 
@@ -422,12 +421,9 @@ class HTMLRenderer:
         )
 
         content = "" if text is None else escape(str(text))
-        spinner_css = self._spinner_css()
+        self._styles.add(self._spinner_css())
 
-        return (
-            f"<style>{spinner_css}</style>"
-            f"<span {attributes}>{content}{children}</span>"
-        )
+        return f"<span {attributes}>{content}{children}</span>"
 
     def _drawer_css(self) -> str:
         """Return built-in CSS for the Drawer component."""
@@ -460,8 +456,6 @@ class HTMLRenderer:
 
     def _render_drawer(self, component: Component) -> str:
         common = self._render_common_attributes(component)
-        drawer_css = self._drawer_css()
-
         class_name = self._value(component.props.get("class_name"))
         title = self._value(component.props.get("title"))
 
@@ -491,8 +485,9 @@ class HTMLRenderer:
 
         children = self._render_children(component)
 
+        self._styles.add(self._drawer_css())
+
         return (
-            f"<style>{drawer_css}</style>"
             f"<aside {attributes}>"
             f"{children}"
             f"</aside>"
@@ -620,8 +615,6 @@ class HTMLRenderer:
 
     def _render_dataframe(self, component: Component) -> str:
         common = self._render_common_attributes(component)
-        dataframe_css = self._dataframe_css()
-
         headers = self._value(component.props.get("headers"))
         data = self._value(component.props.get("data"))
 
@@ -729,10 +722,9 @@ class HTMLRenderer:
             "</div>",
         ])
 
-        return (
-            f"<style>{dataframe_css}</style>"
-            + "".join(parts)
-        )
+        self._styles.add(self._dataframe_css())
+
+        return "".join(parts)
 
     def _render_table(self, component: Component) -> str:
         common = self._render_common_attributes(component)

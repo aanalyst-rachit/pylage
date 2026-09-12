@@ -1,5 +1,7 @@
 import asyncio
 import json
+
+from pylage.ENGINE.core.protocol_codec import decode_message
 import time
 
 from pylage.ENGINE import State
@@ -29,7 +31,7 @@ def test_phase16_ui_kit_websocket_update_behavior():
                         ws.recv(),
                         timeout=2,
                     )
-                    message = json.loads(raw)
+                    message = decode_message(raw).to_dict()
 
                     assert message["type"] == "update"
                     assert message["id"] == component.id
@@ -68,7 +70,7 @@ def test_phase16_ui_kit_websocket_batching():
                     ws.recv(),
                     timeout=2,
                 )
-                message = json.loads(raw)
+                message = decode_message(raw).to_dict()
 
                 assert message["type"] == "update"
                 assert message["id"] == component.id

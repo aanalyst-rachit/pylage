@@ -1,6 +1,8 @@
 import asyncio
 import json
 
+from pylage.ENGINE.core.protocol_codec import decode_message
+
 from pylage.ENGINE import Column, State
 from pylage.ENGINE.runtime.websocket import WebSocketServer
 from pylage.UI.components.button import button
@@ -27,7 +29,7 @@ def test_phase16_ui_kit_unnecessary_tree_changes():
                 state.set("Updated")
 
                 raw = await asyncio.wait_for(ws.recv(), timeout=2)
-                message = json.loads(raw)
+                message = decode_message(raw).to_dict()
 
                 assert message["type"] == "update"
                 assert message["id"] == target.id
@@ -72,7 +74,7 @@ def test_phase16_ui_kit_repeated_state_changes_are_coalesced():
                     state.set(f"Value {value}")
 
                 raw = await asyncio.wait_for(ws.recv(), timeout=2)
-                message = json.loads(raw)
+                message = decode_message(raw).to_dict()
 
                 assert message["type"] == "update"
                 assert message["id"] == target.id

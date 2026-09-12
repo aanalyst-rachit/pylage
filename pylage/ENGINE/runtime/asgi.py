@@ -30,7 +30,7 @@ class _ASGIConnection:
     def __aiter__(self) -> "_ASGIConnection":
         return self
 
-    async def __anext__(self) -> str:
+    async def __anext__(self) -> str | bytes:
         while True:
             message = await self._receive()
             message_type = message.get("type")
@@ -41,7 +41,7 @@ class _ASGIConnection:
                     return text
                 data = message.get("bytes")
                 if data is not None:
-                    return data.decode("utf-8")
+                    return data
                 continue
 
             if message_type == "websocket.disconnect":
@@ -51,8 +51,11 @@ class _ASGIConnection:
             if message_type == "websocket.connect":
                 continue
 
-    async def send(self, data: str) -> None:
+    async def send(self, data: str | bytes) -> None:
         if self._closed:
+            return
+        if isinstance(data, bytes):
+            await self._send({"type": "websocket.send", "bytes": data})
             return
         await self._send({"type": "websocket.send", "text": data})
 
@@ -221,9 +224,12 @@ class ASGIApp:
                 token = secrets.token_urlsafe(32)
             self.session_store.put(token, session)
             self._sessions.add(session)
-            session.attach_external_loop(asyncio.get_running_loop())
 
-        await connection.send(json.dumps({"type": "session", "token": token}))
-        await session.handle_external(connection)
-        self.session_store.put(token, session)
-        self._evict_expired_sessions()
+        session.attach_external_loop(asyncio.get_running_loop())
+        try:
+            await connection.send(json.dumps({"type": "session", "token": token}))
+            await session.handle_external(connection)
+        finally:
+            session.detach_external_loop()
+            self.session_store.put(token, session)
+            self._evict_expired_sessions()

@@ -1,6 +1,8 @@
 import asyncio
 import json
 
+from pylage.ENGINE.core.protocol_codec import decode_message
+
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.runtime.websocket import WebSocketServer
 
@@ -30,7 +32,7 @@ def test_tree_add_is_broadcast_when_component_is_added():
 
     loop.run_until_complete(asyncio.sleep(0))
 
-    message = json.loads(messages[0])
+    message = decode_message(messages[0]).to_dict()
 
     assert message["type"] == "tree_add"
     assert message["parent_id"] == root.id
@@ -64,7 +66,7 @@ def test_tree_add_contains_render_metadata_for_button():
 
     loop.run_until_complete(asyncio.sleep(0))
 
-    message = json.loads(messages[0])
+    message = decode_message(messages[0]).to_dict()
     component = message["components"][0]
 
     assert component["type"] == "Button"
@@ -99,7 +101,7 @@ def test_tree_add_contains_event_metadata():
 
     loop.run_until_complete(asyncio.sleep(0))
 
-    message = json.loads(messages[0])
+    message = decode_message(messages[0]).to_dict()
     component = message["components"][0]
 
     assert component["events"] == "click"
@@ -141,7 +143,7 @@ def test_tree_add_contains_insert_index():
 
     assert len(messages) == 1
 
-    message = json.loads(messages[0])
+    message = decode_message(messages[0]).to_dict()
 
     assert message["type"] == "tree_add"
     assert message["parent_id"] == root.id
@@ -183,7 +185,7 @@ def test_tree_add_preserves_insert_index_in_message():
 
     loop.run_until_complete(asyncio.sleep(0))
 
-    message = json.loads(messages[0])
+    message = decode_message(messages[0]).to_dict()
 
     assert message["index"] == 0
     assert message["components"][0]["props"]["text"] == "Second"
@@ -230,7 +232,7 @@ def test_tree_add_multiple_components_preserves_index():
 
     assert len(messages) == 1
 
-    message = json.loads(messages[0])
+    message = decode_message(messages[0]).to_dict()
 
     assert message["type"] == "tree_add"
     assert message["parent_id"] == root.id

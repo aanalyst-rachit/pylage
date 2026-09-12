@@ -1,5 +1,6 @@
 import asyncio
 import json
+from pylage.ENGINE.core.protocol_codec import decode_message
 
 from pylage.ENGINE import Drawer, State
 from pylage.ENGINE.runtime.websocket import WebSocketServer
@@ -24,9 +25,9 @@ def test_drawer_reactive_open_close_sends_remove_props():
                 # Open drawer.
                 open_state.set(True)
 
-                message = json.loads(
+                message = decode_message(
                     await asyncio.wait_for(ws.recv(), timeout=2)
-                )
+                ).to_dict()
 
                 assert message["type"] == "update"
                 assert message["id"] == drawer.id
@@ -38,9 +39,9 @@ def test_drawer_reactive_open_close_sends_remove_props():
                 # Close drawer.
                 open_state.set(False)
 
-                message = json.loads(
+                message = decode_message(
                     await asyncio.wait_for(ws.recv(), timeout=2)
-                )
+                ).to_dict()
 
                 assert message["type"] == "update"
                 assert message["id"] == drawer.id

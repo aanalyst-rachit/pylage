@@ -1,5 +1,6 @@
 import asyncio
 import json
+from pylage.ENGINE.core.protocol_codec import decode_message
 import pytest
 
 from pylage.ENGINE import Button, Column, Heading, State
@@ -32,7 +33,7 @@ def test_dynamic_component_added_after_server_init_receives_state_binding():
 
     messages = []
 
-    async def fake_broadcast(message):
+    async def fake_broadcast(message, **kwargs):
         messages.append(message)
 
     server._broadcast = fake_broadcast
@@ -50,11 +51,15 @@ def test_dynamic_component_added_after_server_init_receives_state_binding():
 
     # Let scheduler flush
     server._scheduler.flush()
+    loop.run_until_complete(asyncio.sleep(0))
     loop.run_until_complete(asyncio.sleep(0.01))
 
     # The dynamic component should receive update
     updated_props = [
-        json.loads(m) for m in messages if json.loads(m).get("type") == "update" and json.loads(m).get("id") == new_heading.id
+        decode_message(m).to_dict()
+        for m in messages
+        if decode_message(m).to_dict().get("type") == "update"
+        and decode_message(m).to_dict().get("id") == new_heading.id
     ]
     assert len(updated_props) > 0
     assert updated_props[-1]["props"]["text"] == 20

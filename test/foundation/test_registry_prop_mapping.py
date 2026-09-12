@@ -2,6 +2,8 @@ import pytest
 import asyncio
 import json
 
+from pylage.ENGINE.core.protocol_codec import decode_message
+
 import pylage as ps
 from pylage.ENGINE import Column, State
 from pylage.ENGINE.core.component import Component
@@ -41,9 +43,9 @@ async def test_mapping():
 
         class_name.set("danger")
 
-        message = json.loads(
+        message = decode_message(
             await asyncio.wait_for(ws.recv(), timeout=2)
-        )
+        ).to_dict()
 
         print("class_name update:", message)
 
@@ -61,9 +63,9 @@ async def test_mapping():
 
         disabled.set(True)
 
-        message = json.loads(
+        message = decode_message(
             await asyncio.wait_for(ws.recv(), timeout=2)
-        )
+        ).to_dict()
 
         assert message["props"]["disabled"] is True
 
@@ -76,9 +78,9 @@ async def test_mapping():
 
         title.set("Updated title")
 
-        message = json.loads(
+        message = decode_message(
             await asyncio.wait_for(ws.recv(), timeout=2)
-        )
+        ).to_dict()
 
         assert message["props"]["title"] == "Updated title"
 

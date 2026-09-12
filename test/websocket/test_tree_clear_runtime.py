@@ -1,6 +1,8 @@
 import asyncio
 import json
 
+from pylage.ENGINE.core.protocol_codec import decode_message
+
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.runtime.websocket import WebSocketServer
 
@@ -39,7 +41,7 @@ def test_tree_clear_is_broadcast_when_children_are_cleared():
 
     assert len(messages) == 1
 
-    message = json.loads(messages[0])
+    message = decode_message(messages[0]).to_dict()
 
     assert message["type"] == "tree_clear"
     assert message["parent_id"] == root.id
@@ -84,7 +86,7 @@ def test_tree_clear_broadcast_contains_direct_children_only():
 
     assert len(messages) == 1
 
-    message = json.loads(messages[0])
+    message = decode_message(messages[0]).to_dict()
 
     assert message["type"] == "tree_clear"
     assert message["parent_id"] == root.id
