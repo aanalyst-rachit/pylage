@@ -37,6 +37,9 @@ pylage = "pylage.cli:main"
 performance = [
     "uvloop>=0.22.1; sys_platform != 'win32'"
 ]
+test = [
+    "playwright>=1.62,<1.63",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/aanalyst-rachit/pylage"
