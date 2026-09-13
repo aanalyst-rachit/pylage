@@ -1,6 +1,7 @@
-from pylage.ENGINE import Grid, Style
-from pylage.ENGINE.core.renderer import render
 import pylage.UI as ui
+from pylage.ENGINE import Grid
+from pylage.ENGINE.core.renderer import render
+
 
 def test_metric_grid_returns_grid():
     mg = ui.metric_grid(

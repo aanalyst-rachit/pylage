@@ -1,4 +1,4 @@
-from pylage.ENGINE import Dialog, Text, Button, State
+from pylage.ENGINE import Button, Dialog, State, Text
 from pylage.ENGINE.core.renderer import render
 
 
@@ -47,7 +47,6 @@ def test_dialog_supports_open_boolean():
 
 
 def test_dialog_supports_reactive_open_state():
-    import pylage as ps
     open_state = State(False)
     dialog = Dialog(open=open_state)
 

@@ -22,7 +22,7 @@ def get_app():
             f"Name: {name} | Email: {email} | Terms: {terms}"
         )
 
-    page_style = pl.style(
+    _page_style = pl.style(
         width="100%",
         max_width="760px",
         margin="0 auto",

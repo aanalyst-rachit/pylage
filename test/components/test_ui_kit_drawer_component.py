@@ -1,4 +1,4 @@
-from pylage.ENGINE import Drawer, Text, Button, State
+from pylage.ENGINE import Button, Drawer, State, Text
 from pylage.ENGINE.core.renderer import render
 
 
@@ -49,7 +49,6 @@ def test_drawer_supports_open_boolean():
 
 
 def test_drawer_supports_reactive_open_state():
-    import pylage as ps
     open_state = State(False)
     drawer = Drawer(open=open_state)
 

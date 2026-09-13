@@ -2,9 +2,9 @@
 
 ## Definition
 
-The `working_demo/` directory is the repository's actual working application and serves as the canonical first-app example for the PyLage UI Kit.
+The `playground/` directory contains the canonical public showcase application for the current PyLage release.
 
-The application demonstrates a complete PyLage UI Kit application built with the public `pylage` API.
+The playground demonstrates a complete PyLage application built with the public `pylage` API, including reactive state, navigation, components, layouts, overlays, tables, forms, themes, and server-driven updates.
 
 ## Requirements
 
@@ -14,50 +14,49 @@ The application demonstrates a complete PyLage UI Kit application built with the
 
 ## Application Structure
 
-The working application is organized as a Python package:
-
 ```text
-working_demo/
+playground/
 ├── __init__.py
-└── app.py
+├── app.py
+├── runtime.py
+└── server.py
 ```
 
-The application implementation is in `working_demo/app.py`.
+The application factory is defined in `playground/app.py`.
+
+The local playground server is defined in `playground/server.py`.
 
 ## Application Factory
 
-The application exposes `get_app()`, which creates the complete dashboard application.
+The playground exposes `get_app()`, which creates the complete showcase application.
 
-The factory creates reactive navigation state, page content, the sidebar, the dashboard header, and the final `pl.dashboard(...)` application.
+The factory builds the application UI with the public:
 
-Navigation handlers update the active page state and replace the content children with the selected page.
+```python
+import pylage as pl
+```
 
-## Application Pages
+API boundary.
 
-The working application currently defines these pages:
+The application demonstrates reactive state, navigation, page content, components, layouts, overlays, tables, forms, and theme capabilities.
 
-- Dashboard
-- Analytics
-- Forms
-- Tables
-- Navigation
-- Overlays
-- Components
-- Themes
+## Launching the Playground
 
-## Launch Configuration
+From the repository root:
 
-The working application uses `pl.run(...)` with:
+```bash
+.venv/bin/python -m playground.server
+```
 
-- title: `PyLage UI Kit — Example Application`
-- output: `first_app.html`
-- serve: `True`
-- host: `0.0.0.0`
-- port: `3000`
+The development playground server starts on:
 
-The launch configuration is defined in `working_demo/app.py`.
+```text
+http://127.0.0.1:8000
+```
 
-## API Boundary
+The server opens the playground in the default browser and can be stopped with `Ctrl+C`.
+
+## Public API Boundary
 
 Application code imports the public package namespace:
 
@@ -65,31 +64,56 @@ Application code imports the public package namespace:
 import pylage as pl
 ```
 
-The working application uses public APIs including `pl.dashboard`, `pl.navigation`, `pl.navigation_item`, `pl.state`, `pl.derived`, `pl.column`, `pl.row`, `pl.form`, `pl.table`, `pl.drawer`, `pl.modal`, `pl.toast`, and `pl.set_theme`.
+The playground uses public APIs such as:
+
+```python
+pl.dashboard(...)
+pl.navigation(...)
+pl.navigation_item(...)
+pl.state(...)
+pl.derived(...)
+pl.column(...)
+pl.row(...)
+pl.form(...)
+pl.table(...)
+pl.drawer(...)
+pl.modal(...)
+pl.toast(...)
+pl.set_theme(...)
+```
+
+Internal `pylage.ENGINE` APIs are implementation details and are not required for normal application development.
 
 ## Repository Verification
 
-From the repository root, verify the package and working application imports:
+From the repository root:
 
 ```bash
 .venv/bin/python -c "import pylage; print('PYLAGE IMPORT: PASS'); print(pylage.__file__)"
-.venv/bin/python -c "import working_demo.app as app; print('WORKING DEMO IMPORT: PASS'); print('APP FACTORY:', callable(app.get_app))"
+.venv/bin/python -c "import playground.app as app; print('PLAYGROUND IMPORT: PASS'); print('APP FACTORY:', callable(app.get_app))"
 ```
 
-The verified development environment successfully imports `pylage` from the repository checkout and imports `working_demo.app` with a callable `get_app` factory.
+Both imports should resolve against the current repository checkout.
 
 ## Verification
 
-The repository import path and working demo module have been verified with the project Python environment.
+The first-app documentation is based on the current `playground/` application and its server entry point.
 
-Direct execution with `python working_demo/app.py` is not documented as a verified launch method because that execution mode does not preserve the repository import path required by the application.
+For the interactive showcase, use:
+
+```bash
+.venv/bin/python -m playground.server
+```
+
+For application-level API verification, import `playground.app` and call `get_app()` through the project virtual environment.
 
 ## Verified Sources
 
-- `working_demo/app.py` — actual working application, page definitions, application factory, and launch configuration.
-- `working_demo/__init__.py` — working demo package.
-- Repository import-path verification.
+- `playground/app.py` — canonical showcase application and application factory.
+- `playground/server.py` — local playground server and launch configuration.
+- `playground/runtime.py` — playground-specific runtime integration.
+- `playground/__init__.py` — public playground package entry point.
 
 ## Status
 
-First-app documentation reflects the actual `working_demo/` application and the verified repository import workflow.
+This guide reflects the current PyLage V2 public-release playground and public `pylage` API.

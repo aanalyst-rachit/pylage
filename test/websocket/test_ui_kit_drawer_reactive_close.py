@@ -1,8 +1,7 @@
 import asyncio
-import json
-from pylage.ENGINE.core.protocol_codec import decode_message
 
 from pylage.ENGINE import Drawer, State
+from pylage.ENGINE.core.protocol_codec import decode_message
 from pylage.ENGINE.runtime.websocket import WebSocketServer
 
 

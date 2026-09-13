@@ -14,7 +14,7 @@ Purpose:
 
 import pytest
 
-import pylage.UI.themes as themes
+from pylage.UI import themes
 from pylage.UI.themes.factory import create_theme
 
 

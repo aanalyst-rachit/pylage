@@ -1,4 +1,4 @@
-from pylage.ENGINE import Pagination, Text, Button
+from pylage.ENGINE import Button, Pagination, Text
 from pylage.ENGINE.core.renderer import render
 
 

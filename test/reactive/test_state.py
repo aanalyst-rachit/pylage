@@ -1,6 +1,5 @@
 from pylage.ENGINE.core.state import State
 
-
 print("=== PYLAGE STATE TEST ===")
 
 count = State(0)

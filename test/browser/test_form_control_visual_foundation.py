@@ -1,5 +1,5 @@
-from pylage.ENGINE.core.renderer import render
 import pylage as pl
+from pylage.ENGINE.core.renderer import render
 
 
 def test_form_control_visual_foundation_contract():

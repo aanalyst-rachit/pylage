@@ -1,8 +1,7 @@
 import asyncio
-import json
-from pylage.ENGINE.core.protocol_codec import decode_message
 
 from pylage.ENGINE import Column, Heading
+from pylage.ENGINE.core.protocol_codec import decode_message
 from pylage.ENGINE.runtime.websocket import WebSocketServer
 from pylage.ENGINE.styling.global_theme import set_global_theme
 from pylage.UI.themes.dark import DARK_THEME

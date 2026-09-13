@@ -12,9 +12,6 @@ Purpose:
 
 import importlib
 
-import pytest
-
-
 PATTERN_MODULES = [
     "auth",
     "breadcrumbs",

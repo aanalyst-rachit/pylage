@@ -1,4 +1,4 @@
-from pylage.ENGINE import Select, Option
+from pylage.ENGINE import Option, Select
 from pylage.ENGINE.core.renderer import render
 
 

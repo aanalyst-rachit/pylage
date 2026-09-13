@@ -3,7 +3,6 @@ from urllib.request import urlopen
 
 from pylage.ENGINE.runtime import LocalServer
 
-
 output_dir = Path("test_output")
 
 server = LocalServer(output_dir)

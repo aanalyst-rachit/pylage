@@ -2,7 +2,6 @@ from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.registry import PropDefinition, registry
 from pylage.ENGINE.core.renderer import render
 
-
 print("=== PYLAGE GENERIC VOID RENDER TEST ===")
 
 registry.register(

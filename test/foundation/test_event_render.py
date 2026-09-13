@@ -1,8 +1,5 @@
-import pylage as ps
 from pylage.ENGINE import Button
-
 from pylage.ENGINE.core.renderer import render
-
 
 print("=== PYLAGE EVENT RENDER TEST ===")
 

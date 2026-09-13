@@ -1,4 +1,4 @@
-from pylage.ENGINE import State
+from pylage.ENGINE import Option, State
 from pylage.ENGINE.core.renderer import render
 from pylage.UI import (
     checkbox,
@@ -9,7 +9,6 @@ from pylage.UI import (
     slider,
     switch,
 )
-from pylage.ENGINE import Option
 
 
 def test_public_input_wraps_engine_input():

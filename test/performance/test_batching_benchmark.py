@@ -1,10 +1,10 @@
 from time import perf_counter
 
+from pylage.ENGINE.core.binding import StateBinding
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.dirty import DirtyNodes
 from pylage.ENGINE.core.scheduler import Scheduler
 from pylage.ENGINE.core.state import State
-from pylage.ENGINE.core.binding import StateBinding
 
 
 def _build_reactive_pipeline():
@@ -33,7 +33,7 @@ def _build_reactive_pipeline():
 
 
 def _batched_updates(count: int):
-    state, component, scheduler, processed = _build_reactive_pipeline()
+    state, _component, scheduler, processed = _build_reactive_pipeline()
 
     start = perf_counter()
 
@@ -52,7 +52,7 @@ def _batched_updates(count: int):
 
 
 def _unbatched_updates(count: int):
-    state, component, scheduler, processed = _build_reactive_pipeline()
+    state, _component, scheduler, processed = _build_reactive_pipeline()
 
     start = perf_counter()
 

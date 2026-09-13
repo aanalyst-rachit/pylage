@@ -1,6 +1,7 @@
+from playwright.sync_api import sync_playwright
+
 import pylage as pl
 from pylage.ENGINE.runtime.runtime import Runtime
-from playwright.sync_api import sync_playwright
 
 
 def test_positioning_and_z_index_browser_contract():

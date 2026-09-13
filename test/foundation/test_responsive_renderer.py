@@ -1,6 +1,4 @@
-import pylage as ps
 from pylage.ENGINE import ResponsiveStyle, Style, Text, Theme
-
 from pylage.ENGINE.core.renderer import HTMLRenderer
 
 

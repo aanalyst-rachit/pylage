@@ -1,4 +1,5 @@
-import pylage as ps
+from dataclasses import FrozenInstanceError
+
 from pylage.ENGINE import ResponsiveStyle, Style
 
 
@@ -52,7 +53,7 @@ def test_responsive_style_is_immutable():
 
     try:
         responsive.base = Style(color="red")
-    except Exception:
+    except FrozenInstanceError:
         pass
     else:
         raise AssertionError(

@@ -48,10 +48,9 @@ def test_native_controls_preserve_focus_behavior():
                 button_locator.focus()
                 expect(button_locator).to_be_focused()
                 assert page.evaluate(
-                    """document.activeElement === document.querySelector(
-                        'button[data-pylage-id="%s"]'
+                    f"""document.activeElement === document.querySelector(
+                        'button[data-pylage-id="{button_control.id}"]'
                     )"""
-                    % button_control.id
                 )
 
             finally:

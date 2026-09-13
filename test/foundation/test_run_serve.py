@@ -1,11 +1,7 @@
-import threading
-import time
 from urllib.request import urlopen
 
-import pylage as ps
 from pylage.ENGINE import Button, Column, Heading
 from pylage.ENGINE.runtime import Runtime
-
 
 print("=== PYLAGE SERVE MODE TEST ===")
 

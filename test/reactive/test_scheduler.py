@@ -1,8 +1,8 @@
+from pylage.ENGINE.core.binding import StateBinding
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.dirty import DirtyNodes
 from pylage.ENGINE.core.scheduler import Scheduler
 from pylage.ENGINE.core.state import State
-from pylage.ENGINE.core.binding import StateBinding
 
 
 def test_scheduler_request_coalescing():

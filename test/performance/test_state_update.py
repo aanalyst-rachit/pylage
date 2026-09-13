@@ -2,7 +2,6 @@ from time import perf_counter
 
 from pylage.ENGINE import Heading, State
 from pylage.ENGINE.core.binding import StateBinding
-from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.dirty import DirtyNodes
 from pylage.ENGINE.core.scheduler import Scheduler
 from pylage.UI.components.text import text

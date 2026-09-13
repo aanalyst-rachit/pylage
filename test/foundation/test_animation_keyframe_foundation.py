@@ -1,5 +1,5 @@
-from pylage.ENGINE.core.renderer import HTMLRenderer
 from pylage.ENGINE.core.component import Component
+from pylage.ENGINE.core.renderer import HTMLRenderer
 
 
 def test_spinner_animation_contract_is_rendered():

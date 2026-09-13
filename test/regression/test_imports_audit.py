@@ -1,7 +1,6 @@
-import pylage as pl
 from pathlib import Path
 
-
+import pylage as pl
 
 PUBLIC_API = (
     "run",
@@ -62,6 +61,6 @@ def test_ui_implementation_uses_canonical_engine_imports():
     forbidden = []
     for path in Path("pylage/UI").rglob("*.py"):
         for line_no, line in enumerate(path.read_text().splitlines(), 1):
-            if line.startswith("from pylage.ENGINE import") or line.startswith("import pylage.ENGINE"):
+            if line.startswith(("from pylage.ENGINE import", "import pylage.ENGINE")):
                 forbidden.append(f"{path}:{line_no}: {line}")
     assert forbidden == []

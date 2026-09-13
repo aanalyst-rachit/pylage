@@ -1,11 +1,4 @@
 import pylage as pl
-import sys
-from pathlib import Path
-
-# Project root setup
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-import pylage as ps
 
 
 def get_app():
@@ -29,65 +22,27 @@ def get_app():
     # -------------------------------------------------------------------------
     def build_select(options_list, current_state, on_change_fn):
 
-        if hasattr(pl, "select"):
-            try:
-                option_children = []
-                for opt in options_list:
-                    val = opt.get("value") if isinstance(opt, dict) else opt
-                    lbl = opt.get("label") if isinstance(opt, dict) else opt
-                    option_children.append(pl.option(lbl, value=val))
-
-                return pl.select(
-                    *option_children,           # ✅ actual <option> children
-                    value=current_state,        # ✅ pl.State object, not .value
-                    on_change=on_change_fn,
-                    style=pl.style(
-                        width="100%",
-                        padding="0.6rem",
-                        border="1px solid #cbd5e1",
-                        border_radius="0.375rem",
-                        background_color="#ffffff",
-                        color="#0f172a",
-                        font_size="0.95rem",
-                        cursor="pointer",
-                    ),
-                )
-            except Exception:
-                pass
-        # 2. Native Component Builder with raw HTML props
-
-        select_node = pl.select(*[pl.option(opt.get("label") if isinstance(opt, dict) else opt, value=opt.get("value") if isinstance(opt, dict) else opt) for opt in options_list], value=current_state, on_change=on_change_fn)
-        return select_node
-
-
-        # pl.style dict injection directly inside props
-        select_node.props["style"] = {
-            "width": "100%",
-            "padding": "0.6rem",
-            "border": "1px solid #cbd5e1",
-            "borderRadius": "0.375rem",
-            "backgroundColor": "#ffffff",
-            "color": "#0f172a",
-            "fontSize": "0.95rem",
-            "cursor": "pointer",
-        }
-
-        # Build options
+        option_children = []
         for opt in options_list:
             val = opt.get("value") if isinstance(opt, dict) else opt
             lbl = opt.get("label") if isinstance(opt, dict) else opt
+            option_children.append(pl.option(lbl, value=val))
 
-            opt_node = Component("option")
-            opt_node.props["value"] = str(val)
-            opt_node.children = [str(lbl)]
-
-            if str(val) == str(current_state.value):
-                opt_node.props["selected"] = True
-
-            select_node.children.append(opt_node)
-
-        return select_node
-
+        return pl.select(
+            *option_children,
+            value=current_state,
+            on_change=on_change_fn,
+            style=pl.style(
+                width="100%",
+                padding="0.6rem",
+                border="1px solid #cbd5e1",
+                border_radius="0.375rem",
+                background_color="#ffffff",
+                color="#0f172a",
+                font_size="0.95rem",
+                cursor="pointer",
+            ),
+        )
     # -------------------------------------------------------------------------
     # UI Layout
     # -------------------------------------------------------------------------

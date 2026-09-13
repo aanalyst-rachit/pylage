@@ -20,7 +20,6 @@ from pylage import run
 from pylage.ENGINE import Button, Card, Column, Heading, Row, State, Text
 from pylage.ENGINE.styling.style import Style
 
-
 DEMO_DIR = BASE_DIR / "demo"
 
 MANUALS: dict[str, object] = {}
@@ -46,7 +45,7 @@ def discover_manuals() -> dict[str, object]:
                 module = importlib.reload(sys.modules[module_name])
             else:
                 module = importlib.import_module(module_name)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             print(f"[DISCOVERY ERROR] {path.name}: {exc}")
             continue
 
@@ -105,7 +104,7 @@ def build_manual_cache(manuals: dict[str, object]) -> dict[str, object]:
             app = module.get_app() # type: ignore
             apps[name] = app
             print(f"[CACHE OK] {name}")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             print(f"[CACHE ERROR] {name}: {exc}")
 
     print("============================================================")

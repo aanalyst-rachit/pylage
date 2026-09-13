@@ -1,6 +1,5 @@
 from pylage.ENGINE.core.component import component
-from pylage.ENGINE.core.tree import print_tree
-from pylage.ENGINE.core.tree import collect_ids, count_components
+from pylage.ENGINE.core.tree import collect_ids, count_components, print_tree
 
 
 def Heading(text):

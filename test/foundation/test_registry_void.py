@@ -2,7 +2,6 @@ from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.core.renderer import render
 
-
 print("=== PYLAGE REGISTRY VOID TEST ===")
 
 registry.register("RawInput", "input", void=True)

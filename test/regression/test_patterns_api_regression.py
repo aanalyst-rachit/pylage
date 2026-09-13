@@ -11,8 +11,7 @@ Purpose:
 
 import importlib
 
-import pylage.UI.patterns as patterns
-
+from pylage.UI import patterns
 
 PATTERN_MODULES = [
     "auth",

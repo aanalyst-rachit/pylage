@@ -1,4 +1,4 @@
-from playwright.sync_api import sync_playwright, expect
+from playwright.sync_api import expect, sync_playwright
 
 from pylage.ENGINE.runtime import Runtime
 from working_demo.app import get_app

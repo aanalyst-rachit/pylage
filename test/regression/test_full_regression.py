@@ -12,7 +12,6 @@ from pathlib import Path
 
 import pytest
 
-
 ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -20,7 +19,7 @@ def _import(module_name):
     """Import a project module and fail with a useful message."""
     try:
         return importlib.import_module(module_name)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         pytest.fail(f"Failed to import {module_name}: {type(exc).__name__}: {exc}")
 
 

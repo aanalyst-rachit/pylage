@@ -1,7 +1,7 @@
 """UI Kit Layout API regression tests for Phase 11."""
 
 from pylage import UI as ui
-from pylage.ENGINE import Style, ResponsiveStyle
+from pylage.ENGINE import ResponsiveStyle, Style
 
 
 def test_responsive_shorthand_creates_responsive_style():

@@ -2,7 +2,6 @@ import inspect
 
 from pylage.ENGINE.core.renderer import HTMLRenderer
 
-
 print("=== PYLAGE REGISTRY NO BUILTIN DISPATCH TEST ===")
 
 source = inspect.getsource(HTMLRenderer._render_component)

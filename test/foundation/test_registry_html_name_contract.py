@@ -1,6 +1,5 @@
 from pylage.ENGINE.core.registry import ComponentRegistry, PropDefinition
 
-
 print("=== PYLAGE PROP HTML NAME CONTRACT TEST ===")
 
 registry = ComponentRegistry()

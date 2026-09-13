@@ -1,6 +1,7 @@
-from pylage.ENGINE import Card, Style, Text
-from pylage.ENGINE.core.renderer import render
 import pylage.UI as ui
+from pylage.ENGINE import Card, Style
+from pylage.ENGINE.core.renderer import render
+
 
 def test_dashboard_card_returns_card():
     dc = ui.dashboard_card(title="System Status")

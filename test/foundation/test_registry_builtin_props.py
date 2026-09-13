@@ -1,7 +1,5 @@
-import pylage as ps
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.renderer import render
-
 
 print("=== PYLAGE BUILTIN PROP CONTRACT TEST ===")
 

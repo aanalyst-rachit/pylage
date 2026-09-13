@@ -1,9 +1,9 @@
 from time import perf_counter
 
 from pylage.ENGINE.core.component import Component
-from pylage.ENGINE.core.snapshot import component_to_snapshot
 from pylage.ENGINE.core.diff import diff
 from pylage.ENGINE.core.patch import operations_to_messages
+from pylage.ENGINE.core.snapshot import component_to_snapshot
 
 
 def _build_tree(count: int) -> Component:
@@ -36,7 +36,7 @@ def test_phase6_component_scaling():
         root = _build_tree(count)
 
         snapshot, snapshot_time = _measure(
-            lambda: component_to_snapshot(root)
+            lambda root=root: component_to_snapshot(root)
         )
 
         current = snapshot.copy()
@@ -52,11 +52,11 @@ def test_phase6_component_scaling():
             }
 
         operations, diff_time = _measure(
-            lambda: diff(snapshot, current)
+            lambda snapshot=snapshot, current=current: diff(snapshot, current)
         )
 
         messages, patch_time = _measure(
-            lambda: operations_to_messages(operations)
+            lambda operations=operations: operations_to_messages(operations)
         )
 
         assert snapshot["id"] == root.id

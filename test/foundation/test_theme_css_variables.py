@@ -1,4 +1,3 @@
-import pylage as ps
 from pylage.ENGINE import Style, Theme
 
 

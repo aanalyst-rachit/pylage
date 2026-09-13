@@ -1,7 +1,7 @@
 from playwright.sync_api import sync_playwright
-from pylage.ENGINE import ResponsiveStyle
 
 import pylage as pl
+from pylage.ENGINE import ResponsiveStyle
 from pylage.ENGINE.runtime import Runtime
 
 

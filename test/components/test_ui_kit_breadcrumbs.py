@@ -1,4 +1,4 @@
-from pylage.ENGINE import Breadcrumbs, Text, Button
+from pylage.ENGINE import Breadcrumbs, Button, Text
 from pylage.ENGINE.core.renderer import render
 
 

@@ -1,13 +1,14 @@
-from pathlib import Path
+#!/usr/bin/env python3
 import subprocess
 import sys
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def run(label, command):
     print(f"--- {label} ---")
-    result = subprocess.run(command, cwd=ROOT)
+    result = subprocess.run(command, cwd=ROOT, check=False)
     if result.returncode != 0:
         print(f"FAILED: {label}")
         raise SystemExit(result.returncode)

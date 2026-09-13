@@ -16,7 +16,6 @@ import importlib
 import pylage.UI.layout as layouts
 from pylage.ENGINE import ResponsiveStyle, Style
 
-
 REQUIRED_MODULES = [
     "center",
     "container",

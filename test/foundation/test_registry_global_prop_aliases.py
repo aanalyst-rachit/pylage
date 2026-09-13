@@ -2,7 +2,6 @@ from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.registry import PropDefinition, registry
 from pylage.ENGINE.core.renderer import HTMLRenderer
 
-
 print("=== PYLAGE REGISTRY GLOBAL PROP ALIAS TEST ===")
 
 
@@ -52,10 +51,11 @@ print("Registry html_for → for: PASS")
 # Critical architectural contract:
 # renderer must NOT contain semantic alias fallback.
 # ---------------------------------------------------------
-renderer_source = open(
+with open(
     "pylage/ENGINE/core/renderer.py",
     encoding="utf-8",
-).read()
+) as renderer_file:
+    renderer_source = renderer_file.read()
 
 assert '"class_name": "class"' not in renderer_source
 assert '"html_for": "for"' not in renderer_source

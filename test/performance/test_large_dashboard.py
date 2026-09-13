@@ -1,10 +1,10 @@
 from time import perf_counter
 
+from pylage.ENGINE import Column
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.renderer import HTMLRenderer
 from pylage.UI.components.button import button
 from pylage.UI.components.card import card
-from pylage.ENGINE import Column
 from pylage.UI.components.dashboard_section import dashboard_section
 from pylage.UI.components.metric import metric
 from pylage.UI.components.table import table
@@ -77,8 +77,8 @@ def test_phase16_large_dashboard_behavior():
 
     print()
     print("===== PHASE 16 — LARGE DASHBOARD BEHAVIOR =====")
-    print(f"dashboard cards   : 100")
-    print(f"table rows        : 50")
+    print("dashboard cards   : 100")
+    print("table rows        : 50")
     print(f"tree nodes        : {tree_nodes}")
     print(f"render iterations  : {iterations}")
     print(f"total render      : {elapsed:.9f}s")

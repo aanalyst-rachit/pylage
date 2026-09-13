@@ -1,4 +1,4 @@
-from pylage.ENGINE import RadioGroup, Text, Button
+from pylage.ENGINE import Button, RadioGroup, Text
 from pylage.ENGINE.core.renderer import render
 
 

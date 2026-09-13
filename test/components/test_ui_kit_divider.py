@@ -1,8 +1,7 @@
+import pylage.UI as ui
 from pylage.ENGINE import Divider as EngineDivider
 from pylage.ENGINE import Style
 from pylage.ENGINE.core.renderer import render
-
-import pylage.UI as ui
 
 
 def test_divider_returns_existing_divider_component():

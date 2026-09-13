@@ -1,6 +1,5 @@
-from pylage.ENGINE.core.state import State
-
 from playground import get_app
+from pylage.ENGINE.core.state import State
 
 
 def _find_components(root, type_name):

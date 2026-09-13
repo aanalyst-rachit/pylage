@@ -1,4 +1,4 @@
-from pylage.ENGINE import Text, Button
+from pylage.ENGINE import Button, Text
 from pylage.ENGINE.core.renderer import render
 from pylage.UI.recipes import popover
 

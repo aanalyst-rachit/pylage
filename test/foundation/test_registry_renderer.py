@@ -1,6 +1,4 @@
-import pylage as ps
 from pylage.ENGINE import Heading
-
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.core.renderer import render

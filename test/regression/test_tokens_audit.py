@@ -11,7 +11,7 @@ Purpose:
 This is a dedicated regression test for Phase 1.
 """
 
-import pylage.UI.tokens as tokens
+from pylage.UI import tokens
 
 
 def test_tokens_package_imports():

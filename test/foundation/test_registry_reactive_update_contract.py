@@ -2,7 +2,6 @@ from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.registry import ComponentRegistry, PropDefinition
 from pylage.ENGINE.core.state import State
 
-
 print("=== PYLAGE REGISTRY REACTIVE UPDATE CONTRACT TEST ===")
 
 

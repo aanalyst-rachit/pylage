@@ -1,10 +1,8 @@
-from pathlib import Path
 from urllib.request import urlopen
 
 from pylage import run
 from pylage.ENGINE import Button, Column, Heading
 from pylage.ENGINE.runtime import LocalServer
-
 
 print("=== PYLAGE RUNTIME LIFECYCLE TEST ===")
 
@@ -51,7 +49,7 @@ print("Server stopped.")
 
 try:
     urlopen(url)
-except Exception as exc:
+except Exception as exc:  # noqa: BLE001
     print("After stop:", type(exc).__name__)
 
 print("=== RUNTIME LIFECYCLE PASS ===")

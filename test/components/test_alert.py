@@ -1,4 +1,4 @@
-from pylage.ENGINE import Alert, Text, Button
+from pylage.ENGINE import Alert
 from pylage.ENGINE.core.renderer import render
 
 

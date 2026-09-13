@@ -1,4 +1,4 @@
-from pylage.ENGINE import Grid, Text, Button
+from pylage.ENGINE import Button, Grid, Text
 from pylage.ENGINE.core.renderer import render
 
 

@@ -2,7 +2,6 @@ from pylage.ENGINE.core.component import component
 from pylage.ENGINE.core.registry import ComponentRegistry, PropDefinition
 from pylage.ENGINE.core.renderer import HTMLRenderer
 
-
 print("=== PYLAGE REGISTRY GENERIC TEXT CONTRACT TEST ===")
 
 

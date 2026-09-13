@@ -1,9 +1,7 @@
 import re
-
 from pathlib import Path
 
 from pylage.ENGINE.runtime.client import CLIENT_RUNTIME
-
 
 print("=== PYLAGE BROWSER GENERIC REACTIVE PROP TEST ===")
 

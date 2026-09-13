@@ -1,8 +1,7 @@
+import pylage.UI as ui
 from pylage.ENGINE import Badge as EngineBadge
 from pylage.ENGINE import State, Style
 from pylage.ENGINE.core.renderer import render
-
-import pylage.UI as ui
 
 
 def test_trend_returns_existing_badge_component():

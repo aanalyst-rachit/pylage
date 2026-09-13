@@ -1,7 +1,7 @@
+import pylage as pl
 from pylage.ENGINE import State, Style
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.renderer import render
-import pylage as pl
 
 
 def test_navigation_item_returns_existing_component():

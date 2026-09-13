@@ -1,6 +1,7 @@
-from pylage.ENGINE import Column, Card, Style, Text
-from pylage.ENGINE.core.renderer import render
 import pylage.UI as ui
+from pylage.ENGINE import Card, Column, Style, Text
+from pylage.ENGINE.core.renderer import render
+
 
 def test_dashboard_section_returns_column():
     ds = ui.dashboard_section(title="Performance")

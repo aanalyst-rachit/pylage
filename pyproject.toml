@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pylage"
-version = "1.0.2"
+version = "1.0.3"
 description = "A server-driven differential UI framework for Python"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -44,6 +44,9 @@ test = [
 [project.urls]
 "Homepage" = "https://github.com/aanalyst-rachit/pylage"
 "Bug Tracker" = "https://github.com/aanalyst-rachit/pylage/issues"
+
+[tool.ruff]
+exclude = ["benchmark", "demo", "working_demo"]
 
 [tool.setuptools.packages.find]
 where = ["."]

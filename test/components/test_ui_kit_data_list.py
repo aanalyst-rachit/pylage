@@ -1,6 +1,7 @@
-from pylage.ENGINE import Column, Style, Badge
-from pylage.ENGINE.core.renderer import render
 import pylage.UI as ui
+from pylage.ENGINE import Column, Style
+from pylage.ENGINE.core.renderer import render
+
 
 def test_data_list_returns_column():
     dl = ui.data_list({"Status": "Active"})

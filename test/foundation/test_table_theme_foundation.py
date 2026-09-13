@@ -1,6 +1,5 @@
-from pylage.ENGINE.core.renderer import render
 from pylage.ENGINE import Table
-
+from pylage.ENGINE.core.renderer import render
 
 
 def test_table_cells_use_theme_aware_backgrounds():

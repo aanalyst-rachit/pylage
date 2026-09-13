@@ -1,17 +1,17 @@
-import pylage as pl
 import sys
 from pathlib import Path
+
+import pylage as pl
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import pylage as ps
 
 
-
 def get_app():
     # Reactive state used to verify real browser input binding.
     message = pl.state("")
-    input_count = pl.state(0)
+    _input_count = pl.state(0)
     custom_value = pl.state("")
 
     def handle_custom_input(payload=None):

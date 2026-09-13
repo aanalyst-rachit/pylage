@@ -1,4 +1,3 @@
-import pylage as ps
 from pylage.ENGINE import Column, Grid, Row, State, Style, Text
 from pylage.ENGINE.core.renderer import render
 

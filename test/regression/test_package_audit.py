@@ -22,9 +22,8 @@ pylage/
     └── styling/
 """
 
-from pathlib import Path
 import importlib
-
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PYLAGE = ROOT / "pylage"

@@ -3,10 +3,9 @@ from __future__ import annotations
 import time
 import webbrowser
 
-from pylage.ENGINE.runtime import Runtime
-
 from playground.app import get_app
 from playground.runtime import inject_playground_bridge
+from pylage.ENGINE.runtime import Runtime
 
 
 def main() -> None:

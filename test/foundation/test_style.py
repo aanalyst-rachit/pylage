@@ -70,7 +70,7 @@ def test_style_renders_on_component():
 
 
 def test_style_renders_with_html_escaping():
-    from pylage.ENGINE import Text, Style
+    from pylage.ENGINE import Style, Text
     from pylage.ENGINE.core.renderer import render
 
     component = Text(
@@ -302,7 +302,7 @@ def test_style_supports_pseudo_element_rules():
 
 
 def test_style_custom_properties_render_to_html():
-    from pylage.ENGINE import Text, Style
+    from pylage.ENGINE import Style, Text
     from pylage.ENGINE.core.renderer import render
 
     html = render(

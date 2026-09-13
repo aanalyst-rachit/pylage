@@ -4,7 +4,6 @@ from pathlib import Path
 from urllib.request import urlopen
 
 import pylage as pl
-
 from pylage.ENGINE.runtime.asgi import ASGIApp
 from pylage.ENGINE.runtime.server import LocalServer
 

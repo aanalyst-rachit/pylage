@@ -1,4 +1,4 @@
-from pylage.ENGINE import Select, Text, Button, Option, State
+from pylage.ENGINE import Button, Option, Select, State, Text
 from pylage.ENGINE.core.renderer import render
 
 

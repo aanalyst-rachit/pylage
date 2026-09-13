@@ -1,4 +1,4 @@
-from pylage.ENGINE import Carousel, Text, Button, State
+from pylage.ENGINE import Button, Carousel, State, Text
 from pylage.ENGINE.core.renderer import render
 
 
@@ -35,7 +35,6 @@ def test_carousel_supports_props():
 
 
 def test_carousel_supports_value_and_reactivity():
-    import pylage as ps
     slide_state = State(0)
     carousel = Carousel(value=slide_state)
 

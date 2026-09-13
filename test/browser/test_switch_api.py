@@ -1,6 +1,5 @@
 from playwright.sync_api import expect, sync_playwright
 
-import pylage as ps
 from pylage.ENGINE import Column, State, Switch
 from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.core.renderer import render

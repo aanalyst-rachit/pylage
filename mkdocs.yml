@@ -21,16 +21,52 @@ nav:
   - Deployment: deployment.md
   - Components:
       - Alert: component/alert.md
+      - Avatar: component/avatar.md
+      - Badge: component/badge.md
       - Button: component/button.md
       - Card: component/card.md
+      - Checkbox: component/checkbox.md
+      - Column: component/column.md
+      - Confirmation Dialog: component/confirmation_dialog.md
+      - Dashboard: component/dashboard.md
+      - Dashboard Card: component/dashboard_card.md
+      - Dashboard Grid: component/dashboard_grid.md
+      - Dashboard Header: component/dashboard_header.md
+      - Dashboard Section: component/dashboard_section.md
+      - Data List: component/data_list.md
+      - DataFrame: component/dataframe.md
+      - Datepicker: component/datepicker.md
       - Dialog: component/dialog.md
+      - Disabled State: component/disabled_state.md
+      - Divider: component/divider.md
       - Drawer: component/drawer.md
+      - Empty State: component/empty_state.md
+      - Error State: component/error_state.md
       - Form: component/form.md
+      - Form Field: component/form_field.md
+      - Heading: component/heading.md
+      - Help Text: component/help_text.md
       - Input: component/input.md
+      - Loading Overlay: component/loading_overlay.md
+      - Loading State: component/loading_state.md
+      - Metric: component/metric.md
+      - Metric Grid: component/metric_grid.md
       - Modal: component/modal.md
       - Navigation: component/navigation.md
+      - Navigation Item: component/navigation_item.md
+      - Popover: component/popover.md
+      - Radio: component/radio.md
+      - Row: component/row.md
+      - Select: component/select.md
+      - Slider: component/slider.md
+      - Stat Group: component/stat_group.md
+      - Switch: component/switch.md
       - Table: component/table.md
+      - Text: component/text.md
+      - Textarea: component/textarea.md
       - Toast: component/toast.md
+      - Tooltip: component/tooltip.md
+      - Trend: component/trend.md
   - Architecture:
       - API Audit: helper/api_audit.md
       - API Conventions: helper/api_conventions.md

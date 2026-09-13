@@ -3,10 +3,8 @@ import json
 
 from websockets.asyncio.client import connect
 
-import pylage as ps
 from pylage.ENGINE import Button, Column
 from pylage.ENGINE.runtime.websocket import WebSocketServer
-
 
 print("=== PYLAGE WEBSOCKET TEST ===")
 

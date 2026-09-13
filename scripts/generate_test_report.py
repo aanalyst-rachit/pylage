@@ -1,11 +1,10 @@
-from pathlib import Path
-from collections import defaultdict
-from datetime import datetime
 import subprocess
 import time
+from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
 
 import pytest
-
 
 ROOT = Path(__file__).resolve().parents[1]
 TEST_DIR = ROOT / "test"
@@ -43,7 +42,7 @@ class RegressionReporter:
             {"outcome": "passed", "duration": 0.0, "stdout": ""},
         )
 
-        result["duration"] += report.duration
+        result['duration'] += report.duration
 
         if report.when == "call":
             captured = getattr(report, "capstdout", "") or ""
@@ -51,9 +50,9 @@ class RegressionReporter:
                 result["stdout"] = captured.strip()
 
         if report.failed:
-            result["outcome"] = "failed"
-        elif report.skipped and result["outcome"] != "failed":
-            result["outcome"] = "skipped"
+            result['outcome'] = "failed"
+        elif report.skipped and result['outcome'] != "failed":
+            result['outcome'] = "skipped"
 
 
 def get_category(nodeid):
@@ -93,13 +92,13 @@ def write_report(reporter, exit_code):
     category_duration = defaultdict(float)
 
     for nodeid, result in reporter.tests.items():
-        outcome = result["outcome"]
+        outcome = result['outcome']
         category = get_category(nodeid)
-        counts["total"] += 1
+        counts['total'] += 1
         counts[outcome] += 1
         category_counts[category]["total"] += 1
         category_counts[category][outcome] += 1
-        category_duration[category] += result["duration"]
+        category_duration[category] += result['duration']
 
     overall = "PASS" if exit_code == 0 and not reporter.collection_errors else "FAIL"
 
@@ -129,10 +128,10 @@ def write_report(reporter, exit_code):
         f"Commit: {commit}",
         f"Branch: {branch}",
         f"Overall Result: {overall}",
-        f"Total Tests: {counts["total"]}",
-        f"Passed: {counts["passed"]}",
-        f"Failed: {counts["failed"]}",
-        f"Skipped: {counts["skipped"]}",
+        f"Total Tests: {counts['total']}",
+        f"Passed: {counts['passed']}",
+        f"Failed: {counts['failed']}",
+        f"Skipped: {counts['skipped']}",
         f"Duration: {duration:.2f}s",
         "",
         "## CATEGORY SUMMARY",
@@ -144,9 +143,9 @@ def write_report(reporter, exit_code):
     for category in CATEGORIES:
         values = category_counts[category]
         lines.append(
-            f"| {category} | {values["total"]} | "
-            f"{values["passed"]} | {values["failed"]} | "
-            f"{values["skipped"]} | {category_duration[category]:.2f}s |"
+            f"| {category} | {values['total']} | "
+            f"{values['passed']} | {values['failed']} | "
+            f"{values['skipped']} | {category_duration[category]:.2f}s |"
         )
 
     lines.extend([
@@ -154,10 +153,10 @@ def write_report(reporter, exit_code):
         "## KEY HIGHLIGHTS",
         "",
         f"- Full suite exit status: {exit_code}",
-        f"- {counts["passed"]} tests passed.",
-        f"- {counts["failed"]} tests failed.",
-        f"- {counts["skipped"]} tests skipped.",
-        f"- {counts["total"]} tests were executed.",
+        f"- {counts['passed']} tests passed.",
+        f"- {counts['failed']} tests failed.",
+        f"- {counts['skipped']} tests skipped.",
+        f"- {counts['total']} tests were executed.",
     ])
 
     if reporter.collection_errors:
@@ -169,7 +168,7 @@ def write_report(reporter, exit_code):
 
     for nodeid, result in slowest:
         lines.append(
-            f"- `{nodeid}` — {result["duration"]:.3f}s — {result["outcome"]}"
+            f"- `{nodeid}` — {result['duration']:.3f}s — {result['outcome']}"
         )
 
     fence = chr(96) * 3
@@ -194,7 +193,7 @@ def write_report(reporter, exit_code):
 
     for nodeid, result in performance_tests:
         lines.append(
-            f"- {fence}{nodeid}{fence} — {result["duration"]:.3f}s — {result["outcome"]}"
+            f"- {fence}{nodeid}{fence} — {result['duration']:.3f}s — {result['outcome']}"
         )
         stdout = result.get("stdout", "").strip()
         if stdout:

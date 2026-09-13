@@ -1,9 +1,9 @@
+from pylage.ENGINE import ResponsiveStyle, Style
+from pylage.UI.layout.drawer import MobileSidebar, NavigationDrawer
+from pylage.UI.layout.footer import Footer
+from pylage.UI.layout.header import Header
 from pylage.UI.layout.navbar import Navbar
 from pylage.UI.layout.topbar import Topbar
-from pylage.UI.layout.header import Header
-from pylage.UI.layout.footer import Footer
-from pylage.UI.layout.drawer import NavigationDrawer, MobileSidebar
-from pylage.ENGINE import ResponsiveStyle, Style
 
 
 def test_phase_7e_responsive_assertion():

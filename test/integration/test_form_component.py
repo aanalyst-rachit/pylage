@@ -1,4 +1,4 @@
-from pylage.ENGINE import Form, Input, Button
+from pylage.ENGINE import Button, Form, Input
 from pylage.ENGINE.core.renderer import render
 
 

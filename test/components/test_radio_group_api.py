@@ -1,4 +1,3 @@
-import pylage as ps
 from pylage.ENGINE import Input, RadioGroup, State
 from pylage.ENGINE.core.renderer import render
 

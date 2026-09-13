@@ -1,9 +1,8 @@
+import pylage.ENGINE.core.binding as binding_module
 from pylage.ENGINE.core.binding import StateBinding
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.registry import ComponentRegistry, PropDefinition
 from pylage.ENGINE.core.state import State
-import pylage.ENGINE.core.binding as binding_module
-
 
 print("=== PYLAGE REGISTRY STATE BINDING CONTRACT TEST ===")
 

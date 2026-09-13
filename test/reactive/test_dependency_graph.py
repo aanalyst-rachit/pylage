@@ -1,7 +1,7 @@
-import pytest
+
 from pylage.ENGINE.core.component import Component
-from pylage.ENGINE.core.state import State
 from pylage.ENGINE.core.graph import DependencyGraph
+from pylage.ENGINE.core.state import State
 
 
 def test_add_and_get_dependents():

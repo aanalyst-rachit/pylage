@@ -1,9 +1,9 @@
 import asyncio
 import json
-from pylage.ENGINE.core.protocol_codec import decode_message
 from pathlib import Path
 
 import pylage as pl
+from pylage.ENGINE.core.protocol_codec import decode_message
 from pylage.ENGINE.core.state import State
 from pylage.ENGINE.runtime.asgi import ASGIApp
 from pylage.ENGINE.runtime.session_store import InMemorySessionStore

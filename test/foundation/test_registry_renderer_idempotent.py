@@ -1,7 +1,6 @@
 from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.core.renderer import HTMLRenderer
 
-
 print("=== PYLAGE REGISTRY RENDERER IDEMPOTENCY TEST ===")
 
 
@@ -40,8 +39,8 @@ callbacks2 = {
     )
 }
 
-for name in callbacks1:
-    assert callbacks2[name] is callbacks1[name], (
+for name, callback in callbacks1.items():
+    assert callbacks2[name] is callback, (
         f"Renderer callback changed for {name}"
     )
 
@@ -49,7 +48,7 @@ print("Repeated initialization preserves callbacks: PASS")
 
 
 # Both renderer instances must still work.
-from pylage.ENGINE.components import Heading, Button
+from pylage.ENGINE.components import Button, Heading
 
 heading_html = renderer1.render(
     Heading("Hello")

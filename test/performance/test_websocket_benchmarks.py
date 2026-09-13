@@ -1,7 +1,6 @@
 import asyncio
 import time
 
-import pylage as ps
 from pylage.ENGINE import Column, Heading, State
 from pylage.ENGINE.core.protocol_codec import decode_message
 from pylage.ENGINE.runtime.websocket import WebSocketServer

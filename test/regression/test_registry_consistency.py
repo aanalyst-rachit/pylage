@@ -12,7 +12,6 @@ from pylage.ENGINE import (
 )
 from pylage.ENGINE.core.registry import registry
 
-
 DYNAMIC_COMPONENTS = [
     "Card",
     "Badge",

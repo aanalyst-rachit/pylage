@@ -1,6 +1,5 @@
 import pytest
 
-import pylage as ps
 from pylage.ENGINE import Input
 from pylage.ENGINE.core.renderer import render
 

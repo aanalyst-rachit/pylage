@@ -3,7 +3,6 @@ from pylage.ENGINE.core.registry import (
     PropDefinition,
 )
 
-
 print("=== PYLAGE REGISTRY PROPS TEST ===")
 
 registry = ComponentRegistry()

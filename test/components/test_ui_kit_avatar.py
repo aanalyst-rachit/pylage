@@ -1,6 +1,6 @@
-from pylage.ENGINE import Image, Style, State
-from pylage.ENGINE.core.renderer import render
 import pylage.UI as ps
+from pylage.ENGINE import Image, State, Style
+from pylage.ENGINE.core.renderer import render
 
 
 def test_avatar_returns_existing_avatar_component():

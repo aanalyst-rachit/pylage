@@ -17,11 +17,13 @@ PyLage is a Python-first, server-driven reactive UI framework focused on low-lat
 
 Start with the [First App](first_app.md) guide.
 
-## V2 Roadmap
+## Public Release Scope
 
-PyLage V2 development is organized around runtime foundations, protocol performance, security, reactive developer experience, routing, deployment, benchmarks, documentation, and adoption.
+PyLage V2 implementation scope for Phases 0–7 is complete. The current Phase 8 work is focused on final public-release preparation for v1.0.3.
 
-See the [V2 Roadmap](https://github.com/aanalyst-rachit/pylage/blob/main/tracker.md).
+The release process covers documentation, playground verification, demos, changelog, package versioning, release quality gates, and final publication.
+
+The current release tracker is maintained in the repository root as `tracker.md`.
 
 ## Project
 

@@ -2,7 +2,6 @@ import re
 
 from pylage.ENGINE import Column, Text
 from pylage.ENGINE.runtime.runtime import Runtime
-from pylage.ENGINE import Column, Text
 
 
 def test_runtime_rewrites_wildcard_websocket_host_for_browser():

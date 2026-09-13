@@ -3,9 +3,8 @@ from __future__ import annotations
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.renderers.html import render_document
 
-
 PYODIDE_VERSION = "0.29.3"
-PYLAGE_WHEEL = "pylage-1.0.2-py3-none-any.whl"
+PYLAGE_WHEEL = "pylage-1.0.3-py3-none-any.whl"
 
 
 def inject_playground_bridge(document: str, wheel_url: str | None = None) -> str:

@@ -1,10 +1,7 @@
-import pylage as ps
-
 from pylage.ENGINE.core.registry import (
     ComponentRegistry,
     registry,
 )
-
 
 print("=== PYLAGE COMPONENT REGISTRY TEST ===")
 

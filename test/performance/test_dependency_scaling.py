@@ -4,7 +4,6 @@ from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.graph import DependencyGraph
 from pylage.ENGINE.core.state import State
 
-
 SIZES = (10, 100, 1_000, 10_000)
 
 

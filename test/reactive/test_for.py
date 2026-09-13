@@ -3,7 +3,6 @@ from __future__ import annotations
 import pytest
 
 import pylage as pl
-from pylage.ENGINE.core.component import Component
 
 
 def test_public_for_each_api_is_exported():

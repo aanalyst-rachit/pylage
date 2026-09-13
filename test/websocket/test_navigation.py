@@ -61,7 +61,7 @@ def test_navigation_handler_json():
 
 
 def test_navigation_with_routing_runtime(tmp_path):
-    from pathlib import Path
+
     import pylage as pl
     from pylage.ENGINE.routing import Router, RoutingRuntime
 
@@ -76,7 +76,6 @@ def test_navigation_with_routing_runtime(tmp_path):
 
     def on_navigate(path: str):
         runtime.navigate(path)
-        return None
 
     server = WebSocketServer(root, navigation_handler=on_navigate)
     url = server.start()

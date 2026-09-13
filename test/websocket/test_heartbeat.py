@@ -1,10 +1,10 @@
 import asyncio
 import ssl
+from typing import ClassVar
 
 import pytest
 
 import pylage.ENGINE.runtime.websocket as websocket_runtime
-
 from pylage.ENGINE import Column
 from pylage.ENGINE.runtime.websocket import WebSocketServer
 
@@ -68,7 +68,7 @@ async def test_websocket_serve_security_configuration(monkeypatch):
             return ("127.0.0.1", 8765)
 
     class FakeServer:
-        sockets = [FakeSocket()]
+        sockets: ClassVar[list[FakeSocket]] = [FakeSocket()]
 
         async def wait_closed(self):
             return None
@@ -100,7 +100,7 @@ async def test_websocket_serve_propagates_ssl_context(monkeypatch):
             return ("127.0.0.1", 8765)
 
     class FakeServer:
-        sockets = [FakeSocket()]
+        sockets: ClassVar[list[FakeSocket]] = [FakeSocket()]
 
         async def wait_closed(self):
             return None

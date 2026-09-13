@@ -1,7 +1,7 @@
 from pylage.ENGINE.core.component import Component
-from pylage.ENGINE.core.state import State
-from pylage.ENGINE.core.graph import DependencyGraph
 from pylage.ENGINE.core.dirty import DirtyNodes
+from pylage.ENGINE.core.graph import DependencyGraph
+from pylage.ENGINE.core.state import State
 
 
 def test_state_change_marks_dependent_component_dirty():

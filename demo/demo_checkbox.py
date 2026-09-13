@@ -2,10 +2,9 @@ import pylage as pl
 import pylage as ps
 
 
-
 def get_app():
     terms = pl.state(False)
-    notifications = pl.state(True)
+    _notifications = pl.state(True)
     custom_checked = pl.state(False)
     status = pl.state("Not changed yet")
 

@@ -582,102 +582,11 @@ def test_normalize_ir_rejects_non_ir_node():
         normalize_ir("not an IR node")
 
 
-def test_normalize_ir_preserves_identity_and_structure():
-    from pylage.ENGINE.core.ir import normalize_ir
-
-    child = IRNode(
-        node_id="child",
-        node_type="component",
-        component_id="Text",
-        props={"text": "Hello"},
-    )
-
-    node = IRNode(
-        node_id="root",
-        node_type="component",
-        component_id="Button",
-        props={"class": "primary"},
-        children=[child],
-        style_ref="style-ref",
-    )
-
-    normalized = normalize_ir(node)
-
-    assert normalized is not node
-    assert normalized.node_id == "root"
-    assert normalized.node_type == "component"
-    assert normalized.component_id == "Button"
-    assert normalized.props == {"class": "primary"}
-    assert normalized.style_ref == "style-ref"
-
-    assert len(normalized.children) == 1
-    assert normalized.children[0] is not child
-    assert normalized.children[0].node_id == "child"
-    assert normalized.children[0].component_id == "Text"
-
-
 def test_normalize_ir_rejects_invalid_input():
     from pylage.ENGINE.core.ir import normalize_ir
 
     with pytest.raises(TypeError):
         normalize_ir("not an IR node")
-
-
-def test_normalize_ir_deep_copies_props():
-    from pylage.ENGINE.core.ir import normalize_ir
-
-    props = {
-        "metadata": {
-            "items": ["one", "two"],
-        }
-    }
-
-    node = IRNode(
-        node_id="root",
-        node_type="component",
-        component_id="Button",
-        props=props,
-    )
-
-    normalized = normalize_ir(node)
-
-    props["metadata"]["items"].append("three")
-
-    assert normalized.props == {
-        "metadata": {
-            "items": ["one", "two"],
-        }
-    }
-
-
-def test_normalize_ir_preserves_child_order():
-    from pylage.ENGINE.core.ir import normalize_ir
-
-    children = [
-        IRNode(
-            node_id="1",
-            node_type="component",
-            component_id="Text",
-            props={"text": "One"},
-        ),
-        IRNode(
-            node_id="2",
-            node_type="component",
-            component_id="Text",
-            props={"text": "Two"},
-        ),
-    ]
-
-    node = IRNode(
-        node_id="root",
-        node_type="component",
-        component_id="Column",
-        children=children,
-    )
-
-    normalized = normalize_ir(node)
-
-    assert [child.node_id for child in normalized.children] == ["1", "2"]
 
 
 def test_analyze_ir_returns_tree_statistics():
@@ -1005,30 +914,6 @@ def test_analyze_ir_dependencies_includes_nested_nodes():
     result = analyze_ir_dependencies(node)
 
     assert result["node_ids"] == ["root", "child"]
-    assert result["dependencies"] == [
-        {"node_id": "root", "prop_name": "text"}
-    ] if False else result["dependencies"]
-
-def test_analyze_ir_dependencies_includes_nested_nodes():
-    from pylage.ENGINE.core.ir import analyze_ir_dependencies
-
-    node = IRNode(
-        node_id="root",
-        node_type="component",
-        component_id="Column",
-        children=[
-            IRNode(
-                node_id="child",
-                node_type="component",
-                component_id="Button",
-                props={"text": "Hello"},
-            )
-        ],
-    )
-
-    result = analyze_ir_dependencies(node)
-
-    assert result["node_ids"] == ["root", "child"]
     assert {"node_id": "child", "prop_name": "text"} in result["dependencies"]
 
 def test_analyze_ir_dependencies_detects_state():
@@ -1221,8 +1106,9 @@ def test_plan_patches_detects_prop_update():
     ]
 
 def test_plan_patches_does_not_mutate_inputs():
-    from pylage.ENGINE.core.ir import plan_patches
     import copy
+
+    from pylage.ENGINE.core.ir import plan_patches
 
     previous = {
         "id": "root",

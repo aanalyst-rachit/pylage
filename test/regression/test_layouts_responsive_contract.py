@@ -15,7 +15,6 @@ import importlib
 import pylage.UI.layout as layouts
 from pylage.ENGINE import ResponsiveStyle, Style
 
-
 LAYOUT_MODULES = [
     "center",
     "container",

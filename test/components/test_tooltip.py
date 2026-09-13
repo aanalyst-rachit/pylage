@@ -1,4 +1,4 @@
-from pylage.ENGINE import Tooltip, Text, Button
+from pylage.ENGINE import Button, Text, Tooltip
 from pylage.ENGINE.core.renderer import render
 
 

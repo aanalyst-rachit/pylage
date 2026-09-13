@@ -1,9 +1,10 @@
+from playwright.sync_api import expect, sync_playwright
+
 from pylage import UI as pl
 from pylage.ENGINE.runtime.runtime import Runtime
 from pylage.ENGINE.styling.global_theme import set_global_theme
 from pylage.UI.themes.dark import DARK_THEME
 from pylage.UI.themes.light import LIGHT_THEME
-from playwright.sync_api import expect, sync_playwright
 
 
 def test_theme_visual_consistency_updates_computed_styles():

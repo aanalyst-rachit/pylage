@@ -1,10 +1,12 @@
+from typing import ClassVar
+
 from pylage.ENGINE import Style
 from pylage.ENGINE.core.renderer import render
 from pylage.UI import table
 
 
 class FakeDataFrame:
-    columns = ["Name", "Age"]
+    columns: ClassVar[list[str]] = ["Name", "Age"]
 
     def to_dict(self, orient="records"):
         assert orient == "records"

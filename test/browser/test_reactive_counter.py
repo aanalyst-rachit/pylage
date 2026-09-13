@@ -1,7 +1,5 @@
-import pytest
-from playwright.sync_api import sync_playwright, expect
+from playwright.sync_api import expect, sync_playwright
 
-import pylage as ps
 from pylage.ENGINE import Button, Column, Heading, State
 from pylage.ENGINE.runtime import Runtime
 

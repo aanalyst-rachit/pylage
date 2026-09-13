@@ -1,6 +1,7 @@
-from pylage.ENGINE import Column, Style, State
-from pylage.ENGINE.core.renderer import render
 import pylage.UI as ui
+from pylage.ENGINE import Column, State, Style
+from pylage.ENGINE.core.renderer import render
+
 
 def test_loading_state_returns_column():
     ls = ui.loading_state()

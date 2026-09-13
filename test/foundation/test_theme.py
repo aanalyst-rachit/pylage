@@ -1,3 +1,5 @@
+from dataclasses import FrozenInstanceError
+
 import pytest
 
 from pylage.ENGINE import Theme
@@ -76,7 +78,7 @@ def test_theme_is_immutable():
     with pytest.raises(TypeError):
         theme.colors["primary"] = "blue"
 
-    with pytest.raises(Exception):
+    with pytest.raises(FrozenInstanceError):
         theme.name = "dark"
 
 

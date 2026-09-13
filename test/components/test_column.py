@@ -1,4 +1,4 @@
-from pylage.ENGINE import Column, Text, Button
+from pylage.ENGINE import Button, Column, Text
 from pylage.ENGINE.core.renderer import render
 
 

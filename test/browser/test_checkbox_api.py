@@ -1,4 +1,3 @@
-import pylage as ps
 from pylage.ENGINE import Checkbox, State
 from pylage.ENGINE.core.renderer import render
 
@@ -69,7 +68,8 @@ def test_checkbox_registry_declares_checked_as_boolean():
 
 
 def test_checkbox_state_update_controls_browser_checked_property():
-    from playwright.sync_api import sync_playwright, expect
+    from playwright.sync_api import expect, sync_playwright
+
     from pylage.ENGINE.runtime import Runtime
 
     checked = State(False)

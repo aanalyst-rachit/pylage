@@ -1,5 +1,6 @@
-from pylage.ENGINE.core.renderer import render
 import pylage.UI as ui
+from pylage.ENGINE.core.renderer import render
+
 
 def test_dashboard_composition():
     dash = ui.dashboard(

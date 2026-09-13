@@ -1,10 +1,11 @@
 import pylage as pl
+
 """Manual demo for PyLage Media & Graphic components (Audio, Video, Canvas, Image, Icon)."""
 
 
 
 def get_app() -> pl.column:
-    is_playing_audio = pl.state(False)
+    _is_playing_audio = pl.state(False)
     canvas_clicks = pl.state(0)
 
     title = pl.heading("🎨 Media & Graphic Components Manual", level=1)

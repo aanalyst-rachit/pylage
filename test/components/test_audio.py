@@ -38,6 +38,7 @@ def test_audio_supports_props():
     assert "controls" in html
 import pytest
 
+
 def test_audio_rejects_dangerous_src_scheme():
     with pytest.raises(ValueError, match="unsafe URL scheme"):
         render(Audio(src="javascript:alert(1)"))

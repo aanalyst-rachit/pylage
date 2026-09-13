@@ -1,13 +1,12 @@
 from time import perf_counter
 
+from pylage.ENGINE.core.binding import StateBinding
 from pylage.ENGINE.core.component import Component
+from pylage.ENGINE.core.diff import diff
 from pylage.ENGINE.core.dirty import DirtyNodes
+from pylage.ENGINE.core.patch import operations_to_messages
 from pylage.ENGINE.core.scheduler import Scheduler
 from pylage.ENGINE.core.state import State
-from pylage.ENGINE.core.binding import StateBinding
-from pylage.ENGINE.core.snapshot import component_to_snapshot
-from pylage.ENGINE.core.diff import diff
-from pylage.ENGINE.core.patch import operations_to_messages
 
 
 def _build_pipeline():
@@ -64,7 +63,7 @@ def test_phase6_state_update_latency():
 
     print()
     print("===== PHASE 6 — STATE UPDATE LATENCY =====")
-    print(f"iterations        : 1000")
+    print("iterations        : 1000")
     print(f"total             : {result['total']:.9f}s")
     print(f"per update        : {result['per_operation']:.9f}s")
 
@@ -85,7 +84,7 @@ def test_phase6_scheduler_latency():
 
     print()
     print("===== PHASE 6 — SCHEDULER FLUSH =====")
-    print(f"dirty updates     : 1000")
+    print("dirty updates     : 1000")
     print(f"processing cycles : {len(processed)}")
     print(f"elapsed           : {result['total']:.9f}s")
 
@@ -119,7 +118,7 @@ def test_phase6_diff_latency():
 
     print()
     print("===== PHASE 6 — DIFF LATENCY =====")
-    print(f"iterations        : 1000")
+    print("iterations        : 1000")
     print(f"operations        : {len(operations)}")
     print(f"total             : {result['total']:.9f}s")
     print(f"per diff          : {result['per_operation']:.9f}s")
@@ -146,7 +145,7 @@ def test_phase6_patch_latency():
 
     print()
     print("===== PHASE 6 — PATCH LATENCY =====")
-    print(f"iterations        : 1000")
+    print("iterations        : 1000")
     print(f"messages          : {len(messages)}")
     print(f"total             : {result['total']:.9f}s")
     print(f"per conversion    : {result['per_operation']:.9f}s")

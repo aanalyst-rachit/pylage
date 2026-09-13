@@ -1,7 +1,6 @@
+from pylage.ENGINE import Column
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.runtime.asgi import ASGIApp
-from pylage.ENGINE import Button, Column
-
 
 calls = []
 

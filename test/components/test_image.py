@@ -37,6 +37,7 @@ def test_image_supports_props():
     assert 'title="Profile"' in html
 import pytest
 
+
 def test_image_rejects_dangerous_src_scheme():
     with pytest.raises(ValueError, match="unsafe URL scheme"):
         render(Image(src="javascript:alert(1)"))

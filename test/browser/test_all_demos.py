@@ -1,10 +1,9 @@
-from pathlib import Path
 import importlib
-import inspect
+from pathlib import Path
 
 from playwright.sync_api import sync_playwright
-from pylage.ENGINE.runtime import Runtime
 
+from pylage.ENGINE.runtime import Runtime
 
 APP_DIR = Path("demo")
 OUTPUT_DIR = Path("test_output/all_manuals")
@@ -110,7 +109,7 @@ def test_all_manuals_smoke():
                                     force=True,
                                 )
                                 clicked += 1
-                        except Exception:
+                        except Exception:  # noqa: S110, BLE001
                             # One problematic control should not prevent
                             # the rest of the manual from being checked.
                             pass
@@ -135,7 +134,7 @@ def test_all_manuals_smoke():
                 finally:
                     page.close()
 
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
                 results.append(
                     (
                         manual_name,

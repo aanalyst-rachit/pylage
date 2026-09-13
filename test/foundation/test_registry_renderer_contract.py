@@ -3,7 +3,6 @@ import inspect
 from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.core.renderer import HTMLRenderer
 
-
 print("=== PYLAGE REGISTRY → RENDERER CONTRACT TEST ===")
 
 

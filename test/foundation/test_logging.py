@@ -44,9 +44,8 @@ def test_scheduler_error_logs_context_and_preserves_cause(caplog):
 
     scheduler = Scheduler(dirty, callback)
 
-    with caplog.at_level(logging.ERROR, logger="pylage"):
-        with pytest.raises(RuntimeError, match="Scheduler callback failed") as exc_info:
-            scheduler.flush()
+    with caplog.at_level(logging.ERROR, logger="pylage"), pytest.raises(RuntimeError, match="Scheduler callback failed") as exc_info:
+        scheduler.flush()
 
     assert isinstance(exc_info.value.__cause__, ValueError)
     assert str(exc_info.value.__cause__) == "scheduler callback failed"

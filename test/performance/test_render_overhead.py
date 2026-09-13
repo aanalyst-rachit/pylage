@@ -1,6 +1,6 @@
 from time import perf_counter
 
-from pylage.ENGINE import Button, Card, Table, Text, Style
+from pylage.ENGINE import Button, Card, Style, Table, Text
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.renderer import render
 from pylage.UI.components.button import button

@@ -3,10 +3,9 @@ import shutil
 import socket
 import subprocess
 import time
-
-import pytest
 from urllib.request import urlopen
 
+import pytest
 
 FACTORY = "test.foundation.granian_factory_smoke:create_test_app"
 HOST = "127.0.0.1"
@@ -105,18 +104,18 @@ def test_granian_event_loop_benchmark(capsys):
     asyncio_result = _run_granian("asyncio")
     uvloop_result = _run_granian("uvloop")
 
-    assert asyncio_result["bytes"] == uvloop_result["bytes"]
+    assert asyncio_result['bytes'] == uvloop_result['bytes']
     assert asyncio_result["requests"] == uvloop_result["requests"]
 
     throughput_gain = (
-        uvloop_result["requests_per_second"]
-        / asyncio_result["requests_per_second"]
+        uvloop_result['requests_per_second']
+        / asyncio_result['requests_per_second']
         - 1.0
     ) * 100.0
 
     latency_reduction = (
-        (asyncio_result["per_request"] - uvloop_result["per_request"])
-        / asyncio_result["per_request"]
+        (asyncio_result['per_request'] - uvloop_result['per_request'])
+        / asyncio_result['per_request']
     ) * 100.0
 
     print("===== PY LAGE PHASE 2.4 — GRANIAN EVENT LOOP BENCHMARK =====")
@@ -124,16 +123,16 @@ def test_granian_event_loop_benchmark(capsys):
     print(f"measured requests : {MEASURED_REQUESTS}")
     print()
     print("--- ASYNCIO ---")
-    print(f"total             : {asyncio_result["elapsed"]:.9f}s")
-    print(f"per request       : {asyncio_result["per_request"]:.9f}s")
-    print(f"requests/sec      : {asyncio_result["requests_per_second"]:.3f}")
-    print(f"response bytes    : {asyncio_result["bytes"]}")
+    print(f"total             : {asyncio_result['elapsed']:.9f}s")
+    print(f"per request       : {asyncio_result['per_request']:.9f}s")
+    print(f"requests/sec      : {asyncio_result['requests_per_second']:.3f}")
+    print(f"response bytes    : {asyncio_result['bytes']}")
     print()
     print("--- UVLOOP ---")
-    print(f"total             : {uvloop_result["elapsed"]:.9f}s")
-    print(f"per request       : {uvloop_result["per_request"]:.9f}s")
-    print(f"requests/sec      : {uvloop_result["requests_per_second"]:.3f}")
-    print(f"response bytes    : {uvloop_result["bytes"]}")
+    print(f"total             : {uvloop_result['elapsed']:.9f}s")
+    print(f"per request       : {uvloop_result['per_request']:.9f}s")
+    print(f"requests/sec      : {uvloop_result['requests_per_second']:.3f}")
+    print(f"response bytes    : {uvloop_result['bytes']}")
     print()
     print(f"throughput gain   : {throughput_gain:.2f}%")
     print(f"latency reduction : {latency_reduction:.2f}%")

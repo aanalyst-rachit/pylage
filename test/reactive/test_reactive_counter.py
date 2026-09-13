@@ -1,13 +1,11 @@
 import asyncio
 import json
 
-from pylage.ENGINE.core.protocol_codec import decode_message
-
-import pylage as ps
-from pylage.ENGINE import Button, Column, Heading, State
 from websockets.asyncio.client import connect
-from pylage.ENGINE.runtime.websocket import WebSocketServer
 
+from pylage.ENGINE import Button, Column, Heading, State
+from pylage.ENGINE.core.protocol_codec import decode_message
+from pylage.ENGINE.runtime.websocket import WebSocketServer
 
 print("=== PYLAGE REACTIVE COUNTER TEST ===")
 

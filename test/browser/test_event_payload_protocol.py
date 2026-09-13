@@ -1,6 +1,5 @@
 from playwright.sync_api import sync_playwright
 
-import pylage as ps
 from pylage.ENGINE import Checkbox, Column, Input, Option, Select
 from pylage.ENGINE.runtime import Runtime
 

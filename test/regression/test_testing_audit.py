@@ -17,16 +17,10 @@ Coverage:
 - regression cases
 """
 
-import pylage.UI
 import pylage.UI.layout as layouts
-import pylage.UI.patterns as patterns
-import pylage.UI.themes as themes
-import pylage.UI.tokens as tokens
-import pylage.UI.recipes as recipes
-
 from pylage.ENGINE import ResponsiveStyle, Style
 from pylage.ENGINE.components import Text
-
+from pylage.UI import patterns, recipes, themes, tokens
 
 # ================================================================
 # Construction

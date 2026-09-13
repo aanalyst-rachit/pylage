@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pytest
 
-import pylage as pl
 from pylage.ENGINE.routing import Router
 
 

@@ -1,7 +1,5 @@
-import pylage as ps
 from pylage.ENGINE import Button, Column
 from pylage.ENGINE.core.events import EventDispatcher
-
 
 print("=== PYLAGE EVENT DISPATCH TEST ===")
 

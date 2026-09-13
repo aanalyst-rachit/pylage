@@ -1,6 +1,4 @@
-import pylage as ps
 from pylage.ENGINE import Button
-
 
 print("=== PYLAGE EVENT MODEL TEST ===")
 

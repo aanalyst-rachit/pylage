@@ -1,7 +1,7 @@
 import inspect
+from unittest.mock import patch
 
 import pytest
-from unittest.mock import patch
 
 from pylage.ENGINE.runtime import GranianRuntime
 
@@ -49,7 +49,7 @@ def test_granian_runtime_loop_command_contract():
     for loop, expected in ((None, None), ("asyncio", "asyncio"), ("uvloop", "uvloop")):
         captured = {}
 
-        def fake_popen(command, **kwargs):
+        def fake_popen(command, captured=captured, **kwargs):
             captured["command"] = command
             return FakeProcess()
 

@@ -1,7 +1,6 @@
 import pylage as ps
 from pylage.ENGINE import Button, Column, Heading
 
-
 app = Column(
     Heading("Hello PyLage"),
     Button("Click me", variant="primary"),

@@ -1,6 +1,5 @@
 from pylage.ENGINE.core.protocol import EventMessage
 
-
 print("=== PYLAGE EVENT PROTOCOL TEST ===")
 
 

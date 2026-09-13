@@ -1,6 +1,7 @@
-from pylage.ENGINE import Grid, Card, Style, Text
-from pylage.ENGINE.core.renderer import render
 import pylage.UI as ui
+from pylage.ENGINE import Card, Grid, Style, Text
+from pylage.ENGINE.core.renderer import render
+
 
 def test_dashboard_grid_returns_grid():
     dg = ui.dashboard_grid(Card(Text("Widget 1")))

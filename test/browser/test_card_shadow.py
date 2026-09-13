@@ -1,6 +1,7 @@
+from playwright.sync_api import sync_playwright
+
 from pylage import UI as pl
 from pylage.ENGINE.runtime.runtime import Runtime
-from playwright.sync_api import sync_playwright
 
 
 def test_card_shadow_variants_browser_contract():

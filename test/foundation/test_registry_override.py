@@ -2,7 +2,6 @@ from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.registry import ComponentRegistry
 from pylage.ENGINE.core.renderer import HTMLRenderer
 
-
 print("=== PYLAGE REGISTRY OVERRIDE TEST ===")
 
 

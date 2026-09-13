@@ -11,7 +11,6 @@ import importlib
 
 import pytest
 
-
 RECIPE_MODULES = [
     "landing",
     "dashboard",
