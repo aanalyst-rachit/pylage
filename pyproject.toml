@@ -39,6 +39,7 @@ performance = [
 ]
 test = [
     "playwright>=1.62,<1.63",
+    "pytest-asyncio>=1.1,<2",
 ]
 
 [project.urls]
