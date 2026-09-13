@@ -4,6 +4,7 @@ from unittest.mock import patch
 import pytest
 
 from pylage.ENGINE.runtime import GranianRuntime
+from pylage.ENGINE.runtime import granian as granian_runtime
 
 
 def test_granian_runtime_constructor_contract():
@@ -58,7 +59,7 @@ def test_granian_runtime_loop_command_contract():
             loop=loop,
         )
 
-        with patch("pylage.ENGINE.runtime.granian.subprocess.Popen", side_effect=fake_popen), patch(
+        with patch.object(granian_runtime.subprocess, "Popen", side_effect=fake_popen), patch(
             "pylage.ENGINE.runtime.granian.urlopen",
             return_value=FakeResponse(),
         ):
@@ -138,7 +139,7 @@ def test_granian_runtime_tls_command_contract():
         ssl_keyfile_password="secret",
     )
 
-    with patch("pylage.ENGINE.runtime.granian.subprocess.Popen", side_effect=fake_popen), patch(
+    with patch.object(granian_runtime.subprocess, "Popen", side_effect=fake_popen), patch(
         "pylage.ENGINE.runtime.granian.urlopen",
         return_value=FakeResponse(),
     ):
