@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.components.basic import Table as _Table
-
+from pylage.ENGINE.styling.style import Style
 
 _DEFAULT_STYLE = Style(
     width="100%",

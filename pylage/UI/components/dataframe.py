@@ -5,7 +5,6 @@ from typing import Any
 from pylage.ENGINE.components.basic import DataFrame as _DataFrame
 from pylage.ENGINE.styling.style import Style
 
-
 _DEFAULT_STYLE = Style(
     width="100%",
     border="1px solid var(--color-border)",

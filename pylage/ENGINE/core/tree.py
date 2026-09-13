@@ -94,11 +94,7 @@ class TreeMutationObserver:
             for child in event.get("children", []):
                 self._bind_tree(child)
 
-        elif event_type == "remove":
-            for child in event.get("children", []):
-                self._unbind_tree(child)
-
-        elif event_type == "clear":
+        elif event_type == "remove" or event_type == "clear":
             for child in event.get("children", []):
                 self._unbind_tree(child)
 

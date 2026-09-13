@@ -5,7 +5,6 @@ from typing import Any
 from pylage.ENGINE.components.basic import RadioGroup as _RadioGroup
 from pylage.ENGINE.styling.style import Style
 
-
 _BASE_STYLE = Style(
     display="flex",
     flex_direction="column",

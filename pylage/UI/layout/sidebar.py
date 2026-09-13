@@ -4,6 +4,7 @@ from pylage.ENGINE.components.basic import Row
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
 from pylage.ENGINE.styling.style import Style
+
 from ._common import resolve_style
 
 
@@ -25,4 +26,4 @@ def sidebar_layout(
 SidebarLayout = sidebar_layout
 
 
-__all__ = ["sidebar_layout", "SidebarLayout"]
+__all__ = ["SidebarLayout", "sidebar_layout"]

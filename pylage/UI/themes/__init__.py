@@ -14,9 +14,9 @@ __all__ = [
     "LIGHT_COLORS",
     "LIGHT_THEME",
     "available_themes",
+    "dark",
     "get_current_theme",
     "get_theme",
-    "set_theme",
     "light",
-    "dark",
+    "set_theme",
 ]

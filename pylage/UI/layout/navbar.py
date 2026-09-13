@@ -2,8 +2,9 @@ from typing import Any
 
 from pylage.ENGINE.components.basic import Navigation as _Navigation
 from pylage.ENGINE.core.component import Component
-from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
+from pylage.ENGINE.styling.style import Style
+
 from ._common import resolve_style
 
 
@@ -23,4 +24,4 @@ def navbar(*children: Any, style: Style | ResponsiveStyle | None = None, **props
 Navbar = navbar
 
 
-__all__ = ["navbar", "Navbar"]
+__all__ = ["Navbar", "navbar"]

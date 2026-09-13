@@ -30,6 +30,9 @@ dependencies = [
     "msgpack>=1.0.7"
 ]
 
+[project.scripts]
+pylage = "pylage.cli:main"
+
 [project.optional-dependencies]
 performance = [
     "uvloop>=0.22.1; sys_platform != 'win32'"
@@ -42,3 +45,10 @@ performance = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["pylage*"]
+[tool.ruff.lint.per-file-ignores]
+"pylage/ENGINE/__init__.py" = ["F401"]
+"pylage/ENGINE/components/__init__.py" = ["F401"]
+"pylage/UI/__init__.py" = ["F401"]
+"pylage/UI/layout/__init__.py" = ["F401"]
+"pylage/UI/patterns/__init__.py" = ["F401"]
+"pylage/UI/recipes/__init__.py" = ["F401"]

@@ -1,7 +1,5 @@
 """Design tokens for PyLage Layout."""
 
-from typing import Any
-
 COLORS: dict[str, str] = {
     "background": "#ffffff",
     "surface": "#f8fafc",
@@ -206,10 +204,7 @@ def validate_tokens() -> bool:
         return False
 
     required_spacing = {"0", "xs", "sm", "md", "lg", "xl", "2xl", "3xl", "4xl"}
-    if not required_spacing.issubset(SPACING.keys()):
-        return False
-
-    return True
+    return required_spacing.issubset(SPACING.keys())
 
 
 __all__ = [
@@ -217,9 +212,9 @@ __all__ = [
     "FONTS",
     "RADIUS",
     "SPACING",
-    "validate_tokens",
     "contrast_ratio",
     "meets_wcag_contrast",
     "theme_contrast_results",
+    "validate_tokens",
     "validate_wcag_contrast",
 ]

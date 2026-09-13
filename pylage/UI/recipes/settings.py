@@ -2,7 +2,6 @@
 
 from typing import Any
 
-from ..layout import Container, Stack
 from pylage.ENGINE.components import (
     Button,
     Card,
@@ -17,6 +16,8 @@ from pylage.ENGINE.components import (
     Tabs,
     Text,
 )
+
+from ..layout import Container, Stack
 
 
 def SettingsPage(

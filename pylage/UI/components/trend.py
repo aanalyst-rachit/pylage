@@ -3,10 +3,9 @@ from __future__ import annotations
 from typing import Any
 
 from pylage.ENGINE.components.basic import Badge as _Badge
-from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.components.basic import Text as _Text
 from pylage.ENGINE.core.component import Component
-
+from pylage.ENGINE.styling.style import Style
 
 _DIRECTION_CONFIG: dict[str, tuple[str, str]] = {
     "up": ("↑", "success"),

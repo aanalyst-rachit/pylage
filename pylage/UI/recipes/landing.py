@@ -3,8 +3,6 @@
 from typing import Any
 
 from ..layout import Container, Stack
-from ..patterns import Hero, FeatureSection, StatsSection, PricingSection, CTA
-from ..layout import Footer
 
 
 def LandingPage(

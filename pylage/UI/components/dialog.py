@@ -4,8 +4,6 @@ from typing import Any
 
 from pylage.ENGINE.components.basic import Dialog as _Dialog
 from pylage.ENGINE.styling.style import Style
-from pylage.ENGINE.core.component import Component
-
 
 __all__ = ["dialog"]
 

@@ -12,4 +12,4 @@ def navigation(*children: Any, **props: Any) -> Component:
 Navigation = navigation
 
 
-__all__ = ["navigation", "Navigation"]
+__all__ = ["Navigation", "navigation"]

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import json
+from dataclasses import dataclass
 from typing import Any
 
 
@@ -39,7 +39,7 @@ class EventMessage:
     def from_dict(
         cls,
         data: dict[str, Any],
-    ) -> "EventMessage":
+    ) -> EventMessage:
         if not isinstance(data, dict):
             raise TypeError("Event message must be a dictionary.")
 
@@ -62,7 +62,7 @@ class EventMessage:
         )
 
     @classmethod
-    def from_json(cls, data: str) -> "EventMessage":
+    def from_json(cls, data: str) -> EventMessage:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:
@@ -88,7 +88,7 @@ class NavigateMessage:
         return json.dumps(self.to_dict(), separators=(",", ":"))
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "NavigateMessage":
+    def from_dict(cls, data: dict[str, Any]) -> NavigateMessage:
         if not isinstance(data, dict):
             raise TypeError("Navigation message must be a dictionary.")
         if data.get("type") != "navigate":
@@ -101,11 +101,42 @@ class NavigateMessage:
         return cls(path=path)
 
     @classmethod
-    def from_json(cls, data: str) -> "NavigateMessage":
+    def from_json(cls, data: str) -> NavigateMessage:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:
             raise ValueError("Invalid JSON navigation message.") from exc
+        return cls.from_dict(decoded)
+
+
+@dataclass(frozen=True)
+class ReloadMessage:
+    """Server-to-client development reload notification."""
+
+    @property
+    def type(self) -> str:
+        return "reload"
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"type": self.type}
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), separators=(",", ":"))
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> ReloadMessage:
+        if not isinstance(data, dict):
+            raise TypeError("Reload message must be a dictionary.")
+        if data.get("type") != "reload":
+            raise ValueError("Invalid reload message type.")
+        return cls()
+
+    @classmethod
+    def from_json(cls, data: str) -> ReloadMessage:
+        try:
+            decoded = json.loads(data)
+        except json.JSONDecodeError as exc:
+            raise ValueError("Invalid JSON reload message.") from exc
         return cls.from_dict(decoded)
 
 
@@ -142,15 +173,15 @@ class EventMessageResponse:
         )
 
     @classmethod
-    def success(cls, result: Any = None) -> "EventMessageResponse":
+    def success(cls, result: Any = None) -> EventMessageResponse:
         return cls(ok=True, result=result)
 
     @classmethod
-    def failure(cls, error: str) -> "EventMessageResponse":
+    def failure(cls, error: str) -> EventMessageResponse:
         return cls(ok=False, error=error)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "EventMessageResponse":
+    def from_dict(cls, data: dict[str, Any]) -> EventMessageResponse:
         if not isinstance(data, dict):
             raise TypeError("Event response message must be a dictionary.")
 
@@ -164,7 +195,7 @@ class EventMessageResponse:
         )
 
     @classmethod
-    def from_json(cls, data: str) -> "EventMessageResponse":
+    def from_json(cls, data: str) -> EventMessageResponse:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:
@@ -211,7 +242,7 @@ class UpdateMessage:
     def from_dict(
         cls,
         data: dict[str, Any],
-    ) -> "UpdateMessage":
+    ) -> UpdateMessage:
         if not isinstance(data, dict):
             raise TypeError("Update message must be a dictionary.")
 
@@ -227,10 +258,10 @@ class UpdateMessage:
             raise ValueError("Update message requires a valid id.")
 
         if not isinstance(props, dict):
-            raise ValueError("Update message requires props.")
+            raise TypeError("Update message requires props.")
 
         if not isinstance(remove_props, list):
-            raise ValueError(
+            raise TypeError(
                 "Update message remove_props must be a list."
             )
 
@@ -255,7 +286,7 @@ class UpdateMessage:
         )
 
     @classmethod
-    def from_json(cls, data: str) -> "UpdateMessage":
+    def from_json(cls, data: str) -> UpdateMessage:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:
@@ -292,7 +323,7 @@ class ThemeUpdateMessage:
         )
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "ThemeUpdateMessage":
+    def from_dict(cls, data: dict[str, Any]) -> ThemeUpdateMessage:
         if not isinstance(data, dict):
             raise TypeError("Theme update message must be a dictionary.")
 
@@ -301,12 +332,12 @@ class ThemeUpdateMessage:
 
         css = data.get("css")
         if not isinstance(css, str):
-            raise ValueError("Theme update message requires css.")
+            raise TypeError("Theme update message requires css.")
 
         return cls(css=css)
 
     @classmethod
-    def from_json(cls, data: str) -> "ThemeUpdateMessage":
+    def from_json(cls, data: str) -> ThemeUpdateMessage:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:
@@ -332,7 +363,7 @@ class TreeAddMessage:
             )
 
         if not isinstance(self.components, list):
-            raise ValueError(
+            raise TypeError(
                 "Tree add message requires components."
             )
 
@@ -367,7 +398,7 @@ class TreeAddMessage:
     def from_dict(
         cls,
         data: dict[str, Any],
-    ) -> "TreeAddMessage":
+    ) -> TreeAddMessage:
         if not isinstance(data, dict):
             raise TypeError(
                 "Tree add message must be a dictionary."
@@ -388,7 +419,7 @@ class TreeAddMessage:
             )
 
         if not isinstance(components, list):
-            raise ValueError(
+            raise TypeError(
                 "Tree add message requires components."
             )
 
@@ -404,7 +435,7 @@ class TreeAddMessage:
         )
 
     @classmethod
-    def from_json(cls, data: str) -> "TreeAddMessage":
+    def from_json(cls, data: str) -> TreeAddMessage:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:
@@ -462,7 +493,7 @@ class TreeMoveMessage:
     def from_dict(
         cls,
         data: dict[str, Any],
-    ) -> "TreeMoveMessage":
+    ) -> TreeMoveMessage:
         if not isinstance(data, dict):
             raise TypeError(
                 "Tree move message must be a dictionary."
@@ -480,7 +511,7 @@ class TreeMoveMessage:
         )
 
     @classmethod
-    def from_json(cls, data: str) -> "TreeMoveMessage":
+    def from_json(cls, data: str) -> TreeMoveMessage:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:
@@ -547,7 +578,7 @@ class TreeReplaceMessage:
     def from_dict(
         cls,
         data: dict[str, Any],
-    ) -> "TreeReplaceMessage":
+    ) -> TreeReplaceMessage:
         if not isinstance(data, dict):
             raise TypeError(
                 "Tree replace message must be a dictionary."
@@ -566,7 +597,7 @@ class TreeReplaceMessage:
         )
 
     @classmethod
-    def from_json(cls, data: str) -> "TreeReplaceMessage":
+    def from_json(cls, data: str) -> TreeReplaceMessage:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:
@@ -621,7 +652,7 @@ class TreeSetChildrenMessage:
     def from_dict(
         cls,
         data: dict[str, Any],
-    ) -> "TreeSetChildrenMessage":
+    ) -> TreeSetChildrenMessage:
         if not isinstance(data, dict):
             raise TypeError(
                 "Tree set-children message must be a dictionary."
@@ -641,7 +672,7 @@ class TreeSetChildrenMessage:
     def from_json(
         cls,
         data: str,
-    ) -> "TreeSetChildrenMessage":
+    ) -> TreeSetChildrenMessage:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:
@@ -699,7 +730,7 @@ class TreeClearMessage:
     def from_dict(
         cls,
         data: dict[str, Any],
-    ) -> "TreeClearMessage":
+    ) -> TreeClearMessage:
         if not isinstance(data, dict):
             raise TypeError(
                 "Tree clear message must be a dictionary."
@@ -716,7 +747,7 @@ class TreeClearMessage:
         )
 
     @classmethod
-    def from_json(cls, data: str) -> "TreeClearMessage":
+    def from_json(cls, data: str) -> TreeClearMessage:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:
@@ -741,7 +772,7 @@ class TreeRemoveMessage:
             )
 
         if not isinstance(self.component_ids, list):
-            raise ValueError(
+            raise TypeError(
                 "Tree remove message requires component_ids."
             )
 
@@ -774,7 +805,7 @@ class TreeRemoveMessage:
     def from_dict(
         cls,
         data: dict[str, Any],
-    ) -> "TreeRemoveMessage":
+    ) -> TreeRemoveMessage:
         if not isinstance(data, dict):
             raise TypeError(
                 "Tree remove message must be a dictionary."
@@ -794,7 +825,7 @@ class TreeRemoveMessage:
             )
 
         if not isinstance(component_ids, list):
-            raise ValueError(
+            raise TypeError(
                 "Tree remove message requires component_ids."
             )
 
@@ -804,7 +835,7 @@ class TreeRemoveMessage:
         )
 
     @classmethod
-    def from_json(cls, data: str) -> "TreeRemoveMessage":
+    def from_json(cls, data: str) -> TreeRemoveMessage:
         try:
             decoded = json.loads(data)
         except json.JSONDecodeError as exc:

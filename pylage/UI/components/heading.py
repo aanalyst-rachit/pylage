@@ -5,7 +5,6 @@ from typing import Any
 from pylage.ENGINE.components.basic import Heading as _Heading
 from pylage.ENGINE.styling.style import Style
 
-
 _BASE_STYLE = Style(
     margin="0",
     color="var(--color-text)",

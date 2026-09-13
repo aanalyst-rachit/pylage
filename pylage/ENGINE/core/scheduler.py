@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import Callable
 import threading
+from collections.abc import Callable
 
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.dirty import DirtyNodes
+from pylage.ENGINE.runtime.logger import log_event
 
 
 class Scheduler:
@@ -47,13 +48,21 @@ class Scheduler:
             for node in nodes:
                 try:
                     self.callback(node)
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 - scheduler aggregates arbitrary callback failures
                     errors.append((node, exc))
         finally:
             self.dirty.end_flush()
 
         if errors:
             first_node, first_exc = errors[0]
+            log_event(
+                40,
+                "scheduler.error",
+                lifecycle="error",
+                component_id=getattr(first_node, "id", None),
+                error=first_exc,
+                error_count=len(errors),
+            )
             raise RuntimeError(
                 f"Scheduler callback failed for {first_node}: {first_exc}"
             ) from first_exc

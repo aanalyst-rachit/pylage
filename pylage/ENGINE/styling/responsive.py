@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import ClassVar
 
 from pylage.ENGINE.styling.style import Style
 
@@ -16,7 +16,7 @@ class ResponsiveStyle:
     lg: Style | None = None
     xl: Style | None = None
 
-    BREAKPOINTS = {
+    BREAKPOINTS: ClassVar[dict[str, str]] = {
         "sm": "640px",
         "md": "768px",
         "lg": "1024px",
@@ -96,8 +96,9 @@ class ResponsiveStyle:
             if pseudo_css:
                 rules.append(pseudo_css)
 
+            rules_css = "".join(rules)
             blocks.append(
-                f"@media (min-width:{breakpoint}){{{"".join(rules)}}}"
+                f"@media (min-width:{breakpoint}){{{rules_css}}}"
             )
 
         return "".join(blocks)

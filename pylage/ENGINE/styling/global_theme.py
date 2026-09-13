@@ -4,7 +4,6 @@ from typing import Any
 
 from pylage.ENGINE.core.state import State
 
-
 _global_theme = State(None)
 
 

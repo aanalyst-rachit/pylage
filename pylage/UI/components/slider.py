@@ -5,7 +5,6 @@ from typing import Any
 from pylage.ENGINE.components.basic import Slider as _Slider
 from pylage.ENGINE.styling.style import Style
 
-
 _BASE_STYLE = Style(
     width="100%",
     cursor="pointer",

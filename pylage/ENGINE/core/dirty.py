@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import threading
+
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.graph import DependencyGraph
 from pylage.ENGINE.core.state import State

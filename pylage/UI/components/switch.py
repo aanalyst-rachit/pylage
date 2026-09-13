@@ -5,7 +5,6 @@ from typing import Any
 from pylage.ENGINE.components.basic import Switch as _Switch
 from pylage.ENGINE.styling.style import Style
 
-
 _BASE_STYLE = Style(
     width="2.75rem",
     height="1.5rem",

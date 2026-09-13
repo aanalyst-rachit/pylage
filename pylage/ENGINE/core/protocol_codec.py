@@ -6,8 +6,9 @@ import msgpack
 
 from pylage.ENGINE.core.protocol import (
     EventMessage,
-    NavigateMessage,
     EventMessageResponse,
+    NavigateMessage,
+    ReloadMessage,
     ThemeUpdateMessage,
     TreeAddMessage,
     TreeClearMessage,
@@ -21,6 +22,7 @@ from pylage.ENGINE.core.protocol import (
 _MESSAGE_TYPES = {
     'event': EventMessage,
     'navigate': NavigateMessage,
+    'reload': ReloadMessage,
     'response': EventMessageResponse,
     'update': UpdateMessage,
     'theme_update': ThemeUpdateMessage,
@@ -46,7 +48,7 @@ def decode_message(data: bytes | bytearray | memoryview) -> Any:
 
     decoded = msgpack.unpackb(data, raw=False)
     if not isinstance(decoded, dict):
-        raise ValueError('Binary protocol message must decode to a dictionary.')
+        raise TypeError('Binary protocol message must decode to a dictionary.')
 
     message_type = decoded.get('type')
     message_class = _MESSAGE_TYPES.get(message_type)
@@ -62,7 +64,7 @@ def decode_json_message(data: str) -> Any:
     import json
     decoded = json.loads(data)
     if not isinstance(decoded, dict):
-        raise ValueError('JSON protocol message must decode to a dictionary.')
+        raise TypeError('JSON protocol message must decode to a dictionary.')
     message_type = decoded.get('type')
     message_class = _MESSAGE_TYPES.get(message_type)
     if message_class is None:
@@ -82,5 +84,5 @@ def decode_dict(data: bytes | bytearray | memoryview) -> dict[str, Any]:
 
     decoded = msgpack.unpackb(data, raw=False)
     if not isinstance(decoded, dict):
-        raise ValueError('Binary protocol message must decode to a dictionary.')
+        raise TypeError('Binary protocol message must decode to a dictionary.')
     return decoded

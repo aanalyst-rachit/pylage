@@ -21,4 +21,4 @@ def breadcrumb_trail(
 BreadcrumbTrail = breadcrumb_trail
 
 
-__all__ = ["breadcrumb_trail", "BreadcrumbTrail"]
+__all__ = ["BreadcrumbTrail", "breadcrumb_trail"]

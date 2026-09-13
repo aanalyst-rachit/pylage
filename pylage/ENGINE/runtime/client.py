@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 CLIENT_RUNTIME = r"""
 (function () {
     "use strict";
@@ -466,10 +465,44 @@ CLIENT_RUNTIME = r"""
         console.log("[PyLage event]", message);
     };
 
+    window.PyLage.onError = window.PyLage.onError || function (message) {
+        const text = String(message || "Unknown PyLage server error");
+        let overlay = document.getElementById("pylage-error-overlay");
+        if (overlay === null) {
+            overlay = document.createElement("pre");
+            overlay.id = "pylage-error-overlay";
+            overlay.style.position = "fixed";
+            overlay.style.left = "16px";
+            overlay.style.right = "16px";
+            overlay.style.bottom = "16px";
+            overlay.style.zIndex = "2147483647";
+            overlay.style.margin = "0";
+            overlay.style.padding = "16px";
+            overlay.style.overflow = "auto";
+            overlay.style.maxHeight = "40vh";
+            overlay.style.boxSizing = "border-box";
+            overlay.style.fontFamily = "monospace";
+            overlay.style.fontSize = "13px";
+            overlay.style.lineHeight = "1.5";
+            overlay.style.whiteSpace = "pre-wrap";
+            overlay.style.background = "#1f2937";
+            overlay.style.color = "#f9fafb";
+            overlay.style.border = "1px solid #6b7280";
+            overlay.style.borderRadius = "8px";
+            document.body.appendChild(overlay);
+        }
+        overlay.textContent = "[PyLage] Server error\n\n" + text;
+    };
+
     window.PyLage.onResponse = window.PyLage.onResponse || function (message) {
         console.log("[PyLage response]", message);
 
         if (!message) {
+            return;
+        }
+
+        if (message.type === "reload") {
+            window.location.reload();
             return;
         }
 

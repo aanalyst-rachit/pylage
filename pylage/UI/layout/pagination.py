@@ -12,4 +12,4 @@ def pagination(*children: Any, **props: Any) -> Component:
 Pagination = pagination
 
 
-__all__ = ["pagination", "Pagination"]
+__all__ = ["Pagination", "pagination"]

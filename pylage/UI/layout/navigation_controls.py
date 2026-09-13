@@ -1,6 +1,6 @@
 from typing import Any
 
-from pylage.ENGINE.components.basic import Row, Button
+from pylage.ENGINE.components.basic import Button, Row
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.styling.style import Style
 
@@ -21,4 +21,4 @@ def navigation_controls(
 NavigationControls = navigation_controls
 
 
-__all__ = ["navigation_controls", "NavigationControls"]
+__all__ = ["NavigationControls", "navigation_controls"]

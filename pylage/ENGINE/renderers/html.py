@@ -37,11 +37,9 @@ class HTMLDocumentRenderer:
 
             client_runtime = client_runtime.strip()
 
-            if client_runtime.startswith("<script>"):
-                client_runtime = client_runtime[len("<script>"):]
+            client_runtime = client_runtime.removeprefix("<script>")
 
-            if client_runtime.endswith("</script>"):
-                client_runtime = client_runtime[:-len("</script>")]
+            client_runtime = client_runtime.removesuffix("</script>")
 
             scripts = (
                 bootstrap

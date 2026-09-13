@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.routing.router import Router
+from pylage.ENGINE.runtime.logger import log_event
 
 
 class RoutingRuntime:
@@ -53,8 +54,8 @@ class RoutingRuntime:
             try:
                 root.children = list(children)
                 return
-            except Exception:
-                pass
+            except Exception as exc:  # noqa: BLE001 - fallback assignment must isolate arbitrary setter failures
+                log_event(30, "routing.root_assignment_error", error=exc)
         raise RuntimeError(
             "RoutingRuntime root does not support set_children/children assignment."
         )

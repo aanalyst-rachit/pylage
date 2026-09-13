@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any, Callable
 import uuid
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from typing import Any
 
 from pylage.ENGINE.core.registry import registry
-
 
 Child = Any
 EventHandler = Callable[..., Any]
@@ -135,7 +135,7 @@ class Component:
     def __hash__(self) -> int:
         return hash(self.id)
 
-    def add(self, *children: Child) -> "Component":
+    def add(self, *children: Child) -> Component:
         for child in children:
             if isinstance(child, Component):
                 if child is self:
@@ -172,7 +172,7 @@ class Component:
 
         return self
 
-    def remove(self, child: Child) -> "Component":
+    def remove(self, child: Child) -> Component:
         """Remove a child and notify mutation subscribers."""
 
         try:
@@ -196,7 +196,7 @@ class Component:
 
         return self
 
-    def move_to(self, new_parent: "Component") -> "Component":
+    def move_to(self, new_parent: Component) -> Component:
         if not isinstance(new_parent, Component):
             raise TypeError(
                 "move_to expects a Component parent."
@@ -240,7 +240,7 @@ class Component:
         self,
         index: int,
         *children: Child,
-    ) -> "Component":
+    ) -> Component:
         if not isinstance(index, int):
             raise TypeError(
                 "insert index must be an integer."
@@ -299,7 +299,7 @@ class Component:
         self,
         old_child: Child,
         new_child: Child,
-    ) -> "Component":
+    ) -> Component:
         try:
             index = self.children.index(old_child)
         except ValueError as exc:
@@ -347,7 +347,7 @@ class Component:
 
         return self
 
-    def clear(self) -> "Component":
+    def clear(self) -> Component:
         removed_children = list(self.children)
 
         if not removed_children:
@@ -373,7 +373,7 @@ class Component:
     def set_children(
         self,
         *children: Child,
-    ) -> "Component":
+    ) -> Component:
         for child in children:
             if isinstance(child, Component):
                 if child is self:
@@ -443,7 +443,7 @@ class Component:
         self,
         event: str,
         handler: EventHandler,
-    ) -> "Component":
+    ) -> Component:
         if not isinstance(event, str) or not event:
             raise ValueError("event must be a non-empty string")
 

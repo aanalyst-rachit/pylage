@@ -12,4 +12,4 @@ def tabs(*children: Any, **props: Any) -> Component:
 Tabs = tabs
 
 
-__all__ = ["tabs", "Tabs"]
+__all__ = ["Tabs", "tabs"]

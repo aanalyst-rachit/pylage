@@ -2,7 +2,6 @@
 
 from typing import Any
 
-from ..layout import Container, Stack
 from pylage.ENGINE.components import (
     Avatar,
     Button,
@@ -12,6 +11,8 @@ from pylage.ENGINE.components import (
     Row,
     Text,
 )
+
+from ..layout import Container, Stack
 
 
 def ProfilePage(

@@ -7,7 +7,6 @@ from pylage.ENGINE.components.basic import Text as _Text
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.styling.style import Style
 
-
 _VARIANT_STYLES: dict[str, Style] = {
     "default": Style(
         background_color="var(--color-surface-variant)",

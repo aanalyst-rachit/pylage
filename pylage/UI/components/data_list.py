@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
+
 from pylage.ENGINE.components.basic import Column as _Column
 from pylage.ENGINE.components.basic import Row as _Row
-from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.components.basic import Text as _Text
+from pylage.ENGINE.styling.style import Style
 
 _DEFAULT_CONTAINER_STYLE = Style(
     display="flex",

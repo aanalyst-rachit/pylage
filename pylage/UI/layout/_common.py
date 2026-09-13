@@ -1,7 +1,7 @@
 """Common responsive default styles for layout components."""
 
-from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
+from pylage.ENGINE.styling.style import Style
 
 
 def default_responsive_style() -> ResponsiveStyle:

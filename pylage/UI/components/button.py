@@ -5,7 +5,6 @@ from typing import Any
 from pylage.ENGINE.components.basic import Button as _Button
 from pylage.ENGINE.styling.style import Style
 
-
 _VARIANT_STYLES: dict[str, Style] = {
     "primary": Style(
         background_color="var(--color-primary)",

@@ -5,7 +5,6 @@ from typing import Any
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
 from pylage.ENGINE.styling.style import Style
 
-
 SPACING_PROPS = {
     "p": ("padding",),
     "px": ("padding_left", "padding_right"),

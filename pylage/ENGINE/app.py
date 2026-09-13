@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from pathlib import Path
 import time
 import webbrowser
+from pathlib import Path
 
 from pylage.ENGINE.core.component import Component
-from pylage.UI.layout.column import column
 from pylage.ENGINE.routing import Router, RoutingRuntime
 from pylage.ENGINE.runtime import Runtime
+from pylage.UI.layout.column import column
 
 
 def run(

@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from pylage.ENGINE.core.component import Component
-from pylage.ENGINE.core.registry import registry
-from pylage.ENGINE.core.state import State
-from pylage.ENGINE.core.graph import DependencyGraph
 from pylage.ENGINE.core.dirty import DirtyNodes
+from pylage.ENGINE.core.graph import DependencyGraph
+from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.core.scheduler import Scheduler
+from pylage.ENGINE.core.state import State
+from pylage.ENGINE.runtime.logger import log_event
 from pylage.ENGINE.styling.style import Style
-
 
 UpdateCallback = Callable[[Component, dict[str, Any]], None]
 
@@ -121,8 +122,8 @@ class StateBinding:
         for value, comp, prop_name, unsubscribe in records:
             try:
                 unsubscribe()
-            except Exception:
-                pass
+            except Exception as exc:  # noqa: BLE001 - cleanup must isolate arbitrary unsubscribe failures
+                log_event(30, "binding.unsubscribe_error", error=exc)
             if unsubscribe in self._subscriptions:
                 self._subscriptions.remove(unsubscribe)
             if self.graph is not None:
@@ -189,15 +190,15 @@ class StateBinding:
             for value, comp, prop_name, unsubscribe in records:
                 try:
                     unsubscribe()
-                except Exception:
-                    pass
+                except Exception as exc:  # noqa: BLE001 - cleanup must isolate arbitrary unsubscribe failures
+                    log_event(30, "binding.unsubscribe_error", error=exc)
         self._node_bindings.clear()
 
         for unsubscribe in self._subscriptions:
             try:
                 unsubscribe()
-            except Exception:
-                pass
+            except Exception as exc:  # noqa: BLE001 - cleanup must isolate arbitrary unsubscribe failures
+                log_event(30, "binding.unsubscribe_error", error=exc)
 
         self._subscriptions.clear()
 

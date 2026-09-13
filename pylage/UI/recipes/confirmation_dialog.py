@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import Any
 
 from pylage.ENGINE.styling.style import Style
-from pylage.UI.components.dialog import dialog
 from pylage.UI.components.button import button
+from pylage.UI.components.dialog import dialog
 from pylage.UI.layout.row import row
 
 __all__ = ["confirmation_dialog"]

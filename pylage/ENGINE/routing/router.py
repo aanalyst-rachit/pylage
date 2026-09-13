@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from pathlib import Path
 import importlib.util
 import re
+from dataclasses import dataclass
+from pathlib import Path
 
 from pylage.ENGINE.core.component import Component
 

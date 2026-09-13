@@ -6,7 +6,6 @@ from pylage.ENGINE.styling.theme import Theme
 from .dark import DARK_THEME
 from .light import LIGHT_THEME
 
-
 _THEMES = {
     "light": LIGHT_THEME,
     "dark": DARK_THEME,

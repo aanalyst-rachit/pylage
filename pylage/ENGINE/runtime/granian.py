@@ -9,9 +9,10 @@ import importlib
 import socket
 import subprocess
 import time
+from collections.abc import Callable
+from typing import Any
 from urllib.error import URLError
 from urllib.request import urlopen
-from typing import Any, Callable
 
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.runtime.asgi import ASGIApp

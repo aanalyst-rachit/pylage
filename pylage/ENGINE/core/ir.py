@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import copy
-from typing import Any
+from typing import Any, ClassVar
+
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.registry import registry
 from pylage.ENGINE.core.state import State
@@ -43,7 +44,7 @@ def _copy_ir_value(value: Any) -> Any:
 class IRNode:
     """Minimal compiler-layer intermediate representation node."""
 
-    VALID_NODE_TYPES = {"component"}
+    VALID_NODE_TYPES: ClassVar[set[str]] = {"component"}
 
     def __init__(
         self,
@@ -51,7 +52,7 @@ class IRNode:
         node_type: str,
         component_id: str | None = None,
         props: dict[str, Any] | None = None,
-        children: list["IRNode"] | None = None,
+        children: list[IRNode] | None = None,
         style_ref: Any = None,
     ) -> None:
         self._validate_node_id(node_id)
@@ -85,8 +86,7 @@ class IRNode:
         component_id: str | None,
         node_type: str,
     ) -> None:
-        if node_type == "component":
-            if not isinstance(component_id, str) or not component_id:
+        if node_type == "component" and (not isinstance(component_id, str) or not component_id):
                 raise ValueError(
                     "component_id must be a non-empty string "
                     "for component nodes"
@@ -101,25 +101,25 @@ class IRNode:
 
     @staticmethod
     def _validate_children(
-        children: list["IRNode"] | None,
+        children: list[IRNode] | None,
     ) -> None:
         if children is None:
             return
 
         if not isinstance(children, list):
-            raise ValueError("children must be a list or None")
+            raise TypeError("children must be a list or None")
 
         for child in children:
             if not isinstance(child, IRNode):
-                raise ValueError(
+                raise ValueError(  # noqa: TRY004 - preserve established IR validation contract
                     "All children must be IRNode instances"
                 )
 
-    def add_child(self, child: "IRNode") -> None:
+    def add_child(self, child: IRNode) -> None:
         """Append one IR child while preserving insertion order."""
 
         if not isinstance(child, IRNode):
-            raise ValueError("Child must be an IRNode instance")
+            raise ValueError("Child must be an IRNode instance")  # noqa: TRY004 - preserve established IR validation contract
 
         self.children.append(child)
 
@@ -188,7 +188,7 @@ def snapshot_to_ir(snapshot: dict[str, Any]) -> IRNode:
     children = snapshot.get("children", [])
 
     if not isinstance(children, list):
-        raise ValueError("snapshot children must be a list")
+        raise ValueError("snapshot children must be a list")  # noqa: TRY004 - preserve established IR validation contract
 
     ir_children = [
         snapshot_to_ir(child)
@@ -305,23 +305,22 @@ def validate_ir(node: IRNode) -> None:
                 f"Invalid IR node_type: {current.node_type!r}"
             )
 
-        if current.node_type == "component":
-            if (
-                not isinstance(current.component_id, str)
-                or not current.component_id
-            ):
+        if current.node_type == "component" and (
+            not isinstance(current.component_id, str)
+            or not current.component_id
+        ):
                 raise ValueError(
                     "Component IR nodes require a non-empty "
                     "component_id"
                 )
 
         if not isinstance(current.props, dict):
-            raise ValueError(
+            raise TypeError(
                 f"IR node {current.node_id!r} has invalid props"
             )
 
         if not isinstance(current.children, list):
-            raise ValueError(
+            raise TypeError(
                 f"IR node {current.node_id!r} has invalid children"
             )
 

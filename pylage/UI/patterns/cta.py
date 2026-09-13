@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from pylage.ENGINE.components import Button, Column, Heading, Row, Text
+from pylage.ENGINE.components import Column, Heading, Row, Text
 
 
 def CTA(

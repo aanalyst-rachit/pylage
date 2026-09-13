@@ -19,8 +19,23 @@ from .testimonial import Testimonial
 breadcrumb_trail = BreadcrumbTrail
 
 __all__ = [
-    "Hero", "BreadcrumbTrail", "ContactSection", "ContentSection", "CTA", "FAQ",
-    "FeatureSection", "List", "NewsletterSection", "PricingSection", "SearchBar",
-    "EmptyState", "ErrorState", "Loading", "Metric", "MetricCard", "StatsSection",
-    "Testimonial", "breadcrumb_trail",
+    "CTA",
+    "FAQ",
+    "BreadcrumbTrail",
+    "ContactSection",
+    "ContentSection",
+    "EmptyState",
+    "ErrorState",
+    "FeatureSection",
+    "Hero",
+    "List",
+    "Loading",
+    "Metric",
+    "MetricCard",
+    "NewsletterSection",
+    "PricingSection",
+    "SearchBar",
+    "StatsSection",
+    "Testimonial",
+    "breadcrumb_trail",
 ]

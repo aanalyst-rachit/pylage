@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Callable
-
-
 import threading
+from collections.abc import Callable
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
@@ -221,7 +219,6 @@ registry.register(
     },
 )
 
-#
 registry.register(
     "Card",
     "div",
@@ -1146,8 +1143,8 @@ registry.register(
 
 
 __all__ = [
-    "PropDefinition",
     "ComponentDefinition",
     "ComponentRegistry",
+    "PropDefinition",
     "registry",
 ]

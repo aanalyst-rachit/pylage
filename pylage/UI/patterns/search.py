@@ -1,6 +1,7 @@
 """Search pattern for PyLage Layout."""
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from pylage.ENGINE.components import Button, Form, Input, Row
 

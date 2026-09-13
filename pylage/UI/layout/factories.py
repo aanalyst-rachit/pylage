@@ -1,15 +1,20 @@
 from typing import Any
-from pylage.ENGINE.components.basic import Column, Row, Card, Navigation as PNavigation, Pagination as PPagination, Menu as PMenu, Tabs as PTabs, Drawer as PDrawer
+
+from pylage.ENGINE.components.basic import Column, Row
+from pylage.ENGINE.components.basic import Menu as PMenu
+from pylage.ENGINE.components.basic import Navigation as PNavigation
+from pylage.ENGINE.components.basic import Pagination as PPagination
 from pylage.ENGINE.core.component import Component
-from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
+from pylage.ENGINE.styling.style import Style
+
 from ._common import default_responsive_style, resolve_style
 
 
 def Center(*children: Any, style: Style | ResponsiveStyle | None = None, **props: Any) -> Component:
     base_style = Style(display="flex", justify_content="center", align_items="center", width="100%")
-    s = custom_style = style or base_style
-    return Column(*children, style=s, **props)
+    resolved_style = style or base_style
+    return Column(*children, style=resolved_style, **props)
 
 
 def Container(*children: Any, style: Style | ResponsiveStyle | None = None, **props: Any) -> Component:
@@ -25,7 +30,8 @@ def Section(*children: Any, style: Style | ResponsiveStyle | None = None, **prop
 
 
 def Split(*children: Any, style: Style | ResponsiveStyle | None = None, **props: Any) -> Component:
-    resolved_style = base_style.merge(style) if isinstance(style, Style) else resolve_style(style)
+    base_style = default_responsive_style()
+    resolved_style = base_style if style is None else style
     return Row(*children, style=resolved_style, **props)
 
 

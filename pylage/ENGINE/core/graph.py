@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Set, Tuple
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.state import State
 

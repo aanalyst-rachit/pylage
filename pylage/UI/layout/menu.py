@@ -12,4 +12,4 @@ def menu(*children: Any, **props: Any) -> Component:
 Menu = menu
 
 
-__all__ = ["menu", "Menu"]
+__all__ = ["Menu", "menu"]

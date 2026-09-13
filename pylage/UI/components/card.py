@@ -4,9 +4,8 @@ from typing import Any
 
 from pylage.ENGINE.components.basic import Card as _Card
 from pylage.ENGINE.components.basic import Heading as _Heading
-from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.components.basic import Text as _Text
-
+from pylage.ENGINE.styling.style import Style
 
 _VARIANT_STYLES: dict[str, Style] = {
     "default": Style(

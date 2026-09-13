@@ -5,7 +5,6 @@ from typing import Any
 from pylage.ENGINE.components.basic import DatePicker as _DatePicker
 from pylage.ENGINE.styling.style import Style
 
-
 _BASE_STYLE = Style(
     width="100%",
     box_sizing="border-box",

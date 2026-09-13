@@ -2,7 +2,6 @@
 
 from typing import Any
 
-from ..layout import Container
 from pylage.ENGINE.components import (
     Button,
     Card,
@@ -12,6 +11,8 @@ from pylage.ENGINE.components import (
     Input,
     Text,
 )
+
+from ..layout import Container
 
 
 def Authentication(

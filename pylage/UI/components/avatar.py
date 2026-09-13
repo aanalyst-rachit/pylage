@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import Any
 
 from pylage.ENGINE.components.basic import Avatar as _Avatar
-from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.components.basic import Text as _Text
 from pylage.ENGINE.core.component import Component
+from pylage.ENGINE.styling.style import Style
 
 _SIZE_STYLES: dict[str, Style] = {
     "sm": Style(width="32px", height="32px", font_size="0.75rem"),

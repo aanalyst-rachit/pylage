@@ -1,6 +1,7 @@
 """Reusable statistics and metric patterns for PyLage Layout."""
 
-from typing import Any, Iterable, Mapping
+from collections.abc import Iterable, Mapping
+from typing import Any
 
 from pylage.ENGINE.components import Badge, Card, Column, Heading, Row, Text
 

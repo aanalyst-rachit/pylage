@@ -104,9 +104,9 @@ class Style:
     border_left: Any = None
 
     custom: dict[str, Any] | None = None
-    pseudo: dict[str, "Style"] | None = None
+    pseudo: dict[str, Style] | None = None
 
-    def merge(self, override: "Style | None") -> "Style":
+    def merge(self, override: Style | None) -> Style:
         """Return a new Style with override values taking precedence."""
 
         if override is None:

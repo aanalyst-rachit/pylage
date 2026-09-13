@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.core.reactive_list import ReactiveList

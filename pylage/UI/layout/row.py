@@ -1,8 +1,10 @@
 from typing import Any
+
 from pylage.ENGINE.components.basic import Row as _Row
 from pylage.ENGINE.core.component import Component
-from pylage.ENGINE.styling.style import Style
 from pylage.ENGINE.styling.responsive import ResponsiveStyle
+from pylage.ENGINE.styling.style import Style
+
 from ._common import default_responsive_style
 from ._shorthand import build_layout_style
 

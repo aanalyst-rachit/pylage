@@ -8,14 +8,15 @@ from __future__ import annotations
 
 import asyncio
 import json
-import mimetypes
 import secrets
+from collections.abc import Callable, Sequence
 from pathlib import Path
+from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
-from typing import Any, Callable
 
 from pylage.ENGINE.core.component import Component
 from pylage.ENGINE.runtime.session_store import InMemorySessionStore, SessionStore
+from pylage.ENGINE.runtime.static import content_type_for, prepare_static_response
 from pylage.ENGINE.runtime.websocket import WebSocketServer
 
 
@@ -39,7 +40,7 @@ class _ASGIConnection:
         self._max_message_size = max_message_size
         self._closed = False
 
-    def __aiter__(self) -> "_ASGIConnection":
+    def __aiter__(self) -> _ASGIConnection:
         return self
 
     async def __anext__(self) -> str | bytes:
@@ -193,12 +194,37 @@ class ASGIApp:
     async def _http(self, scope: dict[str, Any], send: Any) -> None:
         path = unquote(urlparse(scope.get("path", "/")).path)
 
+        if path == "/health":
+            await self._response(
+                200,
+                b'{"status":"ok"}',
+                {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                },
+                send,
+            )
+            return
+
         if self.document is not None and path in ("/", f"/{self.filename}"):
-            await self._response(200, self.document.encode("utf-8"), "text/html; charset=utf-8", send)
+            await self._response(
+                200,
+                self.document.encode("utf-8"),
+                {
+                    "Content-Type": "text/html; charset=utf-8",
+                    "Cache-Control": "no-cache",
+                },
+                send,
+            )
             return
 
         if self.directory is None:
-            await self._response(404, b"Not Found", "text/plain; charset=utf-8", send)
+            await self._response(
+                404,
+                b"Not Found",
+                {"Content-Type": "text/plain; charset=utf-8"},
+                send,
+            )
             return
 
         relative = Path(self.filename) if path in ("/", f"/{self.filename}") else Path(path.lstrip("/"))
@@ -207,21 +233,47 @@ class ASGIApp:
             target = (self.directory / relative).resolve()
             target.relative_to(self.directory)
         except (ValueError, OSError):
-            await self._response(404, b"Not Found", "text/plain; charset=utf-8", send)
+            await self._response(
+                404,
+                b"Not Found",
+                {"Content-Type": "text/plain; charset=utf-8"},
+                send,
+            )
             return
 
         if not target.is_file():
-            await self._response(404, b"Not Found", "text/plain; charset=utf-8", send)
+            await self._response(
+                404,
+                b"Not Found",
+                {"Content-Type": "text/plain; charset=utf-8"},
+                send,
+            )
             return
 
         try:
             content = target.read_bytes()
         except OSError:
-            await self._response(404, b"Not Found", "text/plain; charset=utf-8", send)
+            await self._response(
+                404,
+                b"Not Found",
+                {"Content-Type": "text/plain; charset=utf-8"},
+                send,
+            )
             return
 
-        content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
-        await self._response(200, content, content_type, send)
+        content_type = content_type_for(target)
+        accept_encoding = ""
+        for name, value in scope.get("headers", []):
+            if name.lower() == b"accept-encoding":
+                accept_encoding = value.decode("latin-1")
+                break
+
+        content, headers = prepare_static_response(
+            content,
+            content_type,
+            accept_encoding=accept_encoding,
+        )
+        await self._response(200, content, headers, send)
 
     def _evict_expired_sessions(self) -> None:
         for _token, session in self.session_store.evict_expired():
@@ -233,16 +285,22 @@ class ASGIApp:
         self,
         status: int,
         body: bytes,
-        content_type: str,
+        headers: dict[str, str],
         send: Any,
     ) -> None:
+        response_headers = [
+            (name.lower().encode("latin-1"), value.encode("latin-1"))
+            for name, value in headers.items()
+        ]
+        if not any(name.lower() == "content-length" for name in headers):
+            response_headers.append(
+                (b"content-length", str(len(body)).encode("ascii"))
+            )
+
         await send({
             "type": "http.response.start",
             "status": status,
-            "headers": [
-                (b"content-type", content_type.encode("latin-1")),
-                (b"content-length", str(len(body)).encode("ascii")),
-            ],
+            "headers": response_headers,
         })
         await send({"type": "http.response.body", "body": body})
 

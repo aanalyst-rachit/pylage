@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from pylage.ENGINE.components import Avatar, Card, Column, Image, Row, Text
+from pylage.ENGINE.components import Card, Column, Image, Row, Text
 
 
 def Testimonial(

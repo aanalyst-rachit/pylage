@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import mimetypes
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
-from typing import Optional
 from urllib.parse import unquote, urlparse
+
+from pylage.ENGINE.runtime.static import content_type_for, prepare_static_response
 
 
 class _RequestHandler(BaseHTTPRequestHandler):
@@ -14,6 +14,16 @@ class _RequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         request_path = unquote(urlparse(self.path).path)
+
+        if request_path == "/health":
+            body = b'{"status":"ok"}'
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
 
         if request_path in ("/", f"/{self.filename}"):
             relative_path = Path(self.filename)
@@ -42,14 +52,22 @@ class _RequestHandler(BaseHTTPRequestHandler):
             self.send_error(404, "Not Found")
             return
 
-        content_type = (
-            mimetypes.guess_type(target.name)[0]
-            or "application/octet-stream"
+        content_type = content_type_for(target)
+        cache_control = (
+            "no-cache"
+            if target.name == self.filename
+            else "public, max-age=3600"
+        )
+        content, headers = prepare_static_response(
+            content,
+            content_type,
+            accept_encoding=self.headers.get("Accept-Encoding", ""),
+            cache_control=cache_control,
         )
 
         self.send_response(200)
-        self.send_header("Content-Type", content_type)
-        self.send_header("Content-Length", str(len(content)))
+        for name, value in headers.items():
+            self.send_header(name, value)
         self.end_headers()
         self.wfile.write(content)
 
@@ -76,8 +94,8 @@ class LocalServer:
         self.port = port
         self.filename = Path(filename).name
 
-        self._server: Optional[ThreadingHTTPServer] = None
-        self._thread: Optional[Thread] = None
+        self._server: ThreadingHTTPServer | None = None
+        self._thread: Thread | None = None
 
     @property
     def url(self) -> str:
@@ -128,7 +146,7 @@ class LocalServer:
         self._thread = None
         self._server = None
 
-    def __enter__(self) -> "LocalServer":
+    def __enter__(self) -> LocalServer:  # noqa: PYI034 - concrete return type preserves Python 3.10 support
         self.start()
         return self
 

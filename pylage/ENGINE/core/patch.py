@@ -10,7 +10,6 @@ from pylage.ENGINE.core.protocol import (
     UpdateMessage,
 )
 
-
 PatchMessage = Any
 
 
@@ -149,6 +148,6 @@ def _require_index(value: Any) -> int | None:
         return None
 
     if not isinstance(value, int):
-        raise ValueError("operation index must be an integer")
+        raise ValueError("operation index must be an integer")  # noqa: TRY004
 
     return value

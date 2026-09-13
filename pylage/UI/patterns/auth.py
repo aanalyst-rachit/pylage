@@ -1,8 +1,9 @@
 """Authentication patterns for PyLage Layout."""
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
-from pylage.ENGINE.components import Button, Column, Form, Heading, Input, Text
+from pylage.ENGINE.components import Button, Column, Form, Heading, Input
 
 
 def LoginForm(

@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import asyncio
+import concurrent.futures
 import ssl
 import threading
 import time
-from typing import Any, Callable, Optional, Sequence
+import uuid
+from collections.abc import Callable, Sequence
+from typing import Any
 
 try:
     from websockets.asyncio.server import Server, ServerConnection, serve
@@ -15,29 +18,35 @@ except ImportError:
 
 from pylage.ENGINE.core.binding import StateBinding
 from pylage.ENGINE.core.component import Component
-from pylage.ENGINE.core.renderer import HTMLRenderer
+from pylage.ENGINE.core.dirty import DirtyNodes
 from pylage.ENGINE.core.events import EventDispatcher
 from pylage.ENGINE.core.graph import DependencyGraph
-from pylage.ENGINE.core.dirty import DirtyNodes
-from pylage.ENGINE.core.scheduler import Scheduler
-from pylage.ENGINE.core.state import State
-from pylage.ENGINE.styling.style import Style
-from pylage.ENGINE.styling.responsive import ResponsiveStyle
-from pylage.ENGINE.styling.global_theme import subscribe_global_theme
-from pylage.ENGINE.core.protocol_codec import decode_json_message, decode_message, encode_message
 from pylage.ENGINE.core.protocol import (
     EventMessage,
-    NavigateMessage,
     EventMessageResponse,
-    UpdateMessage,
+    NavigateMessage,
+    ReloadMessage,
     ThemeUpdateMessage,
     TreeAddMessage,
-    TreeRemoveMessage,
-    TreeMoveMessage,
-    TreeReplaceMessage,
     TreeClearMessage,
+    TreeMoveMessage,
+    TreeRemoveMessage,
+    TreeReplaceMessage,
     TreeSetChildrenMessage,
+    UpdateMessage,
 )
+from pylage.ENGINE.core.protocol_codec import (
+    decode_json_message,
+    decode_message,
+    encode_message,
+)
+from pylage.ENGINE.core.renderer import HTMLRenderer
+from pylage.ENGINE.core.scheduler import Scheduler
+from pylage.ENGINE.core.state import State
+from pylage.ENGINE.runtime.logger import log_event
+from pylage.ENGINE.styling.global_theme import subscribe_global_theme
+from pylage.ENGINE.styling.responsive import ResponsiveStyle
+from pylage.ENGINE.styling.style import Style
 
 
 class _TokenBucket:
@@ -128,18 +137,19 @@ class WebSocketServer:
 
         self._dispatcher = EventDispatcher(root)
 
-        self._loop: Optional[asyncio.AbstractEventLoop] = None
-        self._server: Optional[Server] = None
-        self._thread: Optional[threading.Thread] = None
+        self._loop: asyncio.AbstractEventLoop | None = None
+        self._server: Server | None = None
+        self._thread: threading.Thread | None = None
 
         self._connections: set[Any] = set()
         self._connection_prop_meta: dict[Any, set[tuple[str, str]]] = {}
+        self._connection_session_ids: dict[Any, str] = {}
         self._connections_lock = threading.Lock()
 
         self._theme_unsubscribe = None
 
         self._ready = threading.Event()
-        self._startup_error: Optional[BaseException] = None
+        self._startup_error: BaseException | None = None
 
         self._graph = DependencyGraph()
         self._dirty = DirtyNodes()
@@ -393,6 +403,14 @@ class WebSocketServer:
 
                 prop_meta[prop_name] = meta
 
+
+        log_event(
+            10,
+            "state.update",
+            lifecycle="update",
+            component_id=component.id,
+            prop_count=len(props),
+        )
 
         message = UpdateMessage(
             component_id=component.id,
@@ -756,6 +774,101 @@ class WebSocketServer:
 
         return None
 
+    def replace_root(self, root: Component) -> None:
+        """Replace the reactive root while preserving WebSocket clients."""
+        if not isinstance(root, Component):
+            raise TypeError("WebSocketServer expects a Component root.")
+
+        if (
+            self._loop is not None
+            and self._thread is not None
+            and threading.current_thread() is not self._thread
+        ):
+                result = concurrent.futures.Future()
+
+                def replace_on_loop() -> None:
+                    try:
+                        self._replace_root(root)
+                    except BaseException as exc:  # noqa: BLE001 - cross-thread failure propagation
+                        result.set_exception(exc)
+                    else:
+                        result.set_result(None)
+
+                self._loop.call_soon_threadsafe(replace_on_loop)
+                result.result()
+                return
+
+        self._replace_root(root)
+
+    def _replace_root(self, root: Component) -> None:
+        """Perform root replacement on the WebSocket event-loop thread."""
+        old_binding = self._binding
+        old_observer = self._tree_observer
+
+        old_binding.stop()
+        old_observer.stop()
+
+        self.root = root
+        self._dispatcher = EventDispatcher(root)
+        self._graph = DependencyGraph()
+        self._dirty = DirtyNodes()
+        self._scheduler = Scheduler(
+            self._dirty,
+            self._scheduled_update,
+            schedule_flush=self._schedule_scheduler_flush,
+        )
+        self._binding = StateBinding(
+            root,
+            self._on_state_change,
+            graph=self._graph,
+            dirty=self._dirty,
+            scheduler=self._scheduler,
+        )
+
+        from pylage.ENGINE.core.tree import TreeMutationObserver
+
+        self._tree_observer = TreeMutationObserver(
+            root,
+            self._on_tree_mutation,
+        )
+
+    def notify_reload(self) -> None:
+        """Tell connected development clients to reload the document."""
+        if self._loop is None:
+            return
+
+        log_event(
+            20,
+            "websocket.reload",
+            lifecycle="reload",
+        )
+
+        message = ReloadMessage()
+        payload = encode_message(message)
+        asyncio.run_coroutine_threadsafe(
+            self._broadcast(payload),
+            self._loop,
+        )
+
+    def notify_error(self, error: str) -> None:
+        """Send a server-side development error to connected clients."""
+        if self._loop is None:
+            return
+
+        log_event(
+            40,
+            "websocket.error",
+            lifecycle="error",
+            error=str(error),
+        )
+
+        message = EventMessageResponse.failure(str(error))
+        payload = encode_message(message)
+        asyncio.run_coroutine_threadsafe(
+            self._broadcast(payload),
+            self._loop,
+        )
+
     def flush(self) -> None:
         """Explicit batching boundary for scheduled state updates."""
         self._scheduler.flush()
@@ -798,46 +911,58 @@ class WebSocketServer:
 
     async def _heartbeat(self) -> None:
         """Ping connected native WebSocket clients and remove dead peers."""
-        try:
-            while True:
-                await asyncio.sleep(self.heartbeat_interval)
+        while True:
+            await asyncio.sleep(self.heartbeat_interval)
 
+            with self._connections_lock:
+                connections = tuple(self._connections)
+
+            if not connections:
+                continue
+
+            async def ping(connection: Any) -> tuple[Any, BaseException | None]:
+                try:
+                    waiter = connection.ping()
+                    await asyncio.wait_for(waiter, timeout=self.heartbeat_interval)
+                except BaseException as exc:  # noqa: BLE001 - preserve cancellation and connection failures
+                    return connection, exc
+                return connection, None
+
+            results = await asyncio.gather(
+                *(ping(connection) for connection in connections),
+                return_exceptions=False,
+            )
+
+            dead = {
+                connection
+                for connection, error in results
+                if error is not None
+            }
+
+            if dead:
                 with self._connections_lock:
-                    connections = tuple(self._connections)
+                    self._connections.difference_update(dead)
+                    dead_sessions = [
+                        self._connection_session_ids.pop(connection, None)
+                        for connection in dead
+                    ]
+                    for connection in dead:
+                        self._connection_prop_meta.pop(connection, None)
 
-                if not connections:
-                    continue
+                for session_id in dead_sessions:
+                    if session_id is not None:
+                        log_event(
+                            30,
+                            "websocket.heartbeat.error",
+                            lifecycle="error",
+                            session_id=session_id,
+                            error="heartbeat failed",
+                        )
 
-                async def ping(connection: Any) -> tuple[Any, BaseException | None]:
-                    try:
-                        waiter = connection.ping()
-                        await asyncio.wait_for(waiter, timeout=self.heartbeat_interval)
-                    except BaseException as exc:
-                        return connection, exc
-                    return connection, None
-
-                results = await asyncio.gather(
-                    *(ping(connection) for connection in connections),
-                    return_exceptions=False,
+                await asyncio.gather(
+                    *(self._close_connection(connection) for connection in dead),
+                    return_exceptions=True,
                 )
-
-                dead = {
-                    connection
-                    for connection, error in results
-                    if error is not None
-                }
-
-                if dead:
-                    with self._connections_lock:
-                        self._connections.difference_update(dead)
-
-                    await asyncio.gather(
-                        *(self._close_connection(connection) for connection in dead),
-                        return_exceptions=True,
-                    )
-        except asyncio.CancelledError:
-            raise
-
     async def _close_connection(self, connection: Any) -> None:
         """Best-effort close for a dead heartbeat connection."""
         close = getattr(connection, "close", None)
@@ -847,8 +972,8 @@ class WebSocketServer:
             result = close()
             if asyncio.iscoroutine(result):
                 await result
-        except Exception:
-            pass
+        except Exception as exc:  # noqa: BLE001 - close is best-effort cleanup
+            log_event(30, "websocket.close_error", error=exc)
 
     async def _broadcast(
         self,
@@ -893,7 +1018,7 @@ class WebSocketServer:
 
             try:
                 await connection.send(payload)
-            except BaseException as exc:
+            except BaseException as exc:  # noqa: BLE001 - preserve connection boundary failures
                 return connection, exc
 
             if sent_meta:
@@ -911,13 +1036,36 @@ class WebSocketServer:
         if dead:
             with self._connections_lock:
                 self._connections.difference_update(dead)
+                dead_sessions = [
+                    self._connection_session_ids.pop(connection, None)
+                    for connection in dead
+                ]
                 for connection in dead:
                     self._connection_prop_meta.pop(connection, None)
 
+            for session_id in dead_sessions:
+                if session_id is not None:
+                    log_event(
+                        30,
+                        "websocket.broadcast.error",
+                        lifecycle="error",
+                        session_id=session_id,
+                        error="connection send failed",
+                    )
+
     async def _handle(self, connection: ServerConnection) -> None:
+        session_id = uuid.uuid4().hex
         with self._connections_lock:
             self._connections.add(connection)
             self._connection_prop_meta[connection] = set()
+            self._connection_session_ids[connection] = session_id
+
+        log_event(
+            20,
+            "websocket.connect",
+            lifecycle="connect",
+            session_id=session_id,
+        )
 
         rate_limiter = _TokenBucket(
             self.message_rate_limit,
@@ -941,10 +1089,23 @@ class WebSocketServer:
                         raise TypeError("Expected an event or navigation message.")
 
                     if isinstance(message, NavigateMessage):
+                        log_event(
+                            10,
+                            "websocket.navigate",
+                            lifecycle="event",
+                            session_id=session_id,
+                        )
                         if self.navigation_handler is None:
                             raise RuntimeError("Navigation is not configured.")
                         result = self.navigation_handler(message.path)
                     else:
+                        log_event(
+                            10,
+                            "websocket.event",
+                            lifecycle="event",
+                            session_id=session_id,
+                            component_id=message.component_id,
+                        )
                         result = self._dispatcher.dispatch(
                             message.component_id,
                             message.event,
@@ -956,7 +1117,7 @@ class WebSocketServer:
                         encode_message(response) if is_binary else response.to_json()
                     )
 
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001 - event failures become client responses
                     response = EventMessageResponse.failure(str(exc))
                     await connection.send(
                         encode_message(response) if is_binary else response.to_json()
@@ -965,6 +1126,14 @@ class WebSocketServer:
             with self._connections_lock:
                 self._connections.discard(connection)
                 self._connection_prop_meta.pop(connection, None)
+                self._connection_session_ids.pop(connection, None)
+
+            log_event(
+                20,
+                "websocket.disconnect",
+                lifecycle="disconnect",
+                session_id=session_id,
+            )
 
     async def handle_external(self, connection: Any) -> None:
         """Handle a connection owned by an external ASGI transport."""
@@ -984,7 +1153,7 @@ class WebSocketServer:
             socket = next(iter(self._server.sockets))
             self.port = socket.getsockname()[1]
 
-        except BaseException as exc:
+        except BaseException as exc:  # noqa: BLE001 - capture server startup failures
             self._startup_error = exc
 
         finally:
@@ -1051,6 +1220,7 @@ class WebSocketServer:
             return
 
         self._binding.stop()
+        self._tree_observer.stop()
         self._unsubscribe_theme()
 
         if self._loop is not None and self._server is not None:
@@ -1068,3 +1238,10 @@ class WebSocketServer:
         with self._connections_lock:
             self._connections.clear()
             self._connection_prop_meta.clear()
+            self._connection_session_ids.clear()
+
+        log_event(
+            20,
+            "websocket.stop",
+            lifecycle="stop",
+        )

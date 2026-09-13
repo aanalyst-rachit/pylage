@@ -1,24 +1,33 @@
 """Canonical reusable PyLage page recipes."""
 
-from .landing import LandingPage
-from .dashboard import Dashboard
 from .admin import AdminPanel
 from .authentication import Authentication
+from .confirmation_dialog import confirmation_dialog
+from .dashboard import Dashboard
+from .documentation import Documentation
+from .drawer import drawer, mobile_sidebar, navigation_drawer
+from .landing import LandingPage
+from .modal import modal
+from .popover import popover
 from .profile import ProfilePage
 from .settings import Settings, SettingsPage
-from .documentation import Documentation
-from .modal import modal
-from .drawer import drawer, navigation_drawer, mobile_sidebar
 from .tooltip import tooltip
-from .popover import popover
-from .confirmation_dialog import confirmation_dialog
 
 Admin = AdminPanel
 Landing = LandingPage
 Profile = ProfilePage
 
 __all__ = [
-    "LandingPage", "Dashboard", "AdminPanel", "Authentication", "ProfilePage",
-    "drawer", "navigation_drawer", "mobile_sidebar", "tooltip", "popover",
-    "confirmation_dialog", "modal",
+    "AdminPanel",
+    "Authentication",
+    "Dashboard",
+    "LandingPage",
+    "ProfilePage",
+    "confirmation_dialog",
+    "drawer",
+    "mobile_sidebar",
+    "modal",
+    "navigation_drawer",
+    "popover",
+    "tooltip",
 ]

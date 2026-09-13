@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from html import escape
 import re
+from html import escape
 from typing import Any
 
 from pylage.ENGINE.core.component import Component
-from pylage.ENGINE.core.state import State
 from pylage.ENGINE.core.registry import registry
+from pylage.ENGINE.core.state import State
 from pylage.ENGINE.styling import ResponsiveStyle, Style
 from pylage.ENGINE.styling.collector import StyleCollector
 from pylage.ENGINE.styling.foundation import CSS_FOUNDATION

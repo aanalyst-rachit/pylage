@@ -5,7 +5,6 @@ from typing import Any
 from pylage.ENGINE.components.basic import Checkbox as _Checkbox
 from pylage.ENGINE.styling.style import Style
 
-
 _BASE_STYLE = Style(
     width="1rem",
     height="1rem",
