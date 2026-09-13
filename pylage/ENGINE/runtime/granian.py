@@ -6,15 +6,19 @@ The bridge keeps Granian worker construction importable and process-safe.
 from __future__ import annotations
 
 import importlib
+import os
 import socket
 import subprocess
 import time
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 from urllib.error import URLError
 from urllib.request import urlopen
 
+from pylage.cli import _resolve_app
 from pylage.ENGINE.core.component import Component
+from pylage.ENGINE.renderers.html import render_document
 from pylage.ENGINE.runtime.asgi import ASGIApp
 
 
@@ -172,3 +176,55 @@ def create_asgi_app(factory_path: str) -> ASGIApp:
     raise TypeError(
         "Application factory must return an ASGIApp or Component."
     )
+
+
+
+def _align_component_ids(template: Component, instance: Component) -> None:
+    if not isinstance(template, Component) or not isinstance(instance, Component):
+        raise TypeError("Component ID alignment expects Component trees.")
+
+    if template.type != instance.type:
+        raise RuntimeError(
+            "Production component tree changed between document render "
+            "and session creation: "
+            f"{template.type} != {instance.type}."
+        )
+
+    template_children = [
+        child for child in template.children
+        if isinstance(child, Component)
+    ]
+    instance_children = [
+        child for child in instance.children
+        if isinstance(child, Component)
+    ]
+
+    if len(template_children) != len(instance_children):
+        raise RuntimeError(
+            "Production component tree shape changed between document render "
+            "and session creation."
+        )
+
+    instance.id = template.id
+
+    for template_child, instance_child in zip(
+        template_children,
+        instance_children,
+        strict=True,
+    ):
+        _align_component_ids(template_child, instance_child)
+
+
+def create_application_from_file() -> ASGIApp:
+    """Create the production ASGI application from PYLAGE_APP_FILE."""
+    app_path = Path(os.environ.get("PYLAGE_APP_FILE", "app.py")).resolve()
+    template = _resolve_app(app_path)
+    title = os.environ.get("PYLAGE_TITLE", "PyLage App")
+    document = render_document(template, title=title)
+
+    def app_factory() -> Component:
+        instance = _resolve_app(app_path)
+        _align_component_ids(template, instance)
+        return instance
+
+    return ASGIApp(app_factory=app_factory, document=document)

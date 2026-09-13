@@ -207,20 +207,20 @@ Goal: developer should not need runtime internals.
 
 Exit: CLI + Hot reload + Errors + Assets + Config + Logging + Health + CI — COMPLETE.
 
-## PHASE 7 — Deployment Readiness 🟠
+## PHASE 7 — Deployment Readiness 🟢
 Goal: deployable framework.
 
-7.1 Docker: official Dockerfile.
-7.2 Deployment Docs: Railway, Render, Fly.io, generic VPS.
+7.1 Docker: official Dockerfile. — COMPLETE
+7.2 Deployment Docs: Railway, Render, Fly.io, generic VPS. — COMPLETE
 7.3 Production command:
-pylage run app.py --host 0.0.0.0 --port $PORT
+pylage run app.py --host 0.0.0.0 --port $PORT — COMPLETE
 7.4 Reverse proxy:
-Browser → HTTPS → Reverse Proxy → WSS → PyLage
-7.5 WebSocket Idle Timeout: docs explain heartbeat/idle timeout interaction.
+Browser → HTTPS → Reverse Proxy → WSS → PyLage — COMPLETE
+7.5 WebSocket Idle Timeout: docs explain heartbeat/idle timeout interaction. — COMPLETE
 7.6 Production Smoke Test:
-open → connect → interact → reconnect → multi-user → health.
+open → connect → interact → reconnect → multi-user → health. — COMPLETE
 
-Exit: Docker + deployment guides + real deployment + WSS + health + production smoke test.
+Exit: Docker + deployment guides + real deployment + WSS + health + production smoke test. — COMPLETE
 
 ## PHASE 8 — Credibility, Benchmarks & Flagship Demos 🔴
 Goal: technically complete and convincingly proven.

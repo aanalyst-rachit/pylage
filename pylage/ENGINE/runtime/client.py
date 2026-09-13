@@ -1142,6 +1142,10 @@ def get_client_runtime(websocket_url: str | None = None) -> str:
         "<script>\n"
         "window.PyLage = window.PyLage || {};\n"
         f"window.PyLage.websocketUrl = {url!r};\n"
+        "if (!window.PyLage.websocketUrl && window.location && window.location.host) {\n"
+        "    const protocol = window.location.protocol === \"https:\" ? \"wss:\" : \"ws:\";\n"
+        "    window.PyLage.websocketUrl = protocol + \"//\" + window.location.host + \"/\";\n"
+        "}\n"
         "</script>\n"
     )
 

@@ -1,5 +1,6 @@
 import importlib.util
 import shutil
+import socket
 import subprocess
 import time
 
@@ -9,12 +10,19 @@ from urllib.request import urlopen
 
 FACTORY = "test.foundation.granian_factory_smoke:create_test_app"
 HOST = "127.0.0.1"
-PORT = 8765
 WARMUP_REQUESTS = 50
 MEASURED_REQUESTS = 500
 
 
+def _free_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind((HOST, 0))
+        return int(sock.getsockname()[1])
+
+
 def _run_granian(loop):
+    port = _free_port()
+
     command = [
         "granian",
         FACTORY,
@@ -24,7 +32,7 @@ def _run_granian(loop):
         "--host",
         HOST,
         "--port",
-        str(PORT),
+        str(port),
         "--loop",
         loop,
     ]
@@ -35,7 +43,8 @@ def _run_granian(loop):
         stderr=subprocess.DEVNULL,
     )
 
-    url = f"http://{HOST}:{PORT}/"
+    url = f"http://{HOST}:{port}/"
+    expected_body = b"<html><body><h1>Granian Factory Smoke</h1></body></html>"
 
     try:
         deadline = time.monotonic() + 10.0
@@ -48,7 +57,8 @@ def _run_granian(loop):
 
             try:
                 with urlopen(url, timeout=0.5) as response:
-                    if response.status < 500:
+                    body = response.read()
+                    if response.status == 200 and body == expected_body:
                         break
             except OSError:
                 time.sleep(0.05)

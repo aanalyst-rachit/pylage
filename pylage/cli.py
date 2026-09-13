@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import os
 import sys
 import time
 import traceback
@@ -112,6 +113,32 @@ def main(argv: list[str] | None = None) -> int:
 
         host = args.host if args.host is not None else config.host
         port = args.port if args.port is not None else config.port
+
+        production_port = os.environ.get("PORT")
+        production_mode = (
+            production_port is not None
+            and host == "0.0.0.0"
+            and port == int(production_port)
+        )
+
+        if production_mode:
+            from pylage.ENGINE.runtime.granian import GranianRuntime
+
+            os.environ["PYLAGE_APP_FILE"] = str(app_path)
+            runtime = GranianRuntime(
+                "pylage.ENGINE.runtime.granian:create_application_from_file",
+                host=host,
+                port=port,
+            )
+            runtime.start()
+            try:
+                while runtime.running:
+                    time.sleep(0.1)
+            except KeyboardInterrupt:
+                pass
+            finally:
+                runtime.stop()
+            return 0
 
         runtime = Runtime(
             app,

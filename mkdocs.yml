@@ -18,6 +18,7 @@ nav:
   - Getting Started:
       - First App: first_app.md
       - Installation: helper/installation.md
+  - Deployment: deployment.md
   - Components:
       - Alert: component/alert.md
       - Button: component/button.md
