@@ -7,6 +7,7 @@ circular dependency.
 
 __all__ = [
     "ASGIApp",
+    "EmbeddedGranianRuntime",
     "GranianRuntime",
     "LocalServer",
     "Runtime",
@@ -30,6 +31,10 @@ def __getattr__(name: str):
     if name == "create_asgi_app":
         from pylage.ENGINE.runtime.granian import create_asgi_app
         return create_asgi_app
+
+    if name == "EmbeddedGranianRuntime":
+        from pylage.ENGINE.runtime.granian import EmbeddedGranianRuntime
+        return EmbeddedGranianRuntime
 
     if name == "GranianRuntime":
         from pylage.ENGINE.runtime.granian import GranianRuntime

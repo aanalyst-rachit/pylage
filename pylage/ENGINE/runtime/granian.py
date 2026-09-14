@@ -5,16 +5,21 @@ The bridge keeps Granian worker construction importable and process-safe.
 
 from __future__ import annotations
 
+import asyncio
 import importlib
 import os
 import socket
 import subprocess
+import threading
 import time
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
+
+from granian.constants import Interfaces
+from granian.server.embed import Server
 
 from pylage.cli import _resolve_app
 from pylage.ENGINE.core.component import Component
@@ -37,6 +42,111 @@ def load_factory(path: str) -> Callable[[], Any]:
         raise TypeError(f"Application factory is not callable: {path}")
 
     return factory
+
+
+class EmbeddedGranianRuntime:
+    """Run a PyLage ASGI application using embedded Granian."""
+
+    def __init__(self, application: ASGIApp, *, host: str = "127.0.0.1", port: int = 8000) -> None:
+        if not isinstance(application, ASGIApp):
+            raise TypeError("application must be an ASGIApp.")
+        if port == 0:
+            raise ValueError("Embedded Granian requires an explicit non-zero port.")
+        self.application = application
+        self.host = host
+        self.port = port
+        self._server: Server | None = None
+        self._thread: threading.Thread | None = None
+        self._loop: asyncio.AbstractEventLoop | None = None
+        self._error: BaseException | None = None
+        self._url: str | None = None
+
+    @property
+    def url(self) -> str:
+        if self._url is None:
+            raise RuntimeError("Embedded Granian runtime is not running.")
+        return self._url
+
+    @property
+    def running(self) -> bool:
+        return self._thread is not None and self._thread.is_alive()
+
+    def start(self) -> str:
+        if self._thread is not None:
+            raise RuntimeError("Embedded Granian runtime is already running.")
+
+        self._server = Server(
+            self.application,
+            address=self.host,
+            port=self.port,
+            interface=Interfaces.ASGI,
+            websockets=True,
+            factory=False,
+        )
+
+        def runner() -> None:
+            loop = asyncio.new_event_loop()
+            self._loop = loop
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(self._server.serve())
+            except Exception as exc:  # noqa: BLE001 - background server thread must report arbitrary runtime failures
+                self._error = exc
+            finally:
+                self._loop = None
+                asyncio.set_event_loop(None)
+                loop.close()
+
+        self._thread = threading.Thread(
+            target=runner,
+            name="pylage-granian",
+            daemon=True,
+        )
+        self._thread.start()
+
+        url = f"http://{self.host}:{self.port}/"
+        deadline = time.monotonic() + 10.0
+
+        try:
+            while time.monotonic() < deadline:
+                if self._error is not None:
+                    raise RuntimeError("Embedded Granian exited during startup.") from self._error
+
+                try:
+                    with urlopen(url, timeout=0.5) as response:
+                        if response.status < 500:
+                            self._url = url
+                            return url
+                except HTTPError as exc:
+                    if exc.code < 500:
+                        self._url = url
+                        return url
+                    time.sleep(0.05)
+                except (OSError, URLError):
+                    time.sleep(0.05)
+
+            raise RuntimeError("Embedded Granian did not become ready within 10 seconds.")
+        except Exception:
+            self.stop()
+            raise
+
+    def stop(self) -> None:
+        server = self._server
+        loop = self._loop
+        thread = self._thread
+
+        if server is None:
+            return
+
+        if loop is not None and thread is not None and thread.is_alive():
+            loop.call_soon_threadsafe(server.stop)
+            thread.join(timeout=5.0)
+
+        self._server = None
+        self._thread = None
+        self._loop = None
+        self._url = None
+        self._error = None
 
 
 class GranianRuntime:

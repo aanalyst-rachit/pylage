@@ -155,3 +155,66 @@ def test_granian_runtime_tls_command_contract():
     assert started_url.startswith("https://127.0.0.1:")
     assert runtime.url.startswith("https://127.0.0.1:")
     runtime.stop()
+
+
+def test_embedded_granian_runtime_constructor_contract():
+    from pylage.ENGINE.runtime import EmbeddedGranianRuntime
+    from pylage.ENGINE.runtime.asgi import ASGIApp
+
+    def app_factory():
+        from pylage import column, heading
+        return column(heading("Embedded Test"))
+
+    application = ASGIApp(app_factory=app_factory)
+    runtime = EmbeddedGranianRuntime(application, host="127.0.0.1", port=8124)
+
+    assert runtime.application is application
+    assert runtime.host == "127.0.0.1"
+    assert runtime.port == 8124
+    assert runtime.running is False
+
+
+def test_embedded_granian_runtime_requires_explicit_port():
+    from pylage.ENGINE.runtime import EmbeddedGranianRuntime
+    from pylage.ENGINE.runtime.asgi import ASGIApp
+
+    def app_factory():
+        from pylage import column
+        return column()
+
+    application = ASGIApp(app_factory=app_factory)
+
+    with pytest.raises(ValueError, match="explicit non-zero port"):
+        EmbeddedGranianRuntime(application, port=0)
+
+
+def test_embedded_granian_runtime_rejects_invalid_application():
+    from pylage.ENGINE.runtime import EmbeddedGranianRuntime
+
+    with pytest.raises(TypeError, match="must be an ASGIApp"):
+        EmbeddedGranianRuntime(object())
+
+
+def test_embedded_granian_runtime_real_lifecycle():
+    from pylage.ENGINE.runtime import EmbeddedGranianRuntime
+    from pylage.ENGINE.runtime.asgi import ASGIApp
+
+    def app_factory():
+        from pylage import column, heading
+        return column(heading("Embedded Lifecycle"))
+
+    application = ASGIApp(app_factory=app_factory)
+    runtime = EmbeddedGranianRuntime(application, host="127.0.0.1", port=8125)
+
+    try:
+        url = runtime.start()
+
+        assert url == "http://127.0.0.1:8125/"
+        assert runtime.url == url
+        assert runtime.running is True
+    finally:
+        runtime.stop()
+
+    assert runtime.running is False
+    with pytest.raises(RuntimeError, match="not running"):
+        _ = runtime.url
