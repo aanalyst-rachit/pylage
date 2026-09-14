@@ -72,10 +72,9 @@ nav:
       - API Conventions: helper/api_conventions.md
       - Design Contract: helper/design_contract.md
       - Migration: helper/migration.md
-  - V2:
-      - Roadmap: https://github.com/aanalyst-rachit/pylage/blob/main/tracker.md
   - Releases:
-      - V1.0.2 Tracker: releases/tracker_v1.0.2.md
+      - Changelog: https://github.com/aanalyst-rachit/pylage/blob/main/CHANGELOG.md
+      - v1.0.3: https://github.com/aanalyst-rachit/pylage/releases/tag/v1.0.3
   - Playground: https://aanalyst-rachit.github.io/pylage/playground/
 
 markdown_extensions:

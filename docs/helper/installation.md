@@ -1,72 +1,47 @@
 # Installation
 
-## Definition
-
-PyLage is currently developed and verified from this repository as the `pylage` Python package.
-
-The final updated PyLage release is planned for publication on PyPI after the documentation phase is complete.
-
 ## Requirements
 
-- Python 3.12 is verified in the current development environment.
-- A Python virtual environment is recommended for project isolation.
-- `pip` is required for Python package installation workflows.
+- Python **3.10+**
+- `pip`
+- A virtual environment is recommended
 
-## Development Setup
-
-Create and activate the project virtual environment:
+## Install from PyPI
 
 ```bash
+pip install pylage
+```
+
+For development and browser testing:
+
+```bash
+pip install "pylage[test]"
+```
+
+## Verify
+
+```bash
+python -c "import pylage; print(pylage.__version__)"
+```
+
+You should see:
+
+```text
+1.0.3
+```
+
+## Development install (from source)
+
+```bash
+git clone https://github.com/aanalyst-rachit/pylage.git
+cd pylage
 python3 -m venv .venv
 source .venv/bin/activate
+pip install -e ".[test]"
 ```
 
-## Repository Verification
+## Next steps
 
-The current repository can be verified directly from the project checkout:
-
-```bash
-python -c "import pylage; print(pylage.__file__)"
-```
-
-A successful check confirms that the current repository package can be imported.
-
-## Current PyPI Package
-
-The `pylage` package currently available on PyPI is an older demo release that was published to reserve the package name and URL.
-
-It should not be treated as the current repository release or as the source of the current PyLage implementation.
-
-The updated repository version will be published to PyPI after the documentation work is completed.
-
-## Packaging Status
-
-This repository currently does not contain `pyproject.toml`, `setup.py`, or `setup.cfg`.
-
-Therefore, the documentation does not prescribe `pip install -e .` or another repository installation command that depends on packaging metadata.
-
-For current development, use the repository checkout and its virtual environment.
-
-## API Boundary
-
-Application code imports the package as:
-
-```python
-import pylage as pl
-```
-
-## Verification
-
-The current development checkout was verified with Python 3.12.3 and a successful `import pylage`.
-
-The separately installed PyPI `pylage` package was verified as an older demo release and is intentionally distinguished from the current repository version.
-
-## Verified Sources
-
-- `README.MD` — existing project quick-start and installation references.
-- `pylage/__init__.py` — current package root.
-- Current repository package import verification.
-
-## Status
-
-Installation documentation reflects the current repository workflow and clearly distinguishes the legacy/demo PyPI package from the upcoming updated PyLage release.
+- [First App](../first_app.md)
+- [Deployment](../deployment.md)
+- [Playground](https://aanalyst-rachit.github.io/pylage/playground/)

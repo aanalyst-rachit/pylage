@@ -1,8 +1,25 @@
 # PyLage
 
-**Simple, Ultrafast, Low-Latency Python UI**
+**Simple, ultrafast, low-latency Python UI**
 
-PyLage is a Python-first, server-driven reactive UI framework focused on low-latency differential updates and a simple developer experience.
+PyLage is a Python-first, server-driven reactive UI framework. Build interactive web apps with pure Python components, reactive state, routing, themes, and live browser synchronization — without a separate frontend stack.
+
+```python
+import pylage as pl
+
+count = pl.state(0)
+
+def increment():
+    count.set(count.value + 1)
+
+app = pl.column(
+    pl.heading("Hello PyLage"),
+    pl.text(count),
+    pl.button("Increment", on_click=increment),
+)
+
+pl.run(app)
+```
 
 ## Why PyLage
 
@@ -12,19 +29,25 @@ PyLage is a Python-first, server-driven reactive UI framework focused on low-lat
 - Low-latency state updates
 - No frontend build system required
 - Session-based runtime architecture
+- Routing, themes, and production deployment support
 
-## Getting Started
+## Quick install
 
-Start with the [First App](first_app.md) guide.
+```bash
+pip install pylage
+```
 
-## Public Release Scope
+Requires **Python 3.10+**. Current release: **1.0.3**.
 
-PyLage V2 implementation scope for Phases 0–7 is complete. The current Phase 8 work is focused on final public-release preparation for v1.0.3.
+## Getting started
 
-The release process covers documentation, playground verification, demos, changelog, package versioning, release quality gates, and final publication.
-
-The current release tracker is maintained in the repository root as `tracker.md`.
+1. [Installation](helper/installation.md)
+2. [First App](first_app.md)
+3. [Deployment](deployment.md)
+4. [Playground](https://aanalyst-rachit.github.io/pylage/playground/) (interactive)
 
 ## Project
 
-[GitHub Repository](https://github.com/aanalyst-rachit/pylage)
+- [GitHub repository](https://github.com/aanalyst-rachit/pylage)
+- [Release notes (v1.0.3)](https://github.com/aanalyst-rachit/pylage/releases/tag/v1.0.3)
+- [PyPI](https://pypi.org/project/pylage/)
