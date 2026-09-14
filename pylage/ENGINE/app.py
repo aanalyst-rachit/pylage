@@ -80,6 +80,7 @@ def run(
         asgi = ASGIApp(
             app_factory=app_factory,
             document=document,
+            template=template,
         )
         runtime = EmbeddedGranianRuntime(
             asgi,

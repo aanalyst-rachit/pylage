@@ -82,6 +82,40 @@ class _ASGIConnection:
         await self._send({"type": "websocket.send", "text": data})
 
 
+def _align_component_ids(template: Component, instance: Component) -> None:
+    if not isinstance(template, Component) or not isinstance(instance, Component):
+        raise TypeError("Component ID alignment expects Component trees.")
+
+    if template.type != instance.type:
+        raise RuntimeError(
+            "Component tree changed between document render and session creation: "
+            f"{template.type} != {instance.type}."
+        )
+
+    template_children = [
+        child for child in template.children
+        if isinstance(child, Component)
+    ]
+    instance_children = [
+        child for child in instance.children
+        if isinstance(child, Component)
+    ]
+
+    if len(template_children) != len(instance_children):
+        raise RuntimeError(
+            "Component tree shape changed between document render and session creation."
+        )
+
+    instance.id = template.id
+
+    for template_child, instance_child in zip(
+        template_children,
+        instance_children,
+        strict=True,
+    ):
+        _align_component_ids(template_child, instance_child)
+
+
 class ASGIApp:
     """Minimal ASGI application for a PyLage component tree or factory."""
 
@@ -93,6 +127,7 @@ class ASGIApp:
         directory: str | Path | None = None,
         filename: str = "index.html",
         document: str | None = None,
+        template: Component | None = None,
         session_store: SessionStore | None = None,
         allowed_origins: Sequence[str] | None = None,
         max_message_size: int = 1024 * 1024,
@@ -128,6 +163,9 @@ class ASGIApp:
         self.directory = Path(directory).resolve() if directory is not None else None
         self.filename = Path(filename).name
         self.document = document
+        self.template = template
+        if self.template is not None and not isinstance(self.template, Component):
+            raise TypeError("ASGIApp template must be a Component.")
         self.allowed_origins = tuple(allowed_origins) if allowed_origins is not None else None
         self.max_message_size = max_message_size
         self.websocket = (
@@ -339,6 +377,8 @@ class ASGIApp:
             root = self.app_factory()
             if not isinstance(root, Component):
                 raise TypeError("ASGIApp app_factory must return a Component.")
+            if self.template is not None:
+                _align_component_ids(self.template, root)
 
             session = WebSocketServer(
                 root,
