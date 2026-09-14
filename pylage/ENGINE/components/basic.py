@@ -407,6 +407,10 @@ def Checkbox(**props: Any) -> Component:
 
         checkbox.events["change"] = update_state
 
+        checked.subscribe(
+            lambda _old, new: checkbox.props.__setitem__("checked", bool(new))
+        )
+
     return checkbox
 
 
