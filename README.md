@@ -3,10 +3,12 @@
 [![PyPI version](https://img.shields.io/pypi/v/pylage.svg)](https://pypi.org/project/pylage/)
 [![Python versions](https://img.shields.io/pypi/pyversions/pylage.svg)](https://pypi.org/project/pylage/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Tests](https://img.shields.io/badge/tests-1325%20passed-brightgreen)](https://github.com/aanalyst-rachit/pylage)
+[![Tests](https://img.shields.io/badge/tests-1332%20passed-brightgreen)](https://github.com/aanalyst-rachit/pylage)
 [![GitHub](https://img.shields.io/badge/GitHub-aanalyst--rachit%2Fpylage-blue?logo=github)](https://github.com/aanalyst-rachit/pylage)
 
 **PyLage** is a server-driven differential UI framework for Python.
+
+**Current release: 1.0.4**
 
 Build interactive web applications using pure Python components, reactive state, routing, styling, themes, events, and live browser synchronization — without writing a separate frontend application.
 
@@ -293,8 +295,8 @@ pytest test/reactive -q
 ```
 
 Current verification baseline:
-- **1326** tests collected
-- **1325** passed
+- **1333** tests collected
+- **1332** passed
 - **1** skipped
 
 Additional tooling: Ruff, Playwright, package build verification, dependency auditing.

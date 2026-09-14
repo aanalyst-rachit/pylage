@@ -1,8 +1,10 @@
 import importlib.util
-import shutil
+import os
 import socket
 import subprocess
+import sys
 import time
+from pathlib import Path
 from urllib.request import urlopen
 
 import pytest
@@ -11,6 +13,7 @@ FACTORY = "test.foundation.granian_factory_smoke:create_test_app"
 HOST = "127.0.0.1"
 WARMUP_REQUESTS = 50
 MEASURED_REQUESTS = 500
+GRANIAN = Path(sys.executable).with_name("granian")
 
 
 def _free_port():
@@ -23,7 +26,7 @@ def _run_granian(loop):
     port = _free_port()
 
     command = [
-        "granian",
+        str(GRANIAN),
         FACTORY,
         "--interface",
         "asgi",
@@ -96,8 +99,8 @@ def _run_granian(loop):
 
 
 def test_granian_event_loop_benchmark(capsys):
-    if shutil.which("granian") is None:
-        pytest.skip("granian executable is not installed")
+    if not (GRANIAN.is_file() and os.access(GRANIAN, os.X_OK)):
+        pytest.skip("granian executable is not installed in the active Python environment")
     if importlib.util.find_spec("uvloop") is None:
         pytest.skip("uvloop is not installed; install pylage[performance]")
 
