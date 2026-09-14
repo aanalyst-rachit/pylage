@@ -51,10 +51,24 @@ def test_active_selected_checked_browser_contract():
 
             checkbox.check()
             assert checkbox.is_checked() is True
+
+            for _ in range(50):
+                if checked.value is True:
+                    break
+                page.wait_for_timeout(100)
+
+            assert checked.value is True
             assert switch.is_checked() is True
 
             switch.uncheck()
             assert switch.is_checked() is False
+
+            for _ in range(50):
+                if checked.value is False:
+                    break
+                page.wait_for_timeout(100)
+
+            assert checked.value is False
             assert checkbox.is_checked() is False
 
             active.set(True)
