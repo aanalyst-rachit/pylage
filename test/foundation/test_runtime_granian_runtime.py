@@ -59,9 +59,8 @@ def test_granian_runtime_loop_command_contract():
             loop=loop,
         )
 
-        with patch.object(granian_runtime.subprocess, "Popen", side_effect=fake_popen), patch(
-            "pylage.ENGINE.runtime.granian.urlopen",
-            return_value=FakeResponse(),
+        with patch.object(granian_runtime.subprocess, "Popen", side_effect=fake_popen), patch.object(
+            granian_runtime, "urlopen", return_value=FakeResponse()
         ):
             runtime.start()
 
