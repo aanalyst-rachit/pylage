@@ -102,10 +102,14 @@ def test_run_app_factory_uses_embedded_granian(tmp_path):
 
     output = tmp_path / "served_factory" / "index.html"
 
+    import importlib
+
+    engine_app = importlib.import_module("pylage.ENGINE.app")
+
     with (
-        patch("pylage.ENGINE.app.EmbeddedGranianRuntime", FakeRuntime),
-        patch("pylage.ENGINE.app.time.sleep", side_effect=interrupt),
-        patch("pylage.ENGINE.app.webbrowser.open") as browser_open,
+        patch.object(engine_app, "EmbeddedGranianRuntime", FakeRuntime),
+        patch.object(engine_app.time, "sleep", side_effect=interrupt),
+        patch.object(engine_app.webbrowser, "open") as browser_open,
     ):
         result = pl.run(
             app_factory=app_factory,
