@@ -33,6 +33,10 @@ def test_browser_datepicker_state_binding():
 
             expect(datepicker_locator).to_have_value("2026-09-03")
 
+            page.wait_for_function(
+                "() => Boolean(window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN)"
+            )
+
             datepicker_locator.evaluate(
                 "(el) => { el.value = '2026-09-15'; el.dispatchEvent(new Event('input', {bubbles: true})); }"
             )
