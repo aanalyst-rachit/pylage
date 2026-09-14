@@ -407,10 +407,6 @@ def Checkbox(**props: Any) -> Component:
 
         checkbox.events["change"] = update_state
 
-        checked.subscribe(
-            lambda _old, new: checkbox.props.__setitem__("checked", bool(new))
-        )
-
     return checkbox
 
 
@@ -492,10 +488,6 @@ def Switch(**props: Any) -> Component:
                 user_on_change(payload)
 
         switch.events["change"] = update_state
-
-        checked.subscribe(
-            lambda _old, new: switch.props.__setitem__("checked", bool(new))
-        )
 
     return switch
 
