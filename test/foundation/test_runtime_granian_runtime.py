@@ -138,11 +138,10 @@ def test_granian_runtime_tls_command_contract():
         ssl_keyfile_password="secret",
     )
 
-    with patch.object(granian_runtime.subprocess, "Popen", side_effect=fake_popen), patch(
-        "pylage.ENGINE.runtime.granian.urlopen",
-        return_value=FakeResponse(),
+    with patch.object(granian_runtime.subprocess, "Popen", side_effect=fake_popen), patch.object(
+        granian_runtime, "urlopen", return_value=FakeResponse()
     ):
-        assert runtime.start() == "https://127.0.0.1:0/" or runtime.url.startswith("https://127.0.0.1:")
+        started_url = runtime.start()
 
     command = captured["command"]
     assert command[-6:] == [
@@ -153,5 +152,6 @@ def test_granian_runtime_tls_command_contract():
         "--ssl-keyfile-password",
         "secret",
     ]
+    assert started_url.startswith("https://127.0.0.1:")
     assert runtime.url.startswith("https://127.0.0.1:")
     runtime.stop()
