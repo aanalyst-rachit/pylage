@@ -128,6 +128,43 @@ pl.get_current_theme(...)
 pl.run(...)
 ```
 
+### Session-Isolated Applications
+
+For served applications that need independent state for each browser session, use `app_factory` with `pl.run(...)`. The factory should create and return a fresh component tree each time it is called.
+
+```python
+import pylage as pl
+
+
+def create_app():
+    count = pl.state(0)
+
+    def increment():
+        count.set(count.value + 1)
+
+    return pl.column(
+        pl.heading("Session Counter"),
+        pl.text(count),
+        pl.button("Increment", on_click=increment),
+    )
+
+
+if __name__ == "__main__":
+    pl.run(
+        app_factory=create_app,
+        title="Session Counter",
+        host="127.0.0.1",
+        port=3000,
+        serve=True,
+    )
+```
+
+With `app_factory`, PyLage creates a fresh application/component tree for each new session. Browser sessions therefore keep their reactive state isolated from one another.
+
+The factory must return a new `Component` tree. Application-level persistence, such as users, database records, or data that must survive a page reload, should still be implemented by the application itself using an appropriate persistence layer.
+
+Application code should use the public `pl.run(app_factory=...)` API and should not depend on PyLage private runtime helpers for session creation or component ID management.
+
 ## Reactive State
 
 ```python
