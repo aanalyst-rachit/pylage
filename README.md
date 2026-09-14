@@ -343,7 +343,7 @@ See [`docs/deployment.md`](docs/deployment.md) for production server configurati
 
 ## Release Status
 
-- Current release: **PyLage 1.0.3**
+- Current release: **PyLage 1.0.4**
 - Release status: **Public release preparation complete**
 
 Release process includes full public API audit, documentation & playground verification, package builds, fresh-install checks, and regression testing.

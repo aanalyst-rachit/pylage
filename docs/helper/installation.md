@@ -27,7 +27,7 @@ python -c "import pylage; print(pylage.__version__)"
 You should see:
 
 ```text
-1.0.3
+1.0.4
 ```
 
 ## Development install (from source)
