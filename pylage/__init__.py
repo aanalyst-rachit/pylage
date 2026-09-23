@@ -114,7 +114,7 @@ from pylage.UI.state import derived
 from pylage.UI.style import style
 from pylage.UI.themes import get_current_theme, set_theme
 
-__version__ = "1.0.4"
+__version__ = "1.0.6"
 
 __all__ = [
     "__version__",

@@ -3,12 +3,12 @@
 [![PyPI version](https://img.shields.io/pypi/v/pylage.svg)](https://pypi.org/project/pylage/)
 [![Python versions](https://img.shields.io/pypi/pyversions/pylage.svg)](https://pypi.org/project/pylage/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Tests](https://img.shields.io/badge/tests-1332%20passed-brightgreen)](https://github.com/aanalyst-rachit/pylage)
+[![Tests](https://img.shields.io/badge/tests-1435%20passed-brightgreen)](https://github.com/aanalyst-rachit/pylage)
 [![GitHub](https://img.shields.io/badge/GitHub-aanalyst--rachit%2Fpylage-blue?logo=github)](https://github.com/aanalyst-rachit/pylage)
 
 **PyLage** is a server-driven differential UI framework for Python.
 
-**Current release: 1.0.4**
+**Current release: 1.0.6**
 
 Build interactive web applications using pure Python components, reactive state, routing, styling, themes, events, and live browser synchronization — without writing a separate frontend application.
 
@@ -245,6 +245,87 @@ app = pl.column(
 pl.run(app)
 ```
 
+## Charts
+
+PyLage includes a native chart API for building interactive data visualizations directly from Python. Charts use the optional Plotly dependency and integrate with the same server-driven component model as the rest of the framework.
+
+Install chart support with:
+
+```bash
+pip install "pylage[charts]"
+```
+
+### Native Data API
+
+Create charts directly from pandas DataFrames, Polars DataFrames, LazyFrames, lists of records, or column mappings:
+
+```python
+import pandas as pd
+import pylage as pl
+
+df = pd.DataFrame({
+    "month": ["Jan", "Feb", "Mar", "Apr"],
+    "sales": [120, 180, 150, 220],
+})
+
+app = pl.column(
+    pl.heading("Sales"),
+    pl.chart(
+        data=df,
+        type="bar",
+        x="month",
+        y="sales",
+    ),
+)
+
+pl.run(app)
+```
+
+The native API supports:
+
+- `line`
+- `bar`
+- `scatter`
+- `area`
+- `pie`
+- Multiple `y` columns for supported Cartesian charts
+- `color` grouping for supported Cartesian charts
+- `size` for scatter charts
+- `name`, `x_label`, and `y_label`
+
+### Advanced Plotly API
+
+For full Plotly control, pass an existing Plotly Figure:
+
+```python
+import plotly.express as px
+import pylage as pl
+
+fig = px.line(
+    x=["Jan", "Feb", "Mar"],
+    y=[120, 180, 150],
+    labels={"x": "Month", "y": "Sales"},
+)
+
+app = pl.column(
+    pl.heading("Sales Trend"),
+    pl.chart(fig),
+)
+
+pl.run(app)
+```
+
+The advanced Figure API supports Plotly Express and `plotly.graph_objects`, including reactive Figure/state workflows.
+
+Charts also support interactive events such as:
+
+- `on_click`
+- `on_select`
+- `on_hover`
+- `on_relayout`
+
+See the full [Chart documentation](docs/component/chart.md) for installation, supported chart types, events, lifecycle behavior, deployment requirements, browser runtime assets, performance considerations, and troubleshooting.
+
 ## Routing
 
 PyLage includes built-in routing for multi-view applications with navigation, browser history support, and reactive route state — all within the same server-driven model.
@@ -380,7 +461,7 @@ See [`docs/deployment.md`](docs/deployment.md) for production server configurati
 
 ## Release Status
 
-- Current release: **PyLage 1.0.4**
+- Current release: **PyLage 1.0.6**
 - Release status: **Public release preparation complete**
 
 Release process includes full public API audit, documentation & playground verification, package builds, fresh-install checks, and regression testing.

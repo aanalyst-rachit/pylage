@@ -107,7 +107,7 @@ from .recipes import (
 )
 from .state import derived
 
-__version__ = "1.0.4"
+__version__ = "1.0.6"
 
 __all__ = [
     "CTA",

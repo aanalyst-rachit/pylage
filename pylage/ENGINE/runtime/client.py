@@ -673,7 +673,7 @@ CLIENT_RUNTIME = r"""
 
     window.PyLage._propMetaCache = Object.create(null);
 
-    const boundEventTypes = new Set(["click", "input", "change", "submit"]);
+    const boundEventTypes = new Set();
     let reconnectDelay = 1000;
     const maxReconnectDelay = 16000;
 

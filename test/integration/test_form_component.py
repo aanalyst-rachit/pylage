@@ -50,7 +50,7 @@ def test_form_supports_submit_event():
 def test_form_submit_event_is_in_client_runtime():
     from pylage.ENGINE.runtime.client import CLIENT_RUNTIME
 
-    assert 'document.addEventListener("submit", handleEvent)' in CLIENT_RUNTIME
+    assert 'document.addEventListener(eventType, handleEvent, true)' in CLIENT_RUNTIME
     assert "event.preventDefault()" in CLIENT_RUNTIME
 
 

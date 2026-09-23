@@ -37,7 +37,7 @@ pl.run(app)
 pip install pylage
 ```
 
-Requires **Python 3.10+**. Current release: **1.0.4**.
+Requires **Python 3.10+**. Current release: **1.0.6**.
 
 ## Getting started
 
@@ -49,5 +49,5 @@ Requires **Python 3.10+**. Current release: **1.0.4**.
 ## Project
 
 - [GitHub repository](https://github.com/aanalyst-rachit/pylage)
-- [Release notes (v1.0.4)](https://github.com/aanalyst-rachit/pylage/releases/tag/v1.0.4)
+- [Release notes (v1.0.6)](https://github.com/aanalyst-rachit/pylage/releases/tag/v1.0.6)
 - [PyPI](https://pypi.org/project/pylage/)
