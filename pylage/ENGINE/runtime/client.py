@@ -125,7 +125,7 @@ CLIENT_RUNTIME = r"""
             }
 
             const script = document.createElement("script");
-            script.src = "/_pylage/assets/plotly.min.js";
+            script.src = (window.PyLage && window.PyLage.plotlyAssetUrl) || "/_pylage/assets/plotly.min.js";
             script.async = true;
             script.dataset.pylagePlotly = "1";
 

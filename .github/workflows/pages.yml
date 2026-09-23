@@ -44,7 +44,8 @@ jobs:
         run: |
           wheel_name="$(find dist -maxdepth 1 -type f -name 'pylage-*.whl' -printf '%f\n' | head -n 1)"
           test -n "$wheel_name"
-          mkdir -p site/playground site/dist
+          mkdir -p site/playground/_pylage/assets site/dist
+          cp pylage/ENGINE/runtime/assets/plotly.min.js site/playground/_pylage/assets/plotly.min.js
           python -c "from pathlib import Path; from playground.app import get_app; from playground.runtime import build_playground_document; wheel=Path('dist') / '$wheel_name'; document=build_playground_document(get_app(), wheel_url=f'../dist/{wheel.name}'); Path('site/playground/index.html').write_text(document, encoding='utf-8')"
           cp "dist/$wheel_name" "site/dist/$wheel_name"
 
@@ -52,6 +53,8 @@ jobs:
         run: |
           test -f site/index.html
           test -f site/playground/index.html
+          test -f site/playground/_pylage/assets/plotly.min.js
+          grep -F "./_pylage/assets/plotly.min.js" site/playground/index.html
           wheel_name="$(find site/dist -maxdepth 1 -type f -name 'pylage-*.whl' -printf '%f\n' | head -n 1)"
           test -n "$wheel_name"
           grep -F "../dist/$wheel_name" site/playground/index.html

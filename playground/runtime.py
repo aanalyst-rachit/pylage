@@ -15,6 +15,9 @@ def inject_playground_bridge(document: str, wheel_url: str | None = None) -> str
 <script src="https://cdn.jsdelivr.net/pyodide/v{PYODIDE_VERSION}/full/pyodide.js"></script>
 <script>
 (() => {{
+    window.PyLage = window.PyLage || {{}};
+    window.PyLage.plotlyAssetUrl = "./_pylage/assets/plotly.min.js";
+
     const wheelUrl = {wheel_url!r};
     const editorId = "pylage-playground-editor";
     const runId = "pylage-playground-run";
