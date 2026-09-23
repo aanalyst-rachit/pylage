@@ -419,6 +419,34 @@ Current verification baseline:
 
 Additional tooling: Ruff, Playwright, package build verification, dependency auditing.
 
+## Benchmark
+
+PyLage includes a reproducible browser-level benchmark comparing PyLage, NiceGUI, Streamlit, and Reflex across counter and form interaction scenarios.
+
+The benchmark uses fresh server processes, fresh Playwright pages, 20 warmup interactions, 50 measured interactions, and DOM-visible completion conditions.
+
+Final benchmark reports and raw samples are available in `pylage-bench/`. The complete methodology and results are documented in the [Benchmark documentation](docs/benchmark.md).
+
+### Final Counter Results
+
+| Framework | Startup (ms) | P50 (ms) | P95 (ms) | Mean (ms) |
+|---|---:|---:|---:|---:|
+| PyLage | 409.48 | 60.61 | 74.33 | 61.36 |
+| NiceGUI | 1015.95 | 79.99 | 96.51 | 81.66 |
+| Reflex | 709.79 | 61.18 | 68.06 | 61.28 |
+| Streamlit | 3329.76 | 255.36 | 316.59 | 259.90 |
+
+### Final Form Results
+
+| Framework | Startup (ms) | P50 (ms) | P95 (ms) | Mean (ms) |
+|---|---:|---:|---:|---:|
+| PyLage | 597.09 | 116.42 | 129.34 | 115.21 |
+| NiceGUI | 1049.05 | 143.04 | 175.01 | 142.95 |
+| Reflex | 722.71 | 85.41 | 108.14 | 87.48 |
+| Streamlit | 3232.20 | 563.77 | 639.92 | 542.94 |
+
+> These measurements apply to the defined benchmark scenarios and test environment; they should not be interpreted as a universal performance ranking.
+
 ## Documentation
 
 Documentation lives in `docs/` and is built with MkDocs:

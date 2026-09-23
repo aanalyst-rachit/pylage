@@ -73,6 +73,7 @@ nav:
       - API Conventions: helper/api_conventions.md
       - Design Contract: helper/design_contract.md
       - Migration: helper/migration.md
+  - Benchmark: benchmark.md
   - Releases:
       - Changelog: https://github.com/aanalyst-rachit/pylage/blob/main/CHANGELOG.md
       - v1.0.3: https://github.com/aanalyst-rachit/pylage/releases/tag/v1.0.3
