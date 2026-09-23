@@ -8,6 +8,11 @@ on:
         required: true
         default: "v1.0.6"
         type: string
+      publish_pypi:
+        description: "Publish distributions to PyPI"
+        required: true
+        default: true
+        type: boolean
 
 permissions:
   contents: read
@@ -45,6 +50,7 @@ jobs:
 
   publish:
     name: Publish to PyPI
+    if: inputs.publish_pypi
     needs: build
     runs-on: ubuntu-latest
     environment:
