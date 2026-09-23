@@ -256,6 +256,52 @@ class ASGIApp:
             )
             return
 
+
+        # Packaged framework assets (Plotly.js, etc.)
+        if path.startswith("/_pylage/assets/"):
+            asset_name = path[len("/_pylage/assets/"):]
+            if ".." in asset_name or asset_name.startswith("/"):
+                await self._response(
+                    404,
+                    b"Not Found",
+                    {"Content-Type": "text/plain; charset=utf-8"},
+                    send,
+                )
+                return
+            asset = self._package_asset_path(asset_name)
+            if asset is None:
+                await self._response(
+                    404,
+                    b"Not Found",
+                    {"Content-Type": "text/plain; charset=utf-8"},
+                    send,
+                )
+                return
+            try:
+                content = asset.read_bytes()
+            except OSError:
+                await self._response(
+                    404,
+                    b"Not Found",
+                    {"Content-Type": "text/plain; charset=utf-8"},
+                    send,
+                )
+                return
+            content_type = content_type_for(asset)
+            accept_encoding = ""
+            for name, value in scope.get("headers", []):
+                if name.lower() == b"accept-encoding":
+                    accept_encoding = value.decode("latin-1")
+                    break
+            content, headers = prepare_static_response(
+                content,
+                content_type,
+                accept_encoding=accept_encoding,
+                cache_control="public, max-age=86400",
+            )
+            await self._response(200, content, headers, send)
+            return
+
         if self.directory is None:
             await self._response(
                 404,
@@ -312,6 +358,19 @@ class ASGIApp:
             accept_encoding=accept_encoding,
         )
         await self._response(200, content, headers, send)
+
+
+    def _package_asset_path(self, name: str) -> Path | None:
+        """Resolve a packaged runtime asset (e.g. plotly.min.js)."""
+        base = Path(__file__).resolve().parent / "assets"
+        target = (base / name).resolve()
+        try:
+            target.relative_to(base)
+        except ValueError:
+            return None
+        if target.is_file():
+            return target
+        return None
 
     def _evict_expired_sessions(self) -> None:
         for _token, session in self.session_store.evict_expired():

@@ -67,6 +67,9 @@ class EventDispatcher:
 
         return handler(payload)
 
+    def get_component(self, component_id: str) -> Component | None:
+        return self._components.get(component_id)
+
     def has_component(self, component_id: str) -> bool:
         return component_id in self._components
 

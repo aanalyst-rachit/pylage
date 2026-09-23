@@ -25,6 +25,47 @@ class _RequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(body)
             return
 
+        if request_path.startswith("/_pylage/assets/"):
+            asset_name = request_path[len("/_pylage/assets/"):]
+
+            if ".." in asset_name or asset_name.startswith("/"):
+                self.send_error(404, "Not Found")
+                return
+
+            asset_base = Path(__file__).resolve().parent / "assets"
+            target = (asset_base / asset_name).resolve()
+
+            try:
+                target.relative_to(asset_base)
+            except ValueError:
+                self.send_error(404, "Not Found")
+                return
+
+            if not target.is_file():
+                self.send_error(404, "Not Found")
+                return
+
+            try:
+                content = target.read_bytes()
+            except OSError:
+                self.send_error(404, "Not Found")
+                return
+
+            content_type = content_type_for(target)
+            content, headers = prepare_static_response(
+                content,
+                content_type,
+                accept_encoding=self.headers.get("Accept-Encoding", ""),
+                cache_control="public, max-age=86400",
+            )
+
+            self.send_response(200)
+            for name, value in headers.items():
+                self.send_header(name, value)
+            self.end_headers()
+            self.wfile.write(content)
+            return
+
         if request_path in ("/", f"/{self.filename}"):
             relative_path = Path(self.filename)
         elif request_path.startswith("/"):

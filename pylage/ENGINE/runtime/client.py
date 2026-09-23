@@ -5,6 +5,672 @@ CLIENT_RUNTIME = r"""
     "use strict";
 
     window.PyLage = window.PyLage || {};
+
+    // ============================================================
+    // PyLage Chart runtime (Plotly backend)
+    // ============================================================
+    const chartInstances = new Map(); // id -> {el, backend}
+    const chartPending = new Map(); // id -> {el, generation, promise}
+    const chartQueues = new Map(); // id -> {el, generation, promise}
+
+    function isChartConnected(el) {
+        return !!(
+            el &&
+            el.isConnected &&
+            el.getAttribute &&
+            el.getAttribute("data-pylage-chart") === "1"
+        );
+    }
+
+    function nextChartGeneration(id) {
+        const pending = chartPending.get(id);
+        const queue = chartQueues.get(id);
+
+        return Math.max(
+            pending ? pending.generation : 0,
+            queue ? queue.generation : 0
+        ) + 1;
+    }
+
+    function parseChartPayload(el) {
+        if (!el || !el.getAttribute) {
+            return null;
+        }
+
+        const raw = el.getAttribute("data-chart-payload");
+        if (!raw) {
+            return null;
+        }
+
+        try {
+            return JSON.parse(raw);
+        } catch (error) {
+            console.error(
+                "[PyLage] Invalid chart payload",
+                error
+            );
+            return null;
+        }
+    }
+
+    let plotlyLoadPromise = null;
+
+    function reportChartError(message, error) {
+        const detail = error
+            ? String(error && error.message ? error.message : error)
+            : "";
+
+        const text = detail
+            ? String(message) + ": " + detail
+            : String(message);
+
+        console.error("[PyLage] " + text, error || "");
+
+        if (
+            window.PyLage &&
+            typeof window.PyLage.onError === "function"
+        ) {
+            window.PyLage.onError(text);
+        }
+    }
+
+    function loadPlotlyOnce() {
+        if (window.Plotly) {
+            return Promise.resolve(window.Plotly);
+        }
+
+        if (plotlyLoadPromise) {
+            return plotlyLoadPromise;
+        }
+
+        plotlyLoadPromise = new Promise(function (resolve, reject) {
+            const existing = document.querySelector(
+                'script[data-pylage-plotly="1"]'
+            );
+
+            if (existing) {
+                if (window.Plotly) {
+                    resolve(window.Plotly);
+                    return;
+                }
+
+                existing.addEventListener(
+                    "load",
+                    function () {
+                        if (window.Plotly) {
+                            resolve(window.Plotly);
+                        } else {
+                            reject(
+                                new Error(
+                                    "Plotly loaded but window.Plotly is unavailable"
+                                )
+                            );
+                        }
+                    },
+                    { once: true }
+                );
+
+                existing.addEventListener(
+                    "error",
+                    function () {
+                        existing.remove();
+                        reject(
+                            new Error("Failed to load Plotly")
+                        );
+                    },
+                    { once: true }
+                );
+
+                return;
+            }
+
+            const script = document.createElement("script");
+            script.src = "/_pylage/assets/plotly.min.js";
+            script.async = true;
+            script.dataset.pylagePlotly = "1";
+
+            script.onload = function () {
+                if (window.Plotly) {
+                    resolve(window.Plotly);
+                } else {
+                    reject(
+                        new Error(
+                            "Plotly loaded but window.Plotly is unavailable"
+                        )
+                    );
+                }
+            };
+
+            script.onerror = function () {
+                script.remove();
+                reject(
+                    new Error("Failed to load Plotly asset")
+                );
+            };
+
+            document.head.appendChild(script);
+        });
+
+        plotlyLoadPromise.catch(function () {
+            plotlyLoadPromise = null;
+        });
+
+        return plotlyLoadPromise;
+    }
+
+    function getChartPayloadParts(el) {
+        const payload = parseChartPayload(el);
+        if (!payload || payload.backend !== "plotly") {
+            return null;
+        }
+
+        return {
+            data: payload.data || [],
+            layout: Object.assign(
+                {autosize: true},
+                payload.layout || {}
+            ),
+            config: Object.assign(
+                {responsive: true},
+                payload.config || {}
+            ),
+            frames: Array.isArray(payload.frames)
+                ? payload.frames
+                : null,
+        };
+    }
+
+    async function mountChart(el) {
+        if (!isChartConnected(el)) {
+            return;
+        }
+
+        const id = el.getAttribute("data-pylage-id");
+        if (!id) return;
+
+        if (
+            chartInstances.has(id) ||
+            chartPending.has(id)
+        ) {
+            return;
+        }
+
+        const parts = getChartPayloadParts(el);
+        if (!parts) return;
+
+        const generation = nextChartGeneration(id);
+
+        try {
+            const promise = loadPlotlyOnce();
+
+            chartPending.set(id, {
+                el: el,
+                generation: generation,
+                promise: promise,
+            });
+
+            const Plotly = await promise;
+
+            const pending = chartPending.get(id);
+            if (
+                !pending ||
+                pending.el !== el ||
+                pending.generation !== generation ||
+                !isChartConnected(el)
+            ) {
+                return;
+            }
+
+            await Plotly.newPlot(
+                el,
+                parts.data,
+                parts.layout,
+                parts.config
+            );
+
+            const current = chartPending.get(id);
+            if (
+                !current ||
+                current.el !== el ||
+                current.generation !== generation ||
+                !isChartConnected(el)
+            ) {
+                try {
+                    Plotly.purge(el);
+                } catch (e) {
+                    console.warn("[PyLage] Chart purge error", e);
+                }
+                return;
+            }
+
+            if (parts.frames && parts.frames.length) {
+                await Plotly.addFrames(el, parts.frames);
+            }
+
+            const finalPending = chartPending.get(id);
+            if (
+                !finalPending ||
+                finalPending.el !== el ||
+                finalPending.generation !== generation ||
+                !isChartConnected(el)
+            ) {
+                try {
+                    Plotly.purge(el);
+                } catch (e) {
+                    console.warn("[PyLage] Chart purge error", e);
+                }
+                return;
+            }
+
+            chartInstances.set(id, {
+                el: el,
+                backend: "plotly",
+            });
+
+            chartPending.delete(id);
+            bindChartEvents(el, id);
+            observeChartResize(el, id);
+        } catch (err) {
+            const pending = chartPending.get(id);
+
+            if (
+                pending &&
+                pending.el === el &&
+                pending.generation === generation
+            ) {
+                chartPending.delete(id);
+            }
+
+            if (isChartConnected(el)) {
+                reportChartError(
+                    "Chart mount failed (" + id + ")",
+                    err
+                );
+                el.innerHTML =
+                    '<div style="padding:1rem;color:#b91c1c;font-size:0.875rem;">Chart failed to render</div>';
+            }
+        }
+    }
+
+    async function processChartUpdate(el, id, generation) {
+        if (!isChartConnected(el)) {
+            return;
+        }
+
+        const parts = getChartPayloadParts(el);
+        if (!parts) {
+            return;
+        }
+
+        const Plotly = await loadPlotlyOnce();
+
+        const current = chartInstances.get(id);
+        if (
+            !current ||
+            current.el !== el ||
+            !isChartConnected(el)
+        ) {
+            return;
+        }
+
+        const promise = Plotly.react(
+            el,
+            parts.data,
+            parts.layout,
+            parts.config
+        );
+
+        chartPending.set(id, {
+            el: el,
+            generation: generation,
+            promise: promise,
+        });
+
+        await promise;
+
+        const pending = chartPending.get(id);
+        if (
+            !pending ||
+            pending.el !== el ||
+            pending.generation !== generation ||
+            !isChartConnected(el)
+        ) {
+            return;
+        }
+
+        chartPending.delete(id);
+
+        if (parts.frames && parts.frames.length) {
+            await Plotly.addFrames(el, parts.frames);
+        }
+    }
+
+    function enqueueChartUpdate(el) {
+        if (!isChartConnected(el)) {
+            return;
+        }
+
+        const id = el.getAttribute("data-pylage-id");
+        if (!id) return;
+
+        if (!chartInstances.has(id)) {
+            mountChart(el);
+            return;
+        }
+
+        const generation = nextChartGeneration(id);
+        const previous = chartQueues.get(id);
+
+        const run = async function () {
+            if (previous) {
+                try {
+                    await previous.promise;
+                } catch (e) {
+                    // The previous update already reported its own error.
+                }
+            }
+
+            if (!isChartConnected(el)) {
+                return;
+            }
+
+            try {
+                await processChartUpdate(el, id, generation);
+            } catch (err) {
+                if (isChartConnected(el)) {
+                    reportChartError(
+                        "Chart update failed (" + id + ")",
+                        err
+                    );
+                }
+            }
+        };
+
+        const promise = run();
+
+        chartQueues.set(id, {
+            el: el,
+            generation: generation,
+            promise: promise,
+        });
+
+        promise.finally(function () {
+            const current = chartQueues.get(id);
+            if (
+                current &&
+                current.el === el &&
+                current.generation === generation
+            ) {
+                chartQueues.delete(id);
+            }
+        });
+    }
+
+    async function updateChart(el) {
+        enqueueChartUpdate(el);
+    }
+
+    function observeChartResize(el, id) {
+        if (!el || typeof ResizeObserver === "undefined") {
+            return;
+        }
+
+        if (el.__pylageChartResizeObserver) {
+            return;
+        }
+
+        const observer = new ResizeObserver(() => {
+            if (!isChartConnected(el)) {
+                return;
+            }
+
+            if (
+                !window.Plotly ||
+                typeof window.Plotly.Plots === "undefined" ||
+                typeof window.Plotly.Plots.resize !== "function"
+            ) {
+                return;
+            }
+
+            try {
+                window.Plotly.Plots.resize(el);
+            } catch (err) {
+                reportChartError(
+                    "Chart resize failed (" + id + ")",
+                    err
+                );
+            }
+        });
+
+        observer.observe(el);
+        el.__pylageChartResizeObserver = observer;
+    }
+
+    function disconnectChartResizeObserver(el) {
+        if (!el || !el.__pylageChartResizeObserver) {
+            return;
+        }
+
+        try {
+            el.__pylageChartResizeObserver.disconnect();
+        } catch (e) {
+            console.warn("[PyLage] Chart resize observer cleanup error", e);
+        }
+
+        el.__pylageChartResizeObserver = null;
+    }
+
+    function bindChartEvents(el, id) {
+        if (!el || !window.Plotly || !id) return;
+        if (el.__pylageChartEventsBound) return;
+        el.__pylageChartEventsBound = true;
+
+        function safePoints(eventData) {
+            if (!eventData || !eventData.points) return [];
+
+            return eventData.points.map(function (p) {
+                return {
+                    curveNumber: p.curveNumber,
+                    pointNumber: p.pointNumber,
+                    pointIndex: p.pointIndex,
+                    x: p.x,
+                    y: p.y,
+                    text: p.text,
+                    label: p.label,
+                };
+            });
+        }
+
+        const eventNames = (el.getAttribute("data-pylage-events") || "")
+            .split(",")
+            .map(function (name) {
+                return name.trim();
+            })
+            .filter(Boolean);
+
+        if (eventNames.indexOf("click") !== -1) {
+            el.on("plotly_click", function (eventData) {
+                if (typeof sendEvent === "function") {
+                    sendEvent(id, "click", {
+                        points: safePoints(eventData),
+                    });
+                }
+            });
+        }
+
+        if (eventNames.indexOf("select") !== -1) {
+            el.on("plotly_selected", function (eventData) {
+                if (typeof sendEvent === "function") {
+                    sendEvent(id, "select", {
+                        points: safePoints(eventData),
+                        range:
+                            eventData && eventData.range
+                                ? eventData.range
+                                : null,
+                    });
+                }
+            });
+        }
+
+        if (eventNames.indexOf("relayout") !== -1) {
+            el.on("plotly_relayout", function (eventData) {
+                if (typeof sendEvent === "function") {
+                    sendEvent(id, "relayout", eventData || {});
+                }
+            });
+        }
+
+        if (eventNames.indexOf("hover") !== -1) {
+            el.on("plotly_hover", function (eventData) {
+                if (typeof sendEvent === "function") {
+                    sendEvent(id, "hover", {
+                        points: safePoints(eventData),
+                    });
+                }
+            });
+        }
+    }
+
+    function destroyChart(elOrId) {
+        let id = null;
+        let el = null;
+
+        if (typeof elOrId === "string") {
+            id = elOrId;
+
+            const inst = chartInstances.get(id);
+            if (inst) {
+                el = inst.el;
+            } else {
+                const pending = chartPending.get(id);
+                if (pending) {
+                    el = pending.el;
+                } else {
+                    const queued = chartQueues.get(id);
+                    if (queued) {
+                        el = queued.el;
+                    }
+                }
+            }
+        } else if (elOrId && elOrId.getAttribute) {
+            el = elOrId;
+            id = el.getAttribute("data-pylage-id");
+        }
+
+        if (!id) return;
+
+        // Invalidate pending and queued work for this chart.
+        chartPending.delete(id);
+        chartQueues.delete(id);
+
+        const inst = chartInstances.get(id);
+
+        if (inst) {
+            try {
+                if (window.Plotly && inst.el) {
+                    window.Plotly.purge(inst.el);
+                }
+            } catch (e) {
+                console.warn("[PyLage] Chart purge error", e);
+            }
+        }
+
+        chartInstances.delete(id);
+
+        if (el) {
+            disconnectChartResizeObserver(el);
+            el.__pylageChartEventsBound = false;
+        }
+    }
+
+    function destroyChartsInNode(node) {
+        if (!node || node.nodeType !== 1) {
+            return;
+        }
+
+        if (
+            node.getAttribute &&
+            node.getAttribute("data-pylage-chart") === "1"
+        ) {
+            window.PyLage.charts.destroy(node);
+        }
+
+        if (node.querySelectorAll) {
+            node.querySelectorAll(
+                "[data-pylage-chart='1']"
+            ).forEach(function (el) {
+                window.PyLage.charts.destroy(el);
+            });
+        }
+    }
+
+    function scanAndMountCharts(root) {
+        const scope = root && root.querySelectorAll ? root : document;
+        const nodes = scope.querySelectorAll
+            ? scope.querySelectorAll("[data-pylage-chart='1']")
+            : [];
+        nodes.forEach((el) => { mountChart(el); });
+        // Also handle the root itself
+        if (root && root.getAttribute && root.getAttribute("data-pylage-chart") === "1") {
+            mountChart(root);
+        }
+    }
+
+    // Expose for runtime integration
+    window.PyLage.charts = {
+        mount: mountChart,
+        update: updateChart,
+        destroy: destroyChart,
+        scan: scanAndMountCharts,
+    };
+
+    // Chart auto-mount observer (covers initial render + dynamic inserts)
+    if (!window.__pylageChartObserver) {
+        window.__pylageChartObserver = new MutationObserver((mutations) => {
+            for (const m of mutations) {
+                // Destroy removed charts first. This is important when a DOM
+                // replacement reuses the same data-pylage-id: the old
+                // instance must be cleared before the replacement mounts.
+                for (const node of m.removedNodes) {
+                    if (node.nodeType !== 1) continue;
+                    if (node.getAttribute && node.getAttribute("data-pylage-chart") === "1") {
+                        window.PyLage.charts.destroy(node);
+                    } else if (node.querySelectorAll) {
+                        node.querySelectorAll("[data-pylage-chart='1']").forEach((el) => {
+                            window.PyLage.charts.destroy(el);
+                        });
+                    }
+                }
+
+                // Mount added charts after removals have been cleaned up.
+                for (const node of m.addedNodes) {
+                    if (node.nodeType !== 1) continue;
+                    if (node.getAttribute && node.getAttribute("data-pylage-chart") === "1") {
+                        window.PyLage.charts.mount(node);
+                    } else if (node.querySelectorAll) {
+                        node.querySelectorAll("[data-pylage-chart='1']").forEach((el) => {
+                            window.PyLage.charts.mount(el);
+                        });
+                    }
+                }
+            }
+        });
+        window.__pylageChartObserver.observe(document.documentElement, {
+            childList: true,
+            subtree: true,
+        });
+
+        // Initial scan
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", () => {
+                window.PyLage.charts.scan(document);
+            });
+        } else {
+            window.PyLage.charts.scan(document);
+        }
+    }
+
+
     window.PyLage._propMetaCache = Object.create(null);
 
     const boundEventTypes = new Set(["click", "input", "change", "submit"]);
@@ -821,6 +1487,7 @@ CLIENT_RUNTIME = r"""
                 );
 
                 if (component) {
+                    destroyChartsInNode(component);
                     component.remove();
                 }
             });
@@ -852,6 +1519,7 @@ CLIENT_RUNTIME = r"""
                 );
 
                 if (componentIds.has(componentId)) {
+                    destroyChartsInNode(child);
                     parent.removeChild(child);
                 }
             });
@@ -874,9 +1542,9 @@ CLIENT_RUNTIME = r"""
             }
 
             while (parent.firstChild) {
-                parent.removeChild(
-                    parent.firstChild
-                );
+                const child = parent.firstChild;
+                destroyChartsInNode(child);
+                parent.removeChild(child);
             }
 
             message.children.forEach(function (item) {
@@ -938,6 +1606,7 @@ CLIENT_RUNTIME = r"""
                 );
             }
 
+            destroyChartsInNode(oldComponent);
             oldComponent.remove();
 
             scanAndBindEvents(parent);
@@ -1110,14 +1779,36 @@ CLIENT_RUNTIME = r"""
               );
           });
 
+          // Chart payload updates must flow through the normal
+          // differential-update pipeline. Do not monkey-patch
+          // Element.prototype.setAttribute globally.
+          if (
+              component &&
+              component.getAttribute &&
+              component.getAttribute("data-pylage-chart") === "1" &&
+              (
+                  Object.prototype.hasOwnProperty.call(
+                      message.props,
+                      "_chart_payload"
+                  ) ||
+                  Object.keys(message.props).some(function (propName) {
+                      const meta = propMeta[propName] || {};
+                      return (
+                          (meta.html_name || propName) ===
+                          "data-chart-payload"
+                      );
+                  })
+              ) &&
+              window.PyLage &&
+              window.PyLage.charts &&
+              typeof window.PyLage.charts.update === "function"
+          ) {
+              window.PyLage.charts.update(component);
+          }
+
         window.PyLage.onUpdate = window.PyLage.onUpdate || function () {};
         window.PyLage.onUpdate(message);
     };
-
-    document.addEventListener("click", handleEvent);
-    document.addEventListener("input", handleEvent);
-    document.addEventListener("change", handleEvent);
-    document.addEventListener("submit", handleEvent);
 
     scanAndBindEvents(document);
     if (document.readyState === "loading") {

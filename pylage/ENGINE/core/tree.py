@@ -129,17 +129,33 @@ class TreeMutationObserver:
         if unsubscribe is not None:
             unsubscribe()
 
+        node.cleanup()
+
         self._bound_components.discard(node.id)
 
         if unsubscribe is not None and unsubscribe in self._subscriptions:
             self._subscriptions.remove(unsubscribe)
 
     def stop(self) -> None:
-        """Remove all mutation subscriptions."""
+        """Remove subscriptions and clean up all bound components."""
 
-        for unsubscribe in self._subscriptions:
+        for unsubscribe in tuple(self._subscriptions):
             unsubscribe()
 
         self._subscriptions.clear()
+
+        # Clean up components that are still part of the observed tree.
+        # Components removed earlier were already cleaned by _unbind_tree().
+        def cleanup_tree(node: Any) -> None:
+            if not isinstance(node, Component):
+                return
+
+            for child in list(node.children):
+                cleanup_tree(child)
+
+            node.cleanup()
+
+        cleanup_tree(self.root)
+
         self._component_unsubscribers.clear()
         self._bound_components.clear()

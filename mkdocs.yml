@@ -20,6 +20,7 @@ nav:
       - Installation: helper/installation.md
   - Deployment: deployment.md
   - Components:
+      - Chart: component/chart.md
       - Alert: component/alert.md
       - Avatar: component/avatar.md
       - Badge: component/badge.md
@@ -75,6 +76,7 @@ nav:
   - Releases:
       - Changelog: https://github.com/aanalyst-rachit/pylage/blob/main/CHANGELOG.md
       - v1.0.3: https://github.com/aanalyst-rachit/pylage/releases/tag/v1.0.3
+      - v1.0.6 Tracker: releases/tracker_v1.0.6.md
   - Playground: https://aanalyst-rachit.github.io/pylage/playground/
 
 markdown_extensions:

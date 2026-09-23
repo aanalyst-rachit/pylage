@@ -315,6 +315,129 @@ def test_asgi_factory_creates_isolated_sessions():
         assert not asgi.session_store.clear()
 
 
+def test_asgi_factory_chart_state_isolation():
+    import plotly.graph_objects as go
+
+    created = []
+
+    def factory():
+        state = State(
+            go.Figure(
+                data=[
+                    go.Bar(
+                        x=[f"session-{len(created) + 1}"],
+                        y=[1],
+                    )
+                ]
+            )
+        )
+        chart = pl.Chart(state)
+        root = pl.column(chart)
+        created.append((state, chart, root))
+        return root
+
+    asgi = ASGIApp(app_factory=factory)
+    messages_a = []
+    messages_b = []
+    disconnect_a = asyncio.Event()
+    disconnect_b = asyncio.Event()
+
+    async def receive_a():
+        await disconnect_a.wait()
+        return {"type": "websocket.disconnect"}
+
+    async def receive_b():
+        await disconnect_b.wait()
+        return {"type": "websocket.disconnect"}
+
+    async def send_a(message):
+        messages_a.append(message)
+
+    async def send_b(message):
+        messages_b.append(message)
+
+    async def scenario():
+        task_a = asyncio.create_task(
+            asgi._websocket(
+                {"type": "websocket", "path": "/", "headers": []},
+                receive_a,
+                send_a,
+            )
+        )
+        task_b = asyncio.create_task(
+            asgi._websocket(
+                {"type": "websocket", "path": "/", "headers": []},
+                receive_b,
+                send_b,
+            )
+        )
+
+        for _ in range(100):
+            if len(created) == 2:
+                break
+            await asyncio.sleep(0)
+
+        assert len(created) == 2
+        state_a, chart_a, root_a = created[0]
+        state_b, chart_b, root_b = created[1]
+
+        assert state_a is not state_b
+        assert chart_a is not chart_b
+        assert root_a is not root_b
+        assert len(asgi._sessions) == 2
+
+        state_a.set(
+            go.Figure(
+                data=[
+                    go.Bar(
+                        x=["session-a-updated"],
+                        y=[99],
+                    )
+                ]
+            )
+        )
+        await asyncio.sleep(0.05)
+
+        assert any(
+            message.get("type") == "websocket.send"
+            and isinstance(message.get("bytes"), (bytes, bytearray))
+            and "session-a-updated"
+            in decode_message(message["bytes"]).to_dict().get("props", {}).get(
+                "_chart_payload", ""
+            )
+            for message in messages_a
+        )
+        assert not any(
+            message.get("type") == "websocket.send"
+            and isinstance(message.get("bytes"), (bytes, bytearray))
+            and "session-a-updated"
+            in decode_message(message["bytes"]).to_dict().get("props", {}).get(
+                "_chart_payload", ""
+            )
+            for message in messages_b
+        )
+
+        disconnect_a.set()
+        disconnect_b.set()
+        await asyncio.gather(task_a, task_b)
+
+        shutdown_events = asyncio.Queue()
+
+        async def shutdown_receive():
+            return await shutdown_events.get()
+
+        async def shutdown_send(message):
+            pass
+
+        await shutdown_events.put({"type": "lifespan.shutdown"})
+        await asgi._lifespan(shutdown_receive, shutdown_send)
+
+        assert not asgi._sessions
+        assert not asgi.session_store.clear()
+
+    run(scenario())
+
+
 def test_asgi_factory_resumes_session_after_disconnect():
     created = []
 

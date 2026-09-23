@@ -1,0 +1,61 @@
+{
+  "framework": "pylage",
+  "workload": "state-bound heading plus button increment",
+  "server": "Granian + ASGI production factory",
+  "startup": {
+    "definition": "process launch to first HTTP-ready response",
+    "latency_ms": 614.175362
+  },
+  "initial_render": {
+    "latency_ms": 1.31374,
+    "payload_bytes": 40508
+  },
+  "memory": {
+    "server_rss_bytes": 33091584
+  },
+  "metrics": {
+    "iterations": 50,
+    "state_update_latency_ms": {
+      "min": 1.580109,
+      "mean": 3.41624754,
+      "median": 3.2308425,
+      "p95": 4.622638,
+      "max": 8.819749
+    },
+    "update_payload_bytes": {
+      "min": 40,
+      "mean": 40.76,
+      "max": 78
+    }
+  },
+  "throughput": null,
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-7.0.0-28-generic-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "processor": "x86_64",
+    "cpu_count": 2,
+    "pylage": "1.0.2",
+    "granian": "2.8.2",
+    "websockets": "17.1",
+    "host_memory": {
+      "total_bytes": 3971424256,
+      "available_bytes": 1019809792
+    }
+  },
+  "benchmark": {
+    "iterations": 50,
+    "interval_seconds": 0.075
+  },
+  "command": [
+    "/home/racit/Desktop/PYLAGE_PROJECTS/pylage/.venv/bin/granian",
+    "pylage.ENGINE.runtime.granian:create_application_from_file",
+    "--interface",
+    "asgi",
+    "--factory",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "41063"
+  ]
+}

@@ -36,9 +36,14 @@ def test_public_api_symbols_are_importable():
 
 
 
-def test_public_root_has_no_uppercase_api_leaks():
-    uppercase = [name for name in dir(pl) if not name.startswith("_") and name[:1].isupper()]
-    assert uppercase == []
+def test_public_root_has_no_unexpected_uppercase_api_leaks():
+    allowed = {"Chart"}
+    uppercase = {
+        name
+        for name in dir(pl)
+        if not name.startswith("_") and name[:1].isupper()
+    }
+    assert uppercase == allowed
 
 
 

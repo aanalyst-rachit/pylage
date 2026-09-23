@@ -588,19 +588,8 @@ pl.card(
     )
 
     def run_preview():
-        preview.set_children(
-            pl.heading(
-                "Live Preview",
-                level=3,
-                style=pl.style(
-                    color="#0f172a",
-                    font_size="1rem",
-                    font_weight="700",
-                    margin="0 0 0.75rem",
-                ),
-            ),
-            pl.text("Preview updated from the editor."),
-            preview_area,
+        preview_area.set_children(
+            pl.text("Preview updated from the editor.")
         )
 
     run_button.events["click"] = run_preview

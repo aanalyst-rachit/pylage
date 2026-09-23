@@ -83,6 +83,49 @@ class _TokenBucket:
         return True
 
 
+_CHART_EVENTS = frozenset({
+    "click",
+    "select",
+    "hover",
+    "relayout",
+})
+
+
+def _validate_chart_event_payload(
+    component: Component,
+    event: str,
+    payload: Any,
+) -> None:
+    """Validate the normalized payload contract for Plotly chart events."""
+    if component.type != "Chart" or event not in _CHART_EVENTS:
+        return
+
+    if not isinstance(payload, dict):
+        raise TypeError(
+            f"Chart {event} event payload must be a dictionary."
+        )
+
+    if event in {"click", "select", "hover"}:
+        points = payload.get("points")
+        if not isinstance(points, list):
+            raise TypeError(
+                f"Chart {event} event payload requires a points list."
+            )
+
+        for point in points:
+            if not isinstance(point, dict):
+                raise TypeError(
+                    f"Chart {event} event points must be dictionaries."
+                )
+
+    if event == "select":
+        event_range = payload.get("range")
+        if event_range is not None and not isinstance(event_range, dict):
+            raise TypeError(
+                "Chart select event range must be a dictionary or null."
+            )
+
+
 class WebSocketServer:
     """WebSocket transport for PyLage events and state updates."""
 
@@ -1105,6 +1148,19 @@ class WebSocketServer:
                             lifecycle="event",
                             session_id=session_id,
                             component_id=message.component_id,
+                        )
+                        component = self._dispatcher.get_component(
+                            message.component_id
+                        )
+                        if component is None:
+                            raise KeyError(
+                                f"Unknown component id: {message.component_id}"
+                            )
+
+                        _validate_chart_event_payload(
+                            component,
+                            message.event,
+                            message.payload,
                         )
                         result = self._dispatcher.dispatch(
                             message.component_id,

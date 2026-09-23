@@ -48,7 +48,11 @@ def inject_playground_bridge(document: str, wheel_url: str | None = None) -> str
 
                 await pyodide.runPythonAsync(
                     `import micropip
-await micropip.install(${{JSON.stringify(wheelUrl)}}, deps=False)`
+await micropip.install(
+    ${{JSON.stringify(wheelUrl + "?playground=1")}},
+    deps=False
+)
+await micropip.install("plotly")`
                 );
 
                 status("Ready");

@@ -211,3 +211,94 @@ def test_phase6_websocket_client_scaling():
                 server.stop()
 
     asyncio.run(run())
+
+
+def test_phase12_websocket_chart_multi_session_benchmark():
+    async def run():
+        import websockets
+        import plotly.graph_objects as go
+
+        from pylage import Chart
+
+        for client_count in (10, 50, 100):
+            chart_state = State(
+                go.Figure(
+                    data=[
+                        go.Scatter(
+                            x=list(range(100)),
+                            y=list(range(100)),
+                            mode="lines",
+                            name="initial",
+                        )
+                    ]
+                )
+            )
+
+            chart = Chart(chart_state)
+            app = Column(chart)
+            server = WebSocketServer(app)
+
+            try:
+                url = server.start()
+
+                connections = [
+                    await websockets.connect(url)
+                    for _ in range(client_count)
+                ]
+
+                try:
+                    updated_figure = go.Figure(
+                        data=[
+                            go.Scatter(
+                                x=list(range(120)),
+                                y=list(range(120)),
+                                mode="lines",
+                                name="updated",
+                            )
+                        ]
+                    )
+
+                    start = time.perf_counter()
+
+                    chart_state.set(updated_figure)
+
+                    messages = await asyncio.gather(
+                        *[
+                            asyncio.wait_for(
+                                ws.recv(),
+                                timeout=5,
+                            )
+                            for ws in connections
+                        ]
+                    )
+
+                    elapsed = time.perf_counter() - start
+
+                    assert len(messages) == client_count
+
+                    for raw in messages:
+                        message = decode_message(raw).to_dict()
+
+                        assert message["type"] == "update"
+                        assert message["id"] == chart.id
+                        assert "props" in message
+                        assert "_chart_payload" in message["props"]
+
+                    print()
+                    print(
+                        "===== PHASE 12 — WEBSOCKET CHART "
+                        "SIMULTANEOUS SESSIONS ====="
+                    )
+                    print(f"clients            : {client_count}")
+                    print(f"total              : {elapsed:.9f}s")
+                    print(f"per client         : {elapsed / client_count:.9f}s")
+
+                finally:
+                    await asyncio.gather(
+                        *(ws.close() for ws in connections)
+                    )
+
+            finally:
+                server.stop()
+
+    asyncio.run(run())

@@ -29,6 +29,11 @@ class Component:
         init=False,
         repr=False,
     )
+    _cleanup_callbacks: list[Callable[[], None]] = field(
+        default_factory=list,
+        init=False,
+        repr=False,
+    )
 
     def __init__(
         self,
@@ -131,6 +136,7 @@ class Component:
         self.id = id or uuid.uuid4().hex[:10]
         self._parent = None
         self._mutation_subscribers = []
+        self._cleanup_callbacks = []
 
     def __hash__(self) -> int:
         return hash(self.id)
@@ -438,6 +444,27 @@ class Component:
                 self._mutation_subscribers.remove(callback)
 
         return unsubscribe
+
+    def add_cleanup(self, callback: Callable[[], None]) -> Callable[[], None]:
+        """Register a callback to run when this component leaves the tree."""
+        if not callable(callback):
+            raise TypeError("cleanup callback must be callable")
+
+        self._cleanup_callbacks.append(callback)
+
+        def remove() -> None:
+            if callback in self._cleanup_callbacks:
+                self._cleanup_callbacks.remove(callback)
+
+        return remove
+
+    def cleanup(self) -> None:
+        """Run and clear all registered cleanup callbacks."""
+        callbacks = tuple(self._cleanup_callbacks)
+        self._cleanup_callbacks.clear()
+
+        for callback in callbacks:
+            callback()
 
     def on(
         self,

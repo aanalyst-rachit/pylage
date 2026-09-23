@@ -317,3 +317,29 @@ def test_observer_stops_tracking_subtree_removed_by_clear():
     assert len(mutations) == 1
 
     observer.stop()
+
+
+def test_observer_cleans_up_removed_component():
+    root = Component(type="Column")
+    child = Component(type="Column")
+
+    root.add(child)
+
+    cleanup_calls = []
+
+    child.add_cleanup(lambda: cleanup_calls.append(child))
+
+    observer = TreeMutationObserver(
+        root,
+        lambda event: None,
+    )
+
+    root.remove(child)
+
+    assert cleanup_calls == [child]
+
+    # Cleanup is one-shot.
+    child.cleanup()
+    assert cleanup_calls == [child]
+
+    observer.stop()

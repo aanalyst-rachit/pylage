@@ -41,6 +41,9 @@ test = [
     "playwright>=1.62,<1.63",
     "pytest-asyncio>=1.1,<2",
 ]
+charts = [
+    "plotly>=5.18,<7",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/aanalyst-rachit/pylage"
@@ -59,3 +62,7 @@ include = ["pylage*"]
 "pylage/UI/layout/__init__.py" = ["F401"]
 "pylage/UI/patterns/__init__.py" = ["F401"]
 "pylage/UI/recipes/__init__.py" = ["F401"]
+
+
+[tool.setuptools.package-data]
+"pylage.ENGINE.runtime" = ["assets/*"]

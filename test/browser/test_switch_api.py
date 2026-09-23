@@ -174,6 +174,12 @@ def test_switch_browser_change_updates_bound_state():
             locator.uncheck()
 
             expect(locator).not_to_be_checked()
+
+            for _ in range(50):
+                if enabled.value is False:
+                    break
+                page.wait_for_timeout(100)
+
             assert enabled.value is False
 
             browser.close()

@@ -78,3 +78,5 @@ __all__ = [
     "Toast",
     "Tooltip",
 ]
+
+from pylage.ENGINE.components.chart import Chart as chart, Chart
