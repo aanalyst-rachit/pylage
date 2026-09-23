@@ -5,12 +5,12 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from pylage.ENGINE.charts.dataframe import dataframe_to_figure
+from pylage.ENGINE.charts.plotly_backend import is_plotly_available
+from pylage.ENGINE.charts.registry_backends import figure_to_payload
 from pylage.ENGINE.core.component import Component, component
 from pylage.ENGINE.core.registry import PropDefinition, registry
 from pylage.ENGINE.core.state import State
-from pylage.ENGINE.charts.registry_backends import figure_to_payload
-from pylage.ENGINE.charts.plotly_backend import is_plotly_available
-from pylage.ENGINE.charts.dataframe import dataframe_to_figure
 
 
 def _unwrap(value: Any) -> Any:
@@ -43,7 +43,7 @@ def _chart_renderer(renderer: Any, component: Component) -> str:
         payload_json = raw
         try:
             payload = json.loads(raw)
-        except Exception:
+        except json.JSONDecodeError:
             payload = {"backend": "none", "data": [], "layout": {}, "config": {}}
     else:
         payload = {
@@ -299,7 +299,7 @@ def Chart(
                 x_label=x_label,
                 y_label=y_label,
             )
-        except Exception:
+        except (ImportError, TypeError):
             initial_dict = {
                 "backend": "none",
                 "data": [],
@@ -343,7 +343,7 @@ def Chart(
                         )
                     )
                 )
-            except Exception:
+            except (ImportError, TypeError):
                 payload_state.set(
                     _payload_to_json({
                         "backend": "none",

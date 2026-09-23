@@ -79,4 +79,5 @@ __all__ = [
     "Tooltip",
 ]
 
-from pylage.ENGINE.components.chart import Chart as chart, Chart
+from pylage.ENGINE.components.chart import Chart
+from pylage.ENGINE.components.chart import Chart as chart

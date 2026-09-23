@@ -5,8 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from pylage.ENGINE.charts.base import ChartBackend, ChartPayload
-from pylage.ENGINE.charts.plotly_backend import get_plotly_backend, is_plotly_available
-
+from pylage.ENGINE.charts.plotly_backend import get_plotly_backend
 
 _BACKENDS: list[ChartBackend] = []
 

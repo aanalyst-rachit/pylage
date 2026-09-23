@@ -16,7 +16,8 @@ from pylage.ENGINE.components.basic import ProgressBar as progress_bar
 from pylage.ENGINE.components.basic import Skeleton as skeleton
 from pylage.ENGINE.components.basic import Spinner as spinner
 from pylage.ENGINE.components.basic import Video as video
-from pylage.ENGINE.components.chart import Chart as chart, Chart
+from pylage.ENGINE.components.chart import Chart
+from pylage.ENGINE.components.chart import Chart as chart
 from pylage.ENGINE.core.reactive_list import ReactiveList as reactive_list
 from pylage.ENGINE.core.state import State as state
 from pylage.UI import themes as theme
@@ -117,6 +118,7 @@ from pylage.UI.themes import get_current_theme, set_theme
 __version__ = "1.0.6"
 
 __all__ = [
+    "Chart",
     "__version__",
     "accordion",
     "admin_panel",
@@ -129,11 +131,10 @@ __all__ = [
     "breadcrumb_trail",
     "button",
     "canvas",
-    "Chart",
-    "chart",
     "card",
     "carousel",
     "center",
+    "chart",
     "checkbox",
     "colors",
     "column",
