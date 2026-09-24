@@ -23,6 +23,7 @@ DEMO_DIR = BASE_DIR / "demo"
 
 MANUALS: dict[str, object] = {}
 MANUAL_APPS: dict[str, object] = {}
+window_instance = None
 
 
 def display_name_from_path(path: Path) -> str:
