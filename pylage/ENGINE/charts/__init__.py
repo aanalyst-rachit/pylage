@@ -8,6 +8,6 @@ __all__ = [
     "ChartBackend",
     "ChartPayload",
     "PlotlyBackend",
-    "is_plotly_available",
     "dataframe_to_figure",
+    "is_plotly_available",
 ]

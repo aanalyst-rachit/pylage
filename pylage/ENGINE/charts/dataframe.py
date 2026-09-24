@@ -7,10 +7,9 @@ pipeline remains responsible for figure -> ChartPayload conversion.
 
 from __future__ import annotations
 
-from datetime import date, datetime, time
 import math
+from datetime import date, datetime, time
 from typing import Any
-
 
 
 def _is_missing(value: Any) -> bool:
@@ -19,8 +18,8 @@ def _is_missing(value: Any) -> bool:
         return True
 
     try:
-        result = value != value
-    except Exception:
+        result = value != value  # noqa: PLR0124
+    except Exception:  # noqa: BLE001
         return False
 
     return isinstance(result, bool) and result
