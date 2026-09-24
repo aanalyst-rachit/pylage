@@ -1223,7 +1223,26 @@ CLIENT_RUNTIME = r"""
          * ``item.html`` may contain multiple top-level nodes. DataFrame,
          * for example, emits a <style> node followed by its component root.
          */
-        function createRenderedNodes(item) {
+        function applyDynamicStyles(styles) {
+    if (typeof styles !== "string" || !styles) {
+        return;
+    }
+
+    const template = document.createElement("template");
+    template.innerHTML = styles;
+
+    Array.from(template.content.childNodes).forEach(function(node) {
+        if (
+            node.nodeType === 1 &&
+            node.tagName &&
+            node.tagName.toLowerCase() === "style"
+        ) {
+            document.head.appendChild(node);
+        }
+    });
+}
+
+function createRenderedNodes(item) {
             if (
                 !item ||
                 !item.id ||
@@ -1541,6 +1560,8 @@ CLIENT_RUNTIME = r"""
                 return;
             }
 
+            applyDynamicStyles(message.styles);
+
             while (parent.firstChild) {
                 const child = parent.firstChild;
                 destroyChartsInNode(child);
@@ -1573,6 +1594,8 @@ CLIENT_RUNTIME = r"""
             ) {
                 return;
             }
+
+            applyDynamicStyles(message.styles);
 
             const item = message.new_component;
 

@@ -355,6 +355,7 @@ class TreeAddMessage:
     parent_id: str
     components: list[dict[str, Any]]
     index: int | None = None
+    styles: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.parent_id, str) or not self.parent_id:
@@ -385,6 +386,9 @@ class TreeAddMessage:
 
         if self.index is not None:
             data["index"] = self.index
+
+        if self.styles:
+            data["styles"] = self.styles
 
         return data
 
@@ -432,6 +436,7 @@ class TreeAddMessage:
             parent_id=parent_id,
             components=components,
             index=index,
+            styles=data.get("styles"),
         )
 
     @classmethod
@@ -530,6 +535,7 @@ class TreeReplaceMessage:
     old_component_id: str
     new_component: dict[str, Any]
     index: int
+    styles: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.parent_id, str) or not self.parent_id:
@@ -555,18 +561,28 @@ class TreeReplaceMessage:
                 "Tree replace message requires an integer index."
             )
 
+        if self.styles is not None and not isinstance(self.styles, str):
+            raise TypeError(
+                "Tree replace message styles must be a string."
+            )
+
     @property
     def type(self) -> str:
         return "tree_replace"
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        data = {
             "type": self.type,
             "parent_id": self.parent_id,
             "old_component_id": self.old_component_id,
             "new_component": self.new_component,
             "index": self.index,
         }
+
+        if self.styles:
+            data["styles"] = self.styles
+
+        return data
 
     def to_json(self) -> str:
         return json.dumps(
@@ -594,6 +610,7 @@ class TreeReplaceMessage:
             old_component_id=data.get("old_component_id"),
             new_component=data.get("new_component"),
             index=data.get("index"),
+            styles=data.get("styles"),
         )
 
     @classmethod
@@ -614,6 +631,7 @@ class TreeSetChildrenMessage:
 
     parent_id: str
     children: list[dict[str, Any]]
+    styles: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.parent_id, str) or not self.parent_id:
@@ -631,16 +649,26 @@ class TreeSetChildrenMessage:
                 "Tree set-children message requires child dictionaries."
             )
 
+        if self.styles is not None and not isinstance(self.styles, str):
+            raise TypeError(
+                "Tree set-children message styles must be a string."
+            )
+
     @property
     def type(self) -> str:
         return "tree_set_children"
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        data = {
             "type": self.type,
             "parent_id": self.parent_id,
             "children": list(self.children),
         }
+
+        if self.styles:
+            data["styles"] = self.styles
+
+        return data
 
     def to_json(self) -> str:
         return json.dumps(
@@ -666,6 +694,7 @@ class TreeSetChildrenMessage:
         return cls(
             parent_id=data.get("parent_id"),
             children=data.get("children"),
+            styles=data.get("styles"),
         )
 
     @classmethod

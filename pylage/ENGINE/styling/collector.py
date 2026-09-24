@@ -29,5 +29,15 @@ class StyleCollector:
             for attributes, css in self._styles
         )
 
+    def render_from(self, start: int) -> str:
+        """Render styles added at or after ``start``."""
+        if start < 0:
+            start = 0
+
+        return "".join(
+            f"<style{attributes}>{css}</style>"
+            for attributes, css in self._styles[start:]
+        )
+
     def __len__(self) -> int:
         return len(self._styles)

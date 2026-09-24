@@ -535,13 +535,16 @@ class WebSocketServer:
             self._dispatcher.index(new_child)
             self._binding.bind(new_child)
 
+            style_start = len(self._renderer._styles)
             component = self._serialize_component_tree(new_child)
+            styles = self._renderer._styles.render_from(style_start)
 
             message = TreeReplaceMessage(
                 parent_id=parent.id,
                 old_component_id=old_child.id,
                 new_component=component,
                 index=index,
+                styles=styles or None,
             )
 
             if self._loop is None:
@@ -566,15 +569,18 @@ class WebSocketServer:
                     self._dispatcher.index(child)
                     self._binding.bind(child)
 
+            style_start = len(self._renderer._styles)
             serialized_children = [
                 self._serialize_component_tree(child)
                 for child in children
                 if isinstance(child, Component)
             ]
+            styles = self._renderer._styles.render_from(style_start)
 
             message = TreeSetChildrenMessage(
                 parent_id=parent.id,
                 children=serialized_children,
+                styles=styles or None,
             )
 
             if self._loop is None:
@@ -667,6 +673,7 @@ class WebSocketServer:
             return
 
         components = []
+        style_start = len(self._renderer._styles)
 
         for child in children:
             if not isinstance(child, Component):
@@ -680,10 +687,13 @@ class WebSocketServer:
         if not components:
             return
 
+        styles = self._renderer._styles.render_from(style_start)
+
         message = TreeAddMessage(
             parent_id=parent.id,
             components=components,
             index=event.get("index"),
+            styles=styles or None,
         )
 
         raw_message = encode_message(message)
