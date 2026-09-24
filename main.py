@@ -8,7 +8,6 @@ import threading
 import time
 from pathlib import Path
 
-import webview
 
 BASE_DIR = Path(__file__).resolve().parent
 os.chdir(BASE_DIR)
@@ -349,23 +348,5 @@ def start_pylage():
     )
 
 
-window_instance = None
-
 if __name__ == "__main__":
-    server_thread = threading.Thread(
-        target=start_pylage,
-        daemon=True,
-    )
-
-    server_thread.start()
-
-    time.sleep(1)
-
-    window_instance = webview.create_window(
-        "PyLage Manual",
-        "http://127.0.0.1:8080",
-        width=1200,
-        height=800,
-    )
-
-    webview.start(gui="qt", debug=False)
+    start_pylage()
