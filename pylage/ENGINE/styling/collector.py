@@ -31,8 +31,7 @@ class StyleCollector:
 
     def render_from(self, start: int) -> str:
         """Render styles added at or after ``start``."""
-        if start < 0:
-            start = 0
+        start = max(start, 0)
 
         return "".join(
             f"<style{attributes}>{css}</style>"
