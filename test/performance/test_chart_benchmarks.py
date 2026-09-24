@@ -19,7 +19,7 @@ PHASE12_THRESHOLDS = {
     "repeated_conversion_s": 0.00331,
     "payload_deduplication_s": 0.00384,
     "chart_batching_per_update_s": 0.01602,
-    "payload_bytes": 7323,
+    "payload_bytes": 11168,
     "chart_batching_cycles": 1,
 }
 

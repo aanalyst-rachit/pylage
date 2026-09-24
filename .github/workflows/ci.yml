@@ -41,7 +41,7 @@ jobs:
       - name: Install project and quality tools
         run: |
           python -m pip install --upgrade pip setuptools
-          python -m pip install '.[test]' ruff pytest build pip-audit
+          python -m pip install '.[test,charts]' ruff pytest build pip-audit
 
       - name: Install Playwright Chromium
         run: |
