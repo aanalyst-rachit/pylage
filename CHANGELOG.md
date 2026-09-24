@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.7 — 2026-09-24
+
+### Fixed
+
+- Propagated newly collected component styles through dynamic tree mutations (`add`, `replace`, and `set_children`).
+- Fixed dynamically inserted Drawer components so their required CSS is available in the browser.
+- Initialized the manual application window instance explicitly.
+- Simplified the style collector bounds handling to satisfy linting.
+
+### Changed
+
+- Removed the WebView integration from the manual application entry point.
+- Improved chart-related CI and dependency configuration, including Plotly Express and pandas support.
+
+### Documentation
+
+- Added and finalized PyLage performance benchmark documentation covering Counter and Form interaction scenarios.
+
 ## 1.0.6 — 2026-09-23
 
 ### Chart Integration

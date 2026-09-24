@@ -6,7 +6,7 @@ on:
       tag:
         description: "Git tag to publish"
         required: true
-        default: "v1.0.6"
+        default: "v1.0.7"
         type: string
       publish_pypi:
         description: "Publish distributions to PyPI"
