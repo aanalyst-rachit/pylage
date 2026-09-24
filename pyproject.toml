@@ -43,6 +43,7 @@ test = [
 ]
 charts = [
     "plotly[express]>=5.18,<7",
+    "pandas>=1.5,<3",
 ]
 
 [project.urls]
