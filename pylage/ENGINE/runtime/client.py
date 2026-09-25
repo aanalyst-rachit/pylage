@@ -989,6 +989,11 @@ CLIENT_RUNTIME = r"""
         }
         return normalized;
     }
+    var lastSuccessfulNavigationPath = normalizePath(
+        window.location.pathname || "/"
+    );
+    var pendingNavigation = null;
+
     function sendNavigate(path) {
         var message = {
             type: "navigate",
@@ -1018,11 +1023,28 @@ CLIENT_RUNTIME = r"""
         var normalized = normalizePath(path);
         var opts = options || {};
         var replace = !!opts.replace;
+
+        pendingNavigation = {
+            path: normalized,
+            previousPath: lastSuccessfulNavigationPath,
+            previousState: window.history.state,
+            replace: replace
+        };
+
         if (replace) {
-            window.history.replaceState({ pylage: true, path: normalized }, "", normalized);
+            window.history.replaceState(
+                { pylage: true, path: normalized },
+                "",
+                normalized
+            );
         } else {
-            window.history.pushState({ pylage: true, path: normalized }, "", normalized);
+            window.history.pushState(
+                { pylage: true, path: normalized },
+                "",
+                normalized
+            );
         }
+
         sendNavigate(normalized);
     }
     window.PyLage.navigate = navigate;
@@ -1173,6 +1195,24 @@ CLIENT_RUNTIME = r"""
         }
 
         if (message.type === "response") {
+            if (message.context === "navigate") {
+                if (message.ok) {
+                    lastSuccessfulNavigationPath = normalizePath(
+                        window.location.pathname || "/"
+                    );
+                    pendingNavigation = null;
+                } else if (pendingNavigation) {
+                    window.history.replaceState(
+                        pendingNavigation.previousState,
+                        "",
+                        pendingNavigation.previousPath
+                    );
+                    lastSuccessfulNavigationPath =
+                        pendingNavigation.previousPath;
+                    pendingNavigation = null;
+                }
+            }
+
             if (!message.ok) {
                 console.error("[PyLage] Server error:", message.error);
                 if (typeof window.PyLage.onError === "function") {
@@ -1802,6 +1842,30 @@ function createRenderedNodes(item) {
               );
           });
 
+          // Drawer backdrops are interaction-only companion nodes and
+          // therefore do not receive the component's canonical DOM id.
+          // Keep their visual open state synchronized with the Drawer.
+          if (
+              component &&
+              component.classList &&
+              component.classList.contains("pylage-drawer")
+          ) {
+              const drawerOpen = component.hasAttribute("open");
+              const drawerBackdrop = document.querySelector(
+                  '[data-pylage-drawer-id="' +
+                  CSS.escape(message.id) +
+                  '"]'
+              );
+
+              if (drawerBackdrop) {
+                  if (drawerOpen) {
+                      drawerBackdrop.setAttribute("open", "");
+                  } else {
+                      drawerBackdrop.removeAttribute("open");
+                  }
+              }
+          }
+
           // Chart payload updates must flow through the normal
           // differential-update pipeline. Do not monkey-patch
           // Element.prototype.setAttribute globally.
@@ -1832,6 +1896,97 @@ function createRenderedNodes(item) {
         window.PyLage.onUpdate = window.PyLage.onUpdate || function () {};
         window.PyLage.onUpdate(message);
     };
+
+    document.addEventListener("keydown", function (event) {
+        if (event.defaultPrevented) return;
+        if (event.key !== "Escape") return;
+
+        const dismissibleDrawers = Array.from(
+            document.querySelectorAll(
+                ".pylage-drawer-backdrop[data-pylage-events]"
+            )
+        ).filter(function (backdrop) {
+            const eventNames = backdrop
+                .getAttribute("data-pylage-events")
+                .split(",")
+                .map(function (name) {
+                    return name.trim();
+                });
+
+            return (
+                eventNames.indexOf("dismiss") !== -1 &&
+                backdrop.hasAttribute("open") &&
+                backdrop.getAttribute("data-pylage-drawer-id")
+            );
+        });
+
+        const dismissTarget =
+            dismissibleDrawers[dismissibleDrawers.length - 1];
+
+        if (!dismissTarget) return;
+
+        event.preventDefault();
+        sendEvent(
+            dismissTarget.getAttribute("data-pylage-drawer-id"),
+            "dismiss",
+            null
+        );
+    });
+
+    document.addEventListener("click", function (event) {
+        if (event.defaultPrevented) return;
+        if (event.button !== 0) return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+        let dismissTarget = event.target;
+        while (dismissTarget && dismissTarget !== document) {
+            if (
+                dismissTarget.getAttribute &&
+                dismissTarget.classList &&
+                dismissTarget.classList.contains("pylage-drawer-backdrop") &&
+                dismissTarget.getAttribute("data-pylage-events")
+            ) {
+                const eventNames = dismissTarget
+                    .getAttribute("data-pylage-events")
+                    .split(",")
+                    .map(function (name) {
+                        return name.trim();
+                    });
+
+                if (
+                    eventNames.indexOf("dismiss") !== -1 &&
+                    dismissTarget.getAttribute("data-pylage-drawer-id")
+                ) {
+                    sendEvent(
+                        dismissTarget.getAttribute("data-pylage-drawer-id"),
+                        "dismiss",
+                        null
+                    );
+                    return;
+                }
+            }
+
+            dismissTarget = dismissTarget.parentElement;
+        }
+
+        let target = event.target;
+        while (target && target !== document) {
+            if (target.tagName && target.tagName.toLowerCase() === "a") break;
+            target = target.parentElement;
+        }
+
+        if (!target || target === document) return;
+        if (!target.getAttribute("href")) return;
+        if (target.hasAttribute("download")) return;
+        if (target.target && target.target !== "_self") return;
+
+        const url = new URL(target.href, window.location.href);
+        if (url.origin !== window.location.origin) return;
+
+        const path = url.pathname + url.search + url.hash;
+        event.preventDefault();
+        navigate(path);
+    });
 
     scanAndBindEvents(document);
     if (document.readyState === "loading") {

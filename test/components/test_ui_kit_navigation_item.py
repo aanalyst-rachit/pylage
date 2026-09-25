@@ -12,6 +12,17 @@ def test_navigation_item_returns_existing_component():
     assert item.props["text"] == "Home"
 
 
+def test_navigation_item_forwards_href():
+    item = pl.navigation_item("Dashboard", href="/dashboard")
+
+    assert item.type == "Link"
+    assert item.props["href"] == "/dashboard"
+
+    html = render(item)
+    assert "<a " in html
+    assert 'href="/dashboard"' in html
+
+
 def test_navigation_item_default_contract():
     item = pl.navigation_item("Home")
     style = item.props["style"]
@@ -100,3 +111,54 @@ def test_navigation_item_reactive_active_state_does_not_leak_prop():
     active.set(True)
 
     assert "active" not in item.props
+
+
+def test_navigation_item_auto_active_from_current_path():
+    current_path = State("/dashboard")
+    item = pl.navigation_item(
+        "Dashboard",
+        href="/dashboard",
+        current_path=current_path,
+    )
+
+    assert item.props["style"].background_color.value == "var(--color-primary)"
+    assert item.props["style"].color.value == "var(--color-primary-contrast)"
+
+
+def test_navigation_item_auto_active_updates_with_current_path():
+    current_path = State("/dashboard")
+    dashboard = pl.navigation_item(
+        "Dashboard",
+        href="/dashboard",
+        current_path=current_path,
+    )
+    analytics = pl.navigation_item(
+        "Analytics",
+        href="/analytics",
+        current_path=current_path,
+    )
+
+    assert dashboard.props["style"].background_color.value == "var(--color-primary)"
+    assert analytics.props["style"].background_color.value == "transparent"
+
+    current_path.set("/analytics")
+
+    assert dashboard.props["style"].background_color.value == "transparent"
+    assert analytics.props["style"].background_color.value == "var(--color-primary)"
+
+
+def test_navigation_item_auto_active_cleans_up_derived_state():
+    current_path = State("/dashboard")
+    item = pl.navigation_item(
+        "Dashboard",
+        href="/dashboard",
+        current_path=current_path,
+    )
+
+    derived = item.props["style"].background_color
+    assert len(current_path._subscribers) == 1
+
+    item.cleanup()
+
+    assert len(current_path._subscribers) == 0
+    assert derived.value == "var(--color-primary)"

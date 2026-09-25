@@ -1,134 +1,212 @@
-# PyLage V2 — Post Release Roadmap
+# PyLage Drawer — Progress Tracker
 
-## PHASE 9 — Credibility, Benchmarks & Flagship Demos 🔴
-Goal: technically complete and convincingly proven.
+> Goal: PyLage Drawer system ko production-grade, accessible, responsive aur reusable banana.
 
-8.1 Benchmark Suite vs Streamlit, Reflex, NiceGUI:
-startup, initial render, state update latency, payload size, update latency, memory, throughput where meaningful.
-8.2 Reproducible methodology:
-hardware, Python version, OS, framework versions, app code, commands, metrics, results.
-8.3 Comparison table: PyLage vs Streamlit/Reflex/NiceGUI; real numbers only.
-8.4 Flagship Demo ⭐⭐⭐: PyLage Operations Command Center
-Dashboard, Analytics, Operations, Users, Data, Forms, System, Settings.
-8.5 Additional Demos:
-1 Operations dashboard
-2 Todo/productivity app
-3 Form-heavy application
-4 Data/table application
-8.6 Component coverage:
-layout, navigation, forms, tables, metrics, overlays, themes, reactive state, routing, responsive behavior.
+## Current Baseline
 
-Exit: Benchmarks + reproducibility + comparison + flagship demo + 3–4 real apps.
+- [x] `pl.drawer()` public API
+- [x] `pl.navigation_drawer()` public API
+- [x] `pl.mobile_sidebar()` public API
+- [x] Arbitrary child composition
+- [x] Boolean `open` support
+- [x] Reactive `open` state support
+- [x] Custom style/class/title support
+- [x] Fixed off-canvas Drawer rendering
+- [x] CSS open/close transition
+- [x] Route-aware `navigation_item()` integration
+- [x] Responsive styling infrastructure
+- [x] Existing Drawer/navigation/browser/WebSocket/regression tests
+- [x] Live public-API Drawer application
 
-## PHASE 9.5 — V2 Launch & Adoption Gate ⭐⭐⭐
-Goal: code complete ≠ public launch ready.
+## Phase 1 — Contract Freeze & Baseline
 
-9.5.1 5-Minute Quickstart: pip install → create app → pylage run → browser.
-9.5.2 Documentation:
-installation, quickstart, concepts, components, state, events, routing, deployment, security, performance, troubleshooting.
-9.5.3 API Reference: every public API documented.
-9.5.4 Migration Guide: V1 → V2, breaking changes, deprecated APIs, migration examples, compatibility notes.
-9.5.5 Examples/Starters: dashboard, crud, forms, data-table, multi-page, authentication.
-9.5.6 Troubleshooting: WebSocket disconnect, reverse proxy, WSS, session state, deployment, hot reload, assets, ports.
-9.5.7 Compatibility Policy: Python versions, OS, browser, server configuration, V1 compatibility, V2 policy.
-9.5.8 Security Policy: SECURITY.md + vulnerability reporting process.
-9.5.9 CONTRIBUTING.md.
-9.5.10 Issue templates: bug, feature, performance, security, documentation.
-9.5.11 Changelog.
-9.5.12 License clearly visible.
+- [ ] Freeze current Drawer API contract
+- [ ] Audit existing Drawer implementation
+- [ ] Audit existing Drawer tests
+- [ ] Identify reusable runtime, event, responsive and accessibility infrastructure
+- [ ] Establish focused regression baseline
 
-## PHASE 9.6 — Community + Sustainability Gate 💰
-Engineering feature nahi; project sustainability.
+## Phase 2 — Interaction Foundation [P0]
 
-GitHub Sponsors:
-- –10 Supporter
-- 5–50 Builder
-- 00 Project Sponsor
-- 00 Ecosystem Sponsor
+- [x] Overlay/backdrop
+- [x] Outside-click dismissal
+- [x] Escape-key dismissal
+- [ ] Canonical close/state pipeline
+- [x] Drawer-specific interaction tests
 
-00 examples: sponsor recognition, sponsor wall, roadmap discussions, early release access, priority consideration for reproducible issues.
-00: prominent recognition, project/org logo, roadmap/community discussions, early access, priority consideration.
-Important: sponsorship must NOT be feature-buying mechanism.
+## Phase 3 — Direction & Positioning [P0]
 
-Buy Me a Coffee: casual one-time support.
-Future revenue: free OSS + optional paid production support, migration, architecture consulting, training, enterprise assistance.
+- [ ] Generalize Drawer side/position model
+- [ ] Left Drawer
+- [ ] Right Drawer
+- [ ] Top Drawer
+- [ ] Bottom Drawer
+- [ ] Direction-specific CSS transitions
+- [ ] Viewport sizing/constraints
+- [ ] Direction regression tests
 
-## PHASE 9.7 — Final Release Candidate Gate 🔴
-Checklist:
-- Full tests pass
-- Performance regression pass
-- Session isolation pass
-- Reconnect pass
-- Security audit pass
-- CI green
-- Docker works
-- Real deployment works
-- Benchmarks reproducible
-- Flagship demo works
-- Documentation complete
-- Migration guide complete
-- API docs complete
-- Examples complete
-- SECURITY.md
-- CONTRIBUTING.md
-- Changelog
-- License
-- Sponsor/support pages
-- Release notes
-- PyPI package verified
+## Phase 4 — Accessibility [P0]
 
-Flow: Phase 1 Runtime + Phase 2 Performance + Phase 3 Security + Phase 4 Reactive DX + Phase 5 Routing + Phase 6 DX + Phase 7 Deployment + Phase 9 Proof + Phase 9.5 Adoption + Phase 9.6 Sustainability → RC.
+- [ ] Correct Drawer semantics
+- [ ] ARIA attributes
+- [ ] Keyboard navigation
+- [ ] Focus entry behavior
+- [ ] Focus containment for modal Drawer
+- [ ] Focus restoration on close
+- [ ] Accessibility browser tests
 
-## PHASE 8 — PUBLIC RELEASE 🚀
-Release v1.0.3:
-- PyPI
-- GitHub Release
-- docs
-- flagship demo
-- benchmark report
-- migration guide
-- announcement
+## Phase 5 — Modal vs Persistent [P0]
 
-Positioning:
-> PyLage — Simple, Ultrafast, Low-Latency Python UI
+- [ ] Define modal Drawer contract
+- [ ] Define persistent Drawer contract
+- [ ] Optional overlay behavior
+- [ ] Background interaction rules
+- [ ] Scroll-lock behavior for modal Drawer
+- [ ] Restore scrolling after close
+- [ ] Tests for both modes
 
-USP:
-Python + server-driven + reactive + differential updates + low latency + no frontend build system.
+## Phase 6 — Scroll & Content Behavior [P0]
 
-Components are secondary.
+- [ ] Drawer content scrolling
+- [ ] Long-content browser test
+- [ ] Small-viewport test
+- [ ] Body scroll-lock test
 
-## PHASE 10 — Post-Launch Stabilization 🟢
-Monitor bugs, GitHub issues, performance regressions, deployment problems, browser compatibility, developer confusion, API pain points.
+## Phase 7 — Responsive Drawer System [P1]
 
-Releases 2.0.1, 2.0.2, 2.0.3...
-Focus stability > new features.
+- [ ] Reuse existing ResponsiveStyle infrastructure
+- [ ] Define responsive Drawer behavior
+- [ ] Desktop persistent mode
+- [ ] Mobile overlay mode
+- [ ] Breakpoint-aware navigation behavior
+- [ ] Responsive browser/integration tests
 
-## PHASE 11 — V2.x Differentiators 🟢
-Original post-launch features moved here:
-11.1 MCP
-11.2 SSR / SEO
-11.3 CDN JavaScript Component Bridge
-11.4 Native DB Reactive Bindings
-11.5 SDUI:
-JSON Schema → PyLage Components → UI
-11.6 WASM / Pyodide spike, experimental, not V2.0 blocker
-11.7 Documentation expansion component-by-component.
+## Phase 8 — Navigation Drawer [P1]
 
-## FINAL V2 ARCHITECTURE
-Phase 0 Baseline
-→ Phase 1 Runtime Foundation 🔴
-→ Phase 2 Protocol/Performance 🔴
-→ Phase 3 Security 🔴
-→ Phase 4 Reactive DX
-→ Phase 5 File Routing
-→ Phase 6 Developer UX
-→ Phase 7 Deployment
-→ Phase 8 Public Release 🚀
-→ Phase 9 Benchmarking ⏭️
-→ Phase 9.5 Adoption Gate ⭐
-→ Phase 9.6 Sustainability Gate 💰
-→ Phase 9.7 Release Candidate
-→ Phase 10 Stabilization
-→ Phase 11 V2.x Differentiators
+- [ ] Define NavigationDrawer specialization
+- [ ] Current-route integration
+- [ ] Active navigation item integration
+- [ ] Navigation click behavior
+- [ ] Mobile navigation auto-close
+- [ ] Navigation Drawer browser tests
 
-MCP, SSR, DB, SDUI, WASM remain V2.x branches.
+## Phase 9 — Mobile Sidebar [P1]
+
+- [ ] Define MobileSidebar specialization
+- [ ] Mobile overlay behavior
+- [ ] Backdrop behavior
+- [ ] Escape/outside-click behavior
+- [ ] Route-change close behavior
+- [ ] Mobile browser tests
+
+## Phase 10 — Drawer Lifecycle Events [P1]
+
+- [ ] Evaluate canonical `on_open_change` API
+- [ ] Wire lifecycle events through existing event system
+- [ ] Reactive state/event consistency tests
+- [ ] WebSocket verification
+
+## Phase 11 — Advanced Interaction [P2]
+
+- [ ] Evaluate drag-to-close
+- [ ] Evaluate snap points
+- [ ] Evaluate close threshold
+- [ ] Implement only if architecture and UX justify them
+
+## Phase 12 — Persistent / Mini Sidebar [P2]
+
+- [ ] Audit existing sidebar primitives
+- [ ] Define expanded/collapsed model if needed
+- [ ] Avoid forcing persistent-sidebar concerns into core Drawer
+- [ ] Add dedicated sidebar behavior only where justified
+
+## Phase 13 — Portal & Layering [P2]
+
+- [ ] Audit current renderer layering
+- [ ] Determine whether portal is architecturally necessary
+- [ ] Handle overlay/z-index/clipping if required
+- [ ] Add portal only when justified
+
+## Phase 14 — Nested Drawer Coordination [P2]
+
+- [ ] Define nested Drawer behavior
+- [ ] Define modal Drawer stacking rules
+- [ ] ESC closes topmost applicable Drawer
+- [ ] Focus restoration rules
+- [ ] Multi-Drawer tests
+
+## Phase 15 — Public API Cleanup
+
+- [ ] Review final Drawer API
+- [ ] Remove unnecessary internal leakage
+- [ ] Preserve public API consistency
+- [ ] Add public API regression tests
+
+## Phase 16 — Comprehensive Testing
+
+- [ ] Component tests
+- [ ] Reactive state tests
+- [ ] Interaction tests
+- [ ] Accessibility tests
+- [ ] Responsive tests
+- [ ] Navigation tests
+- [ ] WebSocket tests
+- [ ] Browser tests
+- [ ] Full regression suite
+
+## Phase 17 — Live Drawer Showcase
+
+- [ ] Keep `live/drawer/` public-API-only
+- [ ] Basic Drawer demonstration
+- [ ] Navigation Drawer demonstration
+- [ ] Mobile Sidebar demonstration
+- [ ] Reactive open/close
+- [ ] Image/content composition
+- [ ] Routing
+- [ ] Responsive behavior
+- [ ] Accessibility behavior
+- [ ] Overlay/outside-click behavior
+- [ ] Multiple Drawer configurations
+
+## Phase 18 — Framework Comparison
+
+- [ ] Compare final PyLage behavior with Reflex Drawer
+- [ ] Compare final PyLage sidebar/navigation model with Streamlit
+- [ ] Compare final PyLage Drawer/sidebar model with NiceGUI
+- [ ] Document deliberate differences
+- [ ] Avoid feature cloning without architectural justification
+
+## Phase 19 — Performance Audit
+
+- [ ] Initial render measurement
+- [ ] Open latency measurement
+- [ ] Close latency measurement
+- [ ] Reactive update measurement
+- [ ] DOM mutation measurement
+- [ ] WebSocket payload measurement
+- [ ] Multiple-Drawer stress test
+- [ ] Large navigation list test
+
+## Phase 20 — Documentation
+
+- [ ] Basic Drawer documentation
+- [ ] Modal Drawer documentation
+- [ ] Navigation Drawer documentation
+- [ ] Mobile Sidebar documentation
+- [ ] Responsive usage documentation
+- [ ] Accessibility documentation
+- [ ] Final API reference
+
+## Phase 21 — Final Verification & Release Readiness
+
+- [ ] Focused Drawer tests pass
+- [ ] Live browser verification passes
+- [ ] Routing verification passes
+- [ ] Responsive browser verification passes
+- [ ] Accessibility verification passes
+- [ ] Full pytest regression passes
+- [ ] `git diff --check` passes
+- [ ] `git status` reviewed
+- [ ] Final implementation diff reviewed
+- [ ] Release notes/documentation updated when requested
+- [ ] Git checkpoint created

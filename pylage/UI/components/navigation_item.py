@@ -4,7 +4,8 @@ from collections.abc import Callable
 from typing import Any
 
 from pylage.ENGINE.components.basic import Button as _Button
-from pylage.ENGINE.core.state import State
+from pylage.ENGINE.components.basic import Link as _Link
+from pylage.ENGINE.core.state import DerivedState, State
 from pylage.ENGINE.styling.style import Style
 
 _BASE_STYLE = Style(
@@ -76,28 +77,52 @@ def navigation_item(
     text: Any,
     *,
     active: bool | State = False,
+    current_path: str | State | None = None,
     style: Style | None = None,
     **props: Any,
 ) -> Any:
-    """Create a semantic navigation item using the existing PyLage Button.
+    """Create a navigation item while preserving the legacy button API.
 
-    active may be a boolean for static usage or a State for
-    controlled reactive navigation.
+    Route-aware items use Link semantics when ``href`` is provided.
+    Route-less items retain the original Button semantics.
     """
+    if current_path is not None:
+        href = props.get("href")
+        if not isinstance(href, str) or not href:
+            raise ValueError(
+                "current_path requires a non-empty string href"
+            )
+
+        if isinstance(current_path, State):
+            active = DerivedState(
+                current_path,
+                compute=lambda path: path == href,
+            )
+        elif isinstance(current_path, str):
+            active = current_path == href
+        else:
+            raise TypeError("current_path must be a str, State, or None")
+
+    component_factory = _Link if "href" in props else _Button
+
     if isinstance(active, State):
         final_style, update_active = _resolve_reactive_style(active, style)
-        component = _Button(
+        component = component_factory(
             text,
             style=final_style,
             **props,
         )
         active.subscribe(update_active)
+
+        if isinstance(active, DerivedState):
+            component.add_cleanup(active.dispose)
+
         return component
 
     if not isinstance(active, bool):
         raise TypeError("active must be a bool or State")
 
-    return _Button(
+    return component_factory(
         text,
         style=_resolve_style(active, style),
         **props,

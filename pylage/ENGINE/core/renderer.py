@@ -146,13 +146,22 @@ class HTMLRenderer:
         """Return framework-level CSS for native HTML semantics."""
         return CSS_FOUNDATION
 
-    def _event_attributes(self, component: Component) -> str:
-        if not component.events:
+    def _event_attributes(
+        self,
+        component: Component,
+        excluded_events: set[str] | None = None,
+    ) -> str:
+        events = [
+            event
+            for event in component.events
+            if excluded_events is None or event not in excluded_events
+        ]
+        if not events:
             return ""
 
         events = ",".join(
             escape(event, quote=True)
-            for event in component.events
+            for event in events
         )
 
         return f' data-pylage-events="{events}"'
@@ -168,12 +177,18 @@ class HTMLRenderer:
         self,
         component: Component,
         default_style: Style | None = None,
+        excluded_events: set[str] | None = None,
     ) -> str:
         component_id = escape(component.id, quote=True)
 
+        event_attributes = self._event_attributes(
+            component,
+            excluded_events=excluded_events,
+        )
+
         attributes = (
             f'data-pylage-id="{component_id}"'
-            f'{self._event_attributes(component)}'
+            f'{event_attributes}'
         )
 
         style = component.props.get("style")
@@ -445,6 +460,26 @@ class HTMLRenderer:
     def _drawer_css(self) -> str:
         """Return built-in CSS for the Drawer component."""
         return """
+.pylage-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.4);
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+    transition:
+        opacity 180ms ease,
+        visibility 180ms ease;
+    z-index: 999;
+}
+
+.pylage-drawer-backdrop[open] {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+}
+
 .pylage-drawer {
     position: fixed;
     top: 0;
@@ -472,7 +507,10 @@ class HTMLRenderer:
 """
 
     def _render_drawer(self, component: Component) -> str:
-        common = self._render_common_attributes(component)
+        common = self._render_common_attributes(
+            component,
+            excluded_events={"dismiss"},
+        )
         class_name = self._value(component.props.get("class_name"))
         title = self._value(component.props.get("title"))
 
@@ -501,10 +539,25 @@ class HTMLRenderer:
         )
 
         children = self._render_children(component)
+        is_open = bool(self._value(component.props.get("open")))
 
         self._styles.add(self._drawer_css())
 
+        backdrop_attributes = (
+            'data-pylage-drawer-id="'
+            + escape(component.id, quote=True)
+            + '"'
+            + (
+                ' data-pylage-events="dismiss"'
+                if "dismiss" in component.events
+                else ""
+            )
+            + ' class="pylage-drawer-backdrop"'
+            + (" open" if is_open else "")
+        )
+
         return (
+            f"<div {backdrop_attributes}></div>"
             f"<aside {attributes}>"
             f"{children}"
             f"</aside>"

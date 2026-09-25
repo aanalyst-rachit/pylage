@@ -1141,7 +1141,10 @@ class WebSocketServer:
                     if not isinstance(message, (EventMessage, NavigateMessage)):
                         raise TypeError("Expected an event or navigation message.")
 
+                    response_context = None
+
                     if isinstance(message, NavigateMessage):
+                        response_context = "navigate"
                         log_event(
                             10,
                             "websocket.navigate",
@@ -1150,7 +1153,8 @@ class WebSocketServer:
                         )
                         if self.navigation_handler is None:
                             raise RuntimeError("Navigation is not configured.")
-                        result = self.navigation_handler(message.path)
+                        self.navigation_handler(message.path)
+                        result = None
                     else:
                         log_event(
                             10,
@@ -1178,13 +1182,23 @@ class WebSocketServer:
                             message.payload,
                         )
 
-                    response = EventMessageResponse.success(result)
+                    response = EventMessageResponse.success(
+                        result,
+                        context=response_context,
+                    )
                     await connection.send(
                         encode_message(response) if is_binary else response.to_json()
                     )
 
                 except Exception as exc:  # noqa: BLE001 - event failures become client responses
-                    response = EventMessageResponse.failure(str(exc))
+                    response = EventMessageResponse.failure(
+                        str(exc),
+                        context=(
+                            "navigate"
+                            if isinstance(message, NavigateMessage)
+                            else None
+                        ),
+                    )
                     await connection.send(
                         encode_message(response) if is_binary else response.to_json()
                     )

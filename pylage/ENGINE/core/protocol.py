@@ -147,6 +147,7 @@ class EventMessageResponse:
     ok: bool
     result: Any = None
     error: str | None = None
+    context: str | None = None
 
     @property
     def type(self) -> str:
@@ -164,6 +165,9 @@ class EventMessageResponse:
         if self.error is not None:
             message["error"] = self.error
 
+        if self.context is not None:
+            message["context"] = self.context
+
         return message
 
     def to_json(self) -> str:
@@ -173,12 +177,20 @@ class EventMessageResponse:
         )
 
     @classmethod
-    def success(cls, result: Any = None) -> EventMessageResponse:
-        return cls(ok=True, result=result)
+    def success(
+        cls,
+        result: Any = None,
+        context: str | None = None,
+    ) -> EventMessageResponse:
+        return cls(ok=True, result=result, context=context)
 
     @classmethod
-    def failure(cls, error: str) -> EventMessageResponse:
-        return cls(ok=False, error=error)
+    def failure(
+        cls,
+        error: str,
+        context: str | None = None,
+    ) -> EventMessageResponse:
+        return cls(ok=False, error=error, context=context)
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> EventMessageResponse:
@@ -192,6 +204,7 @@ class EventMessageResponse:
             ok=bool(data.get("ok")),
             result=data.get("result"),
             error=data.get("error"),
+            context=data.get("context"),
         )
 
     @classmethod

@@ -598,3 +598,6 @@ def Tooltip(*children, **props: Any) -> Component:
 
 def Popover(*children, **props: Any) -> Component:
     return component("Popover", *children, **props)
+
+def Link(text: Any, **props: Any) -> Component:
+    return component("Link", text=text, **props)

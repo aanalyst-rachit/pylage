@@ -66,6 +66,28 @@ def test_drawer_is_hidden_when_closed():
     assert "visibility: hidden" in html
 
 
+def test_drawer_backdrop_supports_on_dismiss_event():
+    drawer = Drawer(on_dismiss=lambda: None)
+    html = render(drawer)
+    backdrop, aside = html.split("<aside", 1)
+    assert "class=\"pylage-drawer-backdrop\"" in backdrop
+    assert "data-pylage-events=\"dismiss\"" in backdrop
+    assert "data-pylage-events=\"dismiss\"" not in aside
+
+
+def test_drawer_has_backdrop_when_closed():
+    html = render(Drawer(open=False))
+    assert "pylage-drawer-backdrop" in html
+    assert "visibility: hidden" in html
+
+
+def test_drawer_has_backdrop_when_open():
+    html = render(Drawer(open=True))
+    assert "pylage-drawer-backdrop" in html
+    assert "visibility: visible" in html
+    assert "z-index: 999" in html
+
+
 def test_drawer_is_visible_when_open():
     drawer = Drawer(open=True)
     html = render(drawer)

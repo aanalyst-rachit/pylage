@@ -12,6 +12,7 @@ from pylage.ENGINE.core.component import Component
 class Route:
     path: str
     source: Path
+    label: str | None = None
 
 
 class Router:
@@ -27,6 +28,14 @@ class Router:
 
         self._routes = self._scan()
         self._pages = self._load_pages()
+        self._routes = tuple(
+            Route(
+                route.path,
+                route.source,
+                self._route_label(route),
+            )
+            for route in self._routes
+        )
 
     def _scan(self) -> tuple[Route, ...]:
         routes: list[Route] = []
@@ -69,6 +78,20 @@ class Router:
         for route in self._routes:
             pages[route.source] = self._load_page(route)
         return pages
+
+    def _route_label(self, route: Route) -> str | None:
+        module = self._pages[route.source]
+        label = getattr(module, "label", None)
+
+        if label is None:
+            return None
+
+        if not isinstance(label, str):
+            raise TypeError(
+                f"Route label for {route.path} must be a string."
+            )
+
+        return label
 
     @staticmethod
     def _route_parameters(path: str) -> tuple[str, ...]:

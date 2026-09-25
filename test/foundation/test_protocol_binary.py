@@ -78,3 +78,17 @@ def test_binary_update_is_smaller_than_compact_json():
     binary_payload = encode_message(message)
 
     assert len(binary_payload) < len(json_payload)
+
+
+def test_binary_protocol_preserves_navigation_response_context():
+    message = EventMessageResponse.failure(
+        "No route matches path: /missing",
+        context="navigate",
+    )
+
+    decoded = decode_message(encode_message(message))
+
+    assert decoded == message
+    assert decoded.ok is False
+    assert decoded.error == "No route matches path: /missing"
+    assert decoded.context == "navigate"

@@ -78,3 +78,31 @@ def test_router_ignores_private_modules(tmp_path):
     assert router.routes == (
         Route("/", pages.resolve() / "index.py"),
     )
+
+
+def test_router_reads_optional_route_labels(tmp_path):
+    pages = tmp_path / "pages"
+    pages.mkdir()
+
+    (pages / "index.py").write_text(
+        "PAGE = True\n"
+        "label = 'Home'\n",
+        encoding="utf-8",
+    )
+    (pages / "dashboard.py").write_text(
+        "PAGE = True\n"
+        "label = 'Control Center'\n",
+        encoding="utf-8",
+    )
+    (pages / "settings.py").write_text(
+        "PAGE = True\n",
+        encoding="utf-8",
+    )
+
+    router = Router(pages)
+
+    routes = {route.path: route for route in router.routes}
+
+    assert routes["/"].label == "Home"
+    assert routes["/dashboard"].label == "Control Center"
+    assert routes["/settings"].label is None

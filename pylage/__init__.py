@@ -1,5 +1,10 @@
 """PyLage public API facade."""
 
+def app(*, pages=None, navigation=None, **kwargs):
+    from pylage.UI.app import App
+    return App(pages=pages, navigation=navigation, **kwargs)
+
+
 def run(*args, **kwargs):
     """Run a PyLage application using the server/browser runtime."""
     from pylage.ENGINE.app import run as _run
@@ -11,6 +16,7 @@ from pylage.ENGINE.components.basic import Carousel as carousel
 from pylage.ENGINE.components.basic import Grid as grid
 from pylage.ENGINE.components.basic import Icon as icon
 from pylage.ENGINE.components.basic import Image as image
+from pylage.ENGINE.components.basic import Link as link
 from pylage.ENGINE.components.basic import Option as option
 from pylage.ENGINE.components.basic import ProgressBar as progress_bar
 from pylage.ENGINE.components.basic import Skeleton as skeleton
@@ -20,6 +26,9 @@ from pylage.ENGINE.components.chart import Chart
 from pylage.ENGINE.components.chart import Chart as chart
 from pylage.ENGINE.core.reactive_list import ReactiveList as reactive_list
 from pylage.ENGINE.core.state import State as state
+from pylage.ENGINE.routing import Route as route
+from pylage.ENGINE.routing import Router as router
+from pylage.ENGINE.routing import RoutingRuntime as routing_runtime
 from pylage.UI import themes as theme
 from pylage.UI.colors import colors
 from pylage.UI.components import (
@@ -120,6 +129,7 @@ __version__ = "1.0.7"
 __all__ = [
     "Chart",
     "__version__",
+    "app",
     "accordion",
     "admin_panel",
     "alert",
@@ -174,6 +184,7 @@ __all__ = [
     "image",
     "input",
     "landing_page",
+    "link",
     "list",
     "loading",
     "loading_overlay",
@@ -198,6 +209,9 @@ __all__ = [
     "progress_bar",
     "radio_group",
     "reactive_list",
+    "route",
+    "router",
+    "routing_runtime",
     "row",
     "run",
     "search_bar",

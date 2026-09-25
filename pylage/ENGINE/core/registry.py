@@ -1148,3 +1148,34 @@ __all__ = [
     "PropDefinition",
     "registry",
 ]
+
+registry.register(
+    "Link",
+    "a",
+    props={
+        "text": PropDefinition(
+            "text",
+            kind="text",
+        ),
+        "href": PropDefinition(
+            "href",
+            kind="attribute",
+            html_name="href",
+        ),
+        "tabindex": PropDefinition(
+            "tabindex",
+            kind="attribute",
+            html_name="tabindex",
+        ),
+        "class_name": PropDefinition(
+            "class_name",
+            kind="attribute",
+            html_name="class",
+        ),
+        "title": PropDefinition(
+            "title",
+            kind="attribute",
+            html_name="title",
+        ),
+    },
+)
