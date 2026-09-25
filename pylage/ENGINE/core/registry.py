@@ -504,6 +504,11 @@ registry.register(
             kind="boolean",
             html_name="open",
         ),
+        "position": PropDefinition(
+            "position",
+            kind="attribute",
+            html_name="data-pylage-position",
+        ),
     },
 )
 

@@ -36,14 +36,14 @@
 
 ## Phase 3 — Direction & Positioning [P0]
 
-- [ ] Generalize Drawer side/position model
-- [ ] Left Drawer
-- [ ] Right Drawer
-- [ ] Top Drawer
-- [ ] Bottom Drawer
-- [ ] Direction-specific CSS transitions
-- [ ] Viewport sizing/constraints
-- [ ] Direction regression tests
+- [x] Generalize Drawer side/position model
+- [x] Left Drawer
+- [x] Right Drawer
+- [x] Top Drawer
+- [x] Bottom Drawer
+- [x] Direction-specific CSS transitions
+- [x] Viewport sizing/constraints
+- [x] Direction regression tests
 
 ## Phase 4 — Accessibility [P0]
 

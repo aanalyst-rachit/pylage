@@ -482,15 +482,8 @@ class HTMLRenderer:
 
 .pylage-drawer {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 320px;
-    max-width: calc(100vw - 32px);
-    height: 100vh;
-    max-height: 100vh;
     box-sizing: border-box;
     margin: 0;
-    transform: translateX(-100%);
     visibility: hidden;
     pointer-events: none;
     transition:
@@ -499,8 +492,44 @@ class HTMLRenderer:
     z-index: 1000;
 }
 
+.pylage-drawer[data-pylage-position="left"] {
+    top: 0;
+    left: 0;
+    width: min(320px, calc(100vw - 32px));
+    height: 100vh;
+    max-height: 100vh;
+    transform: translateX(-100%);
+}
+
+.pylage-drawer[data-pylage-position="right"] {
+    top: 0;
+    right: 0;
+    width: min(320px, calc(100vw - 32px));
+    height: 100vh;
+    max-height: 100vh;
+    transform: translateX(100%);
+}
+
+.pylage-drawer[data-pylage-position="top"] {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    max-width: 100vw;
+    height: min(320px, calc(100vh - 32px));
+    transform: translateY(-100%);
+}
+
+.pylage-drawer[data-pylage-position="bottom"] {
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    max-width: 100vw;
+    height: min(320px, calc(100vh - 32px));
+    transform: translateY(100%);
+}
+
 .pylage-drawer[open] {
-    transform: translateX(0);
+    transform: translate(0, 0);
     visibility: visible;
     pointer-events: auto;
 }
@@ -513,6 +542,13 @@ class HTMLRenderer:
         )
         class_name = self._value(component.props.get("class_name"))
         title = self._value(component.props.get("title"))
+        position = self._value(component.props.get("position")) or "left"
+
+        position = str(position).lower()
+        if position not in {"left", "right", "top", "bottom"}:
+            raise ValueError(
+                "Drawer position must be one of: left, right, top, bottom"
+            )
 
         classes = ["pylage-drawer"]
 
@@ -526,6 +562,9 @@ class HTMLRenderer:
             + ' class="'
             + escape(" ".join(classes), quote=True)
             + '"'
+            + ' data-pylage-position="'
+            + escape(position, quote=True)
+            + '"'
         )
 
         if title is not None:
@@ -535,7 +574,7 @@ class HTMLRenderer:
 
         attributes += self._render_prop_attributes(
             component,
-            excluded={"children", "class_name", "title"},
+            excluded={"children", "class_name", "title", "position"},
         )
 
         children = self._render_children(component)

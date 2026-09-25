@@ -94,7 +94,7 @@ def test_drawer_is_visible_when_open():
 
     assert 'class="pylage-drawer"' in html
     assert 'open' in html
-    assert "transform: translateX(0)" in html
+    assert "transform: translate(0, 0)" in html
 
 
 def test_drawer_has_fixed_off_canvas_positioning():
@@ -117,3 +117,49 @@ def test_drawer_preserves_custom_class_and_title():
 
     assert 'class="pylage-drawer my-drawer"' in html
     assert 'title="Navigation"' in html
+
+def test_drawer_defaults_to_left_position():
+    html = render(Drawer())
+
+    assert 'data-pylage-position="left"' in html
+    assert 'transform: translateX(-100%)' in html
+
+
+def test_drawer_supports_right_position():
+    html = render(Drawer(position="right"))
+
+    assert 'data-pylage-position="right"' in html
+    assert 'transform: translateX(100%)' in html
+
+
+def test_drawer_supports_top_position():
+    html = render(Drawer(position="top"))
+
+    assert 'data-pylage-position="top"' in html
+    assert 'transform: translateY(-100%)' in html
+
+
+def test_drawer_supports_bottom_position():
+    html = render(Drawer(position="bottom"))
+
+    assert 'data-pylage-position="bottom"' in html
+    assert 'transform: translateY(100%)' in html
+
+
+def test_drawer_open_state_resets_position_transform():
+    for position in ("left", "right", "top", "bottom"):
+        html = render(Drawer(position=position, open=True))
+
+        assert 'data-pylage-position="' + position + '"' in html
+        assert "transform: translate(0, 0)" in html
+
+
+def test_drawer_rejects_invalid_position():
+    try:
+        render(Drawer(position="center"))
+    except ValueError as exc:
+        assert str(exc) == (
+            "Drawer position must be one of: left, right, top, bottom"
+        )
+    else:
+        raise AssertionError("invalid Drawer position was accepted")
