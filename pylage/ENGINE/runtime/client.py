@@ -678,6 +678,205 @@ CLIENT_RUNTIME = r"""
         overflow: "",
     };
 
+    window.PyLage._resolveDrawerResponsiveMode = function (component) {
+        if (!component) {
+            return null;
+        }
+
+        const raw = component.getAttribute(
+            "data-pylage-responsive-mode"
+        );
+
+        if (!raw) {
+            return null;
+        }
+
+        let config;
+        try {
+            config = JSON.parse(raw);
+        } catch (error) {
+            console.warn(
+                "[PyLage] Invalid responsive Drawer configuration:",
+                error
+            );
+            return null;
+        }
+
+        const breakpoints = [
+            ["sm", 640],
+            ["md", 768],
+            ["lg", 1024],
+            ["xl", 1280],
+        ];
+
+        let mode = config.base || "overlay";
+
+        for (const [name, width] of breakpoints) {
+            if (
+                Object.prototype.hasOwnProperty.call(config, name) &&
+                window.matchMedia(
+                    "(min-width:" + width + "px)"
+                ).matches
+            ) {
+                mode = config[name];
+            }
+        }
+
+        return mode;
+    };
+
+    window.PyLage._reconcileResponsiveDrawer = function (component) {
+        if (
+            !component ||
+            !component.classList ||
+            !component.classList.contains("pylage-drawer")
+        ) {
+            return;
+        }
+
+        const mode =
+            window.PyLage._resolveDrawerResponsiveMode(component);
+
+        if (mode === null) {
+            return;
+        }
+
+        const isOpen = component.hasAttribute("open");
+        const isModal = mode === "overlay";
+        const wasModal =
+            component.getAttribute("data-pylage-modal") === "true";
+
+        component.setAttribute(
+            "data-pylage-modal",
+            isModal ? "true" : "false"
+        );
+
+        const drawerId = component.getAttribute("data-pylage-id");
+        const backdrop = drawerId
+            ? document.querySelector(
+                  '[data-pylage-drawer-id="' +
+                  CSS.escape(drawerId) +
+                  '"]'
+              )
+            : null;
+
+        if (backdrop) {
+            if (isOpen && isModal) {
+                backdrop.setAttribute("open", "");
+            } else {
+                backdrop.removeAttribute("open");
+            }
+        }
+
+        const modeChanged = isModal !== wasModal;
+
+        const scrollState = window.PyLage._drawerScrollState;
+        const focusState =
+            drawerId
+                ? window.PyLage._drawerFocusState[drawerId] || null
+                : null;
+
+        if (!isOpen) {
+            return;
+        }
+
+        if (isModal && !modeChanged && focusState) {
+            return;
+        }
+
+        if (!isModal && !modeChanged) {
+            return;
+        }
+
+        if (isModal) {
+            const openModalDrawers = document.querySelectorAll(
+                ".pylage-drawer[open][data-pylage-modal=\"true\"]"
+            );
+
+            if (
+                openModalDrawers.length === 1 &&
+                !scrollState.locked
+            ) {
+                scrollState.overflow = document.body.style.overflow;
+                scrollState.locked = true;
+                document.body.style.overflow = "hidden";
+            }
+
+            if (!focusState && drawerId) {
+                window.PyLage._drawerFocusState[drawerId] = {
+                    open: true,
+                    returnFocus: document.activeElement,
+                };
+            }
+
+            const focusableSelector = [
+                "a[href]",
+                "area[href]",
+                "button:not([disabled])",
+                "input:not([disabled])",
+                "select:not([disabled])",
+                "textarea:not([disabled])",
+                "iframe",
+                "object",
+                "embed",
+                "[contenteditable='true']",
+                "[tabindex]:not([tabindex='-1'])",
+            ].join(",");
+
+            const firstFocusable =
+                component.querySelector(focusableSelector);
+
+            if (firstFocusable) {
+                firstFocusable.focus();
+            } else {
+                component.focus();
+            }
+
+            return;
+        }
+
+        const remainingModalDrawers = document.querySelectorAll(
+            ".pylage-drawer[open][data-pylage-modal=\"true\"]"
+        );
+
+        if (
+            remainingModalDrawers.length === 0 &&
+            scrollState.locked
+        ) {
+            document.body.style.overflow = scrollState.overflow;
+            scrollState.locked = false;
+            scrollState.overflow = "";
+        }
+
+        if (drawerId && focusState) {
+            const returnFocus = focusState.returnFocus;
+            delete window.PyLage._drawerFocusState[drawerId];
+
+            if (
+                returnFocus &&
+                returnFocus.isConnected &&
+                typeof returnFocus.focus === "function"
+            ) {
+                returnFocus.focus();
+            }
+        }
+    };
+
+    window.PyLage._syncResponsiveDrawers = function () {
+        document
+            .querySelectorAll(".pylage-drawer[data-pylage-responsive-mode]")
+            .forEach(function (drawer) {
+                window.PyLage._reconcileResponsiveDrawer(drawer);
+            });
+    };
+
+    window.addEventListener(
+        "resize",
+        function () {
+            window.PyLage._syncResponsiveDrawers();
+        }
+    );
+
     const boundEventTypes = new Set();
     let reconnectDelay = 1000;
     const maxReconnectDelay = 16000;
@@ -1857,7 +2056,20 @@ function createRenderedNodes(item) {
               component.classList.contains("pylage-drawer")
           ) {
               const drawerOpen = component.hasAttribute("open");
-              const drawerIsModal = component.getAttribute("data-pylage-modal") === "true";
+              const responsiveDrawerMode =
+                  window.PyLage._resolveDrawerResponsiveMode(component);
+              const drawerIsModal =
+                  responsiveDrawerMode !== null
+                      ? responsiveDrawerMode === "overlay"
+                      : component.getAttribute("data-pylage-modal") === "true";
+
+              if (responsiveDrawerMode !== null) {
+                  component.setAttribute(
+                      "data-pylage-modal",
+                      drawerIsModal ? "true" : "false"
+                  );
+              }
+
               const drawerFocusState =
                   window.PyLage._drawerFocusState[message.id] ||
                   null;
@@ -1876,7 +2088,7 @@ function createRenderedNodes(item) {
               );
 
               if (drawerBackdrop) {
-                  if (drawerOpen) {
+                  if (drawerOpen && drawerIsModal) {
                       drawerBackdrop.setAttribute("open", "");
                   } else {
                       drawerBackdrop.removeAttribute("open");
@@ -2159,9 +2371,12 @@ function createRenderedNodes(item) {
     });
 
     scanAndBindEvents(document);
+    window.PyLage._syncResponsiveDrawers();
+
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", function () {
             scanAndBindEvents(document);
+            window.PyLage._syncResponsiveDrawers();
         });
     }
 

@@ -74,12 +74,12 @@
 
 ## Phase 7 — Responsive Drawer System [P1]
 
-- [ ] Reuse existing ResponsiveStyle infrastructure
-- [ ] Define responsive Drawer behavior
-- [ ] Desktop persistent mode
-- [ ] Mobile overlay mode
+- [x] Reuse existing ResponsiveStyle infrastructure
+- [x] Define responsive Drawer behavior
+- [x] Desktop persistent mode
+- [x] Mobile overlay mode
 - [ ] Breakpoint-aware navigation behavior
-- [ ] Responsive browser/integration tests
+- [x] Responsive browser/integration tests
 
 ## Phase 8 — Navigation Drawer [P1]
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from html import escape
 from typing import Any
@@ -558,6 +559,14 @@ class HTMLRenderer:
 
         is_open = bool(self._value(component.props.get("open")))
         is_modal = bool(self._value(component.props.get("modal", True)))
+        responsive_mode = component.props.get("responsive_mode")
+
+        responsive_mode_json = ""
+        if responsive_mode is not None:
+            responsive_mode_json = json.dumps(
+                responsive_mode,
+                separators=(",", ":"),
+            )
 
         attributes = (
             common
@@ -577,6 +586,13 @@ class HTMLRenderer:
             attributes += f' title="{escaped_title}"'
             attributes += f' aria-label="{escaped_title}"'
 
+        if responsive_mode_json:
+            attributes += (
+                ' data-pylage-responsive-mode="'
+                + escape(responsive_mode_json, quote=True)
+                + '"'
+            )
+
         attributes += (
             ' aria-hidden="'
             + ("false" if is_open else "true")
@@ -586,7 +602,14 @@ class HTMLRenderer:
 
         attributes += self._render_prop_attributes(
             component,
-            excluded={"children", "class_name", "title", "position", "modal"},
+            excluded={
+                "children",
+                "class_name",
+                "title",
+                "position",
+                "modal",
+                "responsive_mode",
+            },
         )
 
         children = self._render_children(component)

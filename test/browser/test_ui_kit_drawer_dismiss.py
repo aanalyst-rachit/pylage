@@ -919,3 +919,190 @@ def test_drawer_fits_small_viewport():
                 browser.close()
     finally:
         runtime.stop()
+
+def test_responsive_drawer_uses_overlay_mode_below_breakpoint():
+    open_state = State(True)
+    drawer = Drawer(
+        Column(
+            Text("Responsive drawer"),
+            Button("Action"),
+        ),
+        open=open_state,
+        responsive_mode={"base": "overlay", "md": "persistent"},
+    )
+    app = Column(Button("Trigger"), drawer)
+
+    runtime = Runtime(
+        app,
+        title="PyLage Responsive Drawer Mobile Browser Test",
+        output="test_output/drawer_browser/responsive_mobile.html",
+    )
+
+    try:
+        url = runtime.start()
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 600, "height": 800})
+
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                drawer_locator = page.locator(
+                    f'aside[data-pylage-id="{drawer.id}"]'
+                )
+                backdrop = page.locator(
+                    f'.pylage-drawer-backdrop[data-pylage-drawer-id="{drawer.id}"]'
+                )
+
+                expect(drawer_locator).to_have_attribute(
+                    "data-pylage-modal",
+                    "true",
+                )
+                expect(backdrop).to_have_attribute("open", "")
+                expect(page.locator("body")).to_have_css(
+                    "overflow",
+                    "hidden",
+                )
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_responsive_drawer_uses_persistent_mode_at_md_breakpoint():
+    open_state = State(True)
+    drawer = Drawer(
+        Column(
+            Text("Responsive drawer"),
+            Button("Action"),
+        ),
+        open=open_state,
+        responsive_mode={"base": "overlay", "md": "persistent"},
+    )
+    app = Column(Button("Trigger"), drawer)
+
+    runtime = Runtime(
+        app,
+        title="PyLage Responsive Drawer Desktop Browser Test",
+        output="test_output/drawer_browser/responsive_desktop.html",
+    )
+
+    try:
+        url = runtime.start()
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 800, "height": 800})
+
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                drawer_locator = page.locator(
+                    f'aside[data-pylage-id="{drawer.id}"]'
+                )
+                backdrop = page.locator(
+                    f'.pylage-drawer-backdrop[data-pylage-drawer-id="{drawer.id}"]'
+                )
+
+                expect(drawer_locator).to_have_attribute(
+                    "data-pylage-modal",
+                    "false",
+                )
+                expect(backdrop).not_to_have_attribute("open")
+                expect(page.locator("body")).not_to_have_css(
+                    "overflow",
+                    "hidden",
+                )
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_responsive_drawer_reconciles_mode_when_viewport_crosses_breakpoint():
+    open_state = State(True)
+    drawer = Drawer(
+        Column(
+            Text("Responsive drawer"),
+            Button("Action"),
+        ),
+        open=open_state,
+        responsive_mode={"base": "overlay", "md": "persistent"},
+    )
+    app = Column(Button("Trigger"), drawer)
+
+    runtime = Runtime(
+        app,
+        title="PyLage Responsive Drawer Resize Browser Test",
+        output="test_output/drawer_browser/responsive_resize.html",
+    )
+
+    try:
+        url = runtime.start()
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 600, "height": 800})
+
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                drawer_locator = page.locator(
+                    f'aside[data-pylage-id="{drawer.id}"]'
+                )
+                backdrop = page.locator(
+                    f'.pylage-drawer-backdrop[data-pylage-drawer-id="{drawer.id}"]'
+                )
+
+                expect(drawer_locator).to_have_attribute(
+                    "data-pylage-modal",
+                    "true",
+                )
+                expect(backdrop).to_have_attribute("open", "")
+                expect(page.locator("body")).to_have_css(
+                    "overflow",
+                    "hidden",
+                )
+
+                page.set_viewport_size({"width": 800, "height": 800})
+
+                expect(drawer_locator).to_have_attribute(
+                    "data-pylage-modal",
+                    "false",
+                    timeout=5000,
+                )
+                expect(backdrop).not_to_have_attribute("open")
+                expect(page.locator("body")).not_to_have_css(
+                    "overflow",
+                    "hidden",
+                )
+
+                page.set_viewport_size({"width": 600, "height": 800})
+
+                expect(drawer_locator).to_have_attribute(
+                    "data-pylage-modal",
+                    "true",
+                    timeout=5000,
+                )
+                expect(backdrop).to_have_attribute("open")
+                expect(page.locator("body")).to_have_css(
+                    "overflow",
+                    "hidden",
+                )
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
