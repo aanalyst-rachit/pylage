@@ -75,6 +75,17 @@ def test_drawer_backdrop_supports_on_dismiss_event():
     assert "data-pylage-events=\"dismiss\"" not in aside
 
 
+def test_drawer_defaults_to_modal():
+    html = render(Drawer(open=True))
+    assert "pylage-drawer-backdrop" in html
+    assert "visibility: visible" in html
+
+
+def test_drawer_persistent_mode_has_no_backdrop():
+    html = render(Drawer(open=True, modal=False))
+    assert 'class="pylage-drawer-backdrop"' not in html
+
+
 def test_drawer_has_backdrop_when_closed():
     html = render(Drawer(open=False))
     assert "pylage-drawer-backdrop" in html

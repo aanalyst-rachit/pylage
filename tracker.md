@@ -47,23 +47,23 @@
 
 ## Phase 4 — Accessibility [P0]
 
-- [ ] Correct Drawer semantics
+- [x] Correct Drawer semantics
 - [x] ARIA attributes
 - [x] Keyboard navigation
 - [x] Focus entry behavior
-- [ ] Focus containment for modal Drawer
+- [x] Focus containment for modal Drawer
 - [x] Focus restoration on close
 - [x] Accessibility browser tests
 
 ## Phase 5 — Modal vs Persistent [P0]
 
-- [ ] Define modal Drawer contract
-- [ ] Define persistent Drawer contract
+- [x] Define modal Drawer contract
+- [x] Define persistent Drawer contract
 - [ ] Optional overlay behavior
-- [ ] Background interaction rules
-- [ ] Scroll-lock behavior for modal Drawer
-- [ ] Restore scrolling after close
-- [ ] Tests for both modes
+- [x] Background interaction rules
+- [x] Scroll-lock behavior for modal Drawer
+- [x] Restore scrolling after close
+- [x] Tests for both modes
 
 ## Phase 6 — Scroll & Content Behavior [P0]
 

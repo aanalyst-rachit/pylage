@@ -556,6 +556,7 @@ class HTMLRenderer:
                 classes.append(custom_class)
 
         is_open = bool(self._value(component.props.get("open")))
+        is_modal = bool(self._value(component.props.get("modal", True)))
 
         attributes = (
             common
@@ -564,6 +565,9 @@ class HTMLRenderer:
             + '"'
             + ' data-pylage-position="'
             + escape(position, quote=True)
+            + '"'
+            + ' data-pylage-modal="'
+            + ('true' if is_modal else 'false')
             + '"'
         )
 
@@ -581,7 +585,7 @@ class HTMLRenderer:
 
         attributes += self._render_prop_attributes(
             component,
-            excluded={"children", "class_name", "title", "position"},
+            excluded={"children", "class_name", "title", "position", "modal"},
         )
 
         children = self._render_children(component)
@@ -601,8 +605,10 @@ class HTMLRenderer:
             + (" open" if is_open else "")
         )
 
+        backdrop = f"<div {backdrop_attributes}></div>" if is_modal else ""
+
         return (
-            f"<div {backdrop_attributes}></div>"
+            f"{backdrop}"
             f"<aside {attributes}>"
             f"{children}"
             f"</aside>"

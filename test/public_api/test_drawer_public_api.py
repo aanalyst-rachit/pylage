@@ -65,6 +65,11 @@ def test_drawer_accepts_public_style():
     assert component.props["style"] is style
 
 
+def test_drawer_accepts_public_modal_prop():
+    component = pl.drawer(modal=False)
+    assert component.props["modal"] is False
+
+
 def test_drawer_forwards_public_props():
     component = pl.drawer(
         class_name="custom-drawer",

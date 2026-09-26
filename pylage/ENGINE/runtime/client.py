@@ -673,6 +673,10 @@ CLIENT_RUNTIME = r"""
 
     window.PyLage._propMetaCache = Object.create(null);
     window.PyLage._drawerFocusState = Object.create(null);
+    window.PyLage._drawerScrollState = {
+        locked: false,
+        overflow: "",
+    };
 
     const boundEventTypes = new Set();
     let reconnectDelay = 1000;
@@ -1853,6 +1857,7 @@ function createRenderedNodes(item) {
               component.classList.contains("pylage-drawer")
           ) {
               const drawerOpen = component.hasAttribute("open");
+              const drawerIsModal = component.getAttribute("data-pylage-modal") === "true";
               const drawerFocusState =
                   window.PyLage._drawerFocusState[message.id] ||
                   null;
@@ -1884,14 +1889,28 @@ function createRenderedNodes(item) {
                       "open"
                   ) && drawerOpen !== drawerWasOpen;
 
-              if (drawerOpenChanged && drawerOpen) {
+              if (drawerIsModal && drawerOpenChanged && drawerOpen) {
+                  const openModalDrawers = document.querySelectorAll(
+                      ".pylage-drawer[open][data-pylage-modal=\"true\"]"
+                  );
+                  const drawerScrollState = window.PyLage._drawerScrollState;
+
+                  if (
+                      openModalDrawers.length === 1 &&
+                      drawerScrollState.locked === false
+                  ) {
+                      drawerScrollState.overflow = document.body.style.overflow;
+                      drawerScrollState.locked = true;
+                      document.body.style.overflow = "hidden";
+                  }
+
                   window.PyLage._drawerFocusState[message.id] = {
                       open: true,
                       returnFocus: document.activeElement,
                   };
               }
 
-              if (drawerOpenChanged && drawerOpen) {
+              if (drawerIsModal && drawerOpenChanged && drawerOpen) {
                   const focusableSelector = [
                       "a[href]",
                       "area[href]",
@@ -1916,7 +1935,21 @@ function createRenderedNodes(item) {
                   }
               }
 
-              if (drawerOpenChanged && !drawerOpen) {
+              if (drawerIsModal && drawerOpenChanged && !drawerOpen) {
+                  const openModalDrawers = document.querySelectorAll(
+                      ".pylage-drawer[open][data-pylage-modal=\"true\"]"
+                  );
+                  const drawerScrollState = window.PyLage._drawerScrollState;
+
+                  if (
+                      openModalDrawers.length === 0 &&
+                      drawerScrollState.locked
+                  ) {
+                      document.body.style.overflow = drawerScrollState.overflow;
+                      drawerScrollState.locked = false;
+                      drawerScrollState.overflow = "";
+                  }
+
                   const returnFocus = drawerFocusState
                       ? drawerFocusState.returnFocus
                       : null;
@@ -1969,7 +2002,7 @@ function createRenderedNodes(item) {
 
         if (event.key === "Tab") {
             const openDrawers = Array.from(
-                document.querySelectorAll(".pylage-drawer[open]")
+                document.querySelectorAll(".pylage-drawer[open][data-pylage-modal=\"true\"]")
             );
             const drawer = openDrawers[openDrawers.length - 1];
 

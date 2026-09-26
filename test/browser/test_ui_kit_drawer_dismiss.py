@@ -530,6 +530,91 @@ def test_drawer_escape_key_dismisses_topmost_open_drawer_only():
         runtime.stop()
 
 
+def test_persistent_drawer_does_not_steal_focus_when_opened():
+    open_state = State(False)
+    drawer = Drawer(
+        Column(Button("Drawer action")),
+        open=open_state,
+        modal=False,
+    )
+    trigger = Button("Background action")
+    app = Column(trigger, drawer)
+
+    runtime = Runtime(
+        app,
+        title="PyLage Persistent Drawer Focus Browser Test",
+        output="test_output/drawer_browser/persistent_focus.html",
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                trigger_locator = page.locator(f'button[data-pylage-id="{trigger.id}"]')
+                drawer_locator = page.locator(f'aside[data-pylage-id="{drawer.id}"]')
+
+                trigger_locator.focus()
+                expect(trigger_locator).to_be_focused()
+
+                open_state.set(True)
+
+                expect(drawer_locator).to_have_attribute("open", "", timeout=10000)
+                expect(trigger_locator).to_be_focused(timeout=10000)
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_persistent_drawer_allows_tab_to_reach_background_content():
+    open_state = State(True)
+    drawer = Drawer(
+        Column(Button("Drawer action")),
+        open=open_state,
+        modal=False,
+    )
+    background = Button("Background action")
+    app = Column(drawer, background)
+
+    runtime = Runtime(
+        app,
+        title="PyLage Persistent Drawer Tab Browser Test",
+        output="test_output/drawer_browser/persistent_tab.html",
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                background_locator = page.locator(f'button[data-pylage-id="{background.id}"]')
+                drawer_locator = page.locator(f'aside[data-pylage-id="{drawer.id}"]')
+                drawer_button = drawer_locator.locator("button").first
+
+                drawer_button.focus()
+                expect(drawer_button).to_be_focused()
+
+                page.keyboard.press("Tab")
+                expect(background_locator).to_be_focused(timeout=10000)
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
 
 def test_drawer_tab_wraps_focus_from_last_to_first():
     open_state = State(True)
@@ -634,6 +719,123 @@ def test_drawer_shift_tab_wraps_focus_from_first_to_last():
                 assert page.evaluate(
                     "() => document.activeElement === document.querySelector(\".pylage-drawer[open] button:last-of-type\")"
                 )
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+
+def test_modal_drawer_locks_body_scroll_when_opened():
+    open_state = State(False)
+    drawer = Drawer(
+        Text("Modal drawer"),
+        open=open_state,
+    )
+    runtime = Runtime(
+        Column(drawer),
+        title="PyLage Drawer Scroll Lock Browser Test",
+        output="test_output/drawer_browser/scroll_lock.html",
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                expect(page.locator("body")).to_have_css("overflow", "visible")
+
+                open_state.set(True)
+
+                expect(
+                    page.locator("body")
+                ).to_have_css("overflow", "hidden", timeout=10000)
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_modal_drawer_restores_body_scroll_after_close():
+    open_state = State(False)
+    drawer = Drawer(
+        Text("Modal drawer"),
+        open=open_state,
+    )
+    runtime = Runtime(
+        Column(drawer),
+        title="PyLage Drawer Scroll Restore Browser Test",
+        output="test_output/drawer_browser/scroll_restore.html",
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                page.evaluate("document.body.style.overflow = 'scroll'")
+
+                open_state.set(True)
+                expect(
+                    page.locator("body")
+                ).to_have_css("overflow", "hidden", timeout=10000)
+
+                open_state.set(False)
+                expect(
+                    page.locator("body")
+                ).to_have_css("overflow", "scroll", timeout=10000)
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_persistent_drawer_does_not_lock_body_scroll():
+    open_state = State(False)
+    drawer = Drawer(
+        Text("Persistent drawer"),
+        open=open_state,
+        modal=False,
+    )
+    runtime = Runtime(
+        Column(drawer),
+        title="PyLage Persistent Drawer Scroll Browser Test",
+        output="test_output/drawer_browser/persistent_scroll.html",
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                page.evaluate("document.body.style.overflow = 'scroll'")
+
+                open_state.set(True)
+
+                expect(
+                    page.locator("body")
+                ).to_have_css("overflow", "scroll", timeout=10000)
             finally:
                 browser.close()
     finally:
