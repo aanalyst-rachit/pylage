@@ -67,10 +67,10 @@
 
 ## Phase 6 — Scroll & Content Behavior [P0]
 
-- [ ] Drawer content scrolling
-- [ ] Long-content browser test
-- [ ] Small-viewport test
-- [ ] Body scroll-lock test
+- [x] Drawer content scrolling
+- [x] Long-content browser test
+- [x] Small-viewport test
+- [x] Body scroll-lock test
 
 ## Phase 7 — Responsive Drawer System [P1]
 

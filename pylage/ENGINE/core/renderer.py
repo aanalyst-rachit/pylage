@@ -484,6 +484,7 @@ class HTMLRenderer:
     position: fixed;
     box-sizing: border-box;
     margin: 0;
+    overflow: auto;
     visibility: hidden;
     pointer-events: none;
     transition: transform 180ms ease;

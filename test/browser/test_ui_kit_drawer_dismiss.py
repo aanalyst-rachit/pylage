@@ -840,3 +840,82 @@ def test_persistent_drawer_does_not_lock_body_scroll():
                 browser.close()
     finally:
         runtime.stop()
+
+
+def test_drawer_scrolls_long_content_without_growing_past_viewport():
+    open_state = State(True)
+    drawer = Drawer(
+        Column(*[Text(f'Long content line {i}') for i in range(80)]),
+        open=open_state,
+    )
+    runtime = Runtime(
+        Column(drawer),
+        title='PyLage Drawer Long Content Browser Test',
+        output='test_output/drawer_browser/long_content.html',
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={'width': 800, 'height': 600})
+            try:
+                page.goto(url, wait_until='domcontentloaded')
+                page.wait_for_function(
+                    '() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN',
+                    timeout=10000,
+                )
+                drawer_locator = page.locator(f'aside[data-pylage-id="{drawer.id}"]')
+                expect(drawer_locator).to_have_attribute('open', '', timeout=10000)
+                metrics = drawer_locator.evaluate(
+                    '(element) => ({clientHeight: element.clientHeight, scrollHeight: element.scrollHeight, scrollTop: element.scrollTop})'
+                )
+                assert metrics['scrollHeight'] > metrics['clientHeight']
+                assert metrics['scrollTop'] == 0
+                scrolled = drawer_locator.evaluate(
+                    '(element) => { element.scrollTop = element.scrollHeight; return element.scrollTop; }'
+                )
+                assert scrolled > 0
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_drawer_fits_small_viewport():
+    open_state = State(True)
+    drawer = Drawer(
+        Column(*[Text(f'Small viewport line {i}') for i in range(20)]),
+        open=open_state,
+    )
+    runtime = Runtime(
+        Column(drawer),
+        title='PyLage Drawer Small Viewport Browser Test',
+        output='test_output/drawer_browser/small_viewport.html',
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={'width': 320, 'height': 240})
+            try:
+                page.goto(url, wait_until='domcontentloaded')
+                page.wait_for_function(
+                    '() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN',
+                    timeout=10000,
+                )
+                drawer_locator = page.locator(f'aside[data-pylage-id="{drawer.id}"]')
+                expect(drawer_locator).to_have_attribute('open', '', timeout=10000)
+                box = drawer_locator.bounding_box()
+                assert box is not None
+                assert box['width'] <= 320
+                assert box['height'] <= 240
+                assert box['x'] >= 0
+                assert box['y'] >= 0
+                assert box['x'] + box['width'] <= 320
+                assert box['y'] + box['height'] <= 240
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
