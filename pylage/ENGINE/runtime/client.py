@@ -672,6 +672,7 @@ CLIENT_RUNTIME = r"""
 
 
     window.PyLage._propMetaCache = Object.create(null);
+    window.PyLage._drawerFocusState = Object.create(null);
 
     const boundEventTypes = new Set();
     let reconnectDelay = 1000;
@@ -1844,17 +1845,29 @@ function createRenderedNodes(item) {
 
           // Drawer backdrops are interaction-only companion nodes and
           // therefore do not receive the component's canonical DOM id.
-          // Keep their visual open state synchronized with the Drawer.
+          // Keep their visual open state and accessibility state synchronized
+          // with the Drawer, then move focus into an opened Drawer.
           if (
               component &&
               component.classList &&
               component.classList.contains("pylage-drawer")
           ) {
               const drawerOpen = component.hasAttribute("open");
+              const drawerFocusState =
+                  window.PyLage._drawerFocusState[message.id] ||
+                  null;
+              const drawerWasOpen = drawerFocusState
+                  ? drawerFocusState.open
+                  : false;
               const drawerBackdrop = document.querySelector(
                   '[data-pylage-drawer-id="' +
                   CSS.escape(message.id) +
                   '"]'
+              );
+
+              component.setAttribute(
+                  "aria-hidden",
+                  drawerOpen ? "false" : "true"
               );
 
               if (drawerBackdrop) {
@@ -1862,6 +1875,60 @@ function createRenderedNodes(item) {
                       drawerBackdrop.setAttribute("open", "");
                   } else {
                       drawerBackdrop.removeAttribute("open");
+                  }
+              }
+
+              const drawerOpenChanged =
+                  Object.prototype.hasOwnProperty.call(
+                      message.props,
+                      "open"
+                  ) && drawerOpen !== drawerWasOpen;
+
+              if (drawerOpenChanged && drawerOpen) {
+                  window.PyLage._drawerFocusState[message.id] = {
+                      open: true,
+                      returnFocus: document.activeElement,
+                  };
+              }
+
+              if (drawerOpenChanged && drawerOpen) {
+                  const focusableSelector = [
+                      "a[href]",
+                      "area[href]",
+                      "button:not([disabled])",
+                      "input:not([disabled])",
+                      "select:not([disabled])",
+                      "textarea:not([disabled])",
+                      "iframe",
+                      "object",
+                      "embed",
+                      "[contenteditable='true']",
+                      "[tabindex]:not([tabindex='-1'])"
+                  ].join(",");
+
+                  const firstFocusable =
+                      component.querySelector(focusableSelector);
+
+                  if (firstFocusable) {
+                      firstFocusable.focus();
+                  } else {
+                      component.focus();
+                  }
+              }
+
+              if (drawerOpenChanged && !drawerOpen) {
+                  const returnFocus = drawerFocusState
+                      ? drawerFocusState.returnFocus
+                      : null;
+
+                  delete window.PyLage._drawerFocusState[message.id];
+
+                  if (
+                      returnFocus &&
+                      returnFocus.isConnected &&
+                      typeof returnFocus.focus === "function"
+                  ) {
+                      returnFocus.focus();
                   }
               }
           }
@@ -1899,6 +1966,76 @@ function createRenderedNodes(item) {
 
     document.addEventListener("keydown", function (event) {
         if (event.defaultPrevented) return;
+
+        if (event.key === "Tab") {
+            const openDrawers = Array.from(
+                document.querySelectorAll(".pylage-drawer[open]")
+            );
+            const drawer = openDrawers[openDrawers.length - 1];
+
+            if (drawer) {
+                const focusableSelector = [
+                    "a[href]",
+                    "area[href]",
+                    "button:not([disabled])",
+                    "input:not([disabled])",
+                    "select:not([disabled])",
+                    "textarea:not([disabled])",
+                    "iframe",
+                    "object",
+                    "embed",
+                    "[contenteditable='true']",
+                    "[tabindex]:not([tabindex='-1'])"
+                ].join(",");
+
+                const drawerCandidates = Array.from(
+                    drawer.querySelectorAll(focusableSelector)
+                );
+                const focusable = drawerCandidates.filter(function (element) {
+                    return (
+                        element.getClientRects().length > 0 &&
+                        window.getComputedStyle(element).visibility !== "hidden"
+                    );
+                });
+
+                if (focusable.length) {
+                    const firstFocusable = focusable[0];
+                    const lastFocusable =
+                        focusable[focusable.length - 1];
+                    const activeElement = document.activeElement;
+                    const focusInsideDrawer =
+                        activeElement === drawer ||
+                        drawer.contains(activeElement);
+
+                    if (!focusInsideDrawer) {
+                        event.preventDefault();
+                        (
+                            event.shiftKey
+                                ? lastFocusable
+                                : firstFocusable
+                        ).focus();
+                    } else if (
+                        event.shiftKey &&
+                        activeElement === firstFocusable
+                    ) {
+                        event.preventDefault();
+                        lastFocusable.focus();
+                    } else if (
+                        !event.shiftKey &&
+                        activeElement === lastFocusable
+                    ) {
+                        event.preventDefault();
+                        firstFocusable.focus();
+                    }
+                } else {
+                    event.preventDefault();
+                    drawer.focus();
+                }
+            }
+
+            return;
+        }
+
         if (event.key !== "Escape") return;
 
         const dismissibleDrawers = Array.from(
@@ -1931,7 +2068,7 @@ function createRenderedNodes(item) {
             "dismiss",
             null
         );
-    });
+    }, true);
 
     document.addEventListener("click", function (event) {
         if (event.defaultPrevented) return;

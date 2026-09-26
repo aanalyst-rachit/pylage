@@ -20,11 +20,11 @@
 
 ## Phase 1 — Contract Freeze & Baseline
 
-- [ ] Freeze current Drawer API contract
-- [ ] Audit existing Drawer implementation
-- [ ] Audit existing Drawer tests
-- [ ] Identify reusable runtime, event, responsive and accessibility infrastructure
-- [ ] Establish focused regression baseline
+- [x] Freeze current Drawer API contract
+- [x] Audit existing Drawer implementation
+- [x] Audit existing Drawer tests
+- [x] Identify reusable runtime, event, responsive and accessibility infrastructure
+- [x] Establish focused regression baseline
 
 ## Phase 2 — Interaction Foundation [P0]
 
@@ -48,12 +48,12 @@
 ## Phase 4 — Accessibility [P0]
 
 - [ ] Correct Drawer semantics
-- [ ] ARIA attributes
-- [ ] Keyboard navigation
-- [ ] Focus entry behavior
+- [x] ARIA attributes
+- [x] Keyboard navigation
+- [x] Focus entry behavior
 - [ ] Focus containment for modal Drawer
-- [ ] Focus restoration on close
-- [ ] Accessibility browser tests
+- [x] Focus restoration on close
+- [x] Accessibility browser tests
 
 ## Phase 5 — Modal vs Persistent [P0]
 

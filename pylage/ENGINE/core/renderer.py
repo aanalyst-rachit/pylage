@@ -486,9 +486,7 @@ class HTMLRenderer:
     margin: 0;
     visibility: hidden;
     pointer-events: none;
-    transition:
-        transform 180ms ease,
-        visibility 180ms ease;
+    transition: transform 180ms ease;
     z-index: 1000;
 }
 
@@ -557,6 +555,8 @@ class HTMLRenderer:
             if custom_class != "pylage-drawer":
                 classes.append(custom_class)
 
+        is_open = bool(self._value(component.props.get("open")))
+
         attributes = (
             common
             + ' class="'
@@ -568,9 +568,16 @@ class HTMLRenderer:
         )
 
         if title is not None:
-            attributes += (
-                f' title="{escape(str(title), quote=True)}"'
-            )
+            escaped_title = escape(str(title), quote=True)
+            attributes += f' title="{escaped_title}"'
+            attributes += f' aria-label="{escaped_title}"'
+
+        attributes += (
+            ' aria-hidden="'
+            + ("false" if is_open else "true")
+            + '"'
+            + ' tabindex="-1"'
+        )
 
         attributes += self._render_prop_attributes(
             component,
@@ -578,7 +585,6 @@ class HTMLRenderer:
         )
 
         children = self._render_children(component)
-        is_open = bool(self._value(component.props.get("open")))
 
         self._styles.add(self._drawer_css())
 

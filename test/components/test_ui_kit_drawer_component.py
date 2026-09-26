@@ -118,6 +118,26 @@ def test_drawer_preserves_custom_class_and_title():
     assert 'class="pylage-drawer my-drawer"' in html
     assert 'title="Navigation"' in html
 
+def test_drawer_uses_title_as_accessible_name():
+    drawer = Drawer(title="Navigation")
+    html = render(drawer)
+
+    assert 'title="Navigation"' in html
+    assert 'aria-label="Navigation"' in html
+
+
+def test_drawer_is_hidden_from_accessibility_tree_when_closed():
+    html = render(Drawer(open=False))
+
+    assert 'aria-hidden="true"' in html
+
+
+def test_drawer_is_exposed_to_accessibility_tree_when_open():
+    html = render(Drawer(open=True))
+
+    assert 'aria-hidden="false"' in html
+
+
 def test_drawer_defaults_to_left_position():
     html = render(Drawer())
 

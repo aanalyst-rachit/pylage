@@ -1,7 +1,196 @@
 from playwright.sync_api import expect, sync_playwright
 
-from pylage.ENGINE import Column, Drawer, State, Text
+from pylage.ENGINE import Button, Column, Drawer, State, Text
 from pylage.ENGINE.runtime import Runtime
+
+
+def test_drawer_focuses_first_focusable_child_when_opened():
+    open_state = State(False)
+    drawer = Drawer(
+        Column(
+            Text("Drawer content"),
+            Button("First action"),
+            Button("Second action"),
+        ),
+        open=open_state,
+    )
+    trigger = Button("Open drawer")
+    app = Column(trigger, drawer)
+
+    runtime = Runtime(
+        app,
+        title="PyLage Drawer Focus Entry Browser Test",
+        output="test_output/drawer_browser/focus_entry.html",
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                trigger_locator = page.locator(
+                    f'button[data-pylage-id="{trigger.id}"]'
+                )
+                drawer_locator = page.locator(
+                    f'aside[data-pylage-id="{drawer.id}"]'
+                )
+                first_action = drawer_locator.locator("button").first
+
+                trigger_locator.focus()
+                expect(trigger_locator).to_be_focused()
+
+                open_state.set(True)
+
+                expect(drawer_locator).to_have_attribute(
+                    "open",
+                    "",
+                    timeout=10000,
+                )
+                expect(drawer_locator).to_have_attribute(
+                    "aria-hidden",
+                    "false",
+                )
+                expect(first_action).to_be_focused(timeout=10000)
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_drawer_restores_focus_to_trigger_when_closed():
+    open_state = State(False)
+    drawer = Drawer(
+        Column(
+            Text("Drawer content"),
+            Button("First action"),
+        ),
+        open=open_state,
+    )
+    trigger = Button("Open drawer")
+    app = Column(trigger, drawer)
+
+    def dismiss():
+        open_state.set(False)
+
+    drawer.events["dismiss"] = dismiss
+
+    runtime = Runtime(
+        app,
+        title="PyLage Drawer Focus Restoration Browser Test",
+        output="test_output/drawer_browser/focus_restoration.html",
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                trigger_locator = page.locator(
+                    f'button[data-pylage-id="{trigger.id}"]'
+                )
+                drawer_locator = page.locator(
+                    f'aside[data-pylage-id="{drawer.id}"]'
+                )
+                first_action = drawer_locator.locator("button").first
+
+                trigger_locator.focus()
+                expect(trigger_locator).to_be_focused()
+
+                open_state.set(True)
+
+                expect(drawer_locator).to_have_attribute(
+                    "open",
+                    "",
+                    timeout=10000,
+                )
+                expect(first_action).to_be_focused(timeout=10000)
+
+                open_state.set(False)
+
+                expect(drawer_locator).not_to_have_attribute(
+                    "open",
+                    timeout=10000,
+                )
+                expect(drawer_locator).to_have_attribute(
+                    "aria-hidden",
+                    "true",
+                )
+                expect(trigger_locator).to_be_focused(timeout=10000)
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+
+
+
+
+
+
+def test_drawer_focuses_itself_when_opened_without_focusable_children():
+    open_state = State(False)
+    drawer = Drawer(Text("Drawer content"), open=open_state)
+    trigger = Button("Open drawer")
+    app = Column(trigger, drawer)
+
+    runtime = Runtime(
+        app,
+        title="PyLage Drawer Focus Fallback Browser Test",
+        output="test_output/drawer_browser/focus_fallback.html",
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                trigger_locator = page.locator(
+                    f'button[data-pylage-id="{trigger.id}"]'
+                )
+                drawer_locator = page.locator(
+                    f'aside[data-pylage-id="{drawer.id}"]'
+                )
+
+                trigger_locator.focus()
+                open_state.set(True)
+
+                expect(drawer_locator).to_have_attribute(
+                    "open",
+                    "",
+                    timeout=10000,
+                )
+                expect(drawer_locator).to_have_attribute(
+                    "tabindex",
+                    "-1",
+                    timeout=10000,
+                )
+                expect(drawer_locator).to_be_focused(timeout=10000)
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
 
 
 def test_drawer_backdrop_click_dismisses_drawer_in_browser():
@@ -337,5 +526,115 @@ def test_drawer_escape_key_dismisses_topmost_open_drawer_only():
             finally:
                 browser.close()
 
+    finally:
+        runtime.stop()
+
+
+
+def test_drawer_tab_wraps_focus_from_last_to_first():
+    open_state = State(True)
+    drawer = Drawer(
+        Column(
+            Button("First action"),
+            Button("Last action"),
+        ),
+        open=open_state,
+    )
+    background = Button("Background")
+    app = Column(background, drawer)
+
+    runtime = Runtime(
+        app,
+        title="PyLage Drawer Focus Containment Forward Browser Test",
+        output="test_output/drawer_browser/focus_containment_forward.html",
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                drawer_locator = page.locator(
+                    f"aside[data-pylage-id=\"{drawer.id}\"]"
+                )
+                buttons = drawer_locator.locator("button")
+                first_action = buttons.nth(0)
+                last_action = buttons.nth(1)
+
+
+                last_action.focus()
+                expect(last_action).to_be_focused()
+
+                page.keyboard.press("Tab")
+
+
+                page.wait_for_timeout(250)
+
+                assert page.evaluate(
+                    "() => document.activeElement === document.querySelector(\".pylage-drawer[open] button\")"
+                )
+
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_drawer_shift_tab_wraps_focus_from_first_to_last():
+    open_state = State(True)
+    drawer = Drawer(
+        Column(
+            Button("First action"),
+            Button("Last action"),
+        ),
+        open=open_state,
+    )
+    background = Button("Background")
+    app = Column(background, drawer)
+
+    runtime = Runtime(
+        app,
+        title="PyLage Drawer Focus Containment Reverse Browser Test",
+        output="test_output/drawer_browser/focus_containment_reverse.html",
+    )
+
+    try:
+        url = runtime.start()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    "() => window.PyLage && window.PyLage.socket && window.PyLage.socket.readyState === WebSocket.OPEN",
+                    timeout=10000,
+                )
+
+                drawer_locator = page.locator(
+                    f"aside[data-pylage-id=\"{drawer.id}\"]"
+                )
+                buttons = drawer_locator.locator("button")
+                first_action = buttons.nth(0)
+                last_action = buttons.nth(1)
+
+                first_action.focus()
+                expect(first_action).to_be_focused()
+
+                page.keyboard.press("Shift+Tab")
+
+                page.wait_for_timeout(250)
+
+                assert page.evaluate(
+                    "() => document.activeElement === document.querySelector(\".pylage-drawer[open] button:last-of-type\")"
+                )
+            finally:
+                browser.close()
     finally:
         runtime.stop()
