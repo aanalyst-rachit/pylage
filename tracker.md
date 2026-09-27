@@ -122,10 +122,10 @@
 
 ## Phase 13 — Portal & Layering [P2]
 
-- [ ] Audit current renderer layering
-- [ ] Determine whether portal is architecturally necessary
-- [ ] Handle overlay/z-index/clipping if required
-- [ ] Add portal only when justified
+- [x] Audit current renderer layering — existing `position`, `z_index`, fixed overlay, Drawer backdrop, and loading-overlay primitives already provide the required layering model
+- [x] Determine whether portal is architecturally necessary — no current component requires DOM reparenting; existing fixed overlays render correctly through normal component composition
+- [x] Handle overlay/z-index/clipping if required — existing z-index contracts remain intact; browser verification confirms a fixed loading overlay remains viewport-sized inside an `overflow: hidden` ancestor
+- [x] Add portal only when justified — no portal introduced because the current architecture has no demonstrated portal requirement
 
 ## Phase 14 — Nested Drawer Coordination [P2]
 

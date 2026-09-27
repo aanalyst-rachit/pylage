@@ -66,3 +66,67 @@ def test_positioning_and_z_index_browser_contract():
             browser.close()
     finally:
         runtime.stop()
+
+
+def test_fixed_loading_overlay_escapes_overflow_hidden_ancestor():
+    app = pl.column(
+        pl.column(
+            pl.text("Clipping Ancestor"),
+            pl.loading_overlay(
+                "Loading",
+                open=True,
+            ),
+            style=pl.style(
+                width="240px",
+                height="120px",
+                overflow="hidden",
+                position="relative",
+            ),
+        ),
+    )
+
+    runtime = Runtime(
+        app,
+        title="PyLage Fixed Overlay Clipping Contract",
+        output="test_output/browser_fixed_overlay_clipping/index.html",
+    )
+
+    try:
+        url = runtime.start()
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1280, "height": 720})
+            page.goto(url)
+
+            overlay = page.locator("dialog").filter(has_text="Loading")
+
+            values = overlay.evaluate(
+                """element => {
+                    const s = getComputedStyle(element);
+                    const r = element.getBoundingClientRect();
+                    return {
+                        position: s.position,
+                        zIndex: s.zIndex,
+                        top: r.top,
+                        left: r.left,
+                        right: r.right,
+                        bottom: r.bottom,
+                        width: r.width,
+                        height: r.height,
+                    };
+                }"""
+            )
+
+            assert values["position"] == "fixed"
+            assert values["zIndex"] == "1100"
+            assert values["top"] == 0
+            assert values["left"] == 0
+            assert values["right"] == 1280
+            assert values["bottom"] == 720
+            assert values["width"] == 1280
+            assert values["height"] == 720
+
+            browser.close()
+    finally:
+        runtime.stop()
