@@ -115,10 +115,10 @@
 
 ## Phase 12 — Persistent / Mini Sidebar [P2]
 
-- [ ] Audit existing sidebar primitives
-- [ ] Define expanded/collapsed model if needed
-- [ ] Avoid forcing persistent-sidebar concerns into core Drawer
-- [ ] Add dedicated sidebar behavior only where justified
+- [x] Audit existing sidebar primitives — existing SidebarLayout, State/DerivedState, Style, ResponsiveStyle, and cond() already cover the required composition
+- [x] Define expanded/collapsed model if needed — no new model required; expanded/collapsed state can use existing State/DerivedState with reactive Style values
+- [x] Avoid forcing persistent-sidebar concerns into core Drawer — persistent/mini sidebar behavior is presentation/layout state and remains outside core Drawer
+- [x] Add dedicated sidebar behavior only where justified — no dedicated primitive justified; existing public primitives provide the required behavior
 
 ## Phase 13 — Portal & Layering [P2]
 
