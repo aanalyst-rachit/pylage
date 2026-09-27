@@ -108,10 +108,10 @@
 
 ## Phase 11 — Advanced Interaction [P2]
 
-- [ ] Evaluate drag-to-close
-- [ ] Evaluate snap points
-- [ ] Evaluate close threshold
-- [ ] Implement only if architecture and UX justify them
+- [x] Evaluate drag-to-close — evaluated; no existing gesture infrastructure, so not justified for core Drawer
+- [x] Evaluate snap points — evaluated; would introduce a new intermediate-position model not required by current Drawer architecture
+- [x] Evaluate close threshold — evaluated; only becomes meaningful with drag interaction, which is not justified currently
+- [x] Implement only if architecture and UX justify them — evaluation concluded that implementation is not justified at this stage
 
 ## Phase 12 — Persistent / Mini Sidebar [P2]
 
