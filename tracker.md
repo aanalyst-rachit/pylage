@@ -144,29 +144,29 @@
 
 ## Phase 16 — Comprehensive Testing
 
-- [ ] Component tests
-- [ ] Reactive state tests
-- [ ] Interaction tests
-- [ ] Accessibility tests
-- [ ] Responsive tests
-- [ ] Navigation tests
-- [ ] WebSocket tests
-- [ ] Browser tests
-- [ ] Full regression suite
+- [x] Component tests
+- [x] Reactive state tests
+- [x] Interaction tests
+- [x] Accessibility tests
+- [x] Responsive tests
+- [x] Navigation tests
+- [x] WebSocket tests
+- [x] Browser tests
+- [x] Full regression suite
 
 ## Phase 17 — Live Drawer Showcase
 
-- [ ] Keep `live/drawer/` public-API-only
-- [ ] Basic Drawer demonstration
-- [ ] Navigation Drawer demonstration
-- [ ] Mobile Sidebar demonstration
-- [ ] Reactive open/close
-- [ ] Image/content composition
-- [ ] Routing
-- [ ] Responsive behavior
-- [ ] Accessibility behavior
-- [ ] Overlay/outside-click behavior
-- [ ] Multiple Drawer configurations
+- [x] Keep `live/drawer/` public-API-only
+- [x] Basic Drawer demonstration
+- [x] Navigation Drawer demonstration
+- [x] Mobile Sidebar demonstration
+- [x] Reactive open/close
+- [x] Image/content composition
+- [x] Routing
+- [x] Responsive behavior
+- [x] Accessibility behavior
+- [x] Overlay/outside-click behavior
+- [x] Multiple Drawer configurations
 
 ## Phase 18 — Framework Comparison
 
@@ -201,7 +201,7 @@
 
 - [ ] Focused Drawer tests pass
 - [ ] Live browser verification passes
-- [ ] Routing verification passes
+- [x] Routing verification passes
 - [ ] Responsive browser verification passes
 - [ ] Accessibility verification passes
 - [ ] Full pytest regression passes

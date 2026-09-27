@@ -205,6 +205,7 @@ def page():
             open=mobile_open,
             title="Mobile Sidebar",
             class_name="live-mobile-sidebar",
+            responsive_mode={"base": "overlay", "md": "persistent"},
         ),
         style=pl.style(
             padding="2rem",
