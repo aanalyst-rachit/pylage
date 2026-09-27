@@ -101,10 +101,10 @@
 
 ## Phase 10 — Drawer Lifecycle Events [P1]
 
-- [ ] Evaluate canonical `on_open_change` API
-- [ ] Wire lifecycle events through existing event system
-- [ ] Reactive state/event consistency tests
-- [ ] WebSocket verification
+- [x] Evaluate canonical `on_open_change` API
+- [x] Wire lifecycle events through existing event system
+- [x] Reactive state/event consistency tests
+- [x] WebSocket verification
 
 ## Phase 11 — Advanced Interaction [P2]
 

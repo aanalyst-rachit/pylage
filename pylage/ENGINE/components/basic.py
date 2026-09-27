@@ -589,7 +589,18 @@ def Menu(*children, **props: Any) -> Component:
 
 
 def Drawer(*children, **props: Any) -> Component:
-    return component("Drawer", *children, **props)
+    open_state = props.get("open")
+    open_change = props.get("on_open_change")
+
+    drawer = component("Drawer", *children, **props)
+
+    if isinstance(open_state, State) and open_change is not None:
+        unsubscribe = open_state.subscribe(
+            lambda old, new: open_change(new)
+        )
+        drawer.add_cleanup(unsubscribe)
+
+    return drawer
 
 
 def Tooltip(*children, **props: Any) -> Component:

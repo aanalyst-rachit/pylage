@@ -194,3 +194,54 @@ def test_drawer_rejects_invalid_position():
         )
     else:
         raise AssertionError("invalid Drawer position was accepted")
+
+
+def test_drawer_on_open_change_is_registered_as_event():
+    handler = lambda value: None
+    drawer = Drawer(on_open_change=handler)
+
+    assert drawer.events["open_change"] is handler
+
+
+def test_drawer_on_open_change_follows_reactive_open_state():
+    state = State(False)
+    received = []
+
+    Drawer(
+        open=state,
+        on_open_change=received.append,
+    )
+
+    state.set(True)
+    state.set(False)
+
+    assert received == [True, False]
+
+
+def test_drawer_on_open_change_ignores_unchanged_state():
+    state = State(False)
+    received = []
+
+    Drawer(
+        open=state,
+        on_open_change=received.append,
+    )
+
+    state.set(False)
+
+    assert received == []
+
+
+def test_drawer_on_open_change_subscription_is_cleaned_up():
+    state = State(False)
+    received = []
+
+    drawer = Drawer(
+        open=state,
+        on_open_change=received.append,
+    )
+
+    drawer.cleanup()
+    state.set(True)
+
+    assert received == []
