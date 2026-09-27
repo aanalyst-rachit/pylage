@@ -87,6 +87,42 @@ drawer_open.set(True)
 drawer_open.set(False)
 ```
 
+### Modal Drawer
+
+Drawers are modal by default. A modal Drawer renders a backdrop and establishes the modal interaction boundary.
+
+```python
+import pylage as pl
+
+pl.drawer(
+    pl.column(
+        pl.heading("Menu", level=2),
+        pl.button("Dashboard"),
+        pl.button("Settings"),
+    ),
+    open=True,
+    modal=True,
+    title="Menu",
+)
+```
+
+The `modal` property controls whether the Drawer uses the modal backdrop:
+
+- `modal=True` — modal Drawer with backdrop behavior.
+- `modal=False` — persistent Drawer without the modal backdrop.
+
+A dismissal handler can be attached through `on_dismiss`.
+
+```python
+import pylage as pl
+
+pl.drawer(
+    pl.text("Menu"),
+    open=True,
+    on_dismiss=lambda: print("dismissed"),
+)
+```
+
 ### Custom Content
 
 Drawer content is composed from normal PyLage components.
@@ -156,7 +192,19 @@ mobile_sidebar(*children, style=None, **props)
 | --- | --- | --- | --- |
 | `*children` | `Any` | — | Content rendered inside the Drawer. |
 | `style` | `Style \\| ResponsiveStyle \\| None` | `None` | Custom or responsive styling forwarded to the Drawer. |
-| `**props` | `Any` | — | Additional Drawer properties, including properties such as `open`, `title`, and `class_name`. |
+| `**props` | `Any` | — | Additional Drawer properties, including `open`, `modal`, `position`, `on_dismiss`, `responsive_mode`, `title`, and `class_name`. |
+
+## Key Properties
+
+| Property | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `bool \| State` | `False` | Controls whether the Drawer is open. |
+| `modal` | `bool` | `True` | Controls modal backdrop and interaction behavior. |
+| `position` | `str` | `"left"` | Drawer position: `left`, `right`, `top`, or `bottom`. |
+| `on_dismiss` | `Callable` | `None` | Handler for Drawer dismissal events. |
+| `responsive_mode` | `dict` | `None` | Maps responsive breakpoints to `overlay` or `persistent` modes. |
+| `title` | `str` | `None` | Sets the HTML title and accessible `aria-label`. |
+| `class_name` | `str` | `None` | Adds a custom CSS class to the Drawer. |
 
 ## Open State
 
@@ -167,6 +215,47 @@ The underlying Drawer supports both boolean and reactive `open` values.
 - A `State` value can be used for reactive open/close behavior.
 
 The UI Kit recipe does not implement a separate visibility state system; it forwards `open` to the existing Drawer component.
+
+## Responsive Usage
+
+Drawer behavior can be configured per responsive breakpoint with `responsive_mode`.
+
+Supported breakpoints are:
+
+- `base`
+- `sm`
+- `md`
+- `lg`
+- `xl`
+
+Supported modes are:
+
+- `overlay`
+- `persistent`
+
+When `base` is omitted, it defaults to `overlay`.
+
+A common responsive pattern is an overlay drawer on smaller screens that becomes persistent on larger screens:
+
+```python
+import pylage as pl
+
+pl.mobile_sidebar(
+    pl.column(
+        pl.heading("Menu", level=2),
+        pl.button("Dashboard"),
+        pl.button("Projects"),
+    ),
+    responsive_mode={
+        "base": "overlay",
+        "md": "persistent",
+    },
+)
+```
+
+The same configuration is available on `drawer()` and `navigation_drawer()`.
+
+`responsive_mode` is part of the PyLage layout API and is rendered as Drawer configuration rather than leaked as an ordinary HTML attribute.
 
 ## Rendering Behavior
 
@@ -179,6 +268,20 @@ When open, the panel is translated into view and pointer interaction is enabled.
 The Drawer uses fixed positioning with viewport-height sizing and a high stacking order so it behaves as an off-canvas overlay rather than a normal layout column.
 
 The built-in renderer provides the Drawer CSS and rendering behavior.
+
+## Accessibility
+
+The Drawer provides accessibility-related state and focus behavior.
+
+- The Drawer renders as an HTML `aside` element.
+- A supplied `title` is used as the accessible label.
+- A closed Drawer is marked `aria-hidden="true"`.
+- An open Drawer is marked `aria-hidden="false"`.
+- Modal Drawers use a backdrop to establish the modal interaction boundary.
+- When a modal Drawer opens, the runtime moves focus into the Drawer.
+- When it closes, focus can be restored to the element that opened it.
+
+Use a meaningful `title` when the Drawer represents a named navigation or interaction region.
 
 ## Styling Boundary
 
