@@ -83,12 +83,12 @@
 
 ## Phase 8 — Navigation Drawer [P1]
 
-- [ ] Define NavigationDrawer specialization
-- [ ] Current-route integration
-- [ ] Active navigation item integration
-- [ ] Navigation click behavior
-- [ ] Mobile navigation auto-close
-- [ ] Navigation Drawer browser tests
+- [x] Define NavigationDrawer specialization
+- [x] Current-route integration
+- [x] Active navigation item integration
+- [x] Navigation click behavior
+- [x] Mobile navigation auto-close
+- [x] Navigation Drawer browser tests
 
 ## Phase 9 — Mobile Sidebar [P1]
 

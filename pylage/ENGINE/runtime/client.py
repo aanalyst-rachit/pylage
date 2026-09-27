@@ -1386,6 +1386,79 @@ CLIENT_RUNTIME = r"""
         overlay.textContent = "[PyLage] Server error\n\n" + text;
     };
 
+    window.PyLage._closeResponsiveNavigationDrawers = function () {
+        document
+            .querySelectorAll(
+                ".pylage-drawer[data-pylage-navigation-drawer][open][data-pylage-responsive-mode]"
+            )
+            .forEach(function (drawer) {
+                if (
+                    window.PyLage._resolveDrawerResponsiveMode(drawer) !==
+                    "overlay"
+                ) {
+                    return;
+                }
+
+                const drawerId =
+                    drawer.getAttribute("data-pylage-id");
+
+                if (drawerId) {
+                    sendEvent(drawerId, "dismiss", null);
+                }
+
+                const focusState =
+                    drawerId
+                        ? window.PyLage._drawerFocusState[drawerId] || null
+                        : null;
+
+                drawer.removeAttribute("open");
+                drawer.setAttribute("aria-hidden", "true");
+
+                const backdrop = drawerId
+                    ? document.querySelector(
+                          '[data-pylage-drawer-id="' +
+                          CSS.escape(drawerId) +
+                          '"]'
+                      )
+                    : null;
+
+                if (backdrop) {
+                    backdrop.removeAttribute("open");
+                }
+
+                const scrollState =
+                    window.PyLage._drawerScrollState;
+
+                const remainingModalDrawers =
+                    document.querySelectorAll(
+                        ".pylage-drawer[open][data-pylage-modal=\"true\"]"
+                    );
+
+                if (
+                    remainingModalDrawers.length === 0 &&
+                    scrollState.locked
+                ) {
+                    document.body.style.overflow =
+                        scrollState.overflow;
+                    scrollState.locked = false;
+                    scrollState.overflow = "";
+                }
+
+                if (drawerId && focusState) {
+                    const returnFocus = focusState.returnFocus;
+                    delete window.PyLage._drawerFocusState[drawerId];
+
+                    if (
+                        returnFocus &&
+                        returnFocus.isConnected &&
+                        typeof returnFocus.focus === "function"
+                    ) {
+                        returnFocus.focus();
+                    }
+                }
+            });
+    };
+
     window.PyLage.onResponse = window.PyLage.onResponse || function (message) {
         console.log("[PyLage response]", message);
 
@@ -1405,6 +1478,7 @@ CLIENT_RUNTIME = r"""
                         window.location.pathname || "/"
                     );
                     pendingNavigation = null;
+                    window.PyLage._closeResponsiveNavigationDrawers();
                 } else if (pendingNavigation) {
                     window.history.replaceState(
                         pendingNavigation.previousState,

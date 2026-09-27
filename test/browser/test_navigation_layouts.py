@@ -3,6 +3,7 @@ from pathlib import Path
 from playwright.sync_api import expect, sync_playwright
 
 import pylage as pl
+from pylage.ENGINE.core.state import State
 from pylage.ENGINE.routing import Router, RoutingRuntime
 from pylage.ENGINE.runtime import Runtime
 
@@ -392,5 +393,250 @@ def test_routed_breadcrumbs_update_with_navigation(tmp_path: Path):
             ).to_be_visible()
 
             browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_navigation_drawer_closes_after_successful_navigation_on_mobile(
+    tmp_path: Path,
+):
+    pages = tmp_path / "pages"
+    pages.mkdir()
+
+    (pages / "index.py").write_text(
+        """import pylage as pl
+
+def page():
+    return pl.text("Home Page")
+""",
+        encoding="utf-8",
+    )
+    (pages / "analytics.py").write_text(
+        """import pylage as pl
+
+def page():
+    return pl.text("Analytics Page")
+""",
+        encoding="utf-8",
+    )
+
+    root = pl.column()
+    content = pl.column()
+    routing = RoutingRuntime(
+        Router(pages),
+        root,
+        content_root=content,
+    )
+
+    open_state = State(True)
+    drawer = pl.navigation_drawer(
+        pl.navigation_item(
+            "Analytics",
+            href="/analytics",
+            current_path=routing.current_path_state,
+        ),
+        open=open_state,
+        responsive_mode={"base": "overlay", "md": "persistent"},
+        title="Navigation Drawer",
+    )
+
+    root.set_children(drawer, content)
+    routing.navigate("/")
+
+    runtime = Runtime(
+        root,
+        title="PyLage Navigation Drawer Mobile Close Test",
+        output="test_output/navigation_layouts/navigation_drawer_mobile_close.html",
+        navigation_handler=routing.navigate,
+    )
+
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 600, "height": 800})
+            try:
+                url = runtime.start()
+                page.goto(url, wait_until="domcontentloaded")
+
+                drawer_locator = page.locator(
+                    f'aside[data-pylage-id="{drawer.id}"]'
+                )
+                expect(drawer_locator).to_have_attribute("open", "")
+
+                drawer_locator.get_by_role(
+                    "link", name="Analytics"
+                ).click()
+
+                expect(
+                    page.get_by_text("Analytics Page", exact=True)
+                ).to_be_visible()
+
+                expect(drawer_locator).not_to_have_attribute(
+                    "open",
+                    timeout=10000,
+                )
+                assert open_state.value is False
+                assert page.url.endswith("/analytics")
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_navigation_drawer_stays_open_in_persistent_mode(
+    tmp_path: Path,
+):
+    pages = tmp_path / "pages"
+    pages.mkdir()
+
+    (pages / "index.py").write_text(
+        """import pylage as pl
+
+def page():
+    return pl.text("Home Page")
+""",
+        encoding="utf-8",
+    )
+    (pages / "analytics.py").write_text(
+        """import pylage as pl
+
+def page():
+    return pl.text("Analytics Page")
+""",
+        encoding="utf-8",
+    )
+
+    root = pl.column()
+    content = pl.column()
+    routing = RoutingRuntime(
+        Router(pages),
+        root,
+        content_root=content,
+    )
+
+    open_state = State(True)
+    drawer = pl.navigation_drawer(
+        pl.navigation_item(
+            "Analytics",
+            href="/analytics",
+            current_path=routing.current_path_state,
+        ),
+        open=open_state,
+        responsive_mode={"base": "overlay", "md": "persistent"},
+        title="Navigation Drawer",
+    )
+
+    root.set_children(drawer, content)
+    routing.navigate("/")
+
+    runtime = Runtime(
+        root,
+        title="PyLage Navigation Drawer Persistent Test",
+        output="test_output/navigation_layouts/navigation_drawer_persistent.html",
+        navigation_handler=routing.navigate,
+    )
+
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 800, "height": 800})
+            try:
+                url = runtime.start()
+                page.goto(url, wait_until="domcontentloaded")
+
+                drawer_locator = page.locator(
+                    f'aside[data-pylage-id="{drawer.id}"]'
+                )
+                expect(drawer_locator).to_have_attribute("open", "")
+
+                drawer_locator.get_by_role(
+                    "link", name="Analytics"
+                ).click()
+
+                expect(
+                    page.get_by_text("Analytics Page", exact=True)
+                ).to_be_visible()
+                expect(drawer_locator).to_have_attribute("open", "")
+                assert open_state.value is True
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_navigation_drawer_stays_open_when_navigation_fails(
+    tmp_path: Path,
+):
+    pages = tmp_path / "pages"
+    pages.mkdir()
+
+    (pages / "index.py").write_text(
+        """import pylage as pl
+
+def page():
+    return pl.text("Home Page")
+""",
+        encoding="utf-8",
+    )
+
+    root = pl.column()
+    content = pl.column()
+    routing = RoutingRuntime(
+        Router(pages),
+        root,
+        content_root=content,
+    )
+
+    open_state = State(True)
+    drawer = pl.navigation_drawer(
+        pl.navigation_item(
+            "Missing",
+            href="/missing",
+            current_path=routing.current_path_state,
+        ),
+        open=open_state,
+        responsive_mode={"base": "overlay", "md": "persistent"},
+        title="Navigation Drawer",
+    )
+
+    root.set_children(drawer, content)
+    routing.navigate("/")
+
+    runtime = Runtime(
+        root,
+        title="PyLage Navigation Drawer Failed Navigation Test",
+        output="test_output/navigation_layouts/navigation_drawer_failed_navigation.html",
+        navigation_handler=routing.navigate,
+    )
+
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 600, "height": 800})
+            try:
+                url = runtime.start()
+                page.goto(url, wait_until="domcontentloaded")
+
+                drawer_locator = page.locator(
+                    f'aside[data-pylage-id="{drawer.id}"]'
+                )
+                expect(drawer_locator).to_have_attribute("open", "")
+
+                drawer_locator.get_by_role(
+                    "link", name="Missing"
+                ).click()
+
+                expect(
+                    page.get_by_text("Home Page", exact=True)
+                ).to_be_visible()
+                expect(drawer_locator).to_have_attribute(
+                    "open",
+                    "",
+                    timeout=10000,
+                )
+                assert open_state.value is True
+                assert page.url.endswith("/")
+            finally:
+                browser.close()
     finally:
         runtime.stop()

@@ -560,6 +560,9 @@ class HTMLRenderer:
         is_open = bool(self._value(component.props.get("open")))
         is_modal = bool(self._value(component.props.get("modal", True)))
         responsive_mode = component.props.get("responsive_mode")
+        is_navigation_drawer = bool(
+            self._value(component.props.get("_navigation_drawer", False))
+        )
 
         responsive_mode_json = ""
         if responsive_mode is not None:
@@ -593,6 +596,9 @@ class HTMLRenderer:
                 + '"'
             )
 
+        if is_navigation_drawer:
+            attributes += " data-pylage-navigation-drawer"
+
         attributes += (
             ' aria-hidden="'
             + ("false" if is_open else "true")
@@ -609,6 +615,7 @@ class HTMLRenderer:
                 "position",
                 "modal",
                 "responsive_mode",
+                "_navigation_drawer",
             },
         )
 
