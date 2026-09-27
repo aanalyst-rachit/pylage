@@ -1106,3 +1106,104 @@ def test_responsive_drawer_reconciles_mode_when_viewport_crosses_breakpoint():
                 browser.close()
     finally:
         runtime.stop()
+
+
+def test_nested_modal_drawers_stack_escape_and_restore_focus():
+    outer_open = State(False)
+    inner_open = State(False)
+
+    def dismiss_outer():
+        outer_open.set(False)
+
+    def dismiss_inner():
+        inner_open.set(False)
+
+    outer = Drawer(
+        Text("Outer drawer"),
+        Button("Outer action"),
+        open=outer_open,
+        on_dismiss=dismiss_outer,
+    )
+    inner = Drawer(
+        Text("Inner drawer"),
+        Button("Inner action"),
+        open=inner_open,
+        on_dismiss=dismiss_inner,
+    )
+    trigger = Button("Open outer")
+
+    runtime = Runtime(
+        Column(trigger, outer, inner),
+        title="PyLage Nested Modal Drawer Browser Test",
+        output="test_output/drawer_browser/nested_modal.html",
+    )
+
+    try:
+        url = runtime.start()
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+
+            try:
+                page.goto(url, wait_until="domcontentloaded")
+                page.wait_for_function(
+                    """() => (
+                        window.PyLage &&
+                        window.PyLage.socket &&
+                        window.PyLage.socket.readyState === WebSocket.OPEN
+                    )""",
+                    timeout=10000,
+                )
+
+                trigger_locator = page.get_by_role("button", name="Open outer")
+                outer_locator = page.locator(
+                    f'aside[data-pylage-id="{outer.id}"]'
+                )
+                inner_locator = page.locator(
+                    f'aside[data-pylage-id="{inner.id}"]'
+                )
+
+                trigger_locator.focus()
+                expect(trigger_locator).to_be_focused()
+
+                outer_open.set(True)
+                expect(
+                    outer_locator.locator("button").first
+                ).to_be_focused(timeout=10000)
+
+                inner_open.set(True)
+                inner_action = inner_locator.locator("button").first
+                outer_action = outer_locator.locator("button").first
+
+                expect(inner_action).to_be_focused(timeout=10000)
+
+                expect(outer_locator).to_have_attribute("open", "")
+                expect(inner_locator).to_have_attribute("open", "")
+
+                modal_drawers = page.locator(
+                    '.pylage-drawer[open][data-pylage-modal="true"]'
+                )
+                expect(modal_drawers).to_have_count(2)
+
+                page.keyboard.press("Escape")
+
+                expect(inner_locator).not_to_have_attribute(
+                    "open",
+                    timeout=10000,
+                )
+                expect(outer_locator).to_have_attribute("open", "")
+                expect(outer_action).to_be_focused(timeout=10000)
+
+                page.keyboard.press("Escape")
+
+                expect(outer_locator).not_to_have_attribute(
+                    "open",
+                    timeout=10000,
+                )
+                expect(trigger_locator).to_be_focused(timeout=10000)
+
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()

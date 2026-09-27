@@ -129,11 +129,11 @@
 
 ## Phase 14 — Nested Drawer Coordination [P2]
 
-- [ ] Define nested Drawer behavior
-- [ ] Define modal Drawer stacking rules
-- [ ] ESC closes topmost applicable Drawer
-- [ ] Focus restoration rules
-- [ ] Multi-Drawer tests
+- [x] Define nested Drawer behavior — nested modal Drawers remain independently open, with DOM order defining the topmost modal
+- [x] Define modal Drawer stacking rules — existing modal z-index contract is preserved; the last open modal Drawer is treated as topmost
+- [x] ESC closes topmost applicable Drawer — existing Escape handling targets the last open dismissible Drawer
+- [x] Focus restoration rules — each modal stores its return-focus target; nested close restores the parent Drawer action, then the original trigger
+- [x] Multi-Drawer tests — browser coverage verifies two simultaneously open modal Drawers, topmost Escape dismissal, and nested focus restoration
 
 ## Phase 15 — Public API Cleanup
 
