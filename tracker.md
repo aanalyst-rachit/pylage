@@ -92,12 +92,12 @@
 
 ## Phase 9 — Mobile Sidebar [P1]
 
-- [ ] Define MobileSidebar specialization
-- [ ] Mobile overlay behavior
-- [ ] Backdrop behavior
-- [ ] Escape/outside-click behavior
-- [ ] Route-change close behavior
-- [ ] Mobile browser tests
+- [x] Define MobileSidebar specialization
+- [x] Mobile overlay behavior
+- [x] Backdrop behavior
+- [x] Escape/outside-click behavior
+- [x] Route-change close behavior
+- [x] Mobile browser tests
 
 ## Phase 10 — Drawer Lifecycle Events [P1]
 

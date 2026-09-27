@@ -640,3 +640,153 @@ def page():
                 browser.close()
     finally:
         runtime.stop()
+
+
+def test_mobile_sidebar_mobile_overlay_dismisses_with_backdrop_and_escape():
+    open_state = State(True)
+    sidebar = pl.mobile_sidebar(
+        pl.text("Mobile Sidebar"),
+        open=open_state,
+        responsive_mode={"base": "overlay", "md": "persistent"},
+        title="Mobile Sidebar",
+    )
+
+    runtime = Runtime(
+        pl.column(sidebar),
+        title="Mobile Sidebar Dismiss Browser Test",
+        output="test_output/navigation_layouts/mobile_sidebar_dismiss.html",
+    )
+
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 600, "height": 800})
+            try:
+                url = runtime.start()
+                page.goto(url, wait_until="domcontentloaded")
+
+                sidebar_locator = page.locator(
+                    f'aside[data-pylage-id="{sidebar.id}"]'
+                )
+                backdrop = page.locator(".pylage-drawer-backdrop")
+
+                expect(sidebar_locator).to_have_attribute("open", "")
+                expect(sidebar_locator).to_have_attribute(
+                    "data-pylage-mobile-sidebar",
+                    "",
+                )
+                expect(sidebar_locator).to_have_attribute(
+                    "data-pylage-modal",
+                    "true",
+                )
+                expect(backdrop).to_be_visible()
+
+                page.mouse.click(590, 400)
+
+                expect(sidebar_locator).not_to_have_attribute(
+                    "open",
+                    timeout=10000,
+                )
+                assert open_state.value is False
+
+                open_state.set(True)
+
+                expect(sidebar_locator).to_have_attribute(
+                    "open",
+                    "",
+                    timeout=10000,
+                )
+
+                page.keyboard.press("Escape")
+
+                expect(sidebar_locator).not_to_have_attribute(
+                    "open",
+                    timeout=10000,
+                )
+                assert open_state.value is False
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()
+
+
+def test_mobile_sidebar_route_change_closes_on_success(tmp_path: Path):
+    pages = tmp_path / "pages"
+    pages.mkdir()
+
+    (pages / "index.py").write_text(
+        "import pylage as pl\n"
+        "def page():\n"
+        "    return pl.text('Home Page')\n",
+        encoding="utf-8",
+    )
+
+    (pages / "analytics.py").write_text(
+        "import pylage as pl\n"
+        "def page():\n"
+        "    return pl.text('Analytics Page')\n",
+        encoding="utf-8",
+    )
+
+    root = pl.column()
+    content = pl.column()
+    routing = RoutingRuntime(
+        Router(pages),
+        root,
+        content_root=content,
+    )
+
+    open_state = State(True)
+    sidebar = pl.mobile_sidebar(
+        pl.navigation_item(
+            "Analytics",
+            href="/analytics",
+            current_path=routing.current_path_state,
+        ),
+        open=open_state,
+        responsive_mode={"base": "overlay", "md": "persistent"},
+        title="Mobile Sidebar",
+    )
+
+    root.set_children(sidebar, content)
+    routing.navigate("/")
+
+    runtime = Runtime(
+        root,
+        title="Mobile Sidebar Route Browser Test",
+        output="test_output/navigation_layouts/mobile_sidebar_route.html",
+        navigation_handler=routing.navigate,
+    )
+
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 600, "height": 800})
+            try:
+                url = runtime.start()
+                page.goto(url, wait_until="domcontentloaded")
+
+                sidebar_locator = page.locator(
+                    f'aside[data-pylage-id="{sidebar.id}"]'
+                )
+
+                expect(sidebar_locator).to_have_attribute("open", "")
+
+                sidebar_locator.get_by_role(
+                    "link",
+                    name="Analytics",
+                ).click()
+
+                expect(
+                    page.get_by_text("Analytics Page", exact=True)
+                ).to_be_visible()
+                expect(sidebar_locator).not_to_have_attribute(
+                    "open",
+                    timeout=10000,
+                )
+                assert open_state.value is False
+                assert page.url.endswith("/analytics")
+            finally:
+                browser.close()
+    finally:
+        runtime.stop()

@@ -563,6 +563,9 @@ class HTMLRenderer:
         is_navigation_drawer = bool(
             self._value(component.props.get("_navigation_drawer", False))
         )
+        is_mobile_sidebar = bool(
+            self._value(component.props.get("_mobile_sidebar", False))
+        )
 
         responsive_mode_json = ""
         if responsive_mode is not None:
@@ -598,6 +601,8 @@ class HTMLRenderer:
 
         if is_navigation_drawer:
             attributes += " data-pylage-navigation-drawer"
+        if is_mobile_sidebar:
+            attributes += " data-pylage-mobile-sidebar"
 
         attributes += (
             ' aria-hidden="'
@@ -616,6 +621,7 @@ class HTMLRenderer:
                 "modal",
                 "responsive_mode",
                 "_navigation_drawer",
+                "_mobile_sidebar",
             },
         )
 

@@ -1389,7 +1389,8 @@ CLIENT_RUNTIME = r"""
     window.PyLage._closeResponsiveNavigationDrawers = function () {
         document
             .querySelectorAll(
-                ".pylage-drawer[data-pylage-navigation-drawer][open][data-pylage-responsive-mode]"
+                ".pylage-drawer[data-pylage-navigation-drawer][open][data-pylage-responsive-mode]," +
+                ".pylage-drawer[data-pylage-mobile-sidebar][open][data-pylage-responsive-mode]"
             )
             .forEach(function (drawer) {
                 if (
