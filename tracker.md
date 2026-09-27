@@ -170,11 +170,11 @@
 
 ## Phase 18 — Framework Comparison
 
-- [ ] Compare final PyLage behavior with Reflex Drawer
-- [ ] Compare final PyLage sidebar/navigation model with Streamlit
-- [ ] Compare final PyLage Drawer/sidebar model with NiceGUI
-- [ ] Document deliberate differences
-- [ ] Avoid feature cloning without architectural justification
+- [x] Compare final PyLage behavior with Reflex Drawer
+- [x] Compare final PyLage sidebar/navigation model with Streamlit
+- [x] Compare final PyLage Drawer/sidebar model with NiceGUI
+- [x] Document deliberate differences
+- [x] Avoid feature cloning without architectural justification
 
 ## Phase 19 — Performance Audit
 
