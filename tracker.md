@@ -137,10 +137,10 @@
 
 ## Phase 15 — Public API Cleanup
 
-- [ ] Review final Drawer API
-- [ ] Remove unnecessary internal leakage
-- [ ] Preserve public API consistency
-- [ ] Add public API regression tests
+- [x] Review final Drawer API — top-level `pylage` exposes the canonical `drawer`, `navigation_drawer`, and `mobile_sidebar` APIs
+- [x] Remove unnecessary internal leakage — package-level `pylage.UI.layout` does not expose the uppercase Drawer constructors; dedicated `pylage.UI.layout.drawer` remains available for existing consumers
+- [x] Preserve public API consistency — top-level Drawer recipes and the dedicated layout module retain their established API boundaries
+- [x] Add public API regression tests — public exports, package-level leakage boundaries, and dedicated layout compatibility are covered
 
 ## Phase 16 — Comprehensive Testing
 

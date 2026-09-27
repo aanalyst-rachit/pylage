@@ -90,3 +90,24 @@ def test_drawer_variants_accept_public_children():
     assert pl.drawer(*children).type == "Drawer"
     assert pl.navigation_drawer(*children).type == "Drawer"
     assert pl.mobile_sidebar(*children).type == "Drawer"
+
+
+def test_drawer_public_api_boundaries_are_stable():
+    import pylage.UI.layout as layout
+    import pylage.UI.layout.drawer as layout_drawer
+
+    assert {"drawer", "navigation_drawer", "mobile_sidebar"} <= set(pl.__all__)
+
+    assert callable(pl.drawer)
+    assert callable(pl.navigation_drawer)
+    assert callable(pl.mobile_sidebar)
+
+    assert not hasattr(layout, "Drawer")
+    assert not hasattr(layout, "NavigationDrawer")
+    assert not hasattr(layout, "MobileSidebar")
+
+    assert set(layout_drawer.__all__) == {
+        "Drawer",
+        "NavigationDrawer",
+        "MobileSidebar",
+    }
