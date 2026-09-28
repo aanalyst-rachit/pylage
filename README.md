@@ -10,7 +10,7 @@
 
 **PyLage** is a Python-first framework for building reactive web interfaces with components, state, routing, layouts, forms, navigation, dashboards, charts, themes, and application-level page patterns.
 
-**Current release:** `1.0.7`
+**Current release:** `1.0.8`
 
 PyLage is designed around a simple idea:
 
@@ -1938,9 +1938,9 @@ Production deployments should use the deployment process appropriate to the targ
 
 # Release Status
 
-**PyLage 1.0.7 is the current release.**
+**PyLage 1.0.8 is the current release.**
 
-The release includes the finalized public Drawer/navigation work, routing and runtime improvements, accessibility behavior, responsive behavior, live showcase coverage, documentation, and comprehensive testing completed during the v1.0.7 development cycle.
+The release includes the finalized public Drawer/navigation work, routing and runtime improvements, accessibility behavior, responsive behavior, live showcase coverage, documentation, and comprehensive testing completed for the v1.0.8 release.
 
 ---
 
