@@ -1,3 +1,6 @@
+import re
+from pathlib import Path
+
 import pylage as ps
 from pylage.UI._meta import IMPORT_NAME, PACKAGE_NAME
 
@@ -11,7 +14,10 @@ def test_ui_kit_package_name():
 
 
 def test_ui_kit_version():
-    assert ps.__version__ == "1.0.7"
+    pyproject = Path(__file__).parents[2] / "pyproject.toml"
+    match = re.search(r"(?m)^version = \"([^\"]+)\"$", pyproject.read_text())
+    assert match is not None
+    assert ps.__version__ == match.group(1)
 
 
 def test_ui_kit_public_api():
