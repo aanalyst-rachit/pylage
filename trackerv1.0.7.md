@@ -26,11 +26,11 @@ The existing Router and RoutingRuntime should be reused. The goal is to connect 
 - [x] Drawer / NavigationDrawer / MobileSidebar exist.
 - [x] NavigationItem exists.
 - [x] BreadcrumbTrail exists.
-- [ ] Navigation UI is not automatically route-aware.
-- [ ] No public `pl.link()` navigation primitive exists.
-- [ ] NavigationItem has no route/href contract.
-- [ ] Active navigation is not automatically derived from the current route.
-- [ ] BreadcrumbTrail is not automatically generated from routing state.
+- [x] Navigation UI is automatically route-aware.
+- [x] Public `pl.link()` navigation primitive exists.
+- [x] NavigationItem has a route/href contract.
+- [x] Active navigation is automatically derived from the current route.
+- [x] BreadcrumbTrail is automatically generated from routing state.
 
 ## Phase A - Public Link Primitive
 
@@ -228,44 +228,44 @@ Make navigation failures predictable and user-facing.
 
 ### Tasks
 
-- [ ] Link to static route.
-- [ ] Link to nested route.
-- [ ] Link to dynamic route.
-- [ ] NavigationItem to static route.
-- [ ] NavigationItem to dynamic route.
-- [ ] Navbar navigation.
-- [ ] Sidebar navigation.
-- [ ] Drawer navigation.
-- [ ] MobileSidebar navigation.
-- [ ] Active navigation state.
-- [ ] Browser Back.
-- [ ] Browser Forward.
-- [ ] `replace=True` behavior.
-- [ ] External URL handling.
-- [ ] Invalid route handling.
-- [ ] Breadcrumb navigation.
-- [ ] Dynamic route parameters.
-- [ ] Existing Button behavior regression.
-- [ ] Existing Drawer behavior regression.
-- [ ] Existing routing regression tests.
-- [ ] Full PyLage test suite.
+- [x] Link to static route.
+- [x] Link to nested route.
+- [x] Link to dynamic route.
+- [x] NavigationItem to static route.
+- [x] NavigationItem to dynamic route.
+- [x] Navbar navigation.
+- [x] Sidebar navigation.
+- [x] Drawer navigation.
+- [x] MobileSidebar navigation.
+- [x] Active navigation state.
+- [x] Browser Back.
+- [x] Browser Forward.
+- [x] `replace=True` behavior.
+- [x] External URL handling.
+- [x] Invalid route handling.
+- [x] Breadcrumb navigation.
+- [x] Dynamic route parameters.
+- [x] Existing Button behavior regression.
+- [x] Existing Drawer behavior regression.
+- [x] Existing routing regression tests.
+- [x] Full PyLage test suite.
 
 ## Phase J - Documentation
 
 ### Tasks
 
-- [ ] Add routing guide.
-- [ ] Add Link documentation.
-- [ ] Add NavigationItem documentation.
-- [ ] Add Navbar example.
-- [ ] Add Sidebar example.
-- [ ] Add NavigationDrawer example.
-- [ ] Add MobileSidebar example.
-- [ ] Add active navigation example.
-- [ ] Add BreadcrumbTrail example.
-- [ ] Add dynamic route example.
-- [ ] Document browser Back/Forward behavior.
-- [ ] Update API reference.
+- [x] Add routing guide.
+- [x] Add Link documentation.
+- [x] Add NavigationItem documentation.
+- [x] Add Navbar example.
+- [x] Add Sidebar example.
+- [x] Add NavigationDrawer example.
+- [x] Add MobileSidebar example.
+- [x] Add active navigation example.
+- [x] Add BreadcrumbTrail example.
+- [x] Add dynamic route example.
+- [x] Document browser Back/Forward behavior.
+- [x] Update API reference.
 - [ ] Add complete navigation example application.
 
 ## Final Target Architecture
