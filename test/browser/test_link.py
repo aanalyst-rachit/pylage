@@ -121,7 +121,7 @@ def page():
                 page.get_by_text("Home Page", exact=True)
             ).to_be_visible()
 
-            assert page.url.endswith("/")
+            expect(page).to_have_url(url)
 
             browser.close()
     finally:

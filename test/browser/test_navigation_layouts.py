@@ -635,7 +635,7 @@ def page():
                     timeout=10000,
                 )
                 assert open_state.value is True
-                assert page.url.endswith("/")
+                expect(page).to_have_url(url)
             finally:
                 browser.close()
     finally:
