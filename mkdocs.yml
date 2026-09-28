@@ -1,5 +1,5 @@
 site_name: PyLage
-site_description: Simple, Ultrafast, Low-Latency Python UI
+site_description: A Python-first, server-driven reactive UI framework for building fast web applications.
 site_url: https://aanalyst-rachit.github.io/pylage/
 repo_name: aanalyst-rachit/pylage
 repo_url: https://github.com/aanalyst-rachit/pylage
@@ -7,19 +7,40 @@ repo_url: https://github.com/aanalyst-rachit/pylage
 theme:
   name: material
   features:
+    - navigation.instant
+    - navigation.instant.progress
     - navigation.tabs
     - navigation.sections
+    - navigation.expand
     - navigation.top
+    - navigation.footer
+    - toc.follow
     - search.highlight
+    - search.share
     - content.code.copy
+    - content.code.annotate
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
 
 nav:
   - Home: index.md
-  - Getting Started:
-      - First App: first_app.md
+  - Get Started:
       - Installation: helper/installation.md
-  - Deployment: deployment.md
-  - API Reference:
+      - First App: first_app.md
+      - Deployment: deployment.md
+  - Core API:
       - Overview: api/index.md
       - Application: api/application.md
       - State & Reactivity: api/state.md
@@ -31,7 +52,6 @@ nav:
       - Components & Primitives: api/components.md
       - Runtime: api/runtime.md
   - Components:
-      - Chart: component/chart.md
       - Alert: component/alert.md
       - Avatar: component/avatar.md
       - Badge: component/badge.md
@@ -49,11 +69,10 @@ nav:
       - DataFrame: component/dataframe.md
       - Datepicker: component/datepicker.md
       - Dialog: component/dialog.md
-      - Disabled State: component/disabled_state.md
-      - Divider: component/divider.md
       - Drawer: component/drawer.md
       - Empty State: component/empty_state.md
       - Error State: component/error_state.md
+      - File: component/file.md
       - Form: component/form.md
       - Form Field: component/form_field.md
       - Heading: component/heading.md
@@ -79,21 +98,26 @@ nav:
       - Toast: component/toast.md
       - Tooltip: component/tooltip.md
       - Trend: component/trend.md
-  - Architecture:
+  - Guides & Architecture:
       - API Audit: helper/api_audit.md
       - API Conventions: helper/api_conventions.md
       - Design Contract: helper/design_contract.md
       - Migration: helper/migration.md
       - Framework Comparison: helper/framework_comparison.md
-  - Benchmark: benchmark.md
+      - Benchmark: benchmark.md
   - Releases:
       - Changelog: https://github.com/aanalyst-rachit/pylage/blob/main/CHANGELOG.md
-      - v1.0.3: https://github.com/aanalyst-rachit/pylage/releases/tag/v1.0.3
-      - v1.0.7 Tracker: releases/tracker_v1.0.7.md
+      - GitHub Releases: https://github.com/aanalyst-rachit/pylage/releases
   - Playground: https://aanalyst-rachit.github.io/pylage/playground/
+
+extra_css:
+  - stylesheets/extra.css
 
 markdown_extensions:
   - admonition
   - pymdownx.highlight
   - pymdownx.superfences
   - pymdownx.tabbed
+  - pymdownx.details
+  - attr_list
+  - md_in_html
