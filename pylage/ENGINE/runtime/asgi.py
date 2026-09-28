@@ -16,8 +16,8 @@ from urllib.parse import parse_qs, unquote, urlparse
 
 from pylage.ENGINE.components import Column
 from pylage.ENGINE.core.component import Component
-from pylage.ENGINE.routing import Router, RoutingRuntime
 from pylage.ENGINE.renderers.html import render_document
+from pylage.ENGINE.routing import Router, RoutingRuntime
 from pylage.ENGINE.runtime.session_store import InMemorySessionStore, SessionStore
 from pylage.ENGINE.runtime.static import content_type_for, prepare_static_response
 from pylage.ENGINE.runtime.websocket import WebSocketServer

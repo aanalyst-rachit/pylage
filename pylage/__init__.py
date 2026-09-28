@@ -129,10 +129,10 @@ __version__ = "1.0.7"
 __all__ = [
     "Chart",
     "__version__",
-    "app",
     "accordion",
     "admin_panel",
     "alert",
+    "app",
     "app_shell",
     "audio",
     "authentication",

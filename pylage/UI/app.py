@@ -3,10 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from pylage.ENGINE.routing import Router, RoutingRuntime
 from pylage.ENGINE.core.component import Component
-from pylage.ENGINE.core.state import State
-from pylage.UI.components.navigation_item import navigation_item
+from pylage.ENGINE.routing import Router, RoutingRuntime
 
 
 class App:
