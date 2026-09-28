@@ -1,7 +1,5 @@
 # PyLage
 
----
-
 [![PyPI version](https://img.shields.io/pypi/v/pylage.svg)](https://pypi.org/project/pylage/)
 [![Python versions](https://img.shields.io/pypi/pyversions/pylage.svg)](https://pypi.org/project/pylage/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
