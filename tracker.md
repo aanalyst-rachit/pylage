@@ -209,4 +209,4 @@
 - [x] `git status` reviewed
 - [x] Final implementation diff reviewed
 - [ ] Release notes/documentation updated when requested
-- [ ] Git checkpoint created
+- [x] Git checkpoint created
