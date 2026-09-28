@@ -35,5 +35,9 @@ def test_runtime_rewrites_wildcard_websocket_host_for_browser():
         assert "0.0.0.0" not in websocket_url
         assert websocket_url.endswith(f":{runtime._websocket.port}/")
 
+        assert "loopbackHosts" in html
+        assert "window.location.hostname" in html
+        assert "websocketUrl.hostname = window.location.hostname" in html
+
     finally:
         runtime.stop()

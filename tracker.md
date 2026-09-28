@@ -199,14 +199,14 @@
 
 ## Phase 21 — Final Verification & Release Readiness
 
-- [ ] Focused Drawer tests pass
-- [ ] Live browser verification passes
+- [x] Focused Drawer tests pass
+- [x] Live browser verification passes
 - [x] Routing verification passes
-- [ ] Responsive browser verification passes
-- [ ] Accessibility verification passes
-- [ ] Full pytest regression passes
-- [ ] `git diff --check` passes
-- [ ] `git status` reviewed
-- [ ] Final implementation diff reviewed
+- [x] Responsive browser verification passes
+- [x] Accessibility verification passes
+- [x] Full pytest regression passes
+- [x] `git diff --check` passes
+- [x] `git status` reviewed
+- [x] Final implementation diff reviewed
 - [ ] Release notes/documentation updated when requested
 - [ ] Git checkpoint created
