@@ -1,5 +1,5 @@
 <div class="pylage-hero">
-  <div class="hero-badge">PYLAGE 1.0.7</div>
+  <div class="hero-badge">PYLAGE 1.0.8</div>
   <h1>Build reactive web apps.<br><span>Stay in Python.</span></h1>
   <p class="hero-lead">A Python-first, server-driven UI framework for fast interactive applications with reactive state, routing, components, and browser synchronization.</p>
   <div class="hero-actions">
