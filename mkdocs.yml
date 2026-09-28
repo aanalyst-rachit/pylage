@@ -19,6 +19,17 @@ nav:
       - First App: first_app.md
       - Installation: helper/installation.md
   - Deployment: deployment.md
+  - API Reference:
+      - Overview: api/index.md
+      - Application: api/application.md
+      - State & Reactivity: api/state.md
+      - Routing: api/routing.md
+      - Styling & Themes: api/styling.md
+      - Layout & Navigation: api/layout.md
+      - Patterns: api/patterns.md
+      - Recipes: api/recipes.md
+      - Components & Primitives: api/components.md
+      - Runtime: api/runtime.md
   - Components:
       - Chart: component/chart.md
       - Alert: component/alert.md

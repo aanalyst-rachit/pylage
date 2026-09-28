@@ -23,6 +23,7 @@ def run(
     host: str = "127.0.0.1",
     port: int = 0,
     open_browser: bool = True,
+    runtime: str = "local",
 ) -> Path:
     """
     Render and optionally serve a PyLage application.
@@ -32,6 +33,11 @@ def run(
     When serve=True, the local runtime starts and the process
     remains alive until interrupted with Ctrl+C.
     """
+
+    if runtime not in {"local", "granian"}:
+        raise ValueError(
+            'pylage.run() runtime must be "local" or "granian".'
+        )
 
     supplied = sum(value is not None for value in (app, app_factory, pages_dir))
     if supplied > 1:
@@ -54,6 +60,55 @@ def run(
         raise TypeError(
             "pylage.run() expects a Component root, app_factory, or pages_dir."
         )
+
+    if runtime == "granian" and app_factory is None:
+        if pages_dir is not None:
+            asgi = ASGIApp(pages_dir=pages_dir)
+            template = asgi.template
+        else:
+            if not isinstance(app, Component):
+                raise TypeError(
+                    "pylage.run() expects a Component root, app_factory, or pages_dir."
+                )
+            asgi = ASGIApp(root=app)
+            template = app
+
+        from pylage.ENGINE.renderers.html import render_document
+
+        document = render_document(
+            template,
+            title=title,
+        )
+
+        output_path = Path(output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(document, encoding="utf-8")
+
+        if not serve:
+            return output_path
+
+        runtime_backend = EmbeddedGranianRuntime(
+            asgi,
+            host=host,
+            port=port,
+        )
+        url = runtime_backend.start()
+
+        print(f"PyLage app running at {url}")
+        print("Press Ctrl+C to stop.")
+
+        if open_browser:
+            webbrowser.open(url)
+
+        try:
+            while True:
+                time.sleep(0.25)
+        except KeyboardInterrupt:
+            print("\nStopping PyLage...")
+        finally:
+            runtime_backend.stop()
+
+        return output_path
 
     if app_factory is not None:
         template = app_factory()

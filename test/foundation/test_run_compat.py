@@ -2,6 +2,8 @@ from pathlib import Path
 from typing import ClassVar
 from unittest.mock import patch
 
+import pytest
+
 import pylage as pl
 
 
@@ -133,3 +135,108 @@ def test_run_app_factory_uses_embedded_granian(tmp_path):
     assert runtime.application.__class__.__name__ == "ASGIApp"
     assert runtime.application.app_factory is app_factory
     browser_open.assert_called_once_with("http://127.0.0.1:8123/")
+
+
+def test_run_granian_runtime_accepts_component(tmp_path):
+    app = pl.column(pl.heading("Granian Component"))
+
+    class FakeRuntime:
+        instances = []
+
+        def __init__(self, application, *, host, port):
+            self.application = application
+            self.host = host
+            self.port = port
+            self.__class__.instances.append(self)
+
+        def start(self):
+            return f"http://{self.host}:{self.port}/"
+
+        def stop(self):
+            pass
+
+    def interrupt(_delay):
+        raise KeyboardInterrupt
+
+    import importlib
+
+    engine_app = importlib.import_module("pylage.ENGINE.app")
+
+    with (
+        patch.object(engine_app, "EmbeddedGranianRuntime", FakeRuntime),
+        patch.object(engine_app.time, "sleep", side_effect=interrupt),
+    ):
+        result = pl.run(
+            app,
+            runtime="granian",
+            output=tmp_path / "granian.html",
+            serve=True,
+            open_browser=False,
+        )
+
+    assert result.exists()
+    assert len(FakeRuntime.instances) == 1
+    assert FakeRuntime.instances[0].application.__class__.__name__ == "ASGIApp"
+    assert FakeRuntime.instances[0].application.root is app
+
+
+def test_run_granian_runtime_accepts_pages_dir(tmp_path):
+    pages = tmp_path / "pages"
+    pages.mkdir()
+    (pages / "index.py").write_text(
+        "import pylage as pl\n\n"
+        "def page():\n"
+        "    return pl.text(\"Granian Pages\")\n",
+        encoding="utf-8",
+    )
+
+    class FakeRuntime:
+        instances = []
+
+        def __init__(self, application, *, host, port):
+            self.application = application
+            self.host = host
+            self.port = port
+            self.__class__.instances.append(self)
+
+        def start(self):
+            return f"http://{self.host}:{self.port}/"
+
+        def stop(self):
+            pass
+
+    def interrupt(_delay):
+        raise KeyboardInterrupt
+
+    import importlib
+
+    engine_app = importlib.import_module("pylage.ENGINE.app")
+
+    with (
+        patch.object(engine_app, "EmbeddedGranianRuntime", FakeRuntime),
+        patch.object(engine_app.time, "sleep", side_effect=interrupt),
+    ):
+        result = pl.run(
+            pages_dir=pages,
+            runtime="granian",
+            output=tmp_path / "granian-pages.html",
+            serve=True,
+            open_browser=False,
+        )
+
+    assert result.exists()
+    assert len(FakeRuntime.instances) == 1
+    assert FakeRuntime.instances[0].application.__class__.__name__ == "ASGIApp"
+    assert FakeRuntime.instances[0].application.pages_dir == pages.resolve()
+
+
+def test_run_runtime_validation(tmp_path):
+    with pytest.raises(
+        ValueError,
+        match='runtime must be "local" or "granian"',
+    ):
+        pl.run(
+            pl.column(pl.heading("Invalid Runtime")),
+            runtime="unknown",
+            output=tmp_path / "invalid.html",
+        )

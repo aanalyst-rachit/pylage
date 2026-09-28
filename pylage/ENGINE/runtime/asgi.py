@@ -14,7 +14,10 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
+from pylage.ENGINE.components import Column
 from pylage.ENGINE.core.component import Component
+from pylage.ENGINE.routing import Router, RoutingRuntime
+from pylage.ENGINE.renderers.html import render_document
 from pylage.ENGINE.runtime.session_store import InMemorySessionStore, SessionStore
 from pylage.ENGINE.runtime.static import content_type_for, prepare_static_response
 from pylage.ENGINE.runtime.websocket import WebSocketServer
@@ -124,6 +127,7 @@ class ASGIApp:
         root: Component | None = None,
         *,
         app_factory: Callable[[], Component] | None = None,
+        pages_dir: str | Path | None = None,
         directory: str | Path | None = None,
         filename: str = "index.html",
         document: str | None = None,
@@ -134,17 +138,22 @@ class ASGIApp:
         message_rate_limit: float = 20.0,
         message_rate_burst: int = 40,
     ) -> None:
-        if root is None and app_factory is None:
-            raise TypeError("ASGIApp expects a Component root or app_factory.")
-
-        if root is not None and app_factory is not None:
-            raise TypeError("ASGIApp accepts either root or app_factory, not both.")
+        supplied = sum(value is not None for value in (root, app_factory, pages_dir))
+        if supplied == 0:
+            raise TypeError("ASGIApp expects a Component root, app_factory, or pages_dir.")
+        if supplied > 1:
+            raise TypeError("ASGIApp accepts only one of root, app_factory, or pages_dir.")
 
         if root is not None and not isinstance(root, Component):
             raise TypeError("ASGIApp expects a Component root.")
 
         if app_factory is not None and not callable(app_factory):
             raise TypeError("ASGIApp app_factory must be callable.")
+
+        if pages_dir is not None:
+            pages_dir = Path(pages_dir).resolve()
+            if not pages_dir.is_dir():
+                raise ValueError("ASGIApp pages_dir must be an existing directory.")
 
         if isinstance(max_message_size, bool) or not isinstance(max_message_size, int):
             raise TypeError("max_message_size must be a positive integer.")
@@ -160,14 +169,25 @@ class ASGIApp:
 
         self.root = root
         self.app_factory = app_factory
+        self.pages_dir = pages_dir
         self.directory = Path(directory).resolve() if directory is not None else None
         self.filename = Path(filename).name
         self.document = document
         self.template = template
         if self.template is not None and not isinstance(self.template, Component):
             raise TypeError("ASGIApp template must be a Component.")
+
+        if pages_dir is not None:
+            routing_template = Column()
+            RoutingRuntime(Router(pages_dir), routing_template).navigate("/")
+            if self.template is None:
+                self.template = routing_template
+            if self.document is None:
+                self.document = render_document(routing_template)
+
         self.allowed_origins = tuple(allowed_origins) if allowed_origins is not None else None
         self.max_message_size = max_message_size
+
         self.websocket = (
             WebSocketServer(
                 root,
@@ -420,7 +440,7 @@ class ASGIApp:
             max_message_size=self.max_message_size,
         )
 
-        if self.app_factory is None:
+        if self.app_factory is None and self.pages_dir is None:
             if self.websocket is None:
                 raise RuntimeError("ASGIApp has no WebSocket server.")
             await self.websocket.handle_external(connection)
@@ -433,11 +453,20 @@ class ASGIApp:
         session = self.session_store.get(token) if token else None
 
         if session is None:
-            root = self.app_factory()
-            if not isinstance(root, Component):
-                raise TypeError("ASGIApp app_factory must return a Component.")
-            if self.template is not None:
-                _align_component_ids(self.template, root)
+            if self.pages_dir is not None:
+                root = Column()
+                routing = RoutingRuntime(Router(self.pages_dir), root)
+                routing.navigate("/")
+                if self.template is not None:
+                    _align_component_ids(self.template, root)
+                navigation_handler = routing.navigate
+            else:
+                root = self.app_factory()
+                if not isinstance(root, Component):
+                    raise TypeError("ASGIApp app_factory must return a Component.")
+                if self.template is not None:
+                    _align_component_ids(self.template, root)
+                navigation_handler = None
 
             session = WebSocketServer(
                 root,
@@ -445,6 +474,7 @@ class ASGIApp:
                 max_message_size=self.max_message_size,
                 message_rate_limit=self.message_rate_limit,
                 message_rate_burst=self.message_rate_burst,
+                navigation_handler=navigation_handler,
             )
             token = secrets.token_urlsafe(32)
             while self.session_store.get(token) is not None:

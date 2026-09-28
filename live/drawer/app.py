@@ -6,6 +6,7 @@ if __name__ == "__main__":
         pages_dir="live/drawer/pages",
         title="PyLage Drawer Live Test",
         serve=True,
+        runtime="granian",
         host="0.0.0.0",
         port=3010,
     )

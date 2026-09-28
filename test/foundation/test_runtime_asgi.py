@@ -3,7 +3,8 @@ import json
 from pathlib import Path
 
 import pylage as pl
-from pylage.ENGINE.core.protocol_codec import decode_message
+from pylage.ENGINE.core.protocol import NavigateMessage
+from pylage.ENGINE.core.protocol_codec import decode_message, encode_message
 from pylage.ENGINE.core.state import State
 from pylage.ENGINE.runtime.asgi import ASGIApp
 from pylage.ENGINE.runtime.session_store import InMemorySessionStore
@@ -1010,3 +1011,70 @@ def test_asgi_websocket_rate_limit_configuration_validation():
 
     with pytest.raises(TypeError):
         ASGIApp(app, message_rate_burst=True)
+
+
+
+def test_asgi_pages_dir_routes_navigation(tmp_path: Path):
+    pages = tmp_path / "pages"
+    pages.mkdir()
+    (pages / "index.py").write_text(
+        'import pylage as pl\n\n'
+        'def page():\n'
+        '    return pl.text("Home")\n',
+        encoding="utf-8",
+    )
+    (pages / "dashboard.py").write_text(
+        'import pylage as pl\n\n'
+        'def page():\n'
+        '    return pl.text("Dashboard")\n',
+        encoding="utf-8",
+    )
+
+    asgi = ASGIApp(
+        pages_dir=pages,
+        document="<html><body>Home</body></html>",
+    )
+
+    messages = []
+    calls = 0
+
+    async def receive():
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return {
+                "type": "websocket.receive",
+                "bytes": encode_message(NavigateMessage("/dashboard")),
+            }
+        return {"type": "websocket.disconnect"}
+
+    async def send(message):
+        messages.append(message)
+
+    run(asgi({"type": "websocket", "path": "/", "headers": []}, receive, send))
+
+    assert messages[0] == {"type": "websocket.accept"}
+    assert any(message.get("type") == "websocket.send" for message in messages)
+
+    assert len(asgi._sessions) == 1
+    session = next(iter(asgi._sessions))
+    assert len(list(session.root.children)) == 1
+    assert list(session.root.children)[0].props.get("text") == "Dashboard"
+
+
+
+def test_asgi_pages_dir_serves_initial_document(tmp_path: Path):
+    pages = tmp_path / "pages"
+    pages.mkdir()
+    (pages / "index.py").write_text("import pylage as pl\n\ndef page():\n    return pl.text(\"Home\")\n", encoding="utf-8")
+    asgi = ASGIApp(pages_dir=pages)
+    messages = []
+    async def receive():
+        return {"type": "http.request"}
+    async def send(message):
+        messages.append(message)
+    run(asgi({"type": "http", "path": "/", "headers": []}, receive, send))
+    assert messages[0]["type"] == "http.response.start"
+    assert messages[0]["status"] == 200
+    assert messages[1]["type"] == "http.response.body"
+    assert b"Home" in messages[1]["body"]
