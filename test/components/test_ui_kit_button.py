@@ -101,6 +101,22 @@ def test_button_primary_and_secondary_have_semantic_hover_styles():
     assert "background-color:var(--color-secondary-hover)" in secondary_html
 
 
+def test_button_renders_optional_icon_inside_button():
+    button = ps.button("Add Row", icon="/_pylage/app-assets/add.svg")
+
+    assert button.props["text"] == "Add Row"
+    assert button.props["icon"] == "/_pylage/app-assets/add.svg"
+
+    html = render(button)
+
+    assert "<button " in html
+    assert "<img src=\"/_pylage/app-assets/add.svg\"" in html
+    assert "alt=\"\" width=\"20\" height=\"20\">" in html
+    assert html.index("<button") < html.index("<img") < html.index("</button>")
+    assert "Add Row</button>" in html
+    assert " icon=" not in html
+
+
 def test_button_disabled_is_forwarded():
     button = ps.button("Save", disabled=True)
 

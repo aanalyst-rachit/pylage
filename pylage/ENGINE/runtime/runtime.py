@@ -21,6 +21,7 @@ class Runtime:
         output: str | Path = "index.html",
         host: str = "127.0.0.1",
         port: int = 0,
+        asset_directory: str | Path | None = None,
         document_transform: Callable[[str], str] | None = None,
         navigation_handler: Callable[[str], object] | None = None,
     ) -> None:
@@ -34,6 +35,11 @@ class Runtime:
         self.output = Path(output)
         self.host = host
         self.port = port
+        self.asset_directory = (
+            Path(asset_directory).resolve()
+            if asset_directory is not None
+            else None
+        )
         if navigation_handler is not None and not callable(navigation_handler):
             raise TypeError(
                 "navigation_handler must be callable or None."
@@ -112,6 +118,7 @@ class Runtime:
                 host=self.host,
                 port=self.port,
                 filename=output_path.name,
+                asset_directory=self.asset_directory,
             )
 
             url = self._server.start()

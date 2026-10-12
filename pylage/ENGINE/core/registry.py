@@ -1024,6 +1024,22 @@ registry.register(
 )
 
 registry.register(
+    "Iframe",
+    "iframe",
+    props={
+        "src": PropDefinition("src", kind="attribute", html_name="src"),
+        "title": PropDefinition("title", kind="attribute", html_name="title"),
+        "width": PropDefinition("width", kind="attribute", html_name="width"),
+        "height": PropDefinition("height", kind="attribute", html_name="height"),
+        "allow": PropDefinition("allow", kind="attribute", html_name="allow"),
+        "allowfullscreen": PropDefinition("allowfullscreen", kind="boolean", html_name="allowfullscreen"),
+        "loading": PropDefinition("loading", kind="attribute", html_name="loading"),
+        "referrerpolicy": PropDefinition("referrerpolicy", kind="attribute", html_name="referrerpolicy"),
+        "class_name": PropDefinition("class_name", kind="attribute", html_name="class"),
+    },
+)
+
+registry.register(
     "Icon",
     "span",
     props={
@@ -1088,6 +1104,10 @@ registry.register(
     props={
         "text": PropDefinition(
             "text",
+            kind="text",
+        ),
+        "icon": PropDefinition(
+            "icon",
             kind="text",
         ),
         "class_name": PropDefinition(

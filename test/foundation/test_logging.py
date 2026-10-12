@@ -10,6 +10,17 @@ from pylage.ENGINE.runtime.logger import configure_logging, log_event
 from pylage.ENGINE.runtime.runtime import Runtime
 
 
+@pytest.fixture(autouse=True)
+def _allow_caplog_to_capture_pylage_records():
+    logger = logging.getLogger("pylage")
+    original_propagate = logger.propagate
+    logger.propagate = True
+    try:
+        yield
+    finally:
+        logger.propagate = original_propagate
+
+
 def test_log_event_exposes_structured_fields(caplog):
     component = Component(type="Heading")
 

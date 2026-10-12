@@ -84,6 +84,44 @@ def test_local_server_serves_static_file_with_headers(tmp_path: Path):
         server.stop()
 
 
+def test_local_server_serves_application_asset(tmp_path: Path):
+    asset_dir = tmp_path / "assets"
+    asset_dir.mkdir()
+    asset = asset_dir / "search.svg"
+    asset.write_text("<svg></svg>", encoding="utf-8")
+
+    server = LocalServer(tmp_path, asset_directory=asset_dir)
+    server.start()
+
+    try:
+        with urlopen(server.url + "_pylage/app-assets/search.svg") as response:
+            assert response.status == 200
+            assert response.headers["Content-Type"].split(";", 1)[0] == "image/svg+xml"
+            assert response.headers["Cache-Control"] == "public, max-age=3600"
+            assert response.read() == asset.read_bytes()
+    finally:
+        server.stop()
+
+
+def test_local_server_blocks_application_asset_traversal(tmp_path: Path):
+    asset_dir = tmp_path / "assets"
+    asset_dir.mkdir()
+    (tmp_path / "secret.txt").write_text("secret", encoding="utf-8")
+
+    server = LocalServer(tmp_path, asset_directory=asset_dir)
+    server.start()
+
+    try:
+        try:
+            urlopen(server.url + "_pylage/app-assets/../secret.txt")
+        except Exception as exc:
+            assert getattr(exc, "code", None) == 404
+        else:
+            raise AssertionError("Asset traversal unexpectedly succeeded")
+    finally:
+        server.stop()
+
+
 def test_local_server_gzip_static_response(tmp_path: Path):
     content = (b"body { margin: 0; padding: 0; }\n" * 100)
     (tmp_path / "styles.css").write_bytes(content)

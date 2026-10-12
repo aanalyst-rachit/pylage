@@ -16,6 +16,7 @@ from pylage.ENGINE.components.basic import Carousel as carousel
 from pylage.ENGINE.components.basic import Grid as grid
 from pylage.ENGINE.components.basic import Icon as icon
 from pylage.ENGINE.components.basic import Image as image
+from pylage.ENGINE.components.basic import Iframe as iframe
 from pylage.ENGINE.components.basic import Link as link
 from pylage.ENGINE.components.basic import Option as option
 from pylage.ENGINE.components.basic import ProgressBar as progress_bar
@@ -182,6 +183,7 @@ __all__ = [
     "hero",
     "icon",
     "image",
+    "iframe",
     "input",
     "landing_page",
     "link",

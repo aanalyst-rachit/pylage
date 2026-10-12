@@ -68,6 +68,27 @@ def test_asgi_http_serves_static_file(tmp_path: Path):
     assert messages[1]["body"] == b"console.log('ok');"
 
 
+def test_asgi_http_serves_application_asset(tmp_path: Path):
+    asset_dir = tmp_path / "assets"
+    asset_dir.mkdir()
+    asset = asset_dir / "search.svg"
+    asset.write_text("<svg></svg>", encoding="utf-8")
+    app = pl.column(pl.heading("ASGI Test"))
+    asgi = ASGIApp(app, asset_directory=asset_dir)
+    messages = []
+
+    async def receive():
+        return {"type": "http.request", "body": b"", "more_body": False}
+
+    async def send(message):
+        messages.append(message)
+
+    run(asgi({"type": "http", "path": "/_pylage/app-assets/search.svg", "method": "GET", "headers": []}, receive, send))
+
+    assert messages[0]["status"] == 200
+    assert messages[1]["body"] == b"<svg></svg>"
+
+
 def test_asgi_scope_rejects_unsupported_type():
     app = pl.column(pl.heading("ASGI Test"))
     asgi = ASGIApp(app, document="<html></html>")

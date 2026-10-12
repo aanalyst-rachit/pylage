@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pytest
 
 import pylage as pl
+from pylage.ENGINE.runtime.runtime import Runtime
 
 
 def test_run_public_api_compatibility(tmp_path):
@@ -137,6 +138,52 @@ def test_run_app_factory_uses_embedded_granian(tmp_path):
     browser_open.assert_called_once_with("http://127.0.0.1:8123/")
 
 
+def test_run_app_factory_passes_asset_directory_to_asgi(tmp_path):
+    asset_dir = tmp_path / "assets"
+    asset_dir.mkdir()
+
+    def app_factory():
+        return pl.column(pl.heading("Asset Factory"))
+
+    class FakeRuntime:
+        instances: ClassVar[list] = []
+
+        def __init__(self, application, *, host, port):
+            self.application = application
+            self.host = host
+            self.port = port
+            self.__class__.instances.append(self)
+
+        def start(self):
+            return f"http://{self.host}:{self.port}/"
+
+        def stop(self):
+            pass
+
+    def interrupt(_delay):
+        raise KeyboardInterrupt
+
+    import importlib
+
+    engine_app = importlib.import_module("pylage.ENGINE.app")
+
+    with (
+        patch.object(engine_app, "EmbeddedGranianRuntime", FakeRuntime),
+        patch.object(engine_app.time, "sleep", side_effect=interrupt),
+    ):
+        result = pl.run(
+            app_factory=app_factory,
+            asset_directory=asset_dir,
+            output=tmp_path / "asset-factory.html",
+            serve=True,
+            open_browser=False,
+        )
+
+    assert result.exists()
+    assert len(FakeRuntime.instances) == 1
+    assert FakeRuntime.instances[0].application.asset_directory == asset_dir.resolve()
+
+
 def test_run_granian_runtime_accepts_component(tmp_path):
     app = pl.column(pl.heading("Granian Component"))
 
@@ -178,6 +225,51 @@ def test_run_granian_runtime_accepts_component(tmp_path):
     assert len(FakeRuntime.instances) == 1
     assert FakeRuntime.instances[0].application.__class__.__name__ == "ASGIApp"
     assert FakeRuntime.instances[0].application.root is app
+
+
+def test_run_granian_component_passes_asset_directory(tmp_path):
+    asset_dir = tmp_path / "assets"
+    asset_dir.mkdir()
+    app = pl.column(pl.heading("Asset Component"))
+
+    class FakeRuntime:
+        instances: ClassVar[list] = []
+
+        def __init__(self, application, *, host, port):
+            self.application = application
+            self.host = host
+            self.port = port
+            self.__class__.instances.append(self)
+
+        def start(self):
+            return f"http://{self.host}:{self.port}/"
+
+        def stop(self):
+            pass
+
+    def interrupt(_delay):
+        raise KeyboardInterrupt
+
+    import importlib
+
+    engine_app = importlib.import_module("pylage.ENGINE.app")
+
+    with (
+        patch.object(engine_app, "EmbeddedGranianRuntime", FakeRuntime),
+        patch.object(engine_app.time, "sleep", side_effect=interrupt),
+    ):
+        result = pl.run(
+            app,
+            runtime="granian",
+            asset_directory=asset_dir,
+            output=tmp_path / "asset-component.html",
+            serve=True,
+            open_browser=False,
+        )
+
+    assert result.exists()
+    assert len(FakeRuntime.instances) == 1
+    assert FakeRuntime.instances[0].application.asset_directory == asset_dir.resolve()
 
 
 def test_run_granian_runtime_accepts_pages_dir(tmp_path):
@@ -228,6 +320,20 @@ def test_run_granian_runtime_accepts_pages_dir(tmp_path):
     assert len(FakeRuntime.instances) == 1
     assert FakeRuntime.instances[0].application.__class__.__name__ == "ASGIApp"
     assert FakeRuntime.instances[0].application.pages_dir == pages.resolve()
+
+
+def test_runtime_passes_asset_directory_to_local_server(tmp_path):
+    asset_dir = tmp_path / "assets"
+    asset_dir.mkdir()
+    (tmp_path / "index.html").write_text("<html>test</html>", encoding="utf-8")
+
+    runtime = Runtime(
+        pl.column(pl.heading("Local Asset Runtime")),
+        output=tmp_path / "index.html",
+        asset_directory=asset_dir,
+    )
+
+    assert runtime.asset_directory == asset_dir.resolve()
 
 
 def test_run_runtime_validation(tmp_path):

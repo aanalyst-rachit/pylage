@@ -2358,11 +2358,19 @@ function createRenderedNodes(item) {
 
         if (event.key !== "Escape") return;
 
-        const dismissibleDrawers = Array.from(
+        const openDrawers = Array.from(
+            document.querySelectorAll(".pylage-drawer[open]")
+        );
+        const topDrawer = openDrawers[openDrawers.length - 1];
+
+        if (!topDrawer) return;
+
+        const drawerId = topDrawer.getAttribute("data-pylage-id");
+        const dismissTarget = Array.from(
             document.querySelectorAll(
                 ".pylage-drawer-backdrop[data-pylage-events]"
             )
-        ).filter(function (backdrop) {
+        ).find(function (backdrop) {
             const eventNames = backdrop
                 .getAttribute("data-pylage-events")
                 .split(",")
@@ -2371,23 +2379,15 @@ function createRenderedNodes(item) {
                 });
 
             return (
-                eventNames.indexOf("dismiss") !== -1 &&
-                backdrop.hasAttribute("open") &&
-                backdrop.getAttribute("data-pylage-drawer-id")
+                backdrop.getAttribute("data-pylage-drawer-id") === drawerId &&
+                eventNames.indexOf("dismiss") !== -1
             );
         });
-
-        const dismissTarget =
-            dismissibleDrawers[dismissibleDrawers.length - 1];
 
         if (!dismissTarget) return;
 
         event.preventDefault();
-        sendEvent(
-            dismissTarget.getAttribute("data-pylage-drawer-id"),
-            "dismiss",
-            null
-        );
+        sendEvent(drawerId, "dismiss", null);
     }, true);
 
     document.addEventListener("click", function (event) {
@@ -2400,7 +2400,6 @@ function createRenderedNodes(item) {
             if (
                 dismissTarget.getAttribute &&
                 dismissTarget.classList &&
-                dismissTarget.classList.contains("pylage-drawer-backdrop") &&
                 dismissTarget.getAttribute("data-pylage-events")
             ) {
                 const eventNames = dismissTarget
@@ -2411,11 +2410,13 @@ function createRenderedNodes(item) {
                     });
 
                 if (
-                    eventNames.indexOf("dismiss") !== -1 &&
-                    dismissTarget.getAttribute("data-pylage-drawer-id")
+                    eventNames.indexOf("dismiss") !== -1
                 ) {
                     sendEvent(
-                        dismissTarget.getAttribute("data-pylage-drawer-id"),
+                        (
+                dismissTarget.getAttribute("data-pylage-drawer-id") ||
+                dismissTarget.getAttribute("data-pylage-id")
+            ),
                         "dismiss",
                         null
                     );

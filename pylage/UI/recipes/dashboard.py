@@ -3,6 +3,7 @@
 from typing import Any
 
 from pylage.ENGINE.components import Column, Heading, Row
+from pylage.ENGINE.styling.style import Style
 
 from ..layout import Container, Stack
 
@@ -70,6 +71,11 @@ def Dashboard(
     main = Column(
         *main_children,
         class_name="dashboard-main",
+        style=Style(
+            width="100%",
+            min_width="0",
+            box_sizing="border-box",
+        ),
     )
 
     body_children.append(main)

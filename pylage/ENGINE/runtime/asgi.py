@@ -129,6 +129,7 @@ class ASGIApp:
         app_factory: Callable[[], Component] | None = None,
         pages_dir: str | Path | None = None,
         directory: str | Path | None = None,
+        asset_directory: str | Path | None = None,
         filename: str = "index.html",
         document: str | None = None,
         template: Component | None = None,
@@ -171,6 +172,11 @@ class ASGIApp:
         self.app_factory = app_factory
         self.pages_dir = pages_dir
         self.directory = Path(directory).resolve() if directory is not None else None
+        self.asset_directory = (
+            Path(asset_directory).resolve()
+            if asset_directory is not None
+            else None
+        )
         self.filename = Path(filename).name
         self.document = document
         self.template = template
@@ -276,6 +282,65 @@ class ASGIApp:
             )
             return
 
+
+        # Application-owned assets.
+        if path.startswith("/_pylage/app-assets/"):
+            if self.asset_directory is None:
+                await self._response(
+                    404,
+                    b"Not Found",
+                    {"Content-Type": "text/plain; charset=utf-8"},
+                    send,
+                )
+                return
+
+            asset_name = path[len("/_pylage/app-assets/"):]
+            try:
+                target = (self.asset_directory / asset_name).resolve()
+                target.relative_to(self.asset_directory)
+            except (ValueError, OSError):
+                await self._response(
+                    404,
+                    b"Not Found",
+                    {"Content-Type": "text/plain; charset=utf-8"},
+                    send,
+                )
+                return
+
+            if not target.is_file():
+                await self._response(
+                    404,
+                    b"Not Found",
+                    {"Content-Type": "text/plain; charset=utf-8"},
+                    send,
+                )
+                return
+
+            try:
+                content = target.read_bytes()
+            except OSError:
+                await self._response(
+                    404,
+                    b"Not Found",
+                    {"Content-Type": "text/plain; charset=utf-8"},
+                    send,
+                )
+                return
+
+            content_type = content_type_for(target)
+            accept_encoding = ""
+            for name, value in scope.get("headers", []):
+                if name.lower() == b"accept-encoding":
+                    accept_encoding = value.decode("latin-1")
+                    break
+            content, headers = prepare_static_response(
+                content,
+                content_type,
+                accept_encoding=accept_encoding,
+                cache_control="public, max-age=3600",
+            )
+            await self._response(200, content, headers, send)
+            return
 
         # Packaged framework assets (Plotly.js, etc.)
         if path.startswith("/_pylage/assets/"):

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import concurrent.futures
+import inspect
 import ssl
 import threading
 import time
@@ -1132,6 +1133,7 @@ class WebSocketServer:
                     break
 
                 is_binary = isinstance(raw_message, (bytes, bytearray, memoryview))
+                message = None
                 try:
                     if is_binary:
                         message = decode_message(raw_message)
@@ -1181,6 +1183,8 @@ class WebSocketServer:
                             message.event,
                             message.payload,
                         )
+                        if inspect.isawaitable(result):
+                            result = await result
 
                     response = EventMessageResponse.success(
                         result,

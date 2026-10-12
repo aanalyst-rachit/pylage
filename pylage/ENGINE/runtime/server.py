@@ -10,6 +10,7 @@ from pylage.ENGINE.runtime.static import content_type_for, prepare_static_respon
 
 class _RequestHandler(BaseHTTPRequestHandler):
     directory: Path
+    asset_directory: Path | None = None
     filename: str = "index.html"
 
     def do_GET(self) -> None:
@@ -23,6 +24,47 @@ class _RequestHandler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
+            return
+
+        if request_path.startswith("/_pylage/app-assets/"):
+            asset_name = request_path[len("/_pylage/app-assets/"):]
+
+            if self.asset_directory is None or asset_name.startswith("/"):
+                self.send_error(404, "Not Found")
+                return
+
+            asset_base = self.asset_directory.resolve()
+            target = (asset_base / asset_name).resolve()
+
+            try:
+                target.relative_to(asset_base)
+            except (ValueError, OSError):
+                self.send_error(404, "Not Found")
+                return
+
+            if not target.is_file():
+                self.send_error(404, "Not Found")
+                return
+
+            try:
+                content = target.read_bytes()
+            except OSError:
+                self.send_error(404, "Not Found")
+                return
+
+            content_type = content_type_for(target)
+            content, headers = prepare_static_response(
+                content,
+                content_type,
+                accept_encoding=self.headers.get("Accept-Encoding", ""),
+                cache_control="public, max-age=3600",
+            )
+
+            self.send_response(200)
+            for name, value in headers.items():
+                self.send_header(name, value)
+            self.end_headers()
+            self.wfile.write(content)
             return
 
         if request_path.startswith("/_pylage/assets/"):
@@ -129,8 +171,14 @@ class LocalServer:
         host: str = "127.0.0.1",
         port: int = 0,
         filename: str = "index.html",
+        asset_directory: str | Path | None = None,
     ) -> None:
         self.directory = Path(directory).resolve()
+        self.asset_directory = (
+            Path(asset_directory).resolve()
+            if asset_directory is not None
+            else None
+        )
         self.host = host
         self.port = port
         self.filename = Path(filename).name
@@ -157,6 +205,7 @@ class LocalServer:
             (_RequestHandler,),
             {
                 "directory": self.directory,
+                "asset_directory": self.asset_directory,
                 "filename": self.filename,
             },
         )

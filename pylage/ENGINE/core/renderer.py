@@ -350,7 +350,7 @@ class HTMLRenderer:
                 continue
 
             if (
-                component.type in {"Image", "Video", "Audio"}
+                component.type in {"Image", "Video", "Audio", "Iframe"}
                 and name == "src"
             ):
                 value = _validate_url_attribute(value)
@@ -1211,13 +1211,23 @@ class HTMLRenderer:
             component.props.get("text", "Button")
         )
 
+        icon = component.props.get("icon")
+
         attributes = common + self._render_prop_attributes(
             component,
-            excluded={"text", "children"},
+            excluded={"text", "children", "icon"},
         )
+
+        icon_html = ""
+        if icon:
+            icon_html = (
+                f"<img src=\"{escape(str(icon), quote=True)}\" "
+                "alt=\"\" width=\"20\" height=\"20\">"
+            )
 
         return (
             f"<button {attributes}>"
+            f"{icon_html}"
             f"{escape(str(text))}"
             f"</button>"
         )

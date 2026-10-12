@@ -21,6 +21,7 @@ from pylage.ENGINE.components.basic import (
     Heading,
     Icon,
     Image,
+    Iframe,
     Input,
     Label,
     Menu,

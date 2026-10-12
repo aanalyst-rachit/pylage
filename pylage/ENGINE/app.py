@@ -22,6 +22,7 @@ def run(
     serve: bool = False,
     host: str = "127.0.0.1",
     port: int = 0,
+    asset_directory: str | Path | None = None,
     open_browser: bool = True,
     runtime: str = "local",
 ) -> Path:
@@ -63,14 +64,20 @@ def run(
 
     if runtime == "granian" and app_factory is None:
         if pages_dir is not None:
-            asgi = ASGIApp(pages_dir=pages_dir)
+            asgi = ASGIApp(
+                pages_dir=pages_dir,
+                asset_directory=asset_directory,
+            )
             template = asgi.template
         else:
             if not isinstance(app, Component):
                 raise TypeError(
                     "pylage.run() expects a Component root, app_factory, or pages_dir."
                 )
-            asgi = ASGIApp(root=app)
+            asgi = ASGIApp(
+                root=app,
+                asset_directory=asset_directory,
+            )
             template = app
 
         from pylage.ENGINE.renderers.html import render_document
@@ -136,6 +143,7 @@ def run(
             app_factory=app_factory,
             document=document,
             template=template,
+            asset_directory=asset_directory,
         )
         runtime = EmbeddedGranianRuntime(
             asgi,
@@ -188,6 +196,7 @@ def run(
         output=output,
         host=host,
         port=port,
+        asset_directory=asset_directory,
         navigation_handler=navigation_handler,
     )
 
